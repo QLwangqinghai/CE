@@ -26,6 +26,20 @@
 		77D3FDB3217F6F2E00E01B5C /* CEBaseType.c in Sources */ = {isa = PBXBuildFile; fileRef = 77D3FDB1217F6F2E00E01B5C /* CEBaseType.c */; };
 		77D3FDB42180DE2300E01B5C /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
 		77D3FDB52180DE2300E01B5C /* CoreEvent.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D603ECA82276C8A5005F22BF /* CERunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECA62276C8A5005F22BF /* CERunLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D603ECAB2276C8A5005F22BF /* CERunLoop.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D603ECA42276C8A5005F22BF /* CERunLoop.framework */; };
+		D603ECAC2276C8A5005F22BF /* CERunLoop.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D603ECA42276C8A5005F22BF /* CERunLoop.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D603ECBC2276C8C4005F22BF /* CFRunLoop.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB12276C8C4005F22BF /* CFRunLoop.c */; };
+		D603ECBD2276C8C4005F22BF /* CFSocket.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB22276C8C4005F22BF /* CFSocket.c */; };
+		D603ECBE2276C8C4005F22BF /* CFMessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECB32276C8C4005F22BF /* CFMessagePort.h */; };
+		D603ECBF2276C8C4005F22BF /* CFMachPort.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECB42276C8C4005F22BF /* CFMachPort.h */; };
+		D603ECC02276C8C4005F22BF /* CFMachPort_Lifetime.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECB52276C8C4005F22BF /* CFMachPort_Lifetime.h */; };
+		D603ECC12276C8C4005F22BF /* CFSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECB62276C8C4005F22BF /* CFSocket.h */; };
+		D603ECC22276C8C4005F22BF /* CFRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECB72276C8C4005F22BF /* CFRunLoop.h */; };
+		D603ECC32276C8C4005F22BF /* CFMachPort.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB82276C8C4005F22BF /* CFMachPort.c */; };
+		D603ECC42276C8C4005F22BF /* CFMessagePort.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB92276C8C4005F22BF /* CFMessagePort.c */; };
+		D603ECC52276C8C4005F22BF /* CFMachPort_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECBA2276C8C4005F22BF /* CFMachPort_Internal.h */; };
+		D603ECC62276C8C4005F22BF /* CFMachPort_Lifetime.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */; };
 		D6A24A1C2268CB3800C8E4B8 /* RunLoop in Resources */ = {isa = PBXBuildFile; fileRef = D6A24A1B2268CB3800C8E4B8 /* RunLoop */; };
 		D6A24A1F2268CEB000C8E4B8 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24A1E2268CEB000C8E4B8 /* Test.swift */; };
 /* End PBXBuildFile section */
@@ -38,6 +52,13 @@
 			remoteGlobalIDString = 64BEEE11217F00AD00204CB0;
 			remoteInfo = CoreEvent;
 		};
+		D603ECA92276C8A5005F22BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64BEEE09217F00AD00204CB0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D603ECA32276C8A5005F22BF;
+			remoteInfo = CERunLoop;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +68,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D603ECAC2276C8A5005F22BF /* CERunLoop.framework in Embed Frameworks */,
 				77D3FDB52180DE2300E01B5C /* CoreEvent.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -80,6 +102,20 @@
 		64C66D97218067EE00375126 /* CEFileEventHandler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEFileEventHandler.c; sourceTree = "<group>"; };
 		77D3FDB0217F6F2E00E01B5C /* CEBaseType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEBaseType.h; sourceTree = "<group>"; };
 		77D3FDB1217F6F2E00E01B5C /* CEBaseType.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEBaseType.c; sourceTree = "<group>"; };
+		D603ECA42276C8A5005F22BF /* CERunLoop.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CERunLoop.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D603ECA62276C8A5005F22BF /* CERunLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERunLoop.h; sourceTree = "<group>"; };
+		D603ECA72276C8A5005F22BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D603ECB12276C8C4005F22BF /* CFRunLoop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFRunLoop.c; sourceTree = "<group>"; };
+		D603ECB22276C8C4005F22BF /* CFSocket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFSocket.c; sourceTree = "<group>"; };
+		D603ECB32276C8C4005F22BF /* CFMessagePort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFMessagePort.h; sourceTree = "<group>"; };
+		D603ECB42276C8C4005F22BF /* CFMachPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFMachPort.h; sourceTree = "<group>"; };
+		D603ECB52276C8C4005F22BF /* CFMachPort_Lifetime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFMachPort_Lifetime.h; sourceTree = "<group>"; };
+		D603ECB62276C8C4005F22BF /* CFSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFSocket.h; sourceTree = "<group>"; };
+		D603ECB72276C8C4005F22BF /* CFRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFRunLoop.h; sourceTree = "<group>"; };
+		D603ECB82276C8C4005F22BF /* CFMachPort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMachPort.c; sourceTree = "<group>"; };
+		D603ECB92276C8C4005F22BF /* CFMessagePort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMessagePort.c; sourceTree = "<group>"; };
+		D603ECBA2276C8C4005F22BF /* CFMachPort_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFMachPort_Internal.h; sourceTree = "<group>"; };
+		D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMachPort_Lifetime.c; sourceTree = "<group>"; };
 		D6A24A1B2268CB3800C8E4B8 /* RunLoop */ = {isa = PBXFileReference; lastKnownFileType = folder; path = RunLoop; sourceTree = "<group>"; };
 		D6A24A1D2268CEB000C8E4B8 /* Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6A24A1E2268CEB000C8E4B8 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
@@ -97,7 +133,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D603ECAB2276C8A5005F22BF /* CERunLoop.framework in Frameworks */,
 				77D3FDB42180DE2300E01B5C /* CoreEvent.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D603ECA12276C8A5005F22BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,6 +153,7 @@
 			children = (
 				64BEEE14217F00AD00204CB0 /* CoreEvent */,
 				64BEEE37217F011D00204CB0 /* Demo */,
+				D603ECA52276C8A5005F22BF /* CERunLoop */,
 				64BEEE13217F00AD00204CB0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -118,6 +163,7 @@
 			children = (
 				64BEEE12217F00AD00204CB0 /* CoreEvent.framework */,
 				64BEEE36217F011D00204CB0 /* Demo.app */,
+				D603ECA42276C8A5005F22BF /* CERunLoop.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -170,6 +216,34 @@
 			path = Demo;
 			sourceTree = "<group>";
 		};
+		D603ECA52276C8A5005F22BF /* CERunLoop */ = {
+			isa = PBXGroup;
+			children = (
+				D603ECB02276C8C4005F22BF /* Source */,
+				D603ECA62276C8A5005F22BF /* CERunLoop.h */,
+				D603ECA72276C8A5005F22BF /* Info.plist */,
+			);
+			path = CERunLoop;
+			sourceTree = "<group>";
+		};
+		D603ECB02276C8C4005F22BF /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				D603ECBA2276C8C4005F22BF /* CFMachPort_Internal.h */,
+				D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */,
+				D603ECB52276C8C4005F22BF /* CFMachPort_Lifetime.h */,
+				D603ECB82276C8C4005F22BF /* CFMachPort.c */,
+				D603ECB42276C8C4005F22BF /* CFMachPort.h */,
+				D603ECB92276C8C4005F22BF /* CFMessagePort.c */,
+				D603ECB32276C8C4005F22BF /* CFMessagePort.h */,
+				D603ECB12276C8C4005F22BF /* CFRunLoop.c */,
+				D603ECB72276C8C4005F22BF /* CFRunLoop.h */,
+				D603ECB22276C8C4005F22BF /* CFSocket.c */,
+				D603ECB62276C8C4005F22BF /* CFSocket.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -185,6 +259,20 @@
 				64BEEE2A217F00E200204CB0 /* config.h in Headers */,
 				64BEEE31217F00E200204CB0 /* atomicvar.h in Headers */,
 				64BEEE17217F00AD00204CB0 /* CoreEvent.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D603EC9F2276C8A5005F22BF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D603ECC02276C8C4005F22BF /* CFMachPort_Lifetime.h in Headers */,
+				D603ECC12276C8C4005F22BF /* CFSocket.h in Headers */,
+				D603ECBE2276C8C4005F22BF /* CFMessagePort.h in Headers */,
+				D603ECC52276C8C4005F22BF /* CFMachPort_Internal.h in Headers */,
+				D603ECC22276C8C4005F22BF /* CFRunLoop.h in Headers */,
+				D603ECBF2276C8C4005F22BF /* CFMachPort.h in Headers */,
+				D603ECA82276C8A5005F22BF /* CERunLoop.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,11 +310,30 @@
 			);
 			dependencies = (
 				77D3FDB72180DE2300E01B5C /* PBXTargetDependency */,
+				D603ECAA2276C8A5005F22BF /* PBXTargetDependency */,
 			);
 			name = Demo;
 			productName = Demo;
 			productReference = 64BEEE36217F011D00204CB0 /* Demo.app */;
 			productType = "com.apple.product-type.application";
+		};
+		D603ECA32276C8A5005F22BF /* CERunLoop */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D603ECAF2276C8A5005F22BF /* Build configuration list for PBXNativeTarget "CERunLoop" */;
+			buildPhases = (
+				D603EC9F2276C8A5005F22BF /* Headers */,
+				D603ECA02276C8A5005F22BF /* Sources */,
+				D603ECA12276C8A5005F22BF /* Frameworks */,
+				D603ECA22276C8A5005F22BF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CERunLoop;
+			productName = CERunLoop;
+			productReference = D603ECA42276C8A5005F22BF /* CERunLoop.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -243,6 +350,9 @@
 					64BEEE35217F011D00204CB0 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1020;
+					};
+					D603ECA32276C8A5005F22BF = {
+						CreatedOnToolsVersion = 10.2;
 					};
 				};
 			};
@@ -261,6 +371,7 @@
 			targets = (
 				64BEEE11217F00AD00204CB0 /* CoreEvent */,
 				64BEEE35217F011D00204CB0 /* Demo */,
+				D603ECA32276C8A5005F22BF /* CERunLoop */,
 			);
 		};
 /* End PBXProject section */
@@ -280,6 +391,13 @@
 			files = (
 				64BEEE3C217F011E00204CB0 /* Assets.xcassets in Resources */,
 				64BEEE3F217F011E00204CB0 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D603ECA22276C8A5005F22BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +426,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D603ECA02276C8A5005F22BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D603ECC32276C8C4005F22BF /* CFMachPort.c in Sources */,
+				D603ECBC2276C8C4005F22BF /* CFRunLoop.c in Sources */,
+				D603ECC62276C8C4005F22BF /* CFMachPort_Lifetime.c in Sources */,
+				D603ECBD2276C8C4005F22BF /* CFSocket.c in Sources */,
+				D603ECC42276C8C4005F22BF /* CFMessagePort.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -315,6 +445,11 @@
 			isa = PBXTargetDependency;
 			target = 64BEEE11217F00AD00204CB0 /* CoreEvent */;
 			targetProxy = 77D3FDB62180DE2300E01B5C /* PBXContainerItemProxy */;
+		};
+		D603ECAA2276C8A5005F22BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D603ECA32276C8A5005F22BF /* CERunLoop */;
+			targetProxy = D603ECA92276C8A5005F22BF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -538,6 +673,60 @@
 			};
 			name = Release;
 		};
+		D603ECAD2276C8A5005F22BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = CERunLoop/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CERunLoop;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D603ECAE2276C8A5005F22BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = CERunLoop/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CERunLoop;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -564,6 +753,15 @@
 			buildConfigurations = (
 				64BEEE45217F011E00204CB0 /* Debug */,
 				64BEEE46217F011E00204CB0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D603ECAF2276C8A5005F22BF /* Build configuration list for PBXNativeTarget "CERunLoop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D603ECAD2276C8A5005F22BF /* Debug */,
+				D603ECAE2276C8A5005F22BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -8,22 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		64BEEE17217F00AD00204CB0 /* CoreEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 64BEEE15217F00AD00204CB0 /* CoreEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		64BEEE2A217F00E200204CB0 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 64BEEE20217F00E200204CB0 /* config.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		64BEEE2B217F00E200204CB0 /* zmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 64BEEE21217F00E200204CB0 /* zmalloc.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		64BEEE30217F00E200204CB0 /* zmalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 64BEEE26217F00E200204CB0 /* zmalloc.c */; };
-		64BEEE31217F00E200204CB0 /* atomicvar.h in Headers */ = {isa = PBXBuildFile; fileRef = 64BEEE27217F00E200204CB0 /* atomicvar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64BEEE3A217F011E00204CB0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 64BEEE39217F011E00204CB0 /* AppDelegate.m */; };
 		64BEEE3C217F011E00204CB0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 64BEEE3B217F011E00204CB0 /* Assets.xcassets */; };
 		64BEEE3F217F011E00204CB0 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64BEEE3D217F011E00204CB0 /* MainMenu.xib */; };
 		64BEEE42217F011E00204CB0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 64BEEE41217F011E00204CB0 /* main.m */; };
-		64C66D9021800F0D00375126 /* CEBaseApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 64C66D8E21800F0D00375126 /* CEBaseApi.h */; };
-		64C66D9121800F0D00375126 /* CEBaseApi.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C66D8F21800F0D00375126 /* CEBaseApi.c */; };
-		64C66D942180609400375126 /* CERunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 64C66D922180609400375126 /* CERunLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		64C66D952180609400375126 /* CERunLoop.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C66D932180609400375126 /* CERunLoop.c */; };
-		64C66D98218067EE00375126 /* CEFileEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 64C66D96218067EE00375126 /* CEFileEventHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		64C66D99218067EE00375126 /* CEFileEventHandler.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C66D97218067EE00375126 /* CEFileEventHandler.c */; };
-		77D3FDB2217F6F2E00E01B5C /* CEBaseType.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D3FDB0217F6F2E00E01B5C /* CEBaseType.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		77D3FDB3217F6F2E00E01B5C /* CEBaseType.c in Sources */ = {isa = PBXBuildFile; fileRef = 77D3FDB1217F6F2E00E01B5C /* CEBaseType.c */; };
 		77D3FDB42180DE2300E01B5C /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
 		77D3FDB52180DE2300E01B5C /* CoreEvent.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D603ECA82276C8A5005F22BF /* CERunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECA62276C8A5005F22BF /* CERunLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -76,6 +64,30 @@
 		D644AA4E227C4E8500F6B333 /* CTWaiter.h in Headers */ = {isa = PBXBuildFile; fileRef = D644AA44227C4E8500F6B333 /* CTWaiter.h */; };
 		D644AA4F227C4E8500F6B333 /* CTSpecific.h in Headers */ = {isa = PBXBuildFile; fileRef = D644AA45227C4E8500F6B333 /* CTSpecific.h */; };
 		D644AA50227C4E8500F6B333 /* CTRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D644AA46227C4E8500F6B333 /* CTRunLoop.h */; };
+		D644AAE4227C7AE700F6B333 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D644AAE3227C7AE700F6B333 /* AppDelegate.m */; };
+		D644AAE7227C7AE700F6B333 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D644AAE6227C7AE700F6B333 /* ViewController.m */; };
+		D644AAE9227C7AE900F6B333 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D644AAE8227C7AE900F6B333 /* Assets.xcassets */; };
+		D644AAEC227C7AE900F6B333 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D644AAEA227C7AE900F6B333 /* Main.storyboard */; };
+		D644AAEF227C7AE900F6B333 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D644AAEE227C7AE900F6B333 /* main.m */; };
+		D644AAFA227C7AE900F6B333 /* Demo2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = D644AAF9227C7AE900F6B333 /* Demo2Tests.m */; };
+		D644AB05227C7AE900F6B333 /* Demo2UITests.m in Sources */ = {isa = PBXBuildFile; fileRef = D644AB04227C7AE900F6B333 /* Demo2UITests.m */; };
+		D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABB4227C7C3F00F6B333 /* CETime.h */; };
+		D644ABB7227C7C3F00F6B333 /* CETime.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABB5227C7C3F00F6B333 /* CETime.c */; };
+		D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABB8227C7C8200F6B333 /* CEPoolBaseApi.h */; };
+		D644ABBB227C7C8200F6B333 /* CEPoolBaseApi.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */; };
+		D644ABBE227C7CD200F6B333 /* CEBaseType.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABBC227C7CD200F6B333 /* CEBaseType.h */; };
+		D644ABBF227C7CD200F6B333 /* CEBaseType.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABBD227C7CD200F6B333 /* CEBaseType.c */; };
+		D644ABC2227C7CF500F6B333 /* CEDispatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABC0227C7CF500F6B333 /* CEDispatcher.c */; };
+		D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC1227C7CF500F6B333 /* CEDispatcher.h */; };
+		D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC4227C7DE900F6B333 /* CEBase.h */; };
+		D644ABC7227C7DEA00F6B333 /* CEBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABC5227C7DE900F6B333 /* CEBase.c */; };
+		D644ABCA227C806300F6B333 /* CEThread.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABC8227C806300F6B333 /* CEThread.c */; };
+		D644ABCB227C806300F6B333 /* CEThread.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC9227C806300F6B333 /* CEThread.h */; };
+		D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABCC227C80E400F6B333 /* CEMemory.h */; };
+		D644ABCF227C80E500F6B333 /* CEMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABCD227C80E500F6B333 /* CEMemory.c */; };
+		D644ABD1227C824300F6B333 /* CEInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD0227C824300F6B333 /* CEInternal.h */; };
+		D644ABD4227C952200F6B333 /* CELog.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD2227C952100F6B333 /* CELog.c */; };
+		D644ABD5227C952200F6B333 /* CELog.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD3227C952200F6B333 /* CELog.h */; };
 		D6A24A1F2268CEB000C8E4B8 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24A1E2268CEB000C8E4B8 /* Test.swift */; };
 /* End PBXBuildFile section */
 
@@ -115,6 +127,20 @@
 			remoteGlobalIDString = D644A9EA227C248400F6B333;
 			remoteInfo = CoreEventV5;
 		};
+		D644AAF6227C7AE900F6B333 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64BEEE09217F00AD00204CB0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D644AADF227C7AE700F6B333;
+			remoteInfo = Demo2;
+		};
+		D644AB01227C7AE900F6B333 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64BEEE09217F00AD00204CB0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D644AADF227C7AE700F6B333;
+			remoteInfo = Demo2;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -137,12 +163,6 @@
 		64BEEE12217F00AD00204CB0 /* CoreEvent.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreEvent.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		64BEEE15217F00AD00204CB0 /* CoreEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreEvent.h; sourceTree = "<group>"; };
 		64BEEE16217F00AD00204CB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		64BEEE1F217F00E200204CB0 /* ae.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ae.h; sourceTree = "<group>"; };
-		64BEEE20217F00E200204CB0 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		64BEEE21217F00E200204CB0 /* zmalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zmalloc.h; sourceTree = "<group>"; };
-		64BEEE24217F00E200204CB0 /* ae.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ae.c; sourceTree = "<group>"; };
-		64BEEE26217F00E200204CB0 /* zmalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zmalloc.c; sourceTree = "<group>"; };
-		64BEEE27217F00E200204CB0 /* atomicvar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomicvar.h; sourceTree = "<group>"; };
 		64BEEE36217F011D00204CB0 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64BEEE38217F011D00204CB0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		64BEEE39217F011E00204CB0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -151,14 +171,6 @@
 		64BEEE40217F011E00204CB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		64BEEE41217F011E00204CB0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		64BEEE43217F011E00204CB0 /* Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demo.entitlements; sourceTree = "<group>"; };
-		64C66D8E21800F0D00375126 /* CEBaseApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEBaseApi.h; sourceTree = "<group>"; };
-		64C66D8F21800F0D00375126 /* CEBaseApi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEBaseApi.c; sourceTree = "<group>"; };
-		64C66D922180609400375126 /* CERunLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERunLoop.h; sourceTree = "<group>"; };
-		64C66D932180609400375126 /* CERunLoop.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CERunLoop.c; sourceTree = "<group>"; };
-		64C66D96218067EE00375126 /* CEFileEventHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEFileEventHandler.h; sourceTree = "<group>"; };
-		64C66D97218067EE00375126 /* CEFileEventHandler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEFileEventHandler.c; sourceTree = "<group>"; };
-		77D3FDB0217F6F2E00E01B5C /* CEBaseType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEBaseType.h; sourceTree = "<group>"; };
-		77D3FDB1217F6F2E00E01B5C /* CEBaseType.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEBaseType.c; sourceTree = "<group>"; };
 		D603ECA42276C8A5005F22BF /* CERunLoop.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CERunLoop.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D603ECA62276C8A5005F22BF /* CERunLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERunLoop.h; sourceTree = "<group>"; };
 		D603ECA72276C8A5005F22BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -209,6 +221,74 @@
 		D644AA44227C4E8500F6B333 /* CTWaiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTWaiter.h; sourceTree = "<group>"; };
 		D644AA45227C4E8500F6B333 /* CTSpecific.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTSpecific.h; sourceTree = "<group>"; };
 		D644AA46227C4E8500F6B333 /* CTRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTRunLoop.h; sourceTree = "<group>"; };
+		D644AAE0227C7AE700F6B333 /* Demo2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D644AAE2227C7AE700F6B333 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		D644AAE3227C7AE700F6B333 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		D644AAE5227C7AE700F6B333 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		D644AAE6227C7AE700F6B333 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		D644AAE8227C7AE900F6B333 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D644AAEB227C7AE900F6B333 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D644AAED227C7AE900F6B333 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D644AAEE227C7AE900F6B333 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D644AAF0227C7AE900F6B333 /* Demo2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demo2.entitlements; sourceTree = "<group>"; };
+		D644AAF5227C7AE900F6B333 /* Demo2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Demo2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D644AAF9227C7AE900F6B333 /* Demo2Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Demo2Tests.m; sourceTree = "<group>"; };
+		D644AAFB227C7AE900F6B333 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D644AB00227C7AE900F6B333 /* Demo2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Demo2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D644AB04227C7AE900F6B333 /* Demo2UITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Demo2UITests.m; sourceTree = "<group>"; };
+		D644AB06227C7AE900F6B333 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D644AB12227C7B5C00F6B333 /* CTBaseType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTBaseType.h; sourceTree = "<group>"; };
+		D644AB13227C7B5C00F6B333 /* CTWaiter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CTWaiter.c; sourceTree = "<group>"; };
+		D644AB14227C7B5C00F6B333 /* CTSpecific.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CTSpecific.c; sourceTree = "<group>"; };
+		D644AB15227C7B5C00F6B333 /* CTRunLoop.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CTRunLoop.c; sourceTree = "<group>"; };
+		D644AB16227C7B5C00F6B333 /* CTBaseType.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CTBaseType.c; sourceTree = "<group>"; };
+		D644AB17227C7B5C00F6B333 /* CTWaiter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTWaiter.h; sourceTree = "<group>"; };
+		D644AB18227C7B5C00F6B333 /* CTSpecific.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTSpecific.h; sourceTree = "<group>"; };
+		D644AB19227C7B5C00F6B333 /* CTRunLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTRunLoop.h; sourceTree = "<group>"; };
+		D644AB1B227C7B5C00F6B333 /* CEBaseApi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEBaseApi.c; sourceTree = "<group>"; };
+		D644AB1C227C7B5C00F6B333 /* CERunLoopSource.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CERunLoopSource.c; sourceTree = "<group>"; };
+		D644AB1D227C7B5C00F6B333 /* CERunLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERunLoop.h; sourceTree = "<group>"; };
+		D644AB1E227C7B5C00F6B333 /* CEThread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEThread.c; sourceTree = "<group>"; };
+		D644AB1F227C7B5C00F6B333 /* CEConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEConfig.h; sourceTree = "<group>"; };
+		D644AB20227C7B5C00F6B333 /* CEBaseType.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEBaseType.c; sourceTree = "<group>"; };
+		D644AB21227C7B5C00F6B333 /* CEMemory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEMemory.c; sourceTree = "<group>"; };
+		D644AB22227C7B5C00F6B333 /* CETimeEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETimeEvent.h; sourceTree = "<group>"; };
+		D644AB23227C7B5C00F6B333 /* CEDispatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEDispatcher.h; sourceTree = "<group>"; };
+		D644AB24227C7B5C00F6B333 /* CELog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CELog.h; sourceTree = "<group>"; };
+		D644AB25227C7B5C00F6B333 /* CEFileEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEFileEvent.h; sourceTree = "<group>"; };
+		D644AB26227C7B5C00F6B333 /* CEClosure.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEClosure.c; sourceTree = "<group>"; };
+		D644AB27227C7B5C00F6B333 /* CETime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETime.h; sourceTree = "<group>"; };
+		D644AB28227C7B5C00F6B333 /* CEThread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThread.h; sourceTree = "<group>"; };
+		D644AB29227C7B5C00F6B333 /* CERunLoop.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CERunLoop.c; sourceTree = "<group>"; };
+		D644AB2A227C7B5C00F6B333 /* CERunLoopSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERunLoopSource.h; sourceTree = "<group>"; };
+		D644AB2B227C7B5C00F6B333 /* CEBaseApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEBaseApi.h; sourceTree = "<group>"; };
+		D644AB2C227C7B5C00F6B333 /* CEMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEMemory.h; sourceTree = "<group>"; };
+		D644AB2D227C7B5C00F6B333 /* CETimeEvent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETimeEvent.c; sourceTree = "<group>"; };
+		D644AB2E227C7B5C00F6B333 /* CEBaseType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEBaseType.h; sourceTree = "<group>"; };
+		D644AB2F227C7B5C00F6B333 /* CELog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CELog.c; sourceTree = "<group>"; };
+		D644AB30227C7B5C00F6B333 /* CEDispatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEDispatcher.c; sourceTree = "<group>"; };
+		D644AB31227C7B5C00F6B333 /* CETime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETime.c; sourceTree = "<group>"; };
+		D644AB32227C7B5C00F6B333 /* CEClosure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEClosure.h; sourceTree = "<group>"; };
+		D644AB33227C7B5C00F6B333 /* CEFileEvent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEFileEvent.c; sourceTree = "<group>"; };
+		D644AB35227C7B5C00F6B333 /* CSTime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CSTime.c; sourceTree = "<group>"; };
+		D644AB36227C7B5C00F6B333 /* CSTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSTime.h; sourceTree = "<group>"; };
+		D644ABB4227C7C3F00F6B333 /* CETime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CETime.h; sourceTree = "<group>"; };
+		D644ABB5227C7C3F00F6B333 /* CETime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CETime.c; sourceTree = "<group>"; };
+		D644ABB8227C7C8200F6B333 /* CEPoolBaseApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPoolBaseApi.h; sourceTree = "<group>"; };
+		D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEPoolBaseApi.c; sourceTree = "<group>"; };
+		D644ABBC227C7CD200F6B333 /* CEBaseType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEBaseType.h; sourceTree = "<group>"; };
+		D644ABBD227C7CD200F6B333 /* CEBaseType.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEBaseType.c; sourceTree = "<group>"; };
+		D644ABC0227C7CF500F6B333 /* CEDispatcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEDispatcher.c; sourceTree = "<group>"; };
+		D644ABC1227C7CF500F6B333 /* CEDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEDispatcher.h; sourceTree = "<group>"; };
+		D644ABC4227C7DE900F6B333 /* CEBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEBase.h; sourceTree = "<group>"; };
+		D644ABC5227C7DE900F6B333 /* CEBase.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEBase.c; sourceTree = "<group>"; };
+		D644ABC8227C806300F6B333 /* CEThread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEThread.c; sourceTree = "<group>"; };
+		D644ABC9227C806300F6B333 /* CEThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEThread.h; sourceTree = "<group>"; };
+		D644ABCC227C80E400F6B333 /* CEMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEMemory.h; sourceTree = "<group>"; };
+		D644ABCD227C80E500F6B333 /* CEMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEMemory.c; sourceTree = "<group>"; };
+		D644ABD0227C824300F6B333 /* CEInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEInternal.h; sourceTree = "<group>"; };
+		D644ABD2227C952100F6B333 /* CELog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CELog.c; sourceTree = "<group>"; };
+		D644ABD3227C952200F6B333 /* CELog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CELog.h; sourceTree = "<group>"; };
 		D6A24A1D2268CEB000C8E4B8 /* Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6A24A1E2268CEB000C8E4B8 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -253,6 +333,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D644AADD227C7AE700F6B333 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D644AAF2227C7AE900F6B333 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D644AAFD227C7AE900F6B333 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -263,6 +364,9 @@
 				64BEEE37217F011D00204CB0 /* Demo */,
 				D603ECA52276C8A5005F22BF /* CERunLoop */,
 				D644A9EC227C248400F6B333 /* CoreEventV5 */,
+				D644AAE1227C7AE700F6B333 /* Demo2 */,
+				D644AAF8227C7AE900F6B333 /* Demo2Tests */,
+				D644AB03227C7AE900F6B333 /* Demo2UITests */,
 				64BEEE13217F00AD00204CB0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -275,6 +379,9 @@
 				D603ECA42276C8A5005F22BF /* CERunLoop.framework */,
 				D644A9EB227C248400F6B333 /* CoreEventV5.framework */,
 				D644A9F3227C248400F6B333 /* CoreEventV5Tests.xctest */,
+				D644AAE0227C7AE700F6B333 /* Demo2.app */,
+				D644AAF5227C7AE900F6B333 /* Demo2Tests.xctest */,
+				D644AB00227C7AE900F6B333 /* Demo2UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -282,32 +389,12 @@
 		64BEEE14217F00AD00204CB0 /* CoreEvent */ = {
 			isa = PBXGroup;
 			children = (
-				64BEEE1D217F00E200204CB0 /* Source */,
+				D644AB37227C7B6900F6B333 /* Source */,
+				D644AB10227C7B5C00F6B333 /* Source1 */,
 				64BEEE15217F00AD00204CB0 /* CoreEvent.h */,
 				64BEEE16217F00AD00204CB0 /* Info.plist */,
 			);
 			path = CoreEvent;
-			sourceTree = "<group>";
-		};
-		64BEEE1D217F00E200204CB0 /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				64BEEE1F217F00E200204CB0 /* ae.h */,
-				64BEEE20217F00E200204CB0 /* config.h */,
-				64BEEE21217F00E200204CB0 /* zmalloc.h */,
-				64BEEE24217F00E200204CB0 /* ae.c */,
-				64BEEE26217F00E200204CB0 /* zmalloc.c */,
-				64BEEE27217F00E200204CB0 /* atomicvar.h */,
-				77D3FDB0217F6F2E00E01B5C /* CEBaseType.h */,
-				77D3FDB1217F6F2E00E01B5C /* CEBaseType.c */,
-				64C66D8E21800F0D00375126 /* CEBaseApi.h */,
-				64C66D8F21800F0D00375126 /* CEBaseApi.c */,
-				64C66D922180609400375126 /* CERunLoop.h */,
-				64C66D932180609400375126 /* CERunLoop.c */,
-				64C66D96218067EE00375126 /* CEFileEventHandler.h */,
-				64C66D97218067EE00375126 /* CEFileEventHandler.c */,
-			);
-			path = Source;
 			sourceTree = "<group>";
 		};
 		64BEEE37217F011D00204CB0 /* Demo */ = {
@@ -419,6 +506,146 @@
 			path = CoreTask;
 			sourceTree = "<group>";
 		};
+		D644AAE1227C7AE700F6B333 /* Demo2 */ = {
+			isa = PBXGroup;
+			children = (
+				D644AAE2227C7AE700F6B333 /* AppDelegate.h */,
+				D644AAE3227C7AE700F6B333 /* AppDelegate.m */,
+				D644AAE5227C7AE700F6B333 /* ViewController.h */,
+				D644AAE6227C7AE700F6B333 /* ViewController.m */,
+				D644AAE8227C7AE900F6B333 /* Assets.xcassets */,
+				D644AAEA227C7AE900F6B333 /* Main.storyboard */,
+				D644AAED227C7AE900F6B333 /* Info.plist */,
+				D644AAEE227C7AE900F6B333 /* main.m */,
+				D644AAF0227C7AE900F6B333 /* Demo2.entitlements */,
+			);
+			path = Demo2;
+			sourceTree = "<group>";
+		};
+		D644AAF8227C7AE900F6B333 /* Demo2Tests */ = {
+			isa = PBXGroup;
+			children = (
+				D644AAF9227C7AE900F6B333 /* Demo2Tests.m */,
+				D644AAFB227C7AE900F6B333 /* Info.plist */,
+			);
+			path = Demo2Tests;
+			sourceTree = "<group>";
+		};
+		D644AB03227C7AE900F6B333 /* Demo2UITests */ = {
+			isa = PBXGroup;
+			children = (
+				D644AB04227C7AE900F6B333 /* Demo2UITests.m */,
+				D644AB06227C7AE900F6B333 /* Info.plist */,
+			);
+			path = Demo2UITests;
+			sourceTree = "<group>";
+		};
+		D644AB10227C7B5C00F6B333 /* Source1 */ = {
+			isa = PBXGroup;
+			children = (
+				D644AB11227C7B5C00F6B333 /* CoreTask */,
+				D644AB1A227C7B5C00F6B333 /* Core */,
+				D644AB34227C7B5C00F6B333 /* CoreSystem */,
+			);
+			path = Source1;
+			sourceTree = "<group>";
+		};
+		D644AB11227C7B5C00F6B333 /* CoreTask */ = {
+			isa = PBXGroup;
+			children = (
+				D644AB12227C7B5C00F6B333 /* CTBaseType.h */,
+				D644AB13227C7B5C00F6B333 /* CTWaiter.c */,
+				D644AB14227C7B5C00F6B333 /* CTSpecific.c */,
+				D644AB15227C7B5C00F6B333 /* CTRunLoop.c */,
+				D644AB16227C7B5C00F6B333 /* CTBaseType.c */,
+				D644AB17227C7B5C00F6B333 /* CTWaiter.h */,
+				D644AB18227C7B5C00F6B333 /* CTSpecific.h */,
+				D644AB19227C7B5C00F6B333 /* CTRunLoop.h */,
+			);
+			path = CoreTask;
+			sourceTree = "<group>";
+		};
+		D644AB1A227C7B5C00F6B333 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				D644AB1B227C7B5C00F6B333 /* CEBaseApi.c */,
+				D644AB1C227C7B5C00F6B333 /* CERunLoopSource.c */,
+				D644AB1D227C7B5C00F6B333 /* CERunLoop.h */,
+				D644AB1E227C7B5C00F6B333 /* CEThread.c */,
+				D644AB1F227C7B5C00F6B333 /* CEConfig.h */,
+				D644AB20227C7B5C00F6B333 /* CEBaseType.c */,
+				D644AB21227C7B5C00F6B333 /* CEMemory.c */,
+				D644AB22227C7B5C00F6B333 /* CETimeEvent.h */,
+				D644AB23227C7B5C00F6B333 /* CEDispatcher.h */,
+				D644AB24227C7B5C00F6B333 /* CELog.h */,
+				D644AB25227C7B5C00F6B333 /* CEFileEvent.h */,
+				D644AB26227C7B5C00F6B333 /* CEClosure.c */,
+				D644AB27227C7B5C00F6B333 /* CETime.h */,
+				D644AB28227C7B5C00F6B333 /* CEThread.h */,
+				D644AB29227C7B5C00F6B333 /* CERunLoop.c */,
+				D644AB2A227C7B5C00F6B333 /* CERunLoopSource.h */,
+				D644AB2B227C7B5C00F6B333 /* CEBaseApi.h */,
+				D644AB2C227C7B5C00F6B333 /* CEMemory.h */,
+				D644AB2D227C7B5C00F6B333 /* CETimeEvent.c */,
+				D644AB2E227C7B5C00F6B333 /* CEBaseType.h */,
+				D644AB2F227C7B5C00F6B333 /* CELog.c */,
+				D644AB30227C7B5C00F6B333 /* CEDispatcher.c */,
+				D644AB31227C7B5C00F6B333 /* CETime.c */,
+				D644AB32227C7B5C00F6B333 /* CEClosure.h */,
+				D644AB33227C7B5C00F6B333 /* CEFileEvent.c */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		D644AB34227C7B5C00F6B333 /* CoreSystem */ = {
+			isa = PBXGroup;
+			children = (
+				D644AB35227C7B5C00F6B333 /* CSTime.c */,
+				D644AB36227C7B5C00F6B333 /* CSTime.h */,
+			);
+			path = CoreSystem;
+			sourceTree = "<group>";
+		};
+		D644AB37227C7B6900F6B333 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				D644ABD7227C973100F6B333 /* RunLoop */,
+				D644ABD6227C952D00F6B333 /* Base */,
+				D644ABC9227C806300F6B333 /* CEThread.h */,
+				D644ABC8227C806300F6B333 /* CEThread.c */,
+				D644ABC1227C7CF500F6B333 /* CEDispatcher.h */,
+				D644ABC0227C7CF500F6B333 /* CEDispatcher.c */,
+				D644ABBC227C7CD200F6B333 /* CEBaseType.h */,
+				D644ABBD227C7CD200F6B333 /* CEBaseType.c */,
+				D644ABB8227C7C8200F6B333 /* CEPoolBaseApi.h */,
+				D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */,
+				D644ABD0227C824300F6B333 /* CEInternal.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		D644ABD6227C952D00F6B333 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				D644ABC4227C7DE900F6B333 /* CEBase.h */,
+				D644ABC5227C7DE900F6B333 /* CEBase.c */,
+				D644ABCC227C80E400F6B333 /* CEMemory.h */,
+				D644ABCD227C80E500F6B333 /* CEMemory.c */,
+				D644ABB4227C7C3F00F6B333 /* CETime.h */,
+				D644ABB5227C7C3F00F6B333 /* CETime.c */,
+				D644ABD3227C952200F6B333 /* CELog.h */,
+				D644ABD2227C952100F6B333 /* CELog.c */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		D644ABD7227C973100F6B333 /* RunLoop */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = RunLoop;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -426,14 +653,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64C66D9021800F0D00375126 /* CEBaseApi.h in Headers */,
-				64C66D942180609400375126 /* CERunLoop.h in Headers */,
-				64C66D98218067EE00375126 /* CEFileEventHandler.h in Headers */,
-				77D3FDB2217F6F2E00E01B5C /* CEBaseType.h in Headers */,
-				64BEEE2B217F00E200204CB0 /* zmalloc.h in Headers */,
-				64BEEE2A217F00E200204CB0 /* config.h in Headers */,
-				64BEEE31217F00E200204CB0 /* atomicvar.h in Headers */,
+				D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */,
+				D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */,
 				64BEEE17217F00AD00204CB0 /* CoreEvent.h in Headers */,
+				D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */,
+				D644ABCB227C806300F6B333 /* CEThread.h in Headers */,
+				D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */,
+				D644ABBE227C7CD200F6B333 /* CEBaseType.h in Headers */,
+				D644ABD5227C952200F6B333 /* CELog.h in Headers */,
+				D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */,
+				D644ABD1227C824300F6B333 /* CEInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -573,6 +802,59 @@
 			productReference = D644A9F3227C248400F6B333 /* CoreEventV5Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		D644AADF227C7AE700F6B333 /* Demo2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D644AB07227C7AE900F6B333 /* Build configuration list for PBXNativeTarget "Demo2" */;
+			buildPhases = (
+				D644AADC227C7AE700F6B333 /* Sources */,
+				D644AADD227C7AE700F6B333 /* Frameworks */,
+				D644AADE227C7AE700F6B333 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Demo2;
+			productName = Demo2;
+			productReference = D644AAE0227C7AE700F6B333 /* Demo2.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D644AAF4227C7AE900F6B333 /* Demo2Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D644AB0A227C7AE900F6B333 /* Build configuration list for PBXNativeTarget "Demo2Tests" */;
+			buildPhases = (
+				D644AAF1227C7AE900F6B333 /* Sources */,
+				D644AAF2227C7AE900F6B333 /* Frameworks */,
+				D644AAF3227C7AE900F6B333 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D644AAF7227C7AE900F6B333 /* PBXTargetDependency */,
+			);
+			name = Demo2Tests;
+			productName = Demo2Tests;
+			productReference = D644AAF5227C7AE900F6B333 /* Demo2Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D644AAFF227C7AE900F6B333 /* Demo2UITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D644AB0D227C7AE900F6B333 /* Build configuration list for PBXNativeTarget "Demo2UITests" */;
+			buildPhases = (
+				D644AAFC227C7AE900F6B333 /* Sources */,
+				D644AAFD227C7AE900F6B333 /* Frameworks */,
+				D644AAFE227C7AE900F6B333 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D644AB02227C7AE900F6B333 /* PBXTargetDependency */,
+			);
+			name = Demo2UITests;
+			productName = Demo2UITests;
+			productReference = D644AB00227C7AE900F6B333 /* Demo2UITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -600,6 +882,17 @@
 						CreatedOnToolsVersion = 10.2.1;
 						TestTargetID = 64BEEE35217F011D00204CB0;
 					};
+					D644AADF227C7AE700F6B333 = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
+					D644AAF4227C7AE900F6B333 = {
+						CreatedOnToolsVersion = 10.2.1;
+						TestTargetID = D644AADF227C7AE700F6B333;
+					};
+					D644AAFF227C7AE900F6B333 = {
+						CreatedOnToolsVersion = 10.2.1;
+						TestTargetID = D644AADF227C7AE700F6B333;
+					};
 				};
 			};
 			buildConfigurationList = 64BEEE0C217F00AD00204CB0 /* Build configuration list for PBXProject "CoreEvent" */;
@@ -620,6 +913,9 @@
 				D603ECA32276C8A5005F22BF /* CERunLoop */,
 				D644A9EA227C248400F6B333 /* CoreEventV5 */,
 				D644A9F2227C248400F6B333 /* CoreEventV5Tests */,
+				D644AADF227C7AE700F6B333 /* Demo2 */,
+				D644AAF4227C7AE900F6B333 /* Demo2Tests */,
+				D644AAFF227C7AE900F6B333 /* Demo2UITests */,
 			);
 		};
 /* End PBXProject section */
@@ -662,6 +958,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D644AADE227C7AE700F6B333 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D644AAE9227C7AE900F6B333 /* Assets.xcassets in Resources */,
+				D644AAEC227C7AE900F6B333 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D644AAF3227C7AE900F6B333 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D644AAFE227C7AE900F6B333 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -669,11 +988,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64C66D9121800F0D00375126 /* CEBaseApi.c in Sources */,
-				77D3FDB3217F6F2E00E01B5C /* CEBaseType.c in Sources */,
-				64C66D99218067EE00375126 /* CEFileEventHandler.c in Sources */,
-				64C66D952180609400375126 /* CERunLoop.c in Sources */,
-				64BEEE30217F00E200204CB0 /* zmalloc.c in Sources */,
+				D644ABBF227C7CD200F6B333 /* CEBaseType.c in Sources */,
+				D644ABCA227C806300F6B333 /* CEThread.c in Sources */,
+				D644ABD4227C952200F6B333 /* CELog.c in Sources */,
+				D644ABB7227C7C3F00F6B333 /* CETime.c in Sources */,
+				D644ABCF227C80E500F6B333 /* CEMemory.c in Sources */,
+				D644ABC2227C7CF500F6B333 /* CEDispatcher.c in Sources */,
+				D644ABBB227C7C8200F6B333 /* CEPoolBaseApi.c in Sources */,
+				D644ABC7227C7DEA00F6B333 /* CEBase.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -728,6 +1050,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D644AADC227C7AE700F6B333 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D644AAE7227C7AE700F6B333 /* ViewController.m in Sources */,
+				D644AAEF227C7AE900F6B333 /* main.m in Sources */,
+				D644AAE4227C7AE700F6B333 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D644AAF1227C7AE900F6B333 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D644AAFA227C7AE900F6B333 /* Demo2Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D644AAFC227C7AE900F6B333 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D644AB05227C7AE900F6B333 /* Demo2UITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -756,6 +1104,16 @@
 			target = D644A9EA227C248400F6B333 /* CoreEventV5 */;
 			targetProxy = D644A9FE227C248400F6B333 /* PBXContainerItemProxy */;
 		};
+		D644AAF7227C7AE900F6B333 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D644AADF227C7AE700F6B333 /* Demo2 */;
+			targetProxy = D644AAF6227C7AE900F6B333 /* PBXContainerItemProxy */;
+		};
+		D644AB02227C7AE900F6B333 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D644AADF227C7AE700F6B333 /* Demo2 */;
+			targetProxy = D644AB01227C7AE900F6B333 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -765,6 +1123,14 @@
 				64BEEE3E217F011E00204CB0 /* Base */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		D644AAEA227C7AE900F6B333 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D644AAEB227C7AE900F6B333 /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1128,6 +1494,110 @@
 			};
 			name = Release;
 		};
+		D644AB08227C7AE900F6B333 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Demo2/Demo2.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Demo2/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.Demo2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D644AB09227C7AE900F6B333 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Demo2/Demo2.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Demo2/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.Demo2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D644AB0B227C7AE900F6B333 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Demo2Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.Demo2Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Demo2.app/Contents/MacOS/Demo2";
+			};
+			name = Debug;
+		};
+		D644AB0C227C7AE900F6B333 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Demo2Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.Demo2Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Demo2.app/Contents/MacOS/Demo2";
+			};
+			name = Release;
+		};
+		D644AB0E227C7AE900F6B333 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Demo2UITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.Demo2UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Demo2;
+			};
+			name = Debug;
+		};
+		D644AB0F227C7AE900F6B333 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Demo2UITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.Demo2UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Demo2;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1181,6 +1651,33 @@
 			buildConfigurations = (
 				D644AA04227C248400F6B333 /* Debug */,
 				D644AA05227C248400F6B333 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D644AB07227C7AE900F6B333 /* Build configuration list for PBXNativeTarget "Demo2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D644AB08227C7AE900F6B333 /* Debug */,
+				D644AB09227C7AE900F6B333 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D644AB0A227C7AE900F6B333 /* Build configuration list for PBXNativeTarget "Demo2Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D644AB0B227C7AE900F6B333 /* Debug */,
+				D644AB0C227C7AE900F6B333 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D644AB0D227C7AE900F6B333 /* Build configuration list for PBXNativeTarget "Demo2UITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D644AB0E227C7AE900F6B333 /* Debug */,
+				D644AB0F227C7AE900F6B333 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

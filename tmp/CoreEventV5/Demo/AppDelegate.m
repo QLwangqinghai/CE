@@ -180,7 +180,7 @@ CEResult_t CERunLoopAddDelayTimerBlock(CERunLoop_s * _Nonnull eventLoop,
 
 
 - (void)doTest {
-    
+    [self valueForKey:@""];
     CERunLoopRunDefault();
     CERunLoop_s * eventLoop = CERunLoopShared();
     

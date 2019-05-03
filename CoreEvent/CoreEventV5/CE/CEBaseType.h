@@ -40,12 +40,13 @@
 
 typedef struct _CEThreadWaiter {
     _Atomic(uintptr_t) whoWakeUp;
-    sem_t * _Nonnull lock;
-    sem_t lockValue;//private
-    
 #if __APPLE__
     char name[1024];
 #endif
+    sem_t * _Nonnull lock;
+    
+    sem_t lockValue;//private
+    
 } CEThreadWaiter_s;
 
 

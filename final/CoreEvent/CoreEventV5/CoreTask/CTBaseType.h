@@ -1,13 +1,13 @@
 //
-//  CEBaseType.h
-//  CoreEvent
+//  CTBaseType.h
+//  CoreThread
 //
 //  Created by wangqinghai on 2018/10/23.
 //  Copyright © 2018年 com.wangqinghai. All rights reserved.
 //
 
-#ifndef CEBaseType_h
-#define CEBaseType_h
+#ifndef CTBaseType_h
+#define CTBaseType_h
 
 //c
 #include <stdio.h>
@@ -33,20 +33,112 @@
 #import <os/lock.h>
 #endif
 
-//custom
-#include "CETime.h"
-#include "CELog.h"
+typedef struct _CTInfo {
+#if __APPLE__
+    pthread_t _Nonnull thread;
+#else
+    pthread_t thread;
+#endif
+} CTInfo_s;
 
-
-typedef struct _CEThreadWaiter {
+//同步任务的waiter
+typedef struct _CTSyncWaiter {
+    uint64_t id;
     _Atomic(uintptr_t) whoWakeUp;
+#if __APPLE__
+    char name[64];
+#endif
     sem_t * _Nonnull lock;
     sem_t lockValue;//private
-    
+} CTSyncWaiter_s;
+
+typedef struct _CTRunLoopWaiter {
 #if __APPLE__
-    char name[1024];
+    char name[64];
 #endif
-} CEThreadWaiter_s;
+    sem_t * _Nonnull lock;
+    sem_t lockValue;//private
+} CTRunLoopWaiter_s;
+
+struct _CTRunLoop;
+typedef struct _CTRunLoop CTRunLoop_s;
+
+/* Time event structure */
+typedef struct _CAFETimeEvent {
+    uint64_t isStatic: 1;
+    uint64_t repeat: 1;
+    uint64_t repeatMode: 1;
+    uint64_t states: 2;//必须为0
+    uint64_t leeway: 17;//偏差 单位 微妙 最大值 0x1FFFF
+    uint64_t interval: 42;//间隔时间 单位微妙  最大 1221小时 (50天)
+    CETimeEventHandler_f _Nonnull execute;
+    CETimeEventClearContextHandler_f _Nullable clearContext;
+    void * _Nullable context;
+    uint64_t when; /* microseconds 微妙 什么时候触发 */
+    uint32_t tdTag;
+    uint32_t tdId: 16;
+    uint32_t qIndex: 16;
+} CAFETimeEvent_s;
+
+/* Time event structure */
+typedef struct _CCSETimeEvent {
+    CTRunLoop_s * _Nonnull owner;
+    uint32_t eventId: 16;
+    uint32_t qIndex: 16;
+    uint32_t leeway;//偏差 单位 纳秒 最大值 0x1FFFF
+    struct timespec when; /* 什么时候触发 */
+} CCSETimeEvent_s;
+
+/* Time event structure */
+typedef struct _CBAFETimeEvent {
+    CTRunLoop_s * _Nonnull owner;
+    uint64_t isStatic: 1;
+    uint64_t repeat: 1;
+    uint64_t repeatMode: 1;
+    uint64_t states: 2;//必须为0
+    uint64_t leeway: 17;//偏差 单位 微妙 最大值 0x1FFFF
+    uint64_t interval: 42;//间隔时间 单位微妙  最大 1221小时 (50天)
+    CETimeEventHandler_f _Nonnull execute;
+    CETimeEventClearContextHandler_f _Nullable clearContext;
+    void * _Nullable context;
+    uint64_t when; /* microseconds 微妙 什么时候触发 */
+    uint32_t tdTag;
+    uint32_t tdId: 16;
+    uint32_t qIndex: 16;
+} CBAFETimeEvent_s;
+
+
+/* State of an event based program */
+struct _CTRunLoop {
+    CTInfo_s * _Nullable threadInfo;
+    CERunLoopProgress_t progress;//
+#if __APPLE__
+    os_unfair_lock blockQueueLock;
+#else
+    pthread_spinlock_t blockQueueLock;
+#endif
+
+    CEBlockQueue_s blockQueue;
+    
+    CETimeEventManager_s timeEventManager;
+    
+    uint64_t microsecondsTime;//单位 微秒
+    uint64_t fileTimerSeconds8;//单位为(1/8)秒
+    
+    CEFileEvent_s * _Nullable fileEventsPages[32768]; /* Registered events, 0x10000 count peer page */
+    CEFiredEvent_s * _Nullable firedPages[32768]; /* Fired events, 0x10000 count peer page  */
+    
+    int readTimerPages[CERunLoopFileTimerPageSize];
+    int writeTimerPages[CERunLoopFileTimerPageSize];
+    
+    void * _Nullable api; /* This is used for polling API specific data */
+    uint32_t observerBufferSize;
+    uint32_t observerBufferCount;
+    
+    CERunLoopObserver_s * _Nullable * _Nonnull observers;
+};
+
+
 
 
 static const uint64_t CETimeBetweenFrames = 125000;//每秒钟8帧

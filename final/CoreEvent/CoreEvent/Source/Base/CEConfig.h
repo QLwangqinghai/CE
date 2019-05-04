@@ -172,6 +172,11 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 #endif
 
 
+#if __LLP64__ || __LP64__
+#define CEBuild64Bit 1
+#else
+#define CEBuild64Bit 0
+#endif
 
 
 //编译选项宏定义

@@ -676,7 +676,7 @@ typedef struct _CEClosureType {
 typedef struct _CEClosure {
     const CEClosureType_s * _Nonnull type;
     const CEThreadWaiter_s * _Nullable waiter;
-    
+    uint8_t content[];
 } CEClosure_s;
 
 typedef struct _CEClosureInfo {

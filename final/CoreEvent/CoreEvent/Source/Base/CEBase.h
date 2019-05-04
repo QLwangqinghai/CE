@@ -37,6 +37,8 @@
 #include "CETime.h"
 #include "CELog.h"
 
+#include "CEConfig.h"
+
 
 static inline uint64_t CEGetMicrosecondsTime(void) {
     return CESystemBootMicroseconds();
@@ -56,12 +58,17 @@ typedef uint64_t CETimeInterval;
 static int CEFileDescriptionInvalid = INT_MIN;
 
 
-//当前模式下会在上次timer 执行的时间基础上 添加 间隔时间 作为下次触发的时间， 比如  触发时间为 10000， 间隔时间 为 1000， 当前执行的时间 为 10234， 则下次触发 在 11234 之后
-#define CETimeEventRepeatModeAfter 1
+//当前模式下会在上次timer 执行结束时间基础上 添加 间隔时间 作为下次触发的时间， 比如  触发时间为 10000， 间隔时间 为 1000， 当前执行的时间 为 10234， 则下次触发 在 11234 之后
+#define CETimeEventRepeatModeNoRepeat 0u
 
 //当前模式下会在上次timer 应该触发的时间基础上 添加 间隔时间 作为下次触发的时间， 比如  触发时间为 10000， 间隔时间 为 1000， 当前执行的时间 为 10234， 则下次触发 在 11000 之后
-#define CETimeEventRepeatModeNone 0
+#define CETimeEventRepeatModeDefault 1u
 
+//当前模式下会在上次timer 执行的时间基础上 添加 间隔时间 作为下次触发的时间， 比如  触发时间为 10000， 间隔时间 为 1000， 当前执行的时间 为 10234， 则下次触发 在 11234 之后
+#define CETimeEventRepeatModeAfter 2u
+
+//当前模式下会在上次timer 执行结束时间基础上 添加 间隔时间 作为下次触发的时间， 比如  触发时间为 10000， 间隔时间 为 1000， 当前执行的时间 为 10234， 则下次触发 在 11234 之后
+#define CETimeEventRepeatModeAfterFinish 3u
 
 
 
@@ -84,7 +91,7 @@ static const uint32_t CETimeEventIdInvalid = 0xFFFFul;
 static const uint64_t CETimeEventIdAllUsed = UINT64_MAX;
 
 
-#if __LLP64__ || __LP64__
+#if CEBuild64Bit
 #define CEAtomicMemoryBlockSizeUse64 1
 #else
 #define CEAtomicMemoryBlockSizeUse64 0
@@ -158,5 +165,7 @@ static const CEResult_t CEResultFailureResize = 6;
 static const CEResult_t CEResultErrorFileDescriptionInvalid = 7;
 static const CEResult_t CEResultErrorTimeDescriptionInvalid = 8;
 static const CEResult_t CEResultErrorTimeDescriptionNotEnough = 9;
+
+
 
 #endif /* CEBaseType_h */

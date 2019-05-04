@@ -9,6 +9,7 @@
 #include "CEPoolBaseApi.h"
 #include "CEMemory.h"
 #include "CEConfig.h"
+
 #include <poll.h>
 #include <sys/socket.h>
 #include <sys/fcntl.h>
@@ -394,12 +395,10 @@ void _CEApiWakeUp(CEApiState_s * _Nonnull state, uint32_t count) {
                 _CEApiWakeUp(state, count + 1);
             }
         } else if (errno == ECONNRESET) {
-            fprintf(stderr, "CEApiWakeUp error 1 %s; \n", strerror(errno));
-            fflush(stderr);
+            CELogError("CEApiWakeUp error 1 %s; \n", strerror(errno));
             abort();
         } else {
-            fprintf(stderr, "CEApiWakeUp error 2 %s; \n", strerror(errno));
-            fflush(stderr);
+            CELogError("CEApiWakeUp error 2 %s; \n", strerror(errno));
             abort();
         }
     }

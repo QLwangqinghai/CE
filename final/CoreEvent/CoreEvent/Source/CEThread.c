@@ -12,11 +12,9 @@
 #include "CEInternal.h"
 
 
-
 //custom
 #include "CETime.h"
 #include "CELog.h"
-
 
 typedef struct _CEThreadWaiter {
     sem_t * _Nonnull lock;
@@ -30,11 +28,9 @@ typedef struct _CEThreadWaiter {
 CEThreadWaiter_s * _Nonnull CEThreadWaiterInit(void);
 void CEThreadWaiterDeinit(CEThreadWaiter_s * _Nonnull waiter);
 
-pthread_key_t CERunLoopWaiterThreadKeyShared(void);
 
 void __CERunLoopThreadKeySharedValueDealloc(void * _Nullable value) {
 }
-
 static pthread_key_t __CERunLoopThreadKeyShared = 0;
 void __CERunLoopThreadKeySharedOnceBlockFunc(void) {
     int result = pthread_key_create(&__CERunLoopThreadKeyShared, __CERunLoopThreadKeySharedValueDealloc);
@@ -46,38 +42,9 @@ pthread_key_t CERunLoopThreadKeyShared(void) {
     return __CERunLoopThreadKeyShared;
 }
 
-
-
-
-static inline CEThreadWaiter_s * _Nullable CEThreadGetWaiterIfCreated(void) {
-    CEThreadWaiter_s * waiter = (CEThreadWaiter_s *)pthread_getspecific(CERunLoopWaiterThreadKeyShared());
-    return waiter;
-}
-void __CERunLoopWaiterThreadKeySharedValueDealloc(void * _Nullable value) {
-    CEThreadWaiter_s * waiter = CEThreadGetWaiterIfCreated();
-    if (NULL != waiter) {
-        CEThreadWaiterDeinit(waiter);
-        pthread_setspecific(CERunLoopWaiterThreadKeyShared(), NULL);
-    }
-}
-static pthread_key_t __CERunLoopWaiterThreadKeyShared = 0;
-void __CERunLoopWaiterThreadKeySharedOnceBlockFunc(void) {
-    int result = pthread_key_create(&__CERunLoopWaiterThreadKeyShared, __CERunLoopWaiterThreadKeySharedValueDealloc);
-    assert(result == 0);
-}
-pthread_key_t CERunLoopWaiterThreadKeyShared(void) {
-    static pthread_once_t token = PTHREAD_ONCE_INIT;
-    pthread_once(&token,&__CERunLoopWaiterThreadKeySharedOnceBlockFunc);
-    return __CERunLoopThreadKeyShared;
-}
-
-CEThreadWaiter_s * _Nonnull CEThreadGetWaiter(void) {
-    CEThreadWaiter_s * waiter = CEThreadGetWaiterIfCreated();
-    if (NULL == waiter) {
-        waiter = CEThreadWaiterInit();
-        pthread_setspecific(CERunLoopWaiterThreadKeyShared(), waiter);
-    }
-    return waiter;
+CEThreadRef _Nullable CEThreadGetCurrent(void) {
+    CEThreadRef thread = (CEThreadRef)pthread_getspecific(CERunLoopThreadKeyShared());
+    return thread;
 }
 
 CEThreadWaiter_s * _Nonnull CEThreadWaiterInit(void) {
@@ -130,24 +97,52 @@ void CEThreadWaiterWakeUp(CEThreadWaiter_s * _Nonnull waiter) {
     }
 }
 
-
-
-
-
-typedef struct _CEThreadContext {
-    void * _Nullable (* _Nonnull main)(void * _Nullable);
-    CEThreadWaiter_s * _Nonnull waiter;
-    CEThreadRef _Nullable thread;
-} CEThreadContext_s;
-
-void * __CEThreadMain(void * args) {
-    CEThreadContext_s * eventLoop = (CEThreadContext_s *)args;
-    
-    CERunLoopRun(eventLoop);
-    return NULL;
+CEThreadRef _Nonnull __CEThreadCreate(void) {
+    CEThreadRef result = CEAllocateClear(sizeof(CEThread_s));
+    return result;
 }
 
-CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config, CERunLoop_s * _Nonnull eventLoop, void * _Nullable (* _Nonnull main)(void * _Nullable)) {
+
+struct __CEThreadContext {
+    void * _Nullable (* _Nonnull main)(void * _Nullable);
+    void * _Nullable params;
+    void (* _Nullable paramsDealloc)(void * _Nonnull);
+    CEThreadWaiter_s * _Nonnull waiter;
+    CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull);
+    CEThreadRef _Nullable thread;
+    
+};
+
+void * __CEThreadMain(void * args) {
+    struct __CEThreadContext * context = (struct __CEThreadContext *)args;
+    
+    CEThreadRef thread = __CEThreadCreate();
+    thread->pthread = pthread_self();
+    thread->runLoopLoader = context->runLoopLoader;
+    thread->status = CEThreadStatusStarting;
+    
+    context->thread = thread;
+    void * _Nullable params = context->params;
+    void (* _Nullable paramsDealloc)(void * _Nonnull) = context->paramsDealloc;
+    CEThreadWaiterWakeUp(context->waiter);
+    context = NULL;
+    pthread_setspecific(CERunLoopThreadKeyShared(), thread);
+    thread->status = CEThreadStatusExecuting;
+    void * result = context->main(params);
+    thread->status = CEThreadStatusFinished;
+    if (params && paramsDealloc) {
+        paramsDealloc(params);
+    };
+    return result;
+}
+
+#define CEThreadCreateDeallocParmas if (params && paramsDealloc) { paramsDealloc(params); }
+
+CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
+                                     CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull),
+                                     void * _Nullable (* _Nonnull main)(void * _Nullable),
+                                     void * _Nullable params,
+                                     void (* _Nullable paramsDealloc)(void * _Nonnull)) {
     pthread_t tid;
     pthread_attr_t attr;
     struct sched_param param;
@@ -159,17 +154,20 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config, CERunLoop_s * _Non
     result = pthread_getschedparam(pthread_self(), &policy, &param);
     if (0 != result) {
         CELogError("pthread_getschedparam %s\n", strerror(result));
-        return 0;
+        CEThreadCreateDeallocParmas;
+        return NULL;
     }
     result = pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
     if (0 != result) {
         CELogError("pthread_attr_setscope PTHREAD_SCOPE_SYSTEM %s\n", strerror(result));
-        return 0;
+        CEThreadCreateDeallocParmas;
+        return NULL;
     }
     result = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
     if (0 != result) {
         CELogError("pthread_attr_setdetachstate PTHREAD_CREATE_DETACHED %s\n", strerror(result));
-        return 0;
+        CEThreadCreateDeallocParmas;
+        return NULL;
     }
     
     size_t stacksize = 0;
@@ -177,23 +175,34 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config, CERunLoop_s * _Non
     
     if (0 != result) {
         CELogError("pthread_attr_getstacksize error %s\n", strerror(result));
-        return 0;
+        CEThreadCreateDeallocParmas;
+        return NULL;
     }
     
-    size_t rStacksize = 1024 * 1024 * 2;
-    if (stacksize < rStacksize) {
+//    size_t rStacksize = 1024 * 1024 * 2;
+//    if (stacksize < rStacksize) {
+//        result = pthread_attr_setstacksize(&attr, rStacksize);//设置线程堆栈大小
+//        if (0 != result) {
+//            CELogError("pthread_attr_setstacksize error %s\n", strerror(result));
+//            return NULL;
+//        }
+//    }
+    size_t rStacksize = config.stacksize;
+    if (rStacksize > 0 && stacksize != rStacksize) {
         result = pthread_attr_setstacksize(&attr, rStacksize);//设置线程堆栈大小
         if (0 != result) {
             CELogError("pthread_attr_setstacksize error %s\n", strerror(result));
-            return 0;
+            CEThreadCreateDeallocParmas;
+            return NULL;
         }
     }
     
-    
+#warning 待完善 优先级设置
     int priority = sched_get_priority_max(policy);
     if (-1 == priority) {
         CELogError("sched_get_priority_max error %s\n", strerror(result));
-        return 0;
+        CEThreadCreateDeallocParmas;
+        return NULL;
     }
     
     param.sched_priority = priority;
@@ -201,30 +210,24 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config, CERunLoop_s * _Non
     result = pthread_attr_setschedparam(&attr, &param);
     if (0 != result) {
         CELogError("pthread_attr_setschedparam %s\n", strerror(result));
-        return 0;
+        CEThreadCreateDeallocParmas;
+        return NULL;
     }
-    CEThreadContext_s context = {};
-    
-    
-    result = pthread_create(&tid, &attr, CERunLoopRunThread, eventLoop);
+    struct __CEThreadContext context = {};
+    context.main = main;
+    context.waiter = CEThreadWaiterInit();
+    context.runLoopLoader = runLoopLoader;
+    context.params = params;
+    context.paramsDealloc = paramsDealloc;
+
+    result = pthread_create(&tid, &attr, __CEThreadMain, &context);
     if (0 != result) {
         CELogError("pthread_create %s\n", strerror(result));
-        return 0;
+        CEThreadCreateDeallocParmas;
+        return NULL;
     }
-    return 1;
-}
-
-
-void CERunLoopRunDefault(void) {
-    CERunLoop_s * eventLoop = CERunLoopShared();
+    CEThreadWaiterWait(context.waiter);
+    CEThreadWaiterDeinit(context.waiter);
     
-    uint32_t runningStates = atomic_load(&(eventLoop->runningStates));
-    if (0 != runningStates) {
-        return;
-    }
-    assert(CERunLoopMakeThreadRunDefault(eventLoop));
-}
-void CERunLoopWakeUp(CERunLoop_s * _Nonnull eventLoop) {
-    assert(eventLoop);
-    CEApiWakeUp(eventLoop->api);
+    return context.thread;
 }

@@ -88,6 +88,10 @@
 		D644ABD1227C824300F6B333 /* CEInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD0227C824300F6B333 /* CEInternal.h */; };
 		D644ABD4227C952200F6B333 /* CELog.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD2227C952100F6B333 /* CELog.c */; };
 		D644ABD5227C952200F6B333 /* CELog.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD3227C952200F6B333 /* CELog.h */; };
+		D67248F4227CABFF00FC8B7A /* CESource.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F2227CABFF00FC8B7A /* CESource.h */; };
+		D67248F5227CABFF00FC8B7A /* CESource.c in Sources */ = {isa = PBXBuildFile; fileRef = D67248F3227CABFF00FC8B7A /* CESource.c */; };
+		D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F6227CAE7300FC8B7A /* CEConfig.h */; };
+		D67248FF227CB0FB00FC8B7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D67248FE227CB0FB00FC8B7A /* main.m */; };
 		D6A24A1F2268CEB000C8E4B8 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24A1E2268CEB000C8E4B8 /* Test.swift */; };
 /* End PBXBuildFile section */
 
@@ -156,6 +160,15 @@
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D67248FA227CB0FB00FC8B7A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -289,6 +302,11 @@
 		D644ABD0227C824300F6B333 /* CEInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEInternal.h; sourceTree = "<group>"; };
 		D644ABD2227C952100F6B333 /* CELog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CELog.c; sourceTree = "<group>"; };
 		D644ABD3227C952200F6B333 /* CELog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CELog.h; sourceTree = "<group>"; };
+		D67248F2227CABFF00FC8B7A /* CESource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CESource.h; path = CoreEvent/Source/CESource.h; sourceTree = SOURCE_ROOT; };
+		D67248F3227CABFF00FC8B7A /* CESource.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = CESource.c; path = CoreEvent/Source/CESource.c; sourceTree = SOURCE_ROOT; };
+		D67248F6227CAE7300FC8B7A /* CEConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEConfig.h; sourceTree = "<group>"; };
+		D67248FC227CB0FB00FC8B7A /* TGCD */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TGCD; sourceTree = BUILT_PRODUCTS_DIR; };
+		D67248FE227CB0FB00FC8B7A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D6A24A1D2268CEB000C8E4B8 /* Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6A24A1E2268CEB000C8E4B8 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -354,6 +372,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D67248F9227CB0FB00FC8B7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -367,6 +392,7 @@
 				D644AAE1227C7AE700F6B333 /* Demo2 */,
 				D644AAF8227C7AE900F6B333 /* Demo2Tests */,
 				D644AB03227C7AE900F6B333 /* Demo2UITests */,
+				D67248FD227CB0FB00FC8B7A /* TGCD */,
 				64BEEE13217F00AD00204CB0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -382,6 +408,7 @@
 				D644AAE0227C7AE700F6B333 /* Demo2.app */,
 				D644AAF5227C7AE900F6B333 /* Demo2Tests.xctest */,
 				D644AB00227C7AE900F6B333 /* Demo2UITests.xctest */,
+				D67248FC227CB0FB00FC8B7A /* TGCD */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -627,6 +654,7 @@
 		D644ABD6227C952D00F6B333 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				D67248F6227CAE7300FC8B7A /* CEConfig.h */,
 				D644ABC4227C7DE900F6B333 /* CEBase.h */,
 				D644ABC5227C7DE900F6B333 /* CEBase.c */,
 				D644ABCC227C80E400F6B333 /* CEMemory.h */,
@@ -642,8 +670,18 @@
 		D644ABD7227C973100F6B333 /* RunLoop */ = {
 			isa = PBXGroup;
 			children = (
+				D67248F2227CABFF00FC8B7A /* CESource.h */,
+				D67248F3227CABFF00FC8B7A /* CESource.c */,
 			);
 			path = RunLoop;
+			sourceTree = "<group>";
+		};
+		D67248FD227CB0FB00FC8B7A /* TGCD */ = {
+			isa = PBXGroup;
+			children = (
+				D67248FE227CB0FB00FC8B7A /* main.m */,
+			);
+			path = TGCD;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -654,10 +692,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */,
+				D67248F4227CABFF00FC8B7A /* CESource.h in Headers */,
 				D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */,
 				64BEEE17217F00AD00204CB0 /* CoreEvent.h in Headers */,
 				D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */,
 				D644ABCB227C806300F6B333 /* CEThread.h in Headers */,
+				D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */,
 				D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */,
 				D644ABBE227C7CD200F6B333 /* CEBaseType.h in Headers */,
 				D644ABD5227C952200F6B333 /* CELog.h in Headers */,
@@ -855,6 +895,23 @@
 			productReference = D644AB00227C7AE900F6B333 /* Demo2UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		D67248FB227CB0FB00FC8B7A /* TGCD */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6724900227CB0FB00FC8B7A /* Build configuration list for PBXNativeTarget "TGCD" */;
+			buildPhases = (
+				D67248F8227CB0FB00FC8B7A /* Sources */,
+				D67248F9227CB0FB00FC8B7A /* Frameworks */,
+				D67248FA227CB0FB00FC8B7A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TGCD;
+			productName = TGCD;
+			productReference = D67248FC227CB0FB00FC8B7A /* TGCD */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -893,6 +950,9 @@
 						CreatedOnToolsVersion = 10.2.1;
 						TestTargetID = D644AADF227C7AE700F6B333;
 					};
+					D67248FB227CB0FB00FC8B7A = {
+						CreatedOnToolsVersion = 10.2;
+					};
 				};
 			};
 			buildConfigurationList = 64BEEE0C217F00AD00204CB0 /* Build configuration list for PBXProject "CoreEvent" */;
@@ -916,6 +976,7 @@
 				D644AADF227C7AE700F6B333 /* Demo2 */,
 				D644AAF4227C7AE900F6B333 /* Demo2Tests */,
 				D644AAFF227C7AE900F6B333 /* Demo2UITests */,
+				D67248FB227CB0FB00FC8B7A /* TGCD */,
 			);
 		};
 /* End PBXProject section */
@@ -992,6 +1053,7 @@
 				D644ABCA227C806300F6B333 /* CEThread.c in Sources */,
 				D644ABD4227C952200F6B333 /* CELog.c in Sources */,
 				D644ABB7227C7C3F00F6B333 /* CETime.c in Sources */,
+				D67248F5227CABFF00FC8B7A /* CESource.c in Sources */,
 				D644ABCF227C80E500F6B333 /* CEMemory.c in Sources */,
 				D644ABC2227C7CF500F6B333 /* CEDispatcher.c in Sources */,
 				D644ABBB227C7C8200F6B333 /* CEPoolBaseApi.c in Sources */,
@@ -1073,6 +1135,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				D644AB05227C7AE900F6B333 /* Demo2UITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D67248F8227CB0FB00FC8B7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D67248FF227CB0FB00FC8B7A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1598,6 +1668,22 @@
 			};
 			name = Release;
 		};
+		D6724901227CB0FB00FC8B7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D6724902227CB0FB00FC8B7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1678,6 +1764,15 @@
 			buildConfigurations = (
 				D644AB0E227C7AE900F6B333 /* Debug */,
 				D644AB0F227C7AE900F6B333 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D6724900227CB0FB00FC8B7A /* Build configuration list for PBXNativeTarget "TGCD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6724901227CB0FB00FC8B7A /* Debug */,
+				D6724902227CB0FB00FC8B7A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

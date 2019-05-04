@@ -115,6 +115,7 @@ uint64_t __ce_log_time = CESystemBootMicroseconds(); \
 fprintf(stderr, "%08llu.%03llu_%03llu: ", __ce_log_time / 1000000ull,  __ce_log_time % 1000000ull / 1000ull, __ce_log_time % 1000ull);                                          \
 fprintf(stderr, format, ##__VA_ARGS__);                                               \
 fprintf(stderr, "\n");                                          \
+fflush(stderr);\
 }
 
 #else

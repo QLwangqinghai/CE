@@ -10,7 +10,20 @@
 #define CEPoolBaseApi_h
 
 
-#include "CEBaseType.h"
+#include "CEBase.h"
+
+
+
+typedef CEFileEventMask_es (*CEApiPoolGetEventMask_f)(void * _Nullable context, void * _Nonnull api, int fd);
+
+typedef void (*CEApiPoolCallback_f)(void * _Nullable context, void * _Nonnull api);
+typedef void (*CEApiPoolFileEventCallback_f)(void * _Nullable context, void * _Nonnull api, int fd, CEFileEventMask_es mask);
+
+typedef struct _CEApiPoolCallback {
+    CEApiPoolFileEventCallback_f _Nonnull fileEventCallback;
+    CEApiPoolCallback_f _Nonnull pipeCallback;
+} CEApiPoolCallback_s;
+
 
 typedef int CEApiResult_t;
 

@@ -11,32 +11,54 @@
 
 #include "CEBase.h"
 
+struct _CERunLoop;
+typedef struct _CERunLoop CERunLoop_s;
+typedef CERunLoop_s * CERunLoopRef;
 
-typedef struct _CEThread {
-    pthread_t _Nullable thread;
-} CEThread_s;
+struct _CEThread;
+typedef struct _CEThread CEThread_s;
 typedef CEThread_s * CEThreadRef;
 
 
+struct _CEThread {
+#if __APPLE__
+    pthread_t _Nullable pthread;
+#else
+    pthread_t pthread;
+#endif
+    CEThreadStatus_t status;
+
+    CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull);
+
+    CERunLoopRef _Nullable runLoop;
+    
+    
+};
+
+struct _CERunLoop {
+    pthread_t _Nullable thread;
+};
+
 typedef struct _CEThreadConfig {
     pthread_t _Nullable thread;
+    size_t stacksize;//0 use default
+    
+#warning 待完善
+    int schedPriority;
 } CEThreadConfig_s;
 
 
 
-typedef struct _CERunLoop {
-    pthread_t _Nullable thread;
-} CERunLoop_s;
-typedef CERunLoop_s * CERunLoopRef;
+
 
 struct _CEThreadWaiter;
 
 typedef struct _CEThreadWaiter * CEThreadWaiterRef;
 
 
-//pthread_key_t CERunLoopThreadKeyShared(void);
-CEThreadWaiterRef _Nonnull CEThreadGetWaiter(void);
 
+
+CEThreadRef _Nullable CEThreadGetCurrent(void);
 
 void CEThreadWaiterWait(CEThreadWaiterRef _Nonnull waiter);
 void CEThreadWaiterWakeUp(CEThreadWaiterRef _Nonnull waiter);

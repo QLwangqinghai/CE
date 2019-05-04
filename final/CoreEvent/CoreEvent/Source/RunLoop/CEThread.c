@@ -8,6 +8,7 @@
 
 
 #include "CEThread.h"
+
 #include "CEMemory.h"
 #include "CEInternal.h"
 
@@ -16,17 +17,15 @@
 #include "CETime.h"
 #include "CELog.h"
 
-typedef struct _CEThreadWaiter {
-    sem_t * _Nonnull lock;
-    sem_t lockValue;//private
-#if __APPLE__
-    char name[1024];
-#endif
-} CEThreadWaiter_s;
+#include "CESem.h"
 
 
-CEThreadWaiter_s * _Nonnull CEThreadWaiterInit(void);
-void CEThreadWaiterDeinit(CEThreadWaiter_s * _Nonnull waiter);
+
+//
+//typedef struct _CEThreadWaiter {
+//    CESemRef _Nonnull sem;
+//
+//} CEThreadWaiter_s;
 
 
 void __CERunLoopThreadKeySharedValueDealloc(void * _Nullable value) {
@@ -47,55 +46,6 @@ CEThreadRef _Nullable CEThreadGetCurrent(void) {
     return thread;
 }
 
-CEThreadWaiter_s * _Nonnull CEThreadWaiterInit(void) {
-    CEThreadWaiter_s * waiter = CEAllocateClear(sizeof(CEThreadWaiter_s));
-//    PSEMNAMLEN
-#if __APPLE__
-    snprintf(waiter->name, 1024, "/%x.%15llx.%x", getpid(), (long long)pthread_self(), arc4random() >> 16);
-    sem_t * sem = sem_open(waiter->name, O_CREAT, S_IRUSR | S_IWUSR, 0);
-    if (SEM_FAILED == sem) {
-        fprintf(stderr, "CEThreadWaiterInit sem_open error %s; \n", strerror(errno));
-        fflush(stderr);
-        abort();
-    }
-    waiter->lock = sem;
-#else
-    if (0 != sem_init(&(waiter->lockValue), 0, 0)) {
-        fprintf(stderr, "CEThreadWaiterInit sem_init error %s; \n", strerror(errno));
-        fflush(stderr);
-        abort();
-    }
-    waiter->lock = &(waiter->lockValue);
-#endif
-
-    return waiter;
-}
-
-void CEThreadWaiterDeinit(CEThreadWaiter_s * _Nonnull waiter) {
-#if __APPLE__
-    sem_close(waiter->lock);
-    sem_unlink(waiter->name);
-#else
-    sem_destroy(waiter->lock);
-#endif
-    
-    CEDeallocate(waiter);
-}
-
-void CEThreadWaiterWait(CEThreadWaiter_s * _Nonnull waiter) {
-    if (0 != sem_wait(waiter->lock)) {
-        fprintf(stderr, "CEThreadWaiterWait sem_wait error %s; \n", strerror(errno));
-        fflush(stderr);
-        abort();
-    }
-}
-void CEThreadWaiterWakeUp(CEThreadWaiter_s * _Nonnull waiter) {
-    if (0 != sem_post(waiter->lock)) {
-        fprintf(stderr, "CEThreadWaiterWakeUp sem_post error %s; \n", strerror(errno));
-        fflush(stderr);
-        abort();
-    }
-}
 
 CEThreadRef _Nonnull __CEThreadCreate(void) {
     CEThreadRef result = CEAllocateClear(sizeof(CEThread_s));
@@ -107,7 +57,7 @@ struct __CEThreadContext {
     void * _Nullable (* _Nonnull main)(void * _Nullable);
     void * _Nullable params;
     void (* _Nullable paramsDealloc)(void * _Nonnull);
-    CEThreadWaiter_s * _Nonnull waiter;
+    CESemRef _Nonnull sem;
     CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull);
     CEThreadRef _Nullable thread;
     
@@ -124,7 +74,7 @@ void * __CEThreadMain(void * args) {
     context->thread = thread;
     void * _Nullable params = context->params;
     void (* _Nullable paramsDealloc)(void * _Nonnull) = context->paramsDealloc;
-    CEThreadWaiterWakeUp(context->waiter);
+    CESemWakeUp(context->sem);
     context = NULL;
     pthread_setspecific(CERunLoopThreadKeyShared(), thread);
     thread->status = CEThreadStatusExecuting;
@@ -215,7 +165,7 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
     }
     struct __CEThreadContext context = {};
     context.main = main;
-    context.waiter = CEThreadWaiterInit();
+    context.sem = CESemInit(0);
     context.runLoopLoader = runLoopLoader;
     context.params = params;
     context.paramsDealloc = paramsDealloc;
@@ -226,8 +176,8 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
         CEThreadCreateDeallocParmas;
         return NULL;
     }
-    CEThreadWaiterWait(context.waiter);
-    CEThreadWaiterDeinit(context.waiter);
+    CESemWait(context.sem);
+    CESemDeinit(context.sem);
     
     return context.thread;
 }

@@ -45,7 +45,7 @@ struct _CEApiState {
 };
 
 
-static void CEApiPollHandlePipeInput(CEApiState_s * _Nonnull api, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback) {
+static void CEApiPollHandlePipeInput(CEApiState_s * _Nonnull api, void * _Nullable context, const CEPoolApiCallback_s * _Nonnull callback) {
     uint8_t buffer[1024] = {};
     recv(api->pread, buffer, 1024, MSG_DONTWAIT);
     
@@ -135,7 +135,7 @@ void * _Nullable CEApiCreate(int setsize, int pread) {
 
 
 
-CEApiResult_t CEApiAddEvent(void * _Nonnull api, int fd, CEFileEventMask_es oldMask, CEFileEventMask_es mask) {
+CEPoolApiResult_t CEApiAddEvent(void * _Nonnull api, int fd, CEFileEventMask_es oldMask, CEFileEventMask_es mask) {
     assert(api);
     CEApiState_s *state = api;
 
@@ -152,9 +152,9 @@ CEApiResult_t CEApiAddEvent(void * _Nonnull api, int fd, CEFileEventMask_es oldM
     if (mask & CEFileEventMaskWritable) ee.events |= EPOLLOUT;
     ee.data.fd = fd;
     if (epoll_ctl(state->fd,op,fd,&ee) == -1) {
-        return CEApiResultErrorSystemCall;
+        return CEPoolApiResultErrorSystemCall;
     };
-    return CEApiResultSuccess;
+    return CEPoolResultSuccess;
 }
 
 void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es delmask) {
@@ -278,7 +278,7 @@ void * _Nullable CEApiCreate(unsigned int setsize) {
 //ev timer https://blog.csdn.net/Namcodream521/article/details/83032615
 
 
-CEApiResult_t CEApiAddEvent(void * _Nonnull api, int fd, CEFileEventMask_es oldMask, CEFileEventMask_es mask) {
+CEPoolApiResult_t CEApiAddEvent(void * _Nonnull api, int fd, CEFileEventMask_es oldMask, CEFileEventMask_es mask) {
     assert(api);
     CEApiState_s *state = api;
     
@@ -287,16 +287,16 @@ CEApiResult_t CEApiAddEvent(void * _Nonnull api, int fd, CEFileEventMask_es oldM
     if (mask & CEFileEventMaskReadable) {
         EV_SET(&ke, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
         if (kevent(state->fd, &ke, 1, NULL, 0, NULL) == -1) {
-            return CEApiResultErrorSystemCall;
+            return CEPoolApiResultErrorSystemCall;
         }
     }
     if (mask & CEFileEventMaskWritable) {
         EV_SET(&ke, fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
         if (kevent(state->fd, &ke, 1, NULL, 0, NULL) == -1) {
-            return CEApiResultErrorSystemCall;
+            return CEPoolApiResultErrorSystemCall;
         }
     }
-    return CEApiResultSuccess;
+    return CEPoolResultSuccess;
 }
 
 void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
@@ -315,7 +315,7 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
     }
 }
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, int setsize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback) {
+int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, int setsize, void * _Nullable context, const CEPoolApiCallback_s * _Nonnull callback) {
     assert(api);
     assert(callback);
 

@@ -28,7 +28,7 @@ struct _CEThread {
 #endif
     CEThreadStatus_t status;
 
-    CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull);
+    CERunLoopRef _Nonnull (* _Nullable runLoopLoader)(CEThreadRef _Nonnull);
 
     CERunLoopRef _Nullable runLoop;
     

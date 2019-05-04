@@ -88,10 +88,15 @@
 		D644ABD1227C824300F6B333 /* CEInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD0227C824300F6B333 /* CEInternal.h */; };
 		D644ABD4227C952200F6B333 /* CELog.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD2227C952100F6B333 /* CELog.c */; };
 		D644ABD5227C952200F6B333 /* CELog.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD3227C952200F6B333 /* CELog.h */; };
+		D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD8227D58E200F6B333 /* CEQueue.h */; };
+		D644ABDB227D58E200F6B333 /* CEQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD9227D58E200F6B333 /* CEQueue.c */; };
+		D647C84A227D7C41004AAA19 /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
 		D67248F4227CABFF00FC8B7A /* CESource.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F2227CABFF00FC8B7A /* CESource.h */; };
 		D67248F5227CABFF00FC8B7A /* CESource.c in Sources */ = {isa = PBXBuildFile; fileRef = D67248F3227CABFF00FC8B7A /* CESource.c */; };
 		D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F6227CAE7300FC8B7A /* CEConfig.h */; };
 		D67248FF227CB0FB00FC8B7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D67248FE227CB0FB00FC8B7A /* main.m */; };
+		D6802B30227D717A0083EDBF /* CESem.h in Headers */ = {isa = PBXBuildFile; fileRef = D6802B2E227D717A0083EDBF /* CESem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6802B31227D717A0083EDBF /* CESem.c in Sources */ = {isa = PBXBuildFile; fileRef = D6802B2F227D717A0083EDBF /* CESem.c */; };
 		D6A24A1F2268CEB000C8E4B8 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24A1E2268CEB000C8E4B8 /* Test.swift */; };
 /* End PBXBuildFile section */
 
@@ -302,11 +307,15 @@
 		D644ABD0227C824300F6B333 /* CEInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEInternal.h; sourceTree = "<group>"; };
 		D644ABD2227C952100F6B333 /* CELog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CELog.c; sourceTree = "<group>"; };
 		D644ABD3227C952200F6B333 /* CELog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CELog.h; sourceTree = "<group>"; };
+		D644ABD8227D58E200F6B333 /* CEQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEQueue.h; sourceTree = "<group>"; };
+		D644ABD9227D58E200F6B333 /* CEQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEQueue.c; sourceTree = "<group>"; };
 		D67248F2227CABFF00FC8B7A /* CESource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CESource.h; path = CoreEvent/Source/CESource.h; sourceTree = SOURCE_ROOT; };
 		D67248F3227CABFF00FC8B7A /* CESource.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = CESource.c; path = CoreEvent/Source/CESource.c; sourceTree = SOURCE_ROOT; };
 		D67248F6227CAE7300FC8B7A /* CEConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEConfig.h; sourceTree = "<group>"; };
 		D67248FC227CB0FB00FC8B7A /* TGCD */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TGCD; sourceTree = BUILT_PRODUCTS_DIR; };
 		D67248FE227CB0FB00FC8B7A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D6802B2E227D717A0083EDBF /* CESem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CESem.h; sourceTree = "<group>"; };
+		D6802B2F227D717A0083EDBF /* CESem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CESem.c; sourceTree = "<group>"; };
 		D6A24A1D2268CEB000C8E4B8 /* Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6A24A1E2268CEB000C8E4B8 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -355,6 +364,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D647C84A227D7C41004AAA19 /* CoreEvent.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +404,7 @@
 				D644AB03227C7AE900F6B333 /* Demo2UITests */,
 				D67248FD227CB0FB00FC8B7A /* TGCD */,
 				64BEEE13217F00AD00204CB0 /* Products */,
+				D647C849227D7C41004AAA19 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -638,14 +649,8 @@
 			children = (
 				D644ABD7227C973100F6B333 /* RunLoop */,
 				D644ABD6227C952D00F6B333 /* Base */,
-				D644ABC9227C806300F6B333 /* CEThread.h */,
-				D644ABC8227C806300F6B333 /* CEThread.c */,
-				D644ABC1227C7CF500F6B333 /* CEDispatcher.h */,
-				D644ABC0227C7CF500F6B333 /* CEDispatcher.c */,
 				D644ABBC227C7CD200F6B333 /* CEBaseType.h */,
 				D644ABBD227C7CD200F6B333 /* CEBaseType.c */,
-				D644ABB8227C7C8200F6B333 /* CEPoolBaseApi.h */,
-				D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */,
 				D644ABD0227C824300F6B333 /* CEInternal.h */,
 			);
 			path = Source;
@@ -670,10 +675,27 @@
 		D644ABD7227C973100F6B333 /* RunLoop */ = {
 			isa = PBXGroup;
 			children = (
+				D644ABC9227C806300F6B333 /* CEThread.h */,
+				D644ABC8227C806300F6B333 /* CEThread.c */,
+				D644ABC1227C7CF500F6B333 /* CEDispatcher.h */,
+				D644ABC0227C7CF500F6B333 /* CEDispatcher.c */,
 				D67248F2227CABFF00FC8B7A /* CESource.h */,
 				D67248F3227CABFF00FC8B7A /* CESource.c */,
+				D644ABB8227C7C8200F6B333 /* CEPoolBaseApi.h */,
+				D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */,
+				D644ABD8227D58E200F6B333 /* CEQueue.h */,
+				D644ABD9227D58E200F6B333 /* CEQueue.c */,
+				D6802B2E227D717A0083EDBF /* CESem.h */,
+				D6802B2F227D717A0083EDBF /* CESem.c */,
 			);
 			path = RunLoop;
+			sourceTree = "<group>";
+		};
+		D647C849227D7C41004AAA19 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		D67248FD227CB0FB00FC8B7A /* TGCD */ = {
@@ -691,6 +713,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */,
+				D6802B30227D717A0083EDBF /* CESem.h in Headers */,
 				D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */,
 				D67248F4227CABFF00FC8B7A /* CESource.h in Headers */,
 				D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */,
@@ -941,6 +965,11 @@
 					};
 					D644AADF227C7AE700F6B333 = {
 						CreatedOnToolsVersion = 10.2.1;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
 					};
 					D644AAF4227C7AE900F6B333 = {
 						CreatedOnToolsVersion = 10.2.1;
@@ -1056,6 +1085,8 @@
 				D67248F5227CABFF00FC8B7A /* CESource.c in Sources */,
 				D644ABCF227C80E500F6B333 /* CEMemory.c in Sources */,
 				D644ABC2227C7CF500F6B333 /* CEDispatcher.c in Sources */,
+				D6802B31227D717A0083EDBF /* CESem.c in Sources */,
+				D644ABDB227D58E200F6B333 /* CEQueue.c in Sources */,
 				D644ABBB227C7C8200F6B333 /* CEPoolBaseApi.c in Sources */,
 				D644ABC7227C7DEA00F6B333 /* CEBase.c in Sources */,
 			);
@@ -1568,7 +1599,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Demo2/Demo2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Demo2/Info.plist;
@@ -1585,7 +1615,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Demo2/Demo2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Demo2/Info.plist;

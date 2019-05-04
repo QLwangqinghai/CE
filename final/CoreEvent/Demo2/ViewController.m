@@ -7,11 +7,13 @@
 //
 
 #import "ViewController.h"
+#import <CoreEvent/CESem.h>
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    CESemRef sem = CESemInit(0);
 
     // Do any additional setup after loading the view.
 }
@@ -21,6 +23,7 @@
     [super setRepresentedObject:representedObject];
 
     // Update the view, if already loaded.
+    
 }
 
 

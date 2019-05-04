@@ -171,4 +171,21 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 #define __sparc__
 #endif
 
+
+
+
+//编译选项宏定义
+
+#define CESemUseDispatch 2
+#define CESemUseFileSem 1
+#define CESemUseDefaultSem 0
+
+
+#if __APPLE__
+    #define CESemUseType CESemUseDispatch
+#else
+    #define CESemUseType CESemUseDefaultSem
+#endif
+
+
 #endif /* CEConfig_h */

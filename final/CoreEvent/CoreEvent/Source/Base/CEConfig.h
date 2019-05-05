@@ -178,6 +178,12 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 #define CEBuild64Bit 0
 #endif
 
+#if CEBuild64Bit
+#define CECpuWordByteSize 8
+#else
+#define CECpuWordByteSize 4
+#endif
+
 
 //编译选项宏定义
 

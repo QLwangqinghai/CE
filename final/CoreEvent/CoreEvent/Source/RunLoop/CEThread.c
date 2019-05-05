@@ -19,32 +19,55 @@
 
 #include "CESem.h"
 
+struct _CEThreadSpecific;
+typedef struct _CEThreadSpecific CEThreadSpecific_s;
+typedef CEThreadSpecific_s * CEThreadSpecificRef;
 
 
-//
-//typedef struct _CEThreadWaiter {
-//    CESemRef _Nonnull sem;
-//
-//} CEThreadWaiter_s;
+struct _CEThreadSpecific {
+    CEThreadRef _Nullable thread;
+    CETaskWorkerRef _Nullable worker;
+};
 
-
-void __CERunLoopThreadKeySharedValueDealloc(void * _Nullable value) {
+CEThreadSpecificRef _Nonnull CEThreadSpecificInit(void) {
+    CEThreadSpecificRef specific = CEAllocateClear(sizeof(CEThreadSpecific_s));
+    return specific;
 }
-static pthread_key_t __CERunLoopThreadKeyShared = 0;
-void __CERunLoopThreadKeySharedOnceBlockFunc(void) {
-    int result = pthread_key_create(&__CERunLoopThreadKeyShared, __CERunLoopThreadKeySharedValueDealloc);
+
+void CEThreadSpecificDeinit(CEThreadSpecificRef _Nonnull specific) {
+
+}
+
+
+void __CEThreadKeySharedValueDealloc(void * _Nullable value) {
+}
+static pthread_key_t __CEThreadKeyShared = 0;
+void __CEThreadKeySharedOnceBlockFunc(void) {
+    int result = pthread_key_create(&__CEThreadKeyShared, __CEThreadKeySharedValueDealloc);
     assert(result == 0);
 }
-pthread_key_t CERunLoopThreadKeyShared(void) {
+pthread_key_t CEThreadSpecificKeyShared(void) {
     static pthread_once_t token = PTHREAD_ONCE_INIT;
-    pthread_once(&token,&__CERunLoopThreadKeySharedOnceBlockFunc);
-    return __CERunLoopThreadKeyShared;
+    pthread_once(&token,&__CEThreadKeySharedOnceBlockFunc);
+    return __CEThreadKeyShared;
 }
 
-CEThreadRef _Nullable CEThreadGetCurrent(void) {
-    CEThreadRef thread = (CEThreadRef)pthread_getspecific(CERunLoopThreadKeyShared());
-    return thread;
+CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void) {
+    CEThreadSpecificRef specific = (CEThreadSpecificRef)pthread_getspecific(CEThreadSpecificKeyShared());
+    if (NULL == specific) {
+        specific = CEThreadSpecificInit();
+        pthread_setspecific(CEThreadSpecificKeyShared(), specific);
+    }
+    return specific;
 }
+
+
+CEThreadRef _Nullable CEThreadGetCurrent(void) {
+    return CEThreadSpecificGetCurrent()->thread;
+}
+
+
+
 
 
 CEThreadRef _Nonnull __CEThreadCreate(void) {
@@ -60,7 +83,6 @@ struct __CEThreadContext {
     CESemRef _Nonnull sem;
     CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull);
     CEThreadRef _Nullable thread;
-    
 };
 
 void * __CEThreadMain(void * args) {
@@ -76,7 +98,7 @@ void * __CEThreadMain(void * args) {
     void (* _Nullable paramsDealloc)(void * _Nonnull) = context->paramsDealloc;
     CESemWakeUp(context->sem);
     context = NULL;
-    pthread_setspecific(CERunLoopThreadKeyShared(), thread);
+    CEThreadSpecificGetCurrent()->thread = thread;
     thread->status = CEThreadStatusExecuting;
     void * result = context->main(params);
     thread->status = CEThreadStatusFinished;

@@ -9,35 +9,18 @@
 #ifndef CEThread_h
 #define CEThread_h
 
-#include "CEBase.h"
-
-struct _CERunLoop;
-typedef struct _CERunLoop CERunLoop_s;
-typedef CERunLoop_s * CERunLoopRef;
-
-struct _CEThread;
-typedef struct _CEThread CEThread_s;
-typedef CEThread_s * CEThreadRef;
+#include "CERunLoopBase.h"
 
 
-struct _CEThread {
-#if __APPLE__
-    pthread_t _Nullable pthread;
-#else
-    pthread_t pthread;
-#endif
-    CEThreadStatus_t status;
 
-    CERunLoopRef _Nonnull (* _Nullable runLoopLoader)(CEThreadRef _Nonnull);
 
-    CERunLoopRef _Nullable runLoop;
-    
-    
-};
 
-struct _CERunLoop {
-    pthread_t _Nullable thread;
-};
+
+
+
+
+
+
 
 typedef struct _CEThreadConfig {
     pthread_t _Nullable thread;

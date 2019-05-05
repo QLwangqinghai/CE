@@ -10,9 +10,9 @@
 
 #include "CEMemory.h"
 
-struct _CETaskParam {
-    CETaskParamItem_s items[0];
-};
+//struct _CETaskParam {
+//    CETaskParamItem_s items[0];
+//};
 
 
 //

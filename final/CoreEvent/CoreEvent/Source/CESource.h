@@ -9,7 +9,8 @@
 #ifndef CESource_h
 #define CESource_h
 
-#include <stdio.h>
+#include "CERunLoopBase.h"
+
 
 //append
 
@@ -18,6 +19,8 @@
 //status
 
 //信号量
+
+
 
 
 #endif /* CESource_h */

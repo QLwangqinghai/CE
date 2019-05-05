@@ -12,14 +12,17 @@
 #include "CEBase.h"
 #include "CEParamItem.h"
 
-static const uint32_t CETaskParamItemMaxCount = 255;
+#define CETaskParamItemBufferSize 16
+
+
+static const uint32_t CETaskParamItemMaxCount = CETaskParamItemBufferSize;
 
 typedef void (*CETaskParamItemRelease_f)(uint32_t type, CEParamItemValue_u value);
 
-typedef struct _CETaskParamItem {
-    CEParamItemValue_u value;
-    CEParamType_e type;
-} CETaskParamItem_s;
+//typedef struct _CETaskParamItem {
+//    CEParamItemValue_u value;
+//    CEParamType_e type;
+//} CETaskParamItem_s;
 
 typedef struct _CETaskParamItemContent {
     CEParamItemValue_u value;

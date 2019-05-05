@@ -9,12 +9,7 @@
 #ifndef CESem_h
 #define CESem_h
 
-#include <stdio.h>
-
-
-struct _CESem;
-typedef struct _CESem CESem_s;
-typedef CESem_s * CESemRef;
+#include "CERunLoopBase.h"
 
 CESemRef _Nonnull CESemInit(unsigned int value);
 void CESemDeinit(CESemRef _Nonnull sem);

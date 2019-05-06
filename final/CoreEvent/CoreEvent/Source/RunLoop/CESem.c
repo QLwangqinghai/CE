@@ -17,7 +17,7 @@
 #include <dispatch/dispatch.h>
 
 struct _CESem {
-     dispatch_semaphore_t    lock;
+     dispatch_semaphore_t _Nonnull lock;
 };
 
 CESemRef _Nonnull CESemInit(unsigned int value) {

@@ -61,7 +61,8 @@ struct _CEThreadLooper {
 
 struct _CETaskWorker {
     CEThreadRef _Nonnull thread;
-    
+    CESourceRef _Nonnull source;
+
     CESemRef _Nonnull sem;
 };
 
@@ -69,12 +70,25 @@ struct _CERunLoop {
     pthread_t _Nullable thread;
 };
 
+//队列状态
 struct _CEQueue {
     char * _Nonnull label;
     CESourceRef _Nonnull source;
     CEThreadRef _Nonnull thread;
     
 };
+
+//Source 状态
+
+
+
+//00 休眠 01执行 10休眠->执行 11执行->休眠
+
+/*
+ 全部task count
+ 正在执行中的 task count
+ 
+ */
 
 
 //高1 位 表示执行中的count， 其余为任务个数 running = countInfos != 0

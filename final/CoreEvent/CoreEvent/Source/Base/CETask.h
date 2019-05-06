@@ -41,10 +41,10 @@ typedef void (*CETaskRelease_f)(CETaskRef _Nonnull task);
 
 
 typedef struct _CETaskBase {
-    uint32_t xxx;
-    uint32_t xxxx: 16;
-    uint32_t type: 8;
-    uint32_t paramItemCount: 8;//入参个数
+    uint64_t tid: 56;
+    uint64_t type: 3;
+    uint64_t paramItemCount: 5;//入参个数
+    
     CETaskRelease_f _Nonnull release;
     CETaskExecute_f _Nonnull execute;
     CETaskExecuteObserverRef _Nullable observer;

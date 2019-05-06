@@ -69,8 +69,8 @@ CEThreadRef _Nonnull CEThreadGetCurrent(void) {
     return &(CEThreadSpecificGetCurrent()->thread);
 }
 
-CEThreadRef _Nonnull CEThreadLooperGetCurrent(void) {
-    return &(CEThreadSpecificGetCurrent()->thread);
+CEThreadLooperRef _Nonnull CEThreadLooperGetCurrent(void) {
+    return &(CEThreadSpecificGetCurrent()->looper);
 }
 
 

@@ -11,14 +11,7 @@
 
 #include "CERunLoopBase.h"
 
-
-
-
-
-
-
-
-
+CEThreadRef _Nonnull CEThreadGetCurrent(void);
 
 
 

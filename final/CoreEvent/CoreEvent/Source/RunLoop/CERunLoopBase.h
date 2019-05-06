@@ -60,11 +60,7 @@ struct _CEThreadLooper {
 
 
 struct _CETaskWorker {
-#if __APPLE__
-    pthread_t _Nullable pthread;
-#else
-    pthread_t pthread;
-#endif
+    CEThreadRef _Nonnull thread;
     
     CESemRef _Nonnull sem;
 };

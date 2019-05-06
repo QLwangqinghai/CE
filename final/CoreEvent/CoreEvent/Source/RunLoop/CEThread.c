@@ -25,7 +25,8 @@ typedef CEThreadSpecific_s * CEThreadSpecificRef;
 
 
 struct _CEThreadSpecific {
-    CEThreadRef _Nullable thread;
+    CEThread_s thread;
+    CEThreadLooperRef _Nullable looper;
     CETaskWorkerRef _Nullable worker;
 };
 
@@ -56,23 +57,27 @@ CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void) {
     CEThreadSpecificRef specific = (CEThreadSpecificRef)pthread_getspecific(CEThreadSpecificKeyShared());
     if (NULL == specific) {
         specific = CEThreadSpecificInit();
+        specific->thread.pthread = pthread_self();
+        
         pthread_setspecific(CEThreadSpecificKeyShared(), specific);
     }
     return specific;
 }
 
 
-CEThreadRef _Nullable CEThreadGetCurrent(void) {
-    return CEThreadSpecificGetCurrent()->thread;
+CEThreadRef _Nonnull CEThreadGetCurrent(void) {
+    return &(CEThreadSpecificGetCurrent()->thread);
+}
+
+CEThreadRef _Nonnull CEThreadLooperGetCurrent(void) {
+    return &(CEThreadSpecificGetCurrent()->thread);
 }
 
 
-
-
-
-CEThreadRef _Nonnull __CEThreadCreate(void) {
-    CEThreadRef result = CEAllocateClear(sizeof(CEThread_s));
-    return result;
+CEThreadLooperRef _Nonnull __CEThreadLooperCreate(CEThreadRef _Nonnull thread) {
+    CEThreadLooperRef looper = CEAllocateClear(sizeof(CEThreadLooper_s));
+    looper->thread = thread;
+    return looper;
 }
 
 
@@ -88,20 +93,18 @@ struct __CEThreadContext {
 void * __CEThreadMain(void * args) {
     struct __CEThreadContext * context = (struct __CEThreadContext *)args;
     
-    CEThreadRef thread = __CEThreadCreate();
-    thread->pthread = pthread_self();
-    thread->runLoopLoader = context->runLoopLoader;
-    thread->status = CEThreadStatusStarting;
-    
+    CEThreadRef thread = CEThreadGetCurrent();
+    CEThreadLooperRef looper = __CEThreadLooperCreate(thread);
+    looper->runLoopLoader = context->runLoopLoader;
+    looper->status = CEThreadStatusStarting;
     context->thread = thread;
     void * _Nullable params = context->params;
     void (* _Nullable paramsDealloc)(void * _Nonnull) = context->paramsDealloc;
     CESemWakeUp(context->sem);
     context = NULL;
-    CEThreadSpecificGetCurrent()->thread = thread;
-    thread->status = CEThreadStatusExecuting;
+    looper->status = CEThreadStatusExecuting;
     void * result = context->main(params);
-    thread->status = CEThreadStatusFinished;
+    looper->status = CEThreadStatusFinished;
     if (params && paramsDealloc) {
         paramsDealloc(params);
     };

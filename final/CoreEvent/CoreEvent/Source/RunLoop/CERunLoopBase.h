@@ -15,6 +15,10 @@ struct _CERunLoop;
 typedef struct _CERunLoop CERunLoop_s;
 typedef CERunLoop_s * CERunLoopRef;
 
+struct _CEThreadLooper;
+typedef struct _CEThreadLooper CEThreadLooper_s;
+typedef CEThreadLooper_s * CEThreadLooperRef;
+
 struct _CEThread;
 typedef struct _CEThread CEThread_s;
 typedef CEThread_s * CEThreadRef;
@@ -36,22 +40,22 @@ typedef struct _CESource CESource_s;
 typedef CESource_s * CESourceRef;
 
 
-
 struct _CEThread {
 #if __APPLE__
     pthread_t _Nullable pthread;
 #else
     pthread_t pthread;
 #endif
+};
+
+
+struct _CEThreadLooper {
+    CEThreadRef _Nonnull thread;
     CEThreadStatus_t status;
     
     CERunLoopRef _Nonnull (* _Nullable runLoopLoader)(CEThreadRef _Nonnull);
-    
-    CERunLoopRef _Nullable runLoop;
-    
-    
+    CERunLoopRef _Nonnull runLoop;
 };
-
 
 
 

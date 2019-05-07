@@ -9,66 +9,10 @@
 #ifndef CERunLoopBase_h
 #define CERunLoopBase_h
 
-#include "CEBase.h"
-
-struct _CERunLoop;
-typedef struct _CERunLoop CERunLoop_s;
-typedef CERunLoop_s * CERunLoopRef;
-
-struct _CEThreadLooper;
-typedef struct _CEThreadLooper CEThreadLooper_s;
-typedef CEThreadLooper_s * CEThreadLooperRef;
-
-struct _CEThread;
-typedef struct _CEThread CEThread_s;
-typedef CEThread_s * CEThreadRef;
-
-struct _CETaskWorker;
-typedef struct _CETaskWorker CETaskWorker_s;
-typedef CETaskWorker_s * CETaskWorkerRef;
-
-struct _CESem;
-typedef struct _CESem CESem_s;
-typedef CESem_s * CESemRef;
-
-struct _CEQueue;
-typedef struct _CEQueue CEQueue_s;
-typedef CEQueue_s * CEQueueRef;
-
-struct _CESource;
-typedef struct _CESource CESource_s;
-typedef CESource_s * CESourceRef;
+#include "CEThreadBase.h"
+#include "CEParam.h"
 
 
-struct _CEThread {
-#if __APPLE__
-    pthread_t _Nullable pthread;
-#else
-    pthread_t pthread;
-#endif
-};
-
-
-struct _CEThreadLooper {
-    CEThreadRef _Nonnull thread;
-    CEThreadStatus_t status;
-    
-    CERunLoopRef _Nonnull (* _Nullable runLoopLoader)(CEThreadRef _Nonnull);
-    CERunLoopRef _Nonnull runLoop;
-};
-
-
-
-struct _CETaskWorker {
-    CEThreadRef _Nonnull thread;
-    CESourceRef _Nonnull source;
-
-    CESemRef _Nonnull sem;
-};
-
-struct _CERunLoop {
-    pthread_t _Nullable thread;
-};
 
 //队列状态
 struct _CEQueue {
@@ -78,7 +22,7 @@ struct _CEQueue {
     
 };
 
-//Source 状态
+
 
 
 
@@ -107,7 +51,6 @@ struct _CESource {
     
     
 };
-
 
 
 #endif /* CERunLoopBase_h */

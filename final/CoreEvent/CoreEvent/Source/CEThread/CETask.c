@@ -46,7 +46,8 @@ _Bool CENoescapingTaskInit(CENoescapingTaskRef _Nonnull task,
     base.release = NULL;
     base.execute = execute;
     base.observer = observer;
-    
+    base.type = CETaskTypeSync;
+
     memcpy(&(task->base), &base, sizeof(CETaskBase_t));
 
     return true;
@@ -84,7 +85,7 @@ CEEscapingTaskRef _Nullable CEEscapingTaskInit(CETaskExecute_f _Nonnull execute,
     
     CEEscapingTaskRef task = CEEscapingTaskAlloc();
     CETaskBase_t base = {};
-    base.type = 1;
+    base.type = CETaskTypeAsync;
     base.paramItemCount = itemCount;
     base.release = __CEEscapingTaskRelease;
     base.execute = execute;

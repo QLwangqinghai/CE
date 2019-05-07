@@ -9,53 +9,14 @@
 #ifndef CETask_h
 #define CETask_h
 
-#include "CEBase.h"
+#include "CERunLoopBase.h"
 #include "CESem.h"
 
 #include "CEParam.h"
 #include "CETaskParam.h"
 #include "CETaskExecuteObserver.h"
 
-struct _CETaskExecuteContext;
-typedef struct _CETaskExecuteContext CETaskExecuteContext_s;
-typedef CETaskExecuteContext_s * CETaskExecuteContextRef;
 
-struct _CETaskExecuteContext {
-    CEParamRef _Nullable * _Nullable resultReceiver;
-    CEParamType_e * _Nullable paramTypes;
-    CEParamItemValue_u * _Nullable paramItems;
-    uint32_t paramCount;
-};
-
-struct _CETask;
-typedef struct _CETask CETask_s;
-typedef CETask_s * CETaskRef;
-typedef CETaskRef CEEscapingTaskRef;
-
-struct _CENoescapingTask;
-typedef struct _CENoescapingTask CENoescapingTask_s;
-typedef CENoescapingTask_s * CENoescapingTaskRef;
-
-typedef void (*CETaskExecute_f)(CETaskExecuteContextRef _Nonnull context);
-typedef void (*CETaskRelease_f)(CETaskRef _Nonnull task);
-
-
-typedef struct _CETaskBase {
-    uint64_t tid: 56;
-    uint64_t type: 3;
-    uint64_t paramItemCount: 5;//入参个数
-    
-    CETaskRelease_f _Nonnull release;
-    CETaskExecute_f _Nonnull execute;
-    CETaskExecuteObserverRef _Nullable observer;
-} CETaskBase_t;
-
-
-struct _CENoescapingTask {
-    CETaskBase_t base;
-    CEParamType_e paramTypes[CETaskParamItemBufferSize];
-    CEParamItemValue_u paramItems[CETaskParamItemBufferSize];
-};
 
 
 

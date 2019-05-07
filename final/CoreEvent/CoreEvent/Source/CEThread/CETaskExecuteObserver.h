@@ -15,19 +15,6 @@
 #include "CESem.h"
 #include "CEParam.h"
 
-struct _CETaskExecuteObserver;
-typedef struct _CETaskExecuteObserver CETaskExecuteObserver_s;
-typedef CETaskExecuteObserver_s * CETaskExecuteObserverRef;
-
-
-typedef CEParamRef _Nullable * _Nullable (*CETaskExecuteObserverGetResultReceiver_f)(CETaskExecuteObserverRef _Nonnull observer);
-typedef void (*CETaskExecuteObserverFinish_f)(CETaskExecuteObserverRef _Nonnull observer);
-
-
-struct _CETaskExecuteObserver {
-    CETaskExecuteObserverGetResultReceiver_f _Nullable getResultReceiver;
-    CETaskExecuteObserverFinish_f _Nullable finish;
-};
 
 
 //struct _CETaskExecuteObserver {

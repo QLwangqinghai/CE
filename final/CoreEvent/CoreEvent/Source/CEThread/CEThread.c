@@ -19,16 +19,6 @@
 
 #include "CESem.h"
 
-struct _CEThreadSpecific;
-typedef struct _CEThreadSpecific CEThreadSpecific_s;
-typedef CEThreadSpecific_s * CEThreadSpecificRef;
-
-
-struct _CEThreadSpecific {
-    CEThread_s thread;
-    CEThreadLooperRef _Nullable looper;
-    CETaskWorkerRef _Nullable worker;
-};
 
 CEThreadSpecificRef _Nonnull CEThreadSpecificInit(void) {
     CEThreadSpecificRef specific = CEAllocateClear(sizeof(CEThreadSpecific_s));
@@ -69,13 +59,13 @@ CEThreadRef _Nonnull CEThreadGetCurrent(void) {
     return &(CEThreadSpecificGetCurrent()->thread);
 }
 
-CEThreadLooperRef _Nonnull CEThreadLooperGetCurrent(void) {
-    return &(CEThreadSpecificGetCurrent()->looper);
+CEThreadLoaderRef _Nonnull CEThreadLooperGetCurrent(void) {
+    return CEThreadSpecificGetCurrent()->loader;
 }
 
 
-CEThreadLooperRef _Nonnull __CEThreadLooperCreate(CEThreadRef _Nonnull thread) {
-    CEThreadLooperRef looper = CEAllocateClear(sizeof(CEThreadLooper_s));
+CEThreadLoaderRef _Nonnull __CEThreadLooperCreate(CEThreadRef _Nonnull thread) {
+    CEThreadLoaderRef looper = CEAllocateClear(sizeof(CEThreadLoader_s));
     looper->thread = thread;
     return looper;
 }
@@ -94,8 +84,8 @@ void * __CEThreadMain(void * args) {
     struct __CEThreadContext * context = (struct __CEThreadContext *)args;
     
     CEThreadRef thread = CEThreadGetCurrent();
-    CEThreadLooperRef looper = __CEThreadLooperCreate(thread);
-    looper->runLoopLoader = context->runLoopLoader;
+    CEThreadLoaderRef looper = __CEThreadLooperCreate(thread);
+    looper->loadRunLoop = context->runLoopLoader;
     looper->status = CEThreadStatusStarting;
     context->thread = thread;
     void * _Nullable params = context->params;

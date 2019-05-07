@@ -28,6 +28,8 @@
 		D603ECC42276C8C4005F22BF /* CFMessagePort.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB92276C8C4005F22BF /* CFMessagePort.c */; };
 		D603ECC52276C8C4005F22BF /* CFMachPort_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECBA2276C8C4005F22BF /* CFMachPort_Internal.h */; };
 		D603ECC62276C8C4005F22BF /* CFMachPort_Lifetime.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */; };
+		D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6378D93228177CD006A46E6 /* CEThreadBase.h */; };
+		D6378D96228178AE006A46E6 /* CEThreadBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6378D95228178AE006A46E6 /* CEThreadBase.c */; };
 		D644A9F4227C248400F6B333 /* CoreEventV5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D644A9EB227C248400F6B333 /* CoreEventV5.framework */; };
 		D644A9FD227C248400F6B333 /* CoreEventV5.h in Headers */ = {isa = PBXBuildFile; fileRef = D644A9ED227C248400F6B333 /* CoreEventV5.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D644AA00227C248400F6B333 /* CoreEventV5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D644A9EB227C248400F6B333 /* CoreEventV5.framework */; };
@@ -219,6 +221,8 @@
 		D603ECB92276C8C4005F22BF /* CFMessagePort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMessagePort.c; sourceTree = "<group>"; };
 		D603ECBA2276C8C4005F22BF /* CFMachPort_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFMachPort_Internal.h; sourceTree = "<group>"; };
 		D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMachPort_Lifetime.c; sourceTree = "<group>"; };
+		D6378D93228177CD006A46E6 /* CEThreadBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadBase.h; sourceTree = "<group>"; };
+		D6378D95228178AE006A46E6 /* CEThreadBase.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEThreadBase.c; sourceTree = "<group>"; };
 		D644A9EB227C248400F6B333 /* CoreEventV5.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreEventV5.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D644A9ED227C248400F6B333 /* CoreEventV5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreEventV5.h; sourceTree = "<group>"; };
 		D644A9EE227C248400F6B333 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -511,6 +515,25 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		D6378D922281777A006A46E6 /* CEThread */ = {
+			isa = PBXGroup;
+			children = (
+				D6378D93228177CD006A46E6 /* CEThreadBase.h */,
+				D6378D95228178AE006A46E6 /* CEThreadBase.c */,
+				D644ABC9227C806300F6B333 /* CEThread.h */,
+				D644ABC8227C806300F6B333 /* CEThread.c */,
+				D6802B2E227D717A0083EDBF /* CESem.h */,
+				D6802B2F227D717A0083EDBF /* CESem.c */,
+				D647C84F227DDE7F004AAA19 /* CETask.h */,
+				D647C850227DDE7F004AAA19 /* CETask.c */,
+				D6724904227E7D7F00FC8B7A /* CETaskParam.h */,
+				D6724903227E7D7F00FC8B7A /* CETaskParam.c */,
+				D647C857227F2910004AAA19 /* CETaskExecuteObserver.h */,
+				D647C858227F2910004AAA19 /* CETaskExecuteObserver.c */,
+			);
+			path = CEThread;
+			sourceTree = "<group>";
+		};
 		D644A9EC227C248400F6B333 /* CoreEventV5 */ = {
 			isa = PBXGroup;
 			children = (
@@ -679,6 +702,7 @@
 		D644AB37227C7B6900F6B333 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				D6378D922281777A006A46E6 /* CEThread */,
 				D644ABD7227C973100F6B333 /* RunLoop */,
 				D644ABD6227C952D00F6B333 /* Base */,
 				D644ABBC227C7CD200F6B333 /* CEBaseType.h */,
@@ -702,17 +726,11 @@
 				D644ABD2227C952100F6B333 /* CELog.c */,
 				D647C84B227DCC09004AAA19 /* CEOperation.h */,
 				D647C84C227DCC09004AAA19 /* CEOperation.c */,
-				D647C84F227DDE7F004AAA19 /* CETask.h */,
-				D647C850227DDE7F004AAA19 /* CETask.c */,
 				D6724907227E9E1400FC8B7A /* CEParamItem.h */,
 				D6724908227E9E1400FC8B7A /* CEParamItem.c */,
-				D6724904227E7D7F00FC8B7A /* CETaskParam.h */,
-				D6724903227E7D7F00FC8B7A /* CETaskParam.c */,
 				D647C853227DFE3A004AAA19 /* CEParam.h */,
 				D647C854227DFE3A004AAA19 /* CEParam.c */,
 				D672490B227E9EFA00FC8B7A /* CEParamType.h */,
-				D647C857227F2910004AAA19 /* CETaskExecuteObserver.h */,
-				D647C858227F2910004AAA19 /* CETaskExecuteObserver.c */,
 				D647C85B227F4251004AAA19 /* CETaskQueue.h */,
 				D647C85C227F4251004AAA19 /* CETaskQueue.c */,
 			);
@@ -722,8 +740,6 @@
 		D644ABD7227C973100F6B333 /* RunLoop */ = {
 			isa = PBXGroup;
 			children = (
-				D644ABC9227C806300F6B333 /* CEThread.h */,
-				D644ABC8227C806300F6B333 /* CEThread.c */,
 				D644ABC1227C7CF500F6B333 /* CEDispatcher.h */,
 				D644ABC0227C7CF500F6B333 /* CEDispatcher.c */,
 				D67248F2227CABFF00FC8B7A /* CESource.h */,
@@ -732,8 +748,6 @@
 				D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */,
 				D644ABD8227D58E200F6B333 /* CEQueue.h */,
 				D644ABD9227D58E200F6B333 /* CEQueue.c */,
-				D6802B2E227D717A0083EDBF /* CESem.h */,
-				D6802B2F227D717A0083EDBF /* CESem.c */,
 				D647C85F227F50EB004AAA19 /* CERunLoopBase.h */,
 			);
 			path = RunLoop;
@@ -784,6 +798,7 @@
 				D644ABD5227C952200F6B333 /* CELog.h in Headers */,
 				D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */,
 				D644ABD1227C824300F6B333 /* CEInternal.h in Headers */,
+				D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1149,6 +1164,7 @@
 				D644ABC2227C7CF500F6B333 /* CEDispatcher.c in Sources */,
 				D647C84E227DCC09004AAA19 /* CEOperation.c in Sources */,
 				D6802B31227D717A0083EDBF /* CESem.c in Sources */,
+				D6378D96228178AE006A46E6 /* CEThreadBase.c in Sources */,
 				D644ABDB227D58E200F6B333 /* CEQueue.c in Sources */,
 				D644ABBB227C7C8200F6B333 /* CEPoolBaseApi.c in Sources */,
 				D644ABC7227C7DEA00F6B333 /* CEBase.c in Sources */,

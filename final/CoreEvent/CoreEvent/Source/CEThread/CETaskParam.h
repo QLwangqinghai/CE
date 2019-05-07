@@ -9,10 +9,9 @@
 #ifndef CETaskParam_h
 #define CETaskParam_h
 
-#include "CEBase.h"
+#include "CEThreadBase.h"
 #include "CEParamItem.h"
 
-#define CETaskParamItemBufferSize 16
 
 
 static const uint32_t CETaskParamItemMaxCount = CETaskParamItemBufferSize;

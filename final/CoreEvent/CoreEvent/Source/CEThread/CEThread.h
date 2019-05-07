@@ -9,7 +9,7 @@
 #ifndef CEThread_h
 #define CEThread_h
 
-#include "CERunLoopBase.h"
+#include "CEThreadBase.h"
 
 CEThreadRef _Nonnull CEThreadGetCurrent(void);
 

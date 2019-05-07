@@ -21,7 +21,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include <pthread.h>
 
 #include <sys/time.h>
 #include <sys/types.h>
@@ -167,17 +166,6 @@ static const CEResult_t CEResultErrorTimeDescriptionInvalid = 8;
 static const CEResult_t CEResultErrorTimeDescriptionNotEnough = 9;
 
 
-#if __APPLE__
-typedef os_unfair_lock CESpinLock_t;
-#else
-typedef pthread_spinlock_t CESpinLock_t;
-#endif
-
-void CESpinLockInit(CESpinLock_t * _Nonnull lockRef);
-void CESpinLockDeinit(CESpinLock_t * _Nonnull lockRef);
-
-void CESpinLockLock(CESpinLock_t * _Nonnull lockRef);
-void CESpinLockUnlock(CESpinLock_t * _Nonnull lockRef);
 
 
 

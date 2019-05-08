@@ -15,6 +15,9 @@
 		D647C87D2281C78E004AAA19 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D647C87C2281C78E004AAA19 /* main.m */; };
 		D647C8892281C821004AAA19 /* AFRecordView.m in Sources */ = {isa = PBXBuildFile; fileRef = D647C8882281C821004AAA19 /* AFRecordView.m */; };
 		D647C88C2281CDAB004AAA19 /* AFVideoPlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = D647C88B2281CDAB004AAA19 /* AFVideoPlayView.m */; };
+		D654264E22829D5500BBE892 /* m300.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D654264D22829D5500BBE892 /* m300.mp4 */; };
+		D654265022829D5D00BBE892 /* m200.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D654264F22829D5D00BBE892 /* m200.mp4 */; };
+		D65426532282A39000BBE892 /* MS.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65426522282A39000BBE892 /* MS.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,7 +25,7 @@
 		D647C86D2281C78C004AAA19 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D647C86E2281C78C004AAA19 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		D647C8702281C78C004AAA19 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		D647C8712281C78C004AAA19 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		D647C8712281C78C004AAA19 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ViewController.m; path = /Users/vector/git.private/CE/CGViewRecorder/CGViewRecorder/ViewController.m; sourceTree = "<absolute>"; };
 		D647C8742281C78C004AAA19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D647C8762281C78E004AAA19 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D647C8792281C78E004AAA19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -32,6 +35,10 @@
 		D647C8882281C821004AAA19 /* AFRecordView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AFRecordView.m; sourceTree = "<group>"; };
 		D647C88A2281CDAB004AAA19 /* AFVideoPlayView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AFVideoPlayView.h; sourceTree = "<group>"; };
 		D647C88B2281CDAB004AAA19 /* AFVideoPlayView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AFVideoPlayView.m; sourceTree = "<group>"; };
+		D654264D22829D5500BBE892 /* m300.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = m300.mp4; sourceTree = "<group>"; };
+		D654264F22829D5D00BBE892 /* m200.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = m200.mp4; sourceTree = "<group>"; };
+		D65426512282A38F00BBE892 /* CGViewRecorder-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CGViewRecorder-Bridging-Header.h"; sourceTree = "<group>"; };
+		D65426522282A39000BBE892 /* MS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MS.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +81,8 @@
 				D647C8782281C78E004AAA19 /* LaunchScreen.storyboard */,
 				D647C87B2281C78E004AAA19 /* Info.plist */,
 				D647C87C2281C78E004AAA19 /* main.m */,
+				D65426522282A39000BBE892 /* MS.swift */,
+				D65426512282A38F00BBE892 /* CGViewRecorder-Bridging-Header.h */,
 			);
 			path = CGViewRecorder;
 			sourceTree = "<group>";
@@ -81,6 +90,8 @@
 		D647C8862281C7F3004AAA19 /* CGViewRecord */ = {
 			isa = PBXGroup;
 			children = (
+				D654264F22829D5D00BBE892 /* m200.mp4 */,
+				D654264D22829D5500BBE892 /* m300.mp4 */,
 				D647C8872281C821004AAA19 /* AFRecordView.h */,
 				D647C8882281C821004AAA19 /* AFRecordView.m */,
 				D647C88A2281CDAB004AAA19 /* AFVideoPlayView.h */,
@@ -120,6 +131,7 @@
 				TargetAttributes = {
 					D647C8692281C78C004AAA19 = {
 						CreatedOnToolsVersion = 10.2.1;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -149,6 +161,8 @@
 				D647C87A2281C78E004AAA19 /* LaunchScreen.storyboard in Resources */,
 				D647C8772281C78E004AAA19 /* Assets.xcassets in Resources */,
 				D647C8752281C78C004AAA19 /* Main.storyboard in Resources */,
+				D654265022829D5D00BBE892 /* m200.mp4 in Resources */,
+				D654264E22829D5500BBE892 /* m300.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,6 +178,7 @@
 				D647C88C2281CDAB004AAA19 /* AFVideoPlayView.m in Sources */,
 				D647C8892281C821004AAA19 /* AFRecordView.m in Sources */,
 				D647C86F2281C78C004AAA19 /* AppDelegate.m in Sources */,
+				D65426532282A39000BBE892 /* MS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,15 +320,21 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = SK32D8HW22;
 				INFOPLIST_FILE = CGViewRecorder/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CGViewRecorder;
+				PRODUCT_BUNDLE_IDENTIFIER = com.haoqi.superCoachingLecture;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = SuperCoachingLectureDev;
+				SWIFT_OBJC_BRIDGING_HEADER = "CGViewRecorder/CGViewRecorder-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -322,15 +343,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = SK32D8HW22;
 				INFOPLIST_FILE = CGViewRecorder/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CGViewRecorder;
+				PRODUCT_BUNDLE_IDENTIFIER = com.haoqi.superCoachingLecture;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = SuperCoachingLectureDev;
+				SWIFT_OBJC_BRIDGING_HEADER = "CGViewRecorder/CGViewRecorder-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

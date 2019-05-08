@@ -25,7 +25,14 @@
     if (nil == urlString) {
         return;
     }
-    NSURL * url = [NSURL URLWithString:urlString];
+    NSURL * url = nil;
+    
+    if ([urlString hasPrefix:@"/"]) {
+        url = [NSURL fileURLWithPath:urlString];
+    } else {
+        url = [NSURL URLWithString:urlString];
+    }
+    
     if (nil == url) {
         return;
     }
@@ -34,13 +41,25 @@
     self.currentPlayerItem = playerItem;
     self.player = [[AVPlayer alloc] initWithPlayerItem:playerItem];
     
-    AVPlayerLayer *avLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-    avLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-    avLayer.frame = self.bounds;
-    [self.layer addSublayer:avLayer];
+//    AVPlayerLayer *avLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
+//    avLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+//    avLayer.frame = self.bounds;
+//    [self.layer addSublayer:avLayer];
+    
+    ((AVPlayerLayer *)self.layer).player = self.player;
+    
+    
     [self.player play];
+
+}
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx {
+    [super drawLayer:layer inContext:ctx];
+
+    NSLog(@"123");
 }
 
-
++ (Class)layerClass {
+    return [AVPlayerLayer class];
+}
 
 @end

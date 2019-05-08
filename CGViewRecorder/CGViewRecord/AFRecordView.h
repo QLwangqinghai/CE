@@ -10,9 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
+
 @interface AFRecordView : UIView
 
+@property (nonatomic, copy) void(^onImage)(UIImage * image, CFTimeInterval time);
+
 - (UIImage *)screenShot;
+
+- (void)dis;
 
 @end
 

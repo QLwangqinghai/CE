@@ -23,8 +23,7 @@ typedef struct _CEThreadConfig {
     int schedPriority;
 } CEThreadConfig_s;
 
-
-
+_Bool CEIsMainThread(void);
 
 
 struct _CEThreadWaiter;

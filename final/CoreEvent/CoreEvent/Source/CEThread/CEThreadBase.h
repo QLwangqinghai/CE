@@ -26,20 +26,9 @@ struct _CEThread;
 typedef struct _CEThread CEThread_s;
 typedef CEThread_s * CEThreadRef;
 
-struct _CEThread {
-#if __APPLE__
-    pthread_t _Nullable pthread;
-#else
-    pthread_t pthread;
-#endif
-};
-
 struct _CERunLoop;
 typedef struct _CERunLoop CERunLoop_s;
 typedef CERunLoop_s * CERunLoopRef;
-struct _CERunLoop {
-    pthread_t _Nullable thread;
-};
 
 
 struct _CEThreadLoader;
@@ -61,46 +50,16 @@ typedef struct _CESource CESource_s;
 typedef CESource_s * CESourceRef;
 
 
-
-struct _CEThreadLoader {
-    CEThreadRef _Nonnull thread;
-    CEThreadStatus_t status;
-    
-    CERunLoopRef _Nonnull (* _Nullable loadRunLoop)(CEThreadRef _Nonnull);
-    CERunLoopRef _Nonnull runLoop;
-};
-
-
-
-struct _CETaskWorker {
-    CEThreadRef _Nonnull thread;
-    CESourceRef _Nonnull source;
-    
-    CESemRef _Nonnull sem;
-};
-
-
 struct _CEThreadSpecific;
 typedef struct _CEThreadSpecific CEThreadSpecific_s;
 typedef CEThreadSpecific_s * CEThreadSpecificRef;
 
 
-struct _CEThreadSpecific {
-    CEThread_s thread;
-    CEThreadLoaderRef _Nullable loader;
-    CETaskWorkerRef _Nullable worker;
-};
 
 struct _CETaskContext;
 typedef struct _CETaskContext CETaskContext_s;
 typedef CETaskContext_s * CETaskContextRef;
 
-struct _CETaskContext {
-    CEParamRef _Nullable * _Nullable resultReceiver;
-    CEParamType_e * _Nullable paramTypes;
-    CEParamItemValue_u * _Nullable paramItems;
-    uint32_t paramCount;
-};
 
 
 struct _CETaskExecuteContext;
@@ -140,6 +99,12 @@ typedef CETaskExecuteObserver_s * CETaskExecuteObserverRef;
 typedef CEParamRef _Nullable * _Nullable (*CETaskExecuteObserverGetResultReceiver_f)(CETaskExecuteObserverRef _Nonnull observer);
 typedef void (*CETaskExecuteObserverFinish_f)(CETaskExecuteObserverRef _Nonnull observer);
 
+struct _CETaskContext {
+    CEParamRef _Nullable * _Nullable resultReceiver;
+    CEParamType_e * _Nullable paramTypes;
+    CEParamItemValue_u * _Nullable paramItems;
+    uint32_t paramCount;
+};
 
 struct _CETaskExecuteObserver {
     CETaskExecuteObserverGetResultReceiver_f _Nullable getResultReceiver;
@@ -160,6 +125,7 @@ typedef struct _CETaskBase {
 
 struct _CENoescapingTask {
     CETaskBase_t base;
+    CEQueueRef _Nullable sourceQueue;
     CEParamType_e paramTypes[CETaskParamItemBufferSize];
     CEParamItemValue_u paramItems[CETaskParamItemBufferSize];
 };

@@ -8,6 +8,7 @@
 
 #include "CETask.h"
 #include "CEMemory.h"
+#include "CEThreadBaseInternal.h"
 
 
 void __CEEscapingTaskRelease(CEEscapingTaskRef _Nonnull task);

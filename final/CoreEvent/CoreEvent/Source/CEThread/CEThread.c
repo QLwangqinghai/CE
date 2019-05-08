@@ -14,11 +14,25 @@
 
 
 //custom
-#include "CETime.h"
+#include "CEThreadBaseInternal.h"
 #include "CELog.h"
 
 #include "CESem.h"
 
+#if __APPLE__
+_Bool CEIsMainThread(void) {
+    return pthread_main_np() == 1;
+}
+#else
+#if __has_include(<syscall.h>)
+#include <syscall.h>
+#else
+#include <sys/syscall.h>
+#endif
+_Bool CEIsMainThread(void) {
+    return syscall(SYS_gettid) == getpid();
+}
+#endif
 
 CEThreadSpecificRef _Nonnull CEThreadSpecificInit(void) {
     CEThreadSpecificRef specific = CEAllocateClear(sizeof(CEThreadSpecific_s));
@@ -43,17 +57,50 @@ pthread_key_t CEThreadSpecificKeyShared(void) {
     return __CEThreadKeyShared;
 }
 
-CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void) {
+static char * __CEMainThreadDefaultName = "main";
+
+CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable threadName, _Bool copyThreadName) {
     CEThreadSpecificRef specific = (CEThreadSpecificRef)pthread_getspecific(CEThreadSpecificKeyShared());
     if (NULL == specific) {
         specific = CEThreadSpecificInit();
         specific->thread.pthread = pthread_self();
-        
+        if (threadName && !copyThreadName) {
+            specific->thread.name = threadName;
+        } else {
+            char * name = NULL;
+            size_t size = 0;
+            if (threadName) {
+                if (copyThreadName) {
+                    size_t len = strlen(threadName);
+                    if (len <= 63) {
+                        size = 64;
+                    } else {
+                        size = (len /*(+ 1 - 1)*/ + CECpuWordByteSize ) / CECpuWordByteSize * CECpuWordByteSize;
+                    }
+                    name = CEAllocateClear(size);
+                    memcpy(name, threadName, len);
+                } else {
+                    name = threadName;
+                }
+            } else {
+                name = CEAllocateClear(64);
+                snprintf(name, 63, "thread: %p", specific);
+            }
+            specific->thread.name = name;
+            specific->thread.nameBufferLength = size;
+        }
         pthread_setspecific(CEThreadSpecificKeyShared(), specific);
     }
     return specific;
 }
 
+CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void) {
+    if (CEIsMainThread()) {
+        return _CEThreadSpecificGetCurrent(__CEMainThreadDefaultName, false);
+    } else {
+        return _CEThreadSpecificGetCurrent(NULL, false);
+    }
+}
 
 CEThreadRef _Nonnull CEThreadGetCurrent(void) {
     return &(CEThreadSpecificGetCurrent()->thread);

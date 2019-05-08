@@ -9,13 +9,14 @@
 #ifndef CERunLoopBase_h
 #define CERunLoopBase_h
 
-#include "CEThreadBase.h"
+#include "CEThreadBaseInternal.h"
 #include "CEParam.h"
 
 
 
 //队列状态
 struct _CEQueue {
+    CEQueueBase_t base;
     char * _Nonnull label;
     CESourceRef _Nonnull source;
     CEThreadRef _Nonnull thread;

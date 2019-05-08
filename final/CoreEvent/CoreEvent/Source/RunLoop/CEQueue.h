@@ -15,7 +15,7 @@
 
 
 
-
+void CEQueueSync(CEQueueRef _Nonnull queue, CENoescapingTaskRef _Nonnull task);
 
 
 

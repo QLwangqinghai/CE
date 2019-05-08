@@ -104,6 +104,7 @@
 		D647C85D227F4251004AAA19 /* CETaskQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C85B227F4251004AAA19 /* CETaskQueue.h */; };
 		D647C85E227F4251004AAA19 /* CETaskQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C85C227F4251004AAA19 /* CETaskQueue.c */; };
 		D647C860227F50EB004AAA19 /* CERunLoopBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C85F227F50EB004AAA19 /* CERunLoopBase.h */; };
+		D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */; };
 		D67248F4227CABFF00FC8B7A /* CESource.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F2227CABFF00FC8B7A /* CESource.h */; };
 		D67248F5227CABFF00FC8B7A /* CESource.c in Sources */ = {isa = PBXBuildFile; fileRef = D67248F3227CABFF00FC8B7A /* CESource.c */; };
 		D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F6227CAE7300FC8B7A /* CEConfig.h */; };
@@ -340,6 +341,7 @@
 		D647C85B227F4251004AAA19 /* CETaskQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETaskQueue.h; sourceTree = "<group>"; };
 		D647C85C227F4251004AAA19 /* CETaskQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETaskQueue.c; sourceTree = "<group>"; };
 		D647C85F227F50EB004AAA19 /* CERunLoopBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERunLoopBase.h; sourceTree = "<group>"; };
+		D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadBaseInternal.h; sourceTree = "<group>"; };
 		D67248F2227CABFF00FC8B7A /* CESource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CESource.h; path = CoreEvent/Source/CESource.h; sourceTree = SOURCE_ROOT; };
 		D67248F3227CABFF00FC8B7A /* CESource.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = CESource.c; path = CoreEvent/Source/CESource.c; sourceTree = SOURCE_ROOT; };
 		D67248F6227CAE7300FC8B7A /* CEConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEConfig.h; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 			isa = PBXGroup;
 			children = (
 				D6378D93228177CD006A46E6 /* CEThreadBase.h */,
+				D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */,
 				D6378D95228178AE006A46E6 /* CEThreadBase.c */,
 				D644ABC9227C806300F6B333 /* CEThread.h */,
 				D644ABC8227C806300F6B333 /* CEThread.c */,
@@ -778,6 +781,7 @@
 				D647C860227F50EB004AAA19 /* CERunLoopBase.h in Headers */,
 				D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */,
 				D647C84D227DCC09004AAA19 /* CEOperation.h in Headers */,
+				D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */,
 				D6802B30227D717A0083EDBF /* CESem.h in Headers */,
 				D647C85D227F4251004AAA19 /* CETaskQueue.h in Headers */,
 				D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */,

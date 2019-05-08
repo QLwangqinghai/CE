@@ -165,8 +165,28 @@ static const CEResult_t CEResultErrorFileDescriptionInvalid = 7;
 static const CEResult_t CEResultErrorTimeDescriptionInvalid = 8;
 static const CEResult_t CEResultErrorTimeDescriptionNotEnough = 9;
 
+typedef struct __CERC {
+    void * _Nonnull type;
+    char * _Nonnull name;
+    size_t objectSize;
+    void const * _Nullable alloctor;//CMAlloctor_s *
+    void (* _Nonnull deinit)(void * _Nonnull object);
+    
+} CERC_s;
+typedef struct __CETypeBaseInfo {
+    void * _Nonnull type;
+    char * _Nonnull name;
+    size_t objectSize;
+    void const * _Nullable alloctor;//CMAlloctor_s *
+    void (* _Nonnull deinit)(void * _Nonnull object);
+    CERC_s * _Nonnull rc;
+} CETypeBaseInfo_s;
 
-
+typedef struct __CMAlloctor {
+    void * _Nonnull (* _Nonnull allocate)(struct __CMAlloctor const * _Nonnull alloctor, size_t size);
+    void (* _Nonnull deallocate)(struct __CMAlloctor const * _Nonnull alloctor, void * _Nonnull ptr, size_t size);
+    void * _Nullable context;
+} CMAlloctor_s;
 
 
 

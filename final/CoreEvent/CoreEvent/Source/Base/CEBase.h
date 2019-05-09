@@ -193,11 +193,16 @@ typedef struct __CEAlloctor CEAlloctor_s;
 
 typedef uint16_t CETypeMask_t;
 
-#define CETypeMaskHasRc 0x8000u
-#define CETypeMaskRcAtomic 0x4000u
+#define CETypeBitHasRc 0x8000u
+#define CETypeBitRcAtomic 0x4000u
 
-#define CETypeMaskDefaultRc 0xC000u
+#define CETypeMaskRcAtomic (CETypeBitHasRc | CETypeBitRcAtomic)
+#define CETypeMaskRcUnsafe (CETypeBitHasRc)
 #define CETypeMaskNoRc 0x0u
+
+#define CETypeMaskDefaultRc CETypeMaskRcAtomic
+
+
 
 #define CETypeMaskVersionBitCount 16
 

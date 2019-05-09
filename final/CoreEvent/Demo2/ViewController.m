@@ -9,13 +9,25 @@
 #import "ViewController.h"
 #import <CoreEvent/CESem.h>
 
-struct _CEParamItem {
-    uint32_t index: 6;
-    uint32_t type: 4;
-    uint32_t hasDealloc: 1;//type 为 CETaskParamItemTypePtr 时 使能
-    uint32_t hasTypeName: 1;//type 为 CETaskParamItemTypePtr 或者 CETaskParamItemTypeStruct 时 使能
-    uint32_t paddingSize: 4;//[0, 15]
-    uint32_t contentSize: 16;
+
+
+struct __CETypeBaseInfo111 {
+    void * _Nonnull type;
+    uint16_t version;
+    uint16_t masks;
+    uint32_t objectSize;//objectSize 为0 时 size 为变长，getCustomSize 必须非空
+    size_t (* _Nullable getCustomSize)(CETypeBase_s * _Nonnull type, void * _Nonnull object);
+    
+    CETypeBase_s const * _Nullable alloctor;//CMAlloctor_s * description
+    void (* _Nonnull init)(void * _Nonnull object);
+    void (* _Nonnull deinit)(void * _Nonnull object);
+    
+    char * _Nonnull name;
+    size_t (* _Nonnull descript)(void * _Nonnull object, char * _Nonnull buffer, size_t bufferSize);
+    
+    void * _Nonnull (* _Nonnull retain)(void * _Nonnull object);
+    void * _Nullable (* _Nonnull tryRetain)(void * _Nonnull object);
+    void (* _Nonnull release)(void * _Nonnull object);
 };
 
 @implementation ViewController
@@ -24,7 +36,7 @@ struct _CEParamItem {
     [super viewDidLoad];
     CESemRef sem = CESemInit(0);
 
-    NSLog(@"%ld", sizeof(struct _CEParamItem));
+    NSLog(@"%ld", sizeof(struct __CETypeBaseInfo111));
     
     // Do any additional setup after loading the view.
 }

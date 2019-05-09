@@ -174,43 +174,87 @@ typedef struct __CERC {
     
 } CERC_s;
 
+typedef void * CERef;
 
-typedef uint32_t CETypeMask_t;
-static const CETypeMask_t CETypeMaskDefaultRc = 0x80000000u;
-static const CETypeMask_t CETypeMaskMate = 0x40000000u;
+typedef void (*CEDescript_f)(void const * _Nonnull handler, char const * _Nonnull buffer);
 
-typedef struct __CETypeBaseInfo {
-    void * _Nonnull type;
+struct __CEObjectRuntimeBase;
+typedef struct __CEObjectRuntimeBase CEObjectRuntimeBase_t;
+
+struct __CEObjectRuntimeRcBase;
+typedef struct __CEObjectRuntimeRcBase CEObjectRuntimeRcBase_t;
+
+
+struct __CETypeBase;
+typedef struct __CETypeBase CETypeBase_s;
+
+struct __CEAlloctor;
+typedef struct __CEAlloctor CEAlloctor_s;
+
+typedef uint16_t CETypeMask_t;
+#define CETypeMaskDefaultRc 0x8000u
+
+#define CETypeMaskVersionBitCount 16
+
+#if CEBuild64Bit
+#define CETypeBaseLayoutSize 88
+#else
+#define CETypeBaseLayoutSize 48
+#endif
+
+
+#pragma pack(push)
+#pragma pack(1)
+
+
+struct __CEObjectRuntimeBase {
+    CETypeBase_s const * const _Nonnull type;
+};
+
+struct __CEObjectRuntimeRcBase {
+    CETypeBase_s const * const _Nonnull type;
+#if CEBuild64Bit
+    _Atomic(uint_fast64_t) rcInfo;
+#else
+    _Atomic(uint_fast32_t) rcInfo;
+#endif
+};
+
+struct __CETypeBase {
+    CETypeBase_s const * const _Nonnull type;
+    uint16_t version;
+    uint16_t masks;
+    uint32_t objectSize;//objectSize 为0 时 size 为变长
+    size_t (* _Nonnull getSize)(CETypeBase_s * _Nonnull type, CERef _Nonnull object);
+
+    CEAlloctor_s const * _Nullable alloctor;//CMAlloctor_s * description    
+    void (* _Nonnull init)(CERef _Nonnull object);
+    void (* _Nonnull deinit)(CERef _Nonnull object);
+    
     char * _Nonnull name;
-    uint32_t masks;
-    uint32_t objectSize;
-    void const * _Nullable alloctor;//CMAlloctor_s * description
-    void (* _Nonnull init)(void * _Nonnull object);
-    void (* _Nonnull deinit)(void * _Nonnull object);
-    size_t (* _Nonnull descript)(void * _Nonnull object, char * _Nonnull buffer, size_t bufferSize);
+    void (* _Nonnull descript)(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript/*会被调用多次*/);
 
-    void * _Nonnull (* _Nonnull retain)(void * _Nonnull object);
-    void * _Nullable (* _Nonnull tryRetain)(void * _Nonnull object);
-    void (* _Nonnull release)(void * _Nonnull object);
-} CETypeBaseInfo_s;
+    CERef _Nonnull (* _Nonnull retain)(CERef _Nonnull object);
+    CERef _Nullable (* _Nonnull tryRetain)(CERef _Nonnull object);
+    void (* _Nonnull release)(CERef _Nonnull object);
+};
 
-typedef struct __CMAlloctor {
-    void * _Nonnull (* _Nonnull allocate)(CETypeBaseInfo_s const * _Nonnull type, size_t size);
-    void (* _Nonnull deallocate)(CETypeBaseInfo_s const * _Nonnull type, void * _Nonnull ptr, size_t size);
+struct __CEAlloctor {
+    void * _Nonnull (* _Nonnull allocate)(CETypeBase_s const * _Nonnull type, size_t size);
+    void (* _Nonnull deallocate)(CETypeBase_s const * _Nonnull type, void * _Nonnull ptr, size_t size);
     void * _Nullable context;
-} CMAlloctor_s;
+};
 
+extern CETypeBase_s __CETypeMate;
 
+#define CETypeMateRef (&__CETypeMate)
 
-typedef struct __CEMateType {
-    void * _Nonnull type;
-    char * _Nonnull name;
-    uint32_t masks;
-    uint32_t objectSize;
-    void const * _Nullable alloctor;//CMAlloctor_s *
-    void (* _Nonnull deinit)(void * _Nonnull object);
-    CERC_s * _Nonnull rc;
-} CEMateType_s;
+#pragma pack(pop)
+
+CERef _Nonnull CERetain(CERef _Nonnull object);
+CERef _Nullable CETryRetain(CERef _Nonnull object);
+void CERelease(CERef _Nonnull object);
+
 
 
 #endif /* CEBaseType_h */

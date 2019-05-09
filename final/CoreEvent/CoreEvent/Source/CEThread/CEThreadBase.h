@@ -124,6 +124,7 @@ typedef struct _CETaskBase {
 
 
 struct _CENoescapingTask {
+//    CEObjectRuntimeBase_t runtime;
     CETaskBase_t base;
     CEQueueRef _Nullable sourceQueue;
     CEParamType_e paramTypes[CETaskParamItemBufferSize];

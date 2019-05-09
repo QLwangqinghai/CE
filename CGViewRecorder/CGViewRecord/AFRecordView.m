@@ -78,10 +78,10 @@
 }
 
 - (void)dis {
-    UIGraphicsBeginImageContext(self.bounds.size);
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, [UIScreen mainScreen].scale);
     
     CFTimeInterval bt = CACurrentMediaTime();
-    [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:false];
+    [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:true];
     CFTimeInterval et = CACurrentMediaTime();
     
     CGImageRef i = CGBitmapContextCreateImage(UIGraphicsGetCurrentContext());
@@ -96,7 +96,7 @@
     
     __times ++;
     
-    if (t - __time > 1) {
+    if (t - __time > 3) {
         __time = t;
         
         NSLog(@"times %ld", __times);

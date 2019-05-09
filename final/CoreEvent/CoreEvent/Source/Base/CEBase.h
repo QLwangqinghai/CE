@@ -173,21 +173,44 @@ typedef struct __CERC {
     void (* _Nonnull deinit)(void * _Nonnull object);
     
 } CERC_s;
+
+
+typedef uint32_t CETypeMask_t;
+static const CETypeMask_t CETypeMaskDefaultRc = 0x80000000u;
+static const CETypeMask_t CETypeMaskMate = 0x40000000u;
+
 typedef struct __CETypeBaseInfo {
     void * _Nonnull type;
     char * _Nonnull name;
-    size_t objectSize;
-    void const * _Nullable alloctor;//CMAlloctor_s *
+    uint32_t masks;
+    uint32_t objectSize;
+    void const * _Nullable alloctor;//CMAlloctor_s * description
+    void (* _Nonnull init)(void * _Nonnull object);
     void (* _Nonnull deinit)(void * _Nonnull object);
-    CERC_s * _Nonnull rc;
+    size_t (* _Nonnull descript)(void * _Nonnull object, char * _Nonnull buffer, size_t bufferSize);
+
+    void * _Nonnull (* _Nonnull retain)(void * _Nonnull object);
+    void * _Nullable (* _Nonnull tryRetain)(void * _Nonnull object);
+    void (* _Nonnull release)(void * _Nonnull object);
 } CETypeBaseInfo_s;
 
 typedef struct __CMAlloctor {
-    void * _Nonnull (* _Nonnull allocate)(struct __CMAlloctor const * _Nonnull alloctor, size_t size);
-    void (* _Nonnull deallocate)(struct __CMAlloctor const * _Nonnull alloctor, void * _Nonnull ptr, size_t size);
+    void * _Nonnull (* _Nonnull allocate)(CETypeBaseInfo_s const * _Nonnull type, size_t size);
+    void (* _Nonnull deallocate)(CETypeBaseInfo_s const * _Nonnull type, void * _Nonnull ptr, size_t size);
     void * _Nullable context;
 } CMAlloctor_s;
 
+
+
+typedef struct __CEMateType {
+    void * _Nonnull type;
+    char * _Nonnull name;
+    uint32_t masks;
+    uint32_t objectSize;
+    void const * _Nullable alloctor;//CMAlloctor_s *
+    void (* _Nonnull deinit)(void * _Nonnull object);
+    CERC_s * _Nonnull rc;
+} CEMateType_s;
 
 
 #endif /* CEBaseType_h */

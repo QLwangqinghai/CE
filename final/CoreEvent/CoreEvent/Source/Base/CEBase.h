@@ -243,15 +243,14 @@ struct __CETypeBase {
     
     char * _Nonnull name;
     void (* _Nonnull descript)(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript/*会被调用多次*/);
-
-    CERef _Nonnull (* _Nonnull retain)(CERef _Nonnull object);
-    CERef _Nullable (* _Nonnull tryRetain)(CERef _Nonnull object);
-    void (* _Nonnull release)(CERef _Nonnull object);
 };
 
 struct __CEAlloctor {
     void * _Nonnull (* _Nonnull allocate)(CETypeBase_s const * _Nonnull type, size_t size);
     void (* _Nonnull deallocate)(CETypeBase_s const * _Nonnull type, void * _Nonnull ptr, size_t size);
+    CERef _Nonnull (* _Nonnull retain)(CERef _Nonnull object);
+    CERef _Nullable (* _Nonnull tryRetain)(CERef _Nonnull object);
+    void (* _Nonnull release)(CERef _Nonnull object);
     void * _Nullable context;
 };
 

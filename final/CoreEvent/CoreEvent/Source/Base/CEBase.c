@@ -19,11 +19,22 @@ void * _Nonnull __CETypeMateAllocate(CETypeBase_s const * _Nonnull type, size_t 
 void __CETypeMateDeallocate(CETypeBase_s const * _Nonnull type, void * _Nonnull ptr, size_t size) {
     CEDeallocate(ptr);
 }
+CERef _Nonnull __CETypeMateRetain(CERef _Nonnull object) {
+    return object;
+}
+CERef _Nullable __CETypeMateTryRetain(CERef _Nonnull object) {
+    return object;
+}
+void __CETypeMateRelease(CERef _Nonnull object) {
+}
 
 CEAlloctor_s __CETypeMateAlloctor = {
     .allocate = __CETypeMateAllocate,
     .deallocate = __CETypeMateDeallocate,
     .context = NULL,
+    .retain = &__CETypeMateRetain,
+    .tryRetain = __CETypeMateTryRetain,
+    .release = __CETypeMateRelease,
 };
 
 
@@ -41,14 +52,7 @@ void __CETypeMateDescript(CERef _Nonnull object, void const * _Nonnull handler, 
     descript(handler, buffer);
 }
 
-CERef _Nonnull __CETypeMateRetain(CERef _Nonnull object) {
-    return object;
-}
-CERef _Nullable __CETypeMateTryRetain(CERef _Nonnull object) {
-    return object;
-}
-void __CETypeMateRelease(CERef _Nonnull object) {
-}
+
 
 CETypeBase_s __CETypeMate = {
     .type = &__CETypeMate,
@@ -64,21 +68,18 @@ CETypeBase_s __CETypeMate = {
     .name = "CEType",
     .descript = __CETypeMateDescript,
     
-    .retain = &__CETypeMateRetain,
-    .tryRetain = __CETypeMateTryRetain,
-    .release = __CETypeMateRelease,
 };
 
 
 CERef _Nonnull CERetain(CERef _Nonnull object) {
     assert(object);
-    return ((CEObjectRuntimeBase_t *)object)->type->retain(object);
+    return ((CEObjectRuntimeBase_t *)object)->type->alloctor->retain(object);
 }
 CERef _Nullable CETryRetain(CERef _Nonnull object) {
     assert(object);
-    return ((CEObjectRuntimeBase_t *)object)->type->tryRetain(object);
+    return ((CEObjectRuntimeBase_t *)object)->type->alloctor->tryRetain(object);
 }
 void CERelease(CERef _Nonnull object) {
     assert(object);
-    return ((CEObjectRuntimeBase_t *)object)->type->release(object);
+    return ((CEObjectRuntimeBase_t *)object)->type->alloctor->release(object);
 }

@@ -178,12 +178,14 @@ typedef void * CERef;
 
 typedef void (*CEDescript_f)(void const * _Nonnull handler, char const * _Nonnull buffer);
 
-struct __CEObjectRuntimeBase;
-typedef struct __CEObjectRuntimeBase CEObjectRuntimeBase_t;
+struct __CERuntimeBase;
+typedef struct __CERuntimeBase CERuntimeBase_t;
 
-struct __CEObjectRuntimeRcBase;
-typedef struct __CEObjectRuntimeRcBase CEObjectRuntimeRcBase_t;
+struct __CERuntimeAtomicRcBase;
+typedef struct __CERuntimeAtomicRcBase CERuntimeAtomicRcBase_t;
 
+struct __CERuntimeUnsafeRcBase;
+typedef struct __CERuntimeUnsafeRcBase CERuntimeUnsafeRcBase_t;
 
 struct __CETypeBase;
 typedef struct __CETypeBase CETypeBase_s;
@@ -207,26 +209,33 @@ typedef uint16_t CETypeMask_t;
 #define CETypeMaskVersionBitCount 16
 
 #if CEBuild64Bit
-#define CETypeBaseLayoutSize 88
+#define CETypeBaseLayoutSize 64
 #else
-#define CETypeBaseLayoutSize 48
+#define CETypeBaseLayoutSize 36
 #endif
 
 
 #pragma pack(push)
 #pragma pack(1)
 
-
-struct __CEObjectRuntimeBase {
+struct __CERuntimeBase {
     CETypeBase_s const * const _Nonnull type;
 };
 
-struct __CEObjectRuntimeRcBase {
+struct __CERuntimeAtomicRcBase {
     CETypeBase_s const * const _Nonnull type;
 #if CEBuild64Bit
     _Atomic(uint_fast64_t) rcInfo;
 #else
     _Atomic(uint_fast32_t) rcInfo;
+#endif
+};
+struct __CERuntimeUnsafeRcBase {
+    CETypeBase_s const * const _Nonnull type;
+#if CEBuild64Bit
+    uint64_t rcInfo;
+#else
+    uint32_t rcInfo;
 #endif
 };
 
@@ -253,12 +262,12 @@ struct __CEAlloctor {
     void (* _Nonnull release)(CERef _Nonnull object);
     void * _Nullable context;
 };
+#pragma pack(pop)
 
 extern CETypeBase_s __CETypeMate;
 
 #define CETypeMateRef (&__CETypeMate)
 
-#pragma pack(pop)
 
 CERef _Nonnull CERetain(CERef _Nonnull object);
 CERef _Nullable CETryRetain(CERef _Nonnull object);

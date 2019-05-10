@@ -73,13 +73,13 @@ CETypeBase_s __CETypeMate = {
 
 CERef _Nonnull CERetain(CERef _Nonnull object) {
     assert(object);
-    return ((CEObjectRuntimeBase_t *)object)->type->alloctor->retain(object);
+    return ((CERuntimeBase_t *)object)->type->alloctor->retain(object);
 }
 CERef _Nullable CETryRetain(CERef _Nonnull object) {
     assert(object);
-    return ((CEObjectRuntimeBase_t *)object)->type->alloctor->tryRetain(object);
+    return ((CERuntimeBase_t *)object)->type->alloctor->tryRetain(object);
 }
 void CERelease(CERef _Nonnull object) {
     assert(object);
-    return ((CEObjectRuntimeBase_t *)object)->type->alloctor->release(object);
+    return ((CERuntimeBase_t *)object)->type->alloctor->release(object);
 }

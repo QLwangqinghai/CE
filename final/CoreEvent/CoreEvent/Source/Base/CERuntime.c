@@ -21,7 +21,7 @@ void __CETypeMateDeallocate(CETypeBase_s const * _Nonnull type, void * _Nonnull 
 }
 
 
-void __CETypeDestroyWeakRefrences(CERef _Nonnull object) {
+void __CETypeMateDestroyWeakRefrences(CERef _Nonnull object) {
     assert(object);
 }
 CERef _Nonnull __CETypeMateRetain(CERef _Nonnull object) {
@@ -40,7 +40,7 @@ static const CEAlloctor_s __CETypeMateAlloctor = {
     .context = NULL,
     .allocate = __CETypeMateAllocate,
     .deallocate = __CETypeMateDeallocate,
-    .destroyWeakRefrences = __CETypeDestroyWeakRefrences,
+    .destroyWeakRefrences = __CETypeMateDestroyWeakRefrences,
     .retain = __CETypeMateRetain,
     .tryRetain = __CETypeMateTryRetain,
     .release = __CETypeMateRelease,
@@ -90,6 +90,11 @@ CERef _Nullable CETryRetain(CERef _Nonnull object) {
 void CERelease(CERef _Nonnull object) {
     assert(object);
     return ((CERuntimeBase_t *)object)->type->alloctor->release(object);
+}
+
+
+void __CETypeDestroyWeakRefrences(CERef _Nonnull object) {
+    assert(object);
 }
 
 static inline CERef _Nullable ___CETypeRetain(CERef _Nonnull object, _Bool tryR) {
@@ -280,6 +285,7 @@ const CEAlloctor_s __CETypeDefaultAlloctor = {
     .context = NULL,
     .allocate = __CETypeMateAllocate,
     .deallocate = __CETypeMateDeallocate,
+    .destroyWeakRefrences = __CETypeDestroyWeakRefrences,
     .retain = __CETypeMateRetain,
     .tryRetain = __CETypeMateTryRetain,
     .release = __CETypeMateRelease,

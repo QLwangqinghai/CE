@@ -39,16 +39,13 @@ typedef uint16_t CETypeMask_t;
 
 #define CETypeBitHasRc 0x8000u
 #define CETypeBitRcAtomic 0x4000u
-
 #define CETypeBitWeakable 0x2000u
-
 
 #define CETypeMaskRcAtomic (CETypeBitHasRc | CETypeBitRcAtomic)
 #define CETypeMaskRcUnsafe (CETypeBitHasRc)
 #define CETypeMaskNoRc 0x0u
 
 #define CETypeMaskDefaultRc CETypeMaskRcAtomic
-
 
 
 #define CETypeMaskVersionBitCount 16
@@ -61,20 +58,16 @@ typedef uint16_t CETypeMask_t;
 
 #if CEBuild64Bit
 
-#define CERuntimeRcStatic 0x7FFFFFFFFFFFFFFCull
-#define CERuntimeRcDeallocing 0x7FFFFFFFFFFFFFFDull
-#define CERuntimeRcDeiniting 0x7FFFFFFFFFFFFFFEull//调用deinit -> dealloc
-#define CERuntimeRcPrepareDeinit 0x7FFFFFFFFFFFFFFFull //不允许retain， 清空弱引用
+#define CERuntimeRcStatic 0x7FFFFFFFFFFFFFFEull
+#define CERuntimeRcDeallocing 0x7FFFFFFFFFFFFFFFull //不允许retain， 清空弱引用
 
 #define CERuntimeRcWeakBit 0x8000000000000000ull
 #define CERuntimeRcMask 0x7FFFFFFFFFFFFFFFull
 
 #else
 
-#define CERuntimeRcStatic 0xFFFFFFFCul
-#define CERuntimeRcDeallocing 0xFFFFFFFDul
-#define CERuntimeRcDeiniting 0xFFFFFFFEul
-#define CERuntimeRcPrepareDeinit 0x7FFFFFFFul
+#define CERuntimeRcStatic 0xFFFFFFFEul
+#define CERuntimeRcDeallocing 0x7FFFFFFFul
 
 #define CERuntimeRcWeakBit 0x80000000ul
 #define CERuntimeRcMask 0x7FFFFFFFul
@@ -83,9 +76,9 @@ typedef uint16_t CETypeMask_t;
 
 
 #if CEBuild64Bit
-typedef uint64_t CERcType_t;
+#define CERcType_t uint64_t
 #else
-typedef uint32_t CERcType_t;
+#define CERcType_t uint32_t
 #endif
 
 
@@ -118,7 +111,7 @@ struct __CETypeBase {
     uint16_t version;
     uint16_t masks;
     uint32_t objectSize;//objectSize 为0 时 size 为变长
-    size_t (* _Nonnull getSize)(CETypeBase_s * _Nonnull type, CERef _Nonnull object);
+    size_t (* _Nonnull getSize)(CETypeBase_s const * _Nonnull type, CERef _Nonnull object);
     
     CEAlloctor_s const * _Nullable alloctor;//CMAlloctor_s * description
     void (* _Nonnull deinit)(CERef _Nonnull object);
@@ -131,6 +124,7 @@ struct __CEAlloctor {
     void * _Nullable context;
     void * _Nonnull (* _Nonnull allocate)(CETypeBase_s const * _Nonnull type, size_t size);
     void (* _Nonnull deallocate)(CETypeBase_s const * _Nonnull type, void * _Nonnull ptr, size_t size);
+    void (* _Nonnull destroyWeakRefrences)(CERef _Nonnull object);
     CERef _Nonnull (* _Nonnull retain)(CERef _Nonnull object);
     CERef _Nullable (* _Nonnull tryRetain)(CERef _Nonnull object);
     void (* _Nonnull release)(CERef _Nonnull object);

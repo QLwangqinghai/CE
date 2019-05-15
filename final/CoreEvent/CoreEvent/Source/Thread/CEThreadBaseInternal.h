@@ -47,7 +47,7 @@ struct _CEThreadLoader {
 struct _CETaskWorker {
     CEThreadRef _Nonnull thread;
     CESourceRef _Nonnull source;
-    
+    void * owmerQueue;
     CESemRef _Nonnull sem;
 };
 

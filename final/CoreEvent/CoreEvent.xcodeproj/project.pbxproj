@@ -521,7 +521,7 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		D6378D922281777A006A46E6 /* CEThread */ = {
+		D6378D922281777A006A46E6 /* Thread */ = {
 			isa = PBXGroup;
 			children = (
 				D6378D93228177CD006A46E6 /* CEThreadBase.h */,
@@ -538,7 +538,7 @@
 				D647C857227F2910004AAA19 /* CETaskExecuteObserver.h */,
 				D647C858227F2910004AAA19 /* CETaskExecuteObserver.c */,
 			);
-			path = CEThread;
+			path = Thread;
 			sourceTree = "<group>";
 		};
 		D644A9EC227C248400F6B333 /* CoreEventV5 */ = {
@@ -709,7 +709,7 @@
 		D644AB37227C7B6900F6B333 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				D6378D922281777A006A46E6 /* CEThread */,
+				D6378D922281777A006A46E6 /* Thread */,
 				D644ABD7227C973100F6B333 /* RunLoop */,
 				D644ABD6227C952D00F6B333 /* Base */,
 				D644ABBC227C7CD200F6B333 /* CEBaseType.h */,

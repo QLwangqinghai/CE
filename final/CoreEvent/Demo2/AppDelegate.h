@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+//http://ip.taobao.com/service/getIpInfo.php?ip=myip
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
 

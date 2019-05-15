@@ -93,6 +93,35 @@ void CERelease(CERef _Nonnull object) {
 }
 
 
+void * _Nonnull __CETypeAllocate(CETypeBase_s const * _Nonnull type, size_t size) {
+    void * object = CEAllocateClear(size);
+    CETypeBase_s * ptr = object;
+    *(CETypeBase_s const **)(&(ptr->type)) = type;
+    
+    if (__builtin_expect(((type->masks & CETypeBitHasRc) == CETypeBitHasRc), true)) {
+        if ((type->masks & CETypeBitRcAtomic) == CETypeBitRcAtomic) {
+            CERuntimeAtomicRcBase_t * header = object;
+            
+#if CEBuild64Bit
+            uint_fast64_t rcInfo = 1;
+            _Atomic(uint_fast64_t) * rcInfoPtr = &(header->rcInfo);
+#else
+            uint_fast32_t rcInfo = 1;
+            _Atomic(uint_fast32_t) * rcInfoPtr = &(header->rcInfo);
+#endif
+            atomic_store(rcInfoPtr, rcInfo);
+        } else {
+            CERuntimeUnsafeRcBase_t * header = object;
+            header->rcInfo = 1;
+        }
+    }
+    
+    return ptr;
+}
+void __CETypeDeallocate(CETypeBase_s const * _Nonnull type, void * _Nonnull ptr, size_t size) {
+    CEDeallocate(ptr);
+}
+
 void __CETypeDestroyWeakRefrences(CERef _Nonnull object) {
     assert(object);
 }
@@ -283,8 +312,8 @@ void __CETypeRelease(CERef _Nonnull object) {
 
 const CEAlloctor_s __CETypeDefaultAlloctor = {
     .context = NULL,
-    .allocate = __CETypeMateAllocate,
-    .deallocate = __CETypeMateDeallocate,
+    .allocate = __CETypeAllocate,
+    .deallocate = __CETypeDeallocate,
     .destroyWeakRefrences = __CETypeDestroyWeakRefrences,
     .retain = __CETypeMateRetain,
     .tryRetain = __CETypeMateTryRetain,

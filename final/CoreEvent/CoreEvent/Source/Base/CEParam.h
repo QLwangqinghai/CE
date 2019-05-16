@@ -11,6 +11,7 @@
 
 #include "CEBase.h"
 #include "CEParamItem.h"
+#include "CERuntime.h"
 
 typedef void * CEStackParamRef;
 typedef void * CEHeapParamRef;

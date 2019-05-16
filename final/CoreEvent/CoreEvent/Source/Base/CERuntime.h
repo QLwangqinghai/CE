@@ -11,7 +11,7 @@
 
 #include "CEBase.h"
 
-
+#define CERuntimeVersion 1
 
 typedef void * CERef;
 
@@ -73,6 +73,8 @@ typedef uint16_t CETypeMask_t;
 #define CERuntimeRcMask 0x7FFFFFFFul
 
 #endif
+
+void CETypeDefaultDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript);
 
 
 #if CEBuild64Bit

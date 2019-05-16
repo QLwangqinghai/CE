@@ -10,6 +10,14 @@
 #include "CEMemory.h"
 
 
+void CETypeDefaultDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript) {
+    char buffer[32] = {};
+    descript(handler, "<");
+    descript(handler, ((CEType_s *)object)->name);
+    snprintf(buffer, 31, ":%p>", object);
+    descript(handler, buffer);
+}
+
 
 void * _Nonnull __CETypeMateAllocate(CETypeRef _Nonnull type, size_t size) {
     CEType_s * ptr = CEAllocateClear(size);
@@ -56,16 +64,14 @@ void __CETypeMateDeinit(CERef _Nonnull object) {
 }
 
 void __CETypeMateDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript) {
-    char buffer[1024] = {};
-    snprintf(buffer, 1023, "<%s:%p>", ((CEType_s *)object)->name, object);
-    descript(handler, buffer);
+    CETypeDefaultDescript(object, handler, descript);
 }
 
 
 
 CEType_s __CETypeMate = {
     .type = &__CETypeMate,
-    .version = 1,
+    .version = CERuntimeVersion,
     .masks = 0,
     .objectSize = CETypeBaseLayoutSize,
     .getSize = __CETypeMateGetSize,

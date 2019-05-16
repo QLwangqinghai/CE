@@ -10,6 +10,27 @@
 
 #include "CEMemory.h"
 
+size_t CEStackParamGetSize(CERef _Nonnull ) {
+    
+    
+}
+
+
+CEType_s CETypeStackParam = {
+    .type = &__CETypeMate,
+    .version = CERuntimeVersion,
+    .masks = 0,
+    .objectSize = CETypeBaseLayoutSize,
+    .getSize = __CETypeMateGetSize,
+    
+    .alloctor = &__CETypeDefaultAlloctor,
+    .deinit = __CETypeMateDeinit,
+    
+    .name = "CEStackParam",
+    .descript = CETypeDefaultDescript,
+    
+};
+
 
 
 typedef struct _CEParamItemContent {
@@ -32,8 +53,8 @@ typedef struct _CEParamBase {
     uint16_t count;
 #endif
     
-    CEParamItem_s items[CEParamItemMaxCount];
-    uint8_t * _Nonnull content;
+//    CEParamItem_s items[CEParamItemMaxCount];
+//    uint8_t * _Nonnull content;
 } CEParamBase_t;
 
 struct _CEParam {
@@ -93,22 +114,22 @@ struct _CEParam11 {
 //
 //    uint32_t refCount = 0;
 //    uint32_t newValue = 0;
-//    
+//
 //    do {
 //        refCount = atomic_load(&(param->refCount));
 //        assert(refCount > 0);
 //        newValue = refCount + 1;
 //    } while (!atomic_compare_exchange_weak(&(param->refCount), &refCount, newValue));
-//    
+//
 //    return param;
 //}
 //
 //void CEParamRelease(CEParamRef _Nonnull param) {
 //    assert(param);
-//    
+//
 //    uint32_t refCount = 0;
 //    uint32_t newValue = 0;
-//    
+//
 //    do {
 //        refCount = atomic_load(&(param->refCount));
 //        assert(refCount > 0);
@@ -135,11 +156,11 @@ struct _CEParam11 {
 //        return false;
 //    }
 //    CEParamItemContent_s * contents = (CEParamItemContent_s *)&(param->content[param->typeContentSize]);
-//    
+//
 //    CEParamItemContent_s * item = contents + index;
 //
 //    CEParamItemValue_u value = {};
-//    
+//
 //    switch (type) {
 //        case CEParamTypePtr: {
 //            void ** ptr = valuePtr;
@@ -213,7 +234,7 @@ struct _CEParam11 {
 //    item->typeName = typeName;
 //    item->release = release;
 //    item->value = value;
-//    
+//
 //    return true;
 //}
 //
@@ -230,11 +251,11 @@ struct _CEParam11 {
 //
 //    CEParamItemContent_s * contents = (CEParamItemContent_s *)&(param->content[param->typeContentSize]);
 //    CEParamItemContent_s * content = contents + index;
-//    
+//
 //    itemRef->type = param->content[index];
 //    itemRef->name = content->name;
 //    itemRef->typeName = content->typeName;
 //    itemRef->value = content->value;
-//    
+//
 //    return true;
 //}

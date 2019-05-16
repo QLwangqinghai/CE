@@ -11,7 +11,7 @@
 
 #include "CEBase.h"
 #include <pthread.h>
-
+#include "CERuntime.h"
 #include "CEParam.h"
 
 #define CETaskParamItemBufferSize 16
@@ -78,8 +78,8 @@ typedef struct _CETask CETask_s;
 typedef CETask_s * CETaskRef;
 typedef CETaskRef CEEscapingTaskRef;
 
-struct _CENoescapingTask;
-typedef struct _CENoescapingTask CENoescapingTask_s;
+struct _CESyncTask;
+typedef struct _CESyncTask CENoescapingTask_s;
 typedef CENoescapingTask_s * CENoescapingTaskRef;
 
 typedef void (*CETaskExecute_f)(CETaskExecuteContextRef _Nonnull context);
@@ -98,6 +98,11 @@ typedef CETaskExecuteObserver_s * CETaskExecuteObserverRef;
 
 typedef CEParamRef _Nullable * _Nullable (*CETaskExecuteObserverGetResultReceiver_f)(CETaskExecuteObserverRef _Nonnull observer);
 typedef void (*CETaskExecuteObserverFinish_f)(CETaskExecuteObserverRef _Nonnull observer);
+
+struct _CETaskResult {
+    uint32_t paramCount;
+    
+};
 
 struct _CETaskContext {
     CEParamRef _Nullable * _Nullable resultReceiver;
@@ -123,9 +128,10 @@ typedef struct _CETaskBase {
 } CETaskBase_t;
 
 
-struct _CENoescapingTask {
+struct _CESyncTask {
 //    CEObjectRuntimeBase_t runtime;
     CETaskBase_t base;
+    CETaskContextRef _Nonnull context;
     CEQueueRef _Nullable sourceQueue;
     CEParamType_e paramTypes[CETaskParamItemBufferSize];
     CEParamItemValue_u paramItems[CETaskParamItemBufferSize];
@@ -138,11 +144,11 @@ typedef os_unfair_lock CESpinLock_t;
 typedef pthread_spinlock_t CESpinLock_t;
 #endif
 
-void CESpinLockInit(CESpinLock_t * _Nonnull lockRef);
-void CESpinLockDeinit(CESpinLock_t * _Nonnull lockRef);
+void CESpinLockInit(CESpinLock_t * _Nonnull lockPtr);
+void CESpinLockDeinit(CESpinLock_t * _Nonnull lockPtr);
 
-void CESpinLockLock(CESpinLock_t * _Nonnull lockRef);
-void CESpinLockUnlock(CESpinLock_t * _Nonnull lockRef);
+void CESpinLockLock(CESpinLock_t * _Nonnull lockPtr);
+void CESpinLockUnlock(CESpinLock_t * _Nonnull lockPtr);
 
 
 

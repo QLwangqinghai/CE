@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-struct __CETypeBase;
-typedef struct __CETypeBase CETypeBase_s;
+struct __CEType;
+typedef struct __CEType CETypeBase_s;
 
 struct __CEAlloctor;
 typedef struct __CEAlloctor CEAlloctor_s;
@@ -22,7 +22,7 @@ static const CETypeMask_t CETypeMaskMate = 0x4000u;
 #pragma pack(push)
 #pragma pack(1)
 
-struct __CETypeBase {
+struct __CEType {
     CETypeBase_s * _Nonnull type;
     uint16_t version;
     uint16_t masks;
@@ -54,7 +54,7 @@ static dispatch_queue_t queue;
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         // insert code here...
-        NSLog(@"Hello, World! %ld", sizeof(struct __CETypeBase));
+        NSLog(@"Hello, World! %ld", sizeof(struct __CEType));
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             NSLog(@"11");

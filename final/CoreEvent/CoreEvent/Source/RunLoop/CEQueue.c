@@ -31,6 +31,10 @@ void CEQueueSync(CEQueueRef _Nonnull queue, CENoescapingTaskRef _Nonnull task) {
     
     CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
 
+    //获取sync任务的上下文 获取不到， 则创建
+    CETaskSyncContextPtr syncContext = specific->syncContext;
+
+    
     if (queue->base.maxConcurrentCount <= 1) {
         CEQueueSerialSync(queue, task, specific);
     } else {

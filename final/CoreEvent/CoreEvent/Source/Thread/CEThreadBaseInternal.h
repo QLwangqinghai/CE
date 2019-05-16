@@ -13,7 +13,7 @@
 
 struct _CETaskSyncContext;
 typedef struct _CETaskSyncContext CETaskSyncContext_t;
-typedef CETaskSyncContext_t * CETaskSyncContextRef;
+typedef CETaskSyncContext_t * CETaskSyncContextPtr;
 
 typedef struct _CEQueueBase {
     char * _Nonnull label;
@@ -58,7 +58,7 @@ struct _CEThreadSpecific {
     
     CEQueueBaseRef _Nullable queue;
     CETaskBase_t * _Nullable task;
-    CETaskSyncContextRef _Nullable syncContext;
+    CETaskSyncContextPtr _Nullable syncContext;
     
 };
 
@@ -72,13 +72,14 @@ typedef struct _CETaskSyncContextItem {
 } CETaskSyncContextItem_t;
 
 typedef struct _CETaskSyncContext {
+    void * owner;
     size_t blockingQueueCount;
     CETaskSyncContextItem_t blocking[16];
     CETaskSyncContextItem_t * _Nullable moreBlocking;
     CETaskSyncContextItem_t current;
 } CETaskSyncContext_t;
 
-typedef CETaskSyncContext_t * CETaskSyncContextRef;
+typedef CETaskSyncContext_t * CETaskSyncContextPtr;
 
 
 

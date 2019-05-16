@@ -26,9 +26,9 @@ typedef struct __CERuntimeAtomicRcBase CERuntimeAtomicRcBase_t;
 struct __CERuntimeUnsafeRcBase;
 typedef struct __CERuntimeUnsafeRcBase CERuntimeUnsafeRcBase_t;
 
-struct __CETypeBase;
-typedef struct __CETypeBase CETypeBase_s;
-typedef const CETypeBase_s * CETypeBaseRef;
+struct __CEType;
+typedef struct __CEType CEType_s;
+typedef CEType_s const * CETypeRef;
 
 
 struct __CEAlloctor;
@@ -86,11 +86,11 @@ typedef uint16_t CETypeMask_t;
 #pragma pack(1)
 
 struct __CERuntimeBase {
-    CETypeBase_s const * const _Nonnull type;
+    CETypeRef const _Nonnull type;
 };
 
 struct __CERuntimeAtomicRcBase {
-    CETypeBase_s const * const _Nonnull type;
+    CETypeRef const _Nonnull type;
 #if CEBuild64Bit
     _Atomic(uint_fast64_t) rcInfo;
 #else
@@ -98,7 +98,7 @@ struct __CERuntimeAtomicRcBase {
 #endif
 };
 struct __CERuntimeUnsafeRcBase {
-    CETypeBase_s const * const _Nonnull type;
+    CETypeRef const _Nonnull type;
 #if CEBuild64Bit
     uint64_t rcInfo;
 #else
@@ -106,12 +106,12 @@ struct __CERuntimeUnsafeRcBase {
 #endif
 };
 
-struct __CETypeBase {
-    CETypeBase_s const * const _Nonnull type;
+struct __CEType {
+    CETypeRef const _Nonnull type;
     uint16_t version;
     uint16_t masks;
     uint32_t objectSize;//objectSize 为0 时 size 为变长
-    size_t (* _Nonnull getSize)(CETypeBase_s const * _Nonnull type, CERef _Nonnull object);
+    size_t (* _Nonnull getSize)(CETypeRef _Nonnull type, CERef _Nonnull object);
     
     CEAlloctor_s const * _Nullable alloctor;//CMAlloctor_s * description
     void (* _Nonnull deinit)(CERef _Nonnull object);
@@ -122,8 +122,8 @@ struct __CETypeBase {
 
 struct __CEAlloctor {
     void * _Nullable context;
-    void * _Nonnull (* _Nonnull allocate)(CETypeBase_s const * _Nonnull type, size_t size);
-    void (* _Nonnull deallocate)(CETypeBase_s const * _Nonnull type, void * _Nonnull ptr, size_t size);
+    void * _Nonnull (* _Nonnull allocate)(CETypeRef _Nonnull type, size_t size);
+    void (* _Nonnull deallocate)(CETypeRef _Nonnull type, void * _Nonnull ptr, size_t size);
     void (* _Nonnull destroyWeakRefrences)(CERef _Nonnull object);
     CERef _Nonnull (* _Nonnull retain)(CERef _Nonnull object);
     CERef _Nullable (* _Nonnull tryRetain)(CERef _Nonnull object);
@@ -131,9 +131,9 @@ struct __CEAlloctor {
 };
 #pragma pack(pop)
 
-extern CETypeBase_s __CETypeMate;
+extern CEType_s __CETypeMate;
 
-#define CETypeMateRef (&__CETypeMate)
+#define __CETypeMateRef (&__CETypeMate)
 
 extern const CEAlloctor_s __CETypeDefaultAlloctor;
 

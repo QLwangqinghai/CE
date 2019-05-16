@@ -12,32 +12,62 @@
 #include "CEBase.h"
 #include "CEParamItem.h"
 
+typedef void * CEStackParamRef;
+typedef void * CEHeapParamRef;
+
+
 struct _CEParam;
 typedef struct _CEParam CEParam_s;
 typedef CEParam_s * CEParamRef;
 
-static const uint32_t CEParamItemMaxCount = 255;
+#define CEParamItemMaxCount 16
+//static const uint32_t CEParamItemMaxCount = 32;
 
 typedef void (*CEParamItemRelease_f)(CEParamType_e type, char * _Nullable typeName, CEParamItemValue_u value);
 
-typedef struct _CEParamItem {
-    uint32_t type: 8;
-    uint32_t xxx: 24;
 
 #if CEBuild64Bit
-    uint32_t xxxx: 32;
-#endif
-    
-    char * _Nullable name;//option
-    char * _Nullable typeName;//option
-    CEParamItemValue_u value;
+
+typedef union _CEParamItemInlineValue {
+    _Bool boolValue;
+    int8_t sint8Value;
+    uint8_t uint8Value;
+    int16_t sint16Value;
+    uint16_t uint16Value;
+    int32_t sint32Value;
+    uint32_t uint32Value;
+    float floatValue;
+} CEParamItemInlineValue_u;
+
+typedef struct _CEParamItem {
+    uint64_t type: 6;
+    uint64_t hasRelease: 1;
+    uint64_t content: 57;
 } CEParamItem_s;
+
+#else
+
+typedef union _CEParamItemInlineValue {
+    _Bool boolValue;
+    int8_t sint8Value;
+    uint8_t uint8Value;
+    int16_t sint16Value;
+    uint16_t uint16Value;
+} CEParamItemInlineValue_u;
+
+typedef struct _CEParamItem {
+    uint32_t type: 6;
+    uint32_t hasRelease: 1;
+    uint32_t content: 25;
+} CEParamItem_s;
+
+#endif
+
+
 
 
 CEParamRef _Nullable CEParamInit(uint32_t itemCount);
 
-CEParamRef _Nonnull CEParamRetain(CEParamRef _Nonnull param);
-void CEParamRelease(CEParamRef _Nonnull param);
 
 _Bool CEParamSetItem(CEParamRef _Nonnull param,
                      uint32_t index,

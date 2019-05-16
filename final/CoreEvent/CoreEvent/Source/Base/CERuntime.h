@@ -51,9 +51,9 @@ typedef uint16_t CETypeMask_t;
 #define CETypeMaskVersionBitCount 16
 
 #if CEBuild64Bit
-#define CETypeBaseLayoutSize 56
+#define CETypeBaseLayoutSize 64
 #else
-#define CETypeBaseLayoutSize 32
+#define CETypeBaseLayoutSize 36
 #endif
 
 #if CEBuild64Bit
@@ -75,6 +75,9 @@ typedef uint16_t CETypeMask_t;
 #endif
 
 void CETypeDefaultDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript);
+
+//do nothing
+void CETypeDefaultDeinit(CERef _Nonnull object);
 
 
 #if CEBuild64Bit
@@ -113,12 +116,12 @@ struct __CEType {
     uint16_t version;
     uint16_t masks;
     uint32_t objectSize;//objectSize 为0 时 size 为变长
-    size_t (* _Nonnull getSize)(CETypeRef _Nonnull type, CERef _Nonnull object);
-    
-    CEAlloctor_s const * _Nullable alloctor;//CMAlloctor_s * description
-    void (* _Nonnull deinit)(CERef _Nonnull object);
-    
     char * _Nonnull name;
+    uintptr_t identifier;
+    CEAlloctor_s const * _Nullable alloctor;//CMAlloctor_s * description
+    
+    size_t (* _Nonnull getSize)(CERef _Nonnull object);
+    void (* _Nonnull deinit)(CERef _Nonnull object);
     void (* _Nonnull descript)(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript/*会被调用多次*/);
 };
 
@@ -134,8 +137,7 @@ struct __CEAlloctor {
 #pragma pack(pop)
 
 extern CEType_s __CETypeMate;
-
-#define __CETypeMateRef (&__CETypeMate)
+#define CETypeMate &__CETypeMate
 
 extern const CEAlloctor_s __CETypeDefaultAlloctor;
 
@@ -143,6 +145,9 @@ extern const CEAlloctor_s __CETypeDefaultAlloctor;
 CERef _Nonnull CERetain(CERef _Nonnull object);
 CERef _Nullable CETryRetain(CERef _Nonnull object);
 void CERelease(CERef _Nonnull object);
+
+
+_Bool CETypeIsEqual(CETypeRef _Nonnull type0, CETypeRef _Nonnull type1);
 
 
 #endif /* CERuntime_h */

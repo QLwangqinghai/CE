@@ -17,11 +17,12 @@ void CETypeDefaultDescript(CERef _Nonnull object, void const * _Nonnull handler,
     snprintf(buffer, 31, ":%p>", object);
     descript(handler, buffer);
 }
+void CETypeDefaultDeinit(CERef _Nonnull object) {}
 
 
 void * _Nonnull __CETypeMateAllocate(CETypeRef _Nonnull type, size_t size) {
-    CEType_s * ptr = CEAllocateClear(size);
-    *(CETypeRef*)(&(ptr->type)) = type;
+    void * ptr = CEAllocateClear(size);
+    memcpy(ptr, &type, sizeof(void *));
     return ptr;
 }
 void __CETypeMateDeallocate(CETypeRef _Nonnull type, void * _Nonnull ptr, size_t size) {
@@ -55,7 +56,8 @@ static const CEAlloctor_s __CETypeMateAlloctor = {
 };
 
 
-size_t __CETypeMateGetSize(CETypeRef _Nonnull type, CERef _Nonnull object) {
+size_t __CETypeMateGetSize(CERef _Nonnull object) {
+    CETypeRef type = ((CERuntimeBase_t *)object)->type;
     return type->objectSize;
 }
 void __CETypeMateInit(CERef _Nonnull object) {
@@ -68,21 +70,20 @@ void __CETypeMateDescript(CERef _Nonnull object, void const * _Nonnull handler, 
 }
 
 
-
 CEType_s __CETypeMate = {
     .type = &__CETypeMate,
     .version = CERuntimeVersion,
-    .masks = 0,
+    .masks = CETypeMaskNoRc,
     .objectSize = CETypeBaseLayoutSize,
-    .getSize = __CETypeMateGetSize,
-    
+    .name = "Type",
+    .identifier = UINTPTR_MAX,
     .alloctor = &__CETypeMateAlloctor,
+
+    .getSize = __CETypeMateGetSize,
     .deinit = __CETypeMateDeinit,
-    
-    .name = "CEType",
     .descript = __CETypeMateDescript,
-    
 };
+
 
 
 CERef _Nonnull CERetain(CERef _Nonnull object) {
@@ -101,8 +102,8 @@ void CERelease(CERef _Nonnull object) {
 
 void * _Nonnull __CETypeAllocate(CETypeRef _Nonnull type, size_t size) {
     void * object = CEAllocateClear(size);
+    memcpy(object, &type, sizeof(void *));
     CEType_s * ptr = object;
-    *(CETypeRef*)(&(ptr->type)) = type;
     
     if (__builtin_expect(((type->masks & CETypeBitHasRc) == CETypeBitHasRc), true)) {
         if ((type->masks & CETypeBitRcAtomic) == CETypeBitRcAtomic) {
@@ -263,7 +264,7 @@ void __CETypeRelease(CERef _Nonnull object) {
                     weakBit = rcInfo & CERuntimeRcWeakBit;
                     newRcInfo = weakBit | rc;
                 } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
-                size_t size = type->getSize(type, object);
+                size_t size = type->getSize(object);
                 //清除weak
                 type->alloctor->destroyWeakRefrences(object);
                 //deinit
@@ -302,7 +303,7 @@ void __CETypeRelease(CERef _Nonnull object) {
                 newRcInfo = weakBit | rc;
                 header->rcInfo = newRcInfo;
 
-                size_t size = type->getSize(type, object);
+                size_t size = type->getSize(object);
                 //清除weak
                 type->alloctor->destroyWeakRefrences(object);
                 //deinit
@@ -324,3 +325,9 @@ const CEAlloctor_s __CETypeDefaultAlloctor = {
     .tryRetain = __CETypeMateTryRetain,
     .release = __CETypeMateRelease,
 };
+
+_Bool CETypeIsEqual(CETypeRef _Nonnull type0, CETypeRef _Nonnull type1) {
+    assert(type0);
+    assert(type1);
+    return type0->identifier == type1->identifier;
+}

@@ -20,47 +20,24 @@ typedef void * CEParamRef;
 extern CETypeRef _Nonnull CETypeStackParam;
 extern CETypeRef _Nonnull CETypeHeapParam;
 
-// 58(32+26);  26(14+12)
-#if CEBuild64Bit
+// 26(1+15+10)
 
-//32 kb
-#define CEParamBufferItemsTotalSizeMax 32768
+//16kb
+#define CEParamBufferItemsTotalSizeMax 16384
 
-#define CEParamBufferItemSizeMax 2048
+#define CEParamBufferItemSizeMax 512
 
-#define CEParamItemContentLocationBitCount 32
-#define CEParamItemContentLocationMask 0xFFFFFFFFul
+#define CEParamItemContentLocationBitCount 15
+#define CEParamItemContentLocationMask 0x7FFFu
 
-#define CEParamItemContentLengthBitCount 26
-#define CEParamItemContentLengthMask 0x3FFFFFFul
-
-#else
-
-//8kb
-#define CEParamBufferItemsTotalSizeMax 8192
-
-#define CEParamBufferItemSizeMax 1024
-
-#define CEParamItemContentLocationBitCount 14
-#define CEParamItemContentLocationMask 0x3FFFu
-
-#define CEParamItemContentLengthBitCount 12
-#define CEParamItemContentLengthMask 0xFFFu
-
-#endif
-
+#define CEParamItemContentLengthBitCount 10
+#define CEParamItemContentLengthMask 0x3FFu
 
 #define CEParamItemMaxCount 16
-//static const uint32_t CEParamItemMaxCount = 32;
 
 typedef void (*CEParamItemRelease_f)(CEParamType_e type, void * _Nonnull itemPtr);
 
-#if CEBuild64Bit
-#define CEStackParamSize(capacity, structSize) (CECpuWordByteSize * (1 + capacity) + 8 + 8 * capacity + structSize)
-#else
-#define CEStackParamSize(capacity, structSize) (CECpuWordByteSize * (1 + capacity) + 8 + 8 * capacity + structSize)
-#endif
-
+#define CEStackParamSize(capacity, structSize) (CECpuWordByteSize + 8 + 12 * capacity + structSize)
 
 
 CEStackParamRef _Nullable CEStackParamInit(void * _Nonnull ptr, size_t size, uint32_t capacity);

@@ -381,10 +381,6 @@ _Bool _CEHeapParamAppendContentValue(CEHeapParamRef _Nonnull heapParam, CEParamT
     CEHeapParamCheck(param, type);
     CEHeapParamCheckCapacity(param);
     
-    if (size > CEParamBufferItemSizeMax) {
-        return false;
-    }
-    
     CEParamItem_s * items = (CEParamItem_s *)(param->itemsAndExt);
     uint8_t * ext = param->itemsAndExt + sizeof(CEParamItem_s) * param->base.count;
     uint8_t * target = NULL;
@@ -637,6 +633,9 @@ _Bool CEHeapParamAppendRef(CEHeapParamRef _Nonnull paramRef, CERef _Nullable ite
 _Bool CEHeapParamAppendBuffer(CEHeapParamRef _Nonnull paramRef, void * _Nonnull buffer, size_t size, CEParamItemRelease_f _Nullable release) {
     CEHeapParamAppendCheck;
     if (0 == size) {
+        return false;
+    }
+    if (size > CEParamBufferItemSizeMax) {
         return false;
     }
     return _CEHeapParamAppendContentValue(heapParam, CEParamTypePtr, buffer, size, release);

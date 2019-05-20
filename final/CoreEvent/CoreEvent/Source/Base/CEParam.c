@@ -13,6 +13,9 @@
 
 #pragma mark - private types
 
+
+//
+
 #pragma pack(push)
 #pragma pack(1)
 
@@ -111,11 +114,21 @@ typedef struct _CEHeapParam {
 assert(type);\
 assert(CETypeIsEqual(type, CETypeHeapParam));
 
+#define CEHeapParamAppendCheck CEHeapParam_s * heapParam = paramRef;\
+assert(heapParam);\
+CETypeRef type = heapParam->runtime.type;\
+assert(type);\
+assert(CETypeIsEqual(type, CETypeHeapParam));\
+if (heapParam->base.capacity >= heapParam->base.count) {\
+    return false;\
+}
 
 #define CEHeapParamCheckCapacity(param)     assert(param);\
 if (param->base.capacity >= param->base.count) {\
 return false;\
 }
+
+
 
 
 #pragma mark - CEParamItem private methods
@@ -532,7 +545,9 @@ CEHeapParamRef _Nonnull CEHeapParamCreate(uint32_t capacity, size_t bufferItemsT
 }
 
 
-_Bool CEHeapParamAppendBool(CEHeapParam_s * _Nonnull heapParam, _Bool item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendBool(CEHeapParamRef _Nonnull paramRef, _Bool item, CEParamItemRelease_f _Nullable release) {
+    
+    CEHeapParamAppendCheck;
     if (NULL == release) {
         CEParamItemInlineValue_u value = {
             .boolValue = item,
@@ -542,7 +557,8 @@ _Bool CEHeapParamAppendBool(CEHeapParam_s * _Nonnull heapParam, _Bool item, CEPa
         return _CEHeapParamAppendContentValue(heapParam, CEParamTypeBool, &item, sizeof(_Bool), release);
     }
 }
-_Bool CEHeapParamAppendSInt8(CEHeapParam_s * _Nonnull heapParam, int8_t item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendSInt8(CEHeapParamRef _Nonnull paramRef, int8_t item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     if (NULL == release) {
         CEParamItemInlineValue_u value = {
             .sint8Value = item,
@@ -552,7 +568,8 @@ _Bool CEHeapParamAppendSInt8(CEHeapParam_s * _Nonnull heapParam, int8_t item, CE
         return _CEHeapParamAppendContentValue(heapParam, CEParamTypeSInt8, &item, sizeof(int8_t), release);
     }
 }
-_Bool CEHeapParamAppendUInt8(CEHeapParam_s * _Nonnull heapParam, uint8_t item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendUInt8(CEHeapParamRef _Nonnull paramRef, uint8_t item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     if (NULL == release) {
         CEParamItemInlineValue_u value = {
             .uint8Value = item,
@@ -562,7 +579,8 @@ _Bool CEHeapParamAppendUInt8(CEHeapParam_s * _Nonnull heapParam, uint8_t item, C
         return _CEHeapParamAppendContentValue(heapParam, CEParamTypeUInt8, &item, sizeof(uint8_t), release);
     }
 }
-_Bool CEHeapParamAppendSInt16(CEHeapParam_s * _Nonnull heapParam, int16_t item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendSInt16(CEHeapParamRef _Nonnull paramRef, int16_t item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     if (NULL == release) {
         CEParamItemInlineValue_u value = {
             .sint16Value = item,
@@ -572,7 +590,8 @@ _Bool CEHeapParamAppendSInt16(CEHeapParam_s * _Nonnull heapParam, int16_t item, 
         return _CEHeapParamAppendContentValue(heapParam, CEParamTypeSInt16, &item, sizeof(int16_t), release);
     }
 }
-_Bool CEHeapParamAppendUInt16(CEHeapParam_s * _Nonnull heapParam, uint16_t item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendUInt16(CEHeapParamRef _Nonnull paramRef, uint16_t item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     if (NULL == release) {
         CEParamItemInlineValue_u value = {
             .uint16Value = item,
@@ -583,31 +602,40 @@ _Bool CEHeapParamAppendUInt16(CEHeapParam_s * _Nonnull heapParam, uint16_t item,
     }
 }
 
-_Bool CEHeapParamppendSInt32(CEHeapParam_s * _Nonnull heapParam, int32_t item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamppendSInt32(CEHeapParamRef _Nonnull paramRef, int32_t item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     return _CEHeapParamAppendContentValue(heapParam, CEParamTypeSInt32, &item, sizeof(int32_t), release);
 }
-_Bool CEHeapParamAppendUInt32(CEHeapParam_s * _Nonnull heapParam, uint32_t item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendUInt32(CEHeapParamRef _Nonnull paramRef, uint32_t item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     return _CEHeapParamAppendContentValue(heapParam, CEParamTypeUInt32, &item, sizeof(uint32_t), release);
 }
-_Bool CEHeapParamAppendSInt64(CEHeapParam_s * _Nonnull heapParam, int64_t item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendSInt64(CEHeapParamRef _Nonnull paramRef, int64_t item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     return _CEHeapParamAppendContentValue(heapParam, CEParamTypeSInt64, &item, sizeof(int64_t), release);
 }
-_Bool CEHeapParamAppendUInt64(CEHeapParam_s * _Nonnull heapParam, uint64_t item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendUInt64(CEHeapParamRef _Nonnull paramRef, uint64_t item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     return _CEHeapParamAppendContentValue(heapParam, CEParamTypeUInt64, &item, sizeof(uint64_t), release);
 }
-_Bool CEHeapParamAppendFloat(CEHeapParam_s * _Nonnull heapParam, float item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendFloat(CEHeapParamRef _Nonnull paramRef, float item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     return _CEHeapParamAppendContentValue(heapParam, CEParamTypeFloat, &item, sizeof(float), release);
 }
-_Bool CEHeapParamAppendDouble(CEHeapParam_s * _Nonnull heapParam, double item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendDouble(CEHeapParamRef _Nonnull paramRef, double item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     return _CEHeapParamAppendContentValue(heapParam, CEParamTypeDouble, &item, sizeof(double), release);
 }
-_Bool CEHeapParamAppendPtr(CEHeapParam_s * _Nonnull heapParam, void * _Nullable item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendPtr(CEHeapParamRef _Nonnull paramRef, void * _Nullable item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     return _CEHeapParamAppendContentValue(heapParam, CEParamTypePtr, &item, sizeof(void *), release);
 }
-_Bool CEHeapParamAppendRef(CEHeapParam_s * _Nonnull heapParam, CERef _Nullable item, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendRef(CEHeapParamRef _Nonnull paramRef, CERef _Nullable item, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     return _CEHeapParamAppendContentValue(heapParam, CEParamTypePtr, &item, sizeof(CERef), release);
 }
-_Bool CEHeapParamAppendBuffer(CEHeapParam_s * _Nonnull heapParam, void * _Nonnull buffer, size_t size, CEParamItemRelease_f _Nullable release) {
+_Bool CEHeapParamAppendBuffer(CEHeapParamRef _Nonnull paramRef, void * _Nonnull buffer, size_t size, CEParamItemRelease_f _Nullable release) {
+    CEHeapParamAppendCheck;
     if (0 == size) {
         return false;
     }
@@ -667,7 +695,6 @@ _Bool CEParamGetItemType(CEParamRef _Nonnull param, uint32_t index, CEParamType_
         return false;
     }
 }
-
 
 _Bool CEParamGetBool(CEParamRef _Nonnull param, uint32_t index, _Bool * _Nonnull item) {
     assert(param);

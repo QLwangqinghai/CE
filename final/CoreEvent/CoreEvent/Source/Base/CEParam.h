@@ -79,21 +79,19 @@ _Bool CEParamGetBuffer(CEParamRef _Nonnull param, uint32_t index, void * _Nonnul
 
 
 CEHeapParamRef _Nonnull CEHeapParamCreate(uint32_t capacity, size_t bufferItemsTotalSize);
-
-
-CEParamRef _Nullable CEParamInit(uint32_t itemCount);
-
-
-//_Bool CEParamSetItem(CEParamRef _Nonnull param,
-//                     uint32_t index,
-//                     CEParamType_e type,
-//                     char * _Nullable name,
-//                     char * _Nullable typeName,
-//                     CEParamItemRelease_f _Nullable release,
-//                     void * _Nonnull valuePtr);
-//
-//_Bool CEParamGetItem(CEParamRef _Nonnull param,
-//                     uint32_t index,
-//                     CEParamItem_s * _Nonnull itemRef);
+_Bool CEHeapParamAppendBool(CEHeapParamRef _Nonnull heapParam, _Bool item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendSInt8(CEHeapParamRef _Nonnull heapParam, int8_t item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendUInt8(CEHeapParamRef _Nonnull heapParam, uint8_t item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendSInt16(CEHeapParamRef _Nonnull heapParam, int16_t item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendUInt16(CEHeapParamRef _Nonnull heapParam, uint16_t item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamppendSInt32(CEHeapParamRef _Nonnull heapParam, int32_t item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendUInt32(CEHeapParamRef _Nonnull heapParam, uint32_t item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendSInt64(CEHeapParamRef _Nonnull heapParam, int64_t item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendUInt64(CEHeapParamRef _Nonnull heapParam, uint64_t item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendFloat(CEHeapParamRef _Nonnull heapParam, float item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendDouble(CEHeapParamRef _Nonnull heapParam, double item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendPtr(CEHeapParamRef _Nonnull heapParam, void * _Nullable item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendRef(CEHeapParamRef _Nonnull heapParam, CERef _Nullable item, CEParamItemRelease_f _Nullable release);
+_Bool CEHeapParamAppendBuffer(CEHeapParamRef _Nonnull heapParam, void * _Nonnull buffer, size_t size, CEParamItemRelease_f _Nullable release);
 
 #endif /* CETaskParam_h */

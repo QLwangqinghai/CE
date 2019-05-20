@@ -56,9 +56,9 @@ extern CETypeRef _Nonnull CETypeHeapParam;
 typedef void (*CEParamItemRelease_f)(CEParamType_e type, void * _Nonnull itemPtr);
 
 #if CEBuild64Bit
-#define CEStackParamSize(capacity, structSize) (CECpuWordByteSize * (2 + capacity) + 8 * capacity + structSize)
+#define CEStackParamSize(capacity, structSize) (CECpuWordByteSize * (1 + capacity) + 8 + 8 * capacity + structSize)
 #else
-#define CEStackParamSize(capacity, structSize) (CECpuWordByteSize * (3 + capacity) + 8 * capacity + structSize)
+#define CEStackParamSize(capacity, structSize) (CECpuWordByteSize * (1 + capacity) + 8 + 8 * capacity + structSize)
 #endif
 
 

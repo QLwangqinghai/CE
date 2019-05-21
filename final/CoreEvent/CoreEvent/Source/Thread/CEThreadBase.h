@@ -117,22 +117,25 @@ struct _CETaskExecuteObserver {
 };
 
 typedef struct _CETaskBase {
-    uint64_t tid: 56;
-    uint64_t type: 3;
-    uint64_t paramItemCount: 5;//入参个数
+    uint64_t tid: 60;
+    uint64_t type: 4;
     void * _Nullable relatedTask;//CENoescapingTaskRef, 同步任务的上下文中用到
-    
-    CETaskRelease_f _Nonnull release;
     CETaskExecute_f _Nonnull execute;
+    CEQueueRef _Nonnull targetQueue;
     CETaskExecuteObserverRef _Nullable observer;
 } CETaskBase_t;
 
-
+/*
+ CEQueueRef _Nonnull targetQueue;
+ CETaskExecuteObserverRef _Nullable observer;
+*/
 struct _CESyncTask {
-//    CEObjectRuntimeBase_t runtime;
+    CERuntimeBase_t runtime;
     CETaskBase_t base;
     CETaskContextRef _Nonnull context;
     CEQueueRef _Nullable sourceQueue;
+    
+    
     CEParamType_e paramTypes[CETaskParamItemBufferSize];
     CEParamItemValue_u paramItems[CETaskParamItemBufferSize];
 };

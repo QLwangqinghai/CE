@@ -15,10 +15,6 @@
 
 
 //
-
-#pragma pack(push)
-#pragma pack(1)
-
 typedef union _CEParamItemInlineValue {
     _Bool boolValue;
     int8_t sint8Value;
@@ -26,6 +22,9 @@ typedef union _CEParamItemInlineValue {
     int16_t sint16Value;
     uint16_t uint16Value;
 } CEParamItemInlineValue_u;
+
+#pragma pack(push)
+#pragma pack(1)
 
 typedef struct _CEParamItem {
     uint32_t type: 6;
@@ -79,10 +78,11 @@ CETypeRef _Nonnull CETypeHeapParam = &__CETypeHeapParam;
 #pragma pack(1)
 
 typedef struct _CEParamBase {
-    uint32_t capacity: 8;
-    uint32_t contentSize: 24;
-    uint32_t count: 8;
-    uint32_t contentUsedSize: 24;
+    uint32_t capacity: 6;
+    uint32_t count: 6;
+    uint32_t contentSize: 20;
+    uint32_t error: 12;
+    uint32_t contentUsedSize: 20;
 } CEParamBase_t;
 
 #pragma pack(pop)
@@ -105,7 +105,7 @@ return false;\
 
 
 typedef struct _CEHeapParam {
-    CERuntimeBase_t runtime;
+    CERuntimeAtomicRcBase_t runtime;
     CEParamBase_t base;
     uint8_t itemsAndExt[0];//    CEParamItem_s items[base.bufferSize]; uint8_t content[];
 } CEHeapParam_s;
@@ -261,15 +261,16 @@ CEStackParamRef _Nullable CEStackParamInit(void * _Nonnull ptr, size_t size, uin
     if (baseSize < sizeof(CEStackParam_s)) {
         return NULL;
     }
-    memset(ptr, 0, size);
     memcpy(ptr, &CETypeStackParam, sizeof(void *));
     
     CEStackParam_s * result = ptr;
     result->base.capacity = capacity;
+    result->base.count = 0;
+    result->base.error = 0;
     
     size_t contentSize = size - sizeof(CEStackParam_s);
-    if (contentSize > 0xFFFFFFu) {
-        result->base.contentSize = 0xFFFFFFu;
+    if (contentSize > 0xFFFFFu) {
+        result->base.contentSize = 0xFFFFFu;
     } else {
         result->base.contentSize = (uint32_t)contentSize;
     }

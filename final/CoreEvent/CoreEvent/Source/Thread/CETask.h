@@ -16,7 +16,7 @@
 #include "CETaskExecuteObserver.h"
 
 
-
+#define CEStackParamSize(capacity, structSize) (CECpuWordByteSize + 8 + 12 * capacity + structSize)
 
 
 

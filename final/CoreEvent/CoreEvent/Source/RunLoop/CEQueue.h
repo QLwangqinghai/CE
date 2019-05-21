@@ -13,9 +13,12 @@
 
 
 
+void aa () {
+    CEParamRef param;
+    
+}
 
-
-void CEQueueSync(CEQueueRef _Nonnull queue, CENoescapingTaskRef _Nonnull task);
+void CEQueueSync(CEQueueRef _Nonnull queue, CEParamRef _Nonnull param, CEHeapParamRef _Nullable * _Nullable result, CETaskExecute_f _Nonnull execute);
 
 
 

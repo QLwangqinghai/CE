@@ -72,7 +72,7 @@ typedef struct _CETaskSyncContextItem {
 } CETaskSyncContextItem_t;
 
 typedef struct _CETaskSyncContext {
-    void * owner;
+    void * _Nonnull owner;
     size_t blockingQueueCount;
     CETaskSyncContextItem_t blocking[16];
     CETaskSyncContextItem_t * _Nullable moreBlocking;

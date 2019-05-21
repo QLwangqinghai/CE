@@ -25,9 +25,8 @@ void CEQueueConcurrentSync(CEQueueRef _Nonnull queue, CENoescapingTaskRef _Nonnu
 }
 
 
-void CEQueueSync(CEQueueRef _Nonnull queue, CENoescapingTaskRef _Nonnull task) {
+void CEQueueSync(CEQueueRef _Nonnull queue, CEParamRef _Nonnull param, CEParamRef _Nullable result, CETaskExecute_f _Nonnull execute) {
     assert(queue);
-    assert(task);
     
     CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
 

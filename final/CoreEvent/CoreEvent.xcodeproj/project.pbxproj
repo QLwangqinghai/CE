@@ -121,6 +121,8 @@
 		D6802B30227D717A0083EDBF /* CESem.h in Headers */ = {isa = PBXBuildFile; fileRef = D6802B2E227D717A0083EDBF /* CESem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6802B31227D717A0083EDBF /* CESem.c in Sources */ = {isa = PBXBuildFile; fileRef = D6802B2F227D717A0083EDBF /* CESem.c */; };
 		D6A24A1F2268CEB000C8E4B8 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24A1E2268CEB000C8E4B8 /* Test.swift */; };
+		D6FB5C8E22956C7100859829 /* CETaskContext.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FB5C8C22956C7100859829 /* CETaskContext.h */; };
+		D6FB5C8F22956C7100859829 /* CETaskContext.c in Sources */ = {isa = PBXBuildFile; fileRef = D6FB5C8D22956C7100859829 /* CETaskContext.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -364,6 +366,8 @@
 		D6802B2F227D717A0083EDBF /* CESem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CESem.c; sourceTree = "<group>"; };
 		D6A24A1D2268CEB000C8E4B8 /* Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6A24A1E2268CEB000C8E4B8 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		D6FB5C8C22956C7100859829 /* CETaskContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETaskContext.h; sourceTree = "<group>"; };
+		D6FB5C8D22956C7100859829 /* CETaskContext.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETaskContext.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -543,6 +547,8 @@
 				D647C858227F2910004AAA19 /* CETaskExecuteObserver.c */,
 				D64C4068228D28C60002BFEB /* CETaskSyncContext.h */,
 				D64C4069228D28C60002BFEB /* CETaskSyncContext.c */,
+				D6FB5C8C22956C7100859829 /* CETaskContext.h */,
+				D6FB5C8D22956C7100859829 /* CETaskContext.c */,
 			);
 			path = Thread;
 			sourceTree = "<group>";
@@ -795,6 +801,7 @@
 				D647C84D227DCC09004AAA19 /* CEOperation.h in Headers */,
 				D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */,
 				D6802B30227D717A0083EDBF /* CESem.h in Headers */,
+				D6FB5C8E22956C7100859829 /* CETaskContext.h in Headers */,
 				D647C85D227F4251004AAA19 /* CETaskQueue.h in Headers */,
 				D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */,
 				D67248F4227CABFF00FC8B7A /* CESource.h in Headers */,
@@ -1170,6 +1177,7 @@
 			files = (
 				D644ABBF227C7CD200F6B333 /* CEBaseType.c in Sources */,
 				D647C852227DDE7F004AAA19 /* CETask.c in Sources */,
+				D6FB5C8F22956C7100859829 /* CETaskContext.c in Sources */,
 				D647C856227DFE3A004AAA19 /* CEParam.c in Sources */,
 				D644ABCA227C806300F6B333 /* CEThread.c in Sources */,
 				D647C89422866D0F004AAA19 /* CERuntime.c in Sources */,

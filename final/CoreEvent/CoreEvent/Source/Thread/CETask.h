@@ -31,11 +31,11 @@ CEEscapingTaskRef _Nullable CEEscapingTaskInit(CETaskExecute_f _Nonnull execute,
 
 void CEEscapingTaskRelease(CEEscapingTaskRef _Nonnull task);
 
-_Bool CEEscapingTaskSetParamItem(CEEscapingTaskRef _Nonnull task,
-                                uint32_t index,
-                                CEParamType_e type,
-                                CETaskParamItemRelease_f _Nullable release,
-                                void * _Nonnull valuePtr);
+//_Bool CEEscapingTaskSetParamItem(CEEscapingTaskRef _Nonnull task,
+//                                uint32_t index,
+//                                CEParamType_e type,
+//                                CETaskParamItemRelease_f _Nullable release,
+//                                void * _Nonnull valuePtr);
 
 _Bool CEEscapingTaskGetParamItem(CEEscapingTaskRef _Nonnull task,
                                  uint32_t index,

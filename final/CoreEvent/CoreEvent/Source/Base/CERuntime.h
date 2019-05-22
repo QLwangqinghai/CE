@@ -15,6 +15,11 @@
 
 typedef void * CERef;
 
+typedef CERef _Nonnull (*CERuntimeRetain_f)(CERef _Nonnull object);
+typedef CERef _Nullable (*CERuntimeTryRetain_f)(CERef _Nonnull object);
+typedef void (*CERuntimeRelease_f)(CERef _Nonnull object);
+
+
 typedef void (*CEDescript_f)(void const * _Nonnull handler, char const * _Nonnull buffer);
 
 struct __CERuntimeBase;
@@ -130,9 +135,9 @@ struct __CEAlloctor {
     void * _Nonnull (* _Nonnull allocate)(CETypeRef _Nonnull type, size_t size);
     void (* _Nonnull deallocate)(CETypeRef _Nonnull type, void * _Nonnull ptr, size_t size);
     void (* _Nonnull destroyWeakRefrences)(CERef _Nonnull object);
-    CERef _Nonnull (* _Nonnull retain)(CERef _Nonnull object);
-    CERef _Nullable (* _Nonnull tryRetain)(CERef _Nonnull object);
-    void (* _Nonnull release)(CERef _Nonnull object);
+    CERuntimeRetain_f _Nonnull retain;
+    CERuntimeTryRetain_f _Nonnull tryRetain;
+    CERuntimeRelease_f _Nonnull release;
 };
 #pragma pack(pop)
 

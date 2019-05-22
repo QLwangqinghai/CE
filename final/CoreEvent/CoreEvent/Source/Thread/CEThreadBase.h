@@ -104,12 +104,12 @@ struct _CETaskResult {
     
 };
 
-struct _CETaskContext {
-    CEParamRef _Nullable * _Nullable resultReceiver;
-    CEParamType_e * _Nullable paramTypes;
-    CEParamItemValue_u * _Nullable paramItems;
-    uint32_t paramCount;
-};
+//struct _CETaskContext {
+//    CEParamRef _Nullable * _Nullable resultReceiver;
+//    CEParamType_e * _Nullable paramTypes;
+//    CEParamItemValue_u * _Nullable paramItems;
+//    uint32_t paramCount;
+//};
 
 struct _CETaskExecuteObserver {
     CETaskExecuteObserverGetResultReceiver_f _Nullable getResultReceiver;

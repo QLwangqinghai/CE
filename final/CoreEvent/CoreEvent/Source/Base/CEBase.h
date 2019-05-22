@@ -38,6 +38,7 @@
 
 #include "CEConfig.h"
 
+typedef void * CEPtr;
 
 static inline uint64_t CEGetMicrosecondsTime(void) {
     return CESystemBootMicroseconds();

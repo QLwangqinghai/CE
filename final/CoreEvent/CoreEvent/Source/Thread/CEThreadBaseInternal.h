@@ -30,6 +30,7 @@ struct _CEThread {
 #endif
     size_t nameBufferLength;//==0时 为静态数据
     char * _Nonnull name;
+    CEQueueRef _Nullable queue;
 };
 
 struct _CERunLoop {
@@ -46,7 +47,7 @@ struct _CEThreadLoader {
 
 struct _CETaskWorker {
     CEThreadRef _Nonnull thread;
-    CESourceRef _Nonnull source;
+    CEQueueRef _Nonnull queue;
     void * owmerQueue;
     CESemRef _Nonnull sem;
 };
@@ -80,6 +81,21 @@ typedef struct _CETaskSyncContext {
 } CETaskSyncContext_t;
 
 typedef CETaskSyncContext_t * CETaskSyncContextPtr;
+
+
+typedef struct _CETaskContext {
+    struct _CETaskContext * _Nullable prev;
+
+
+    CEQueueBaseRef _Nullable queue;
+    CEThreadRef _Nonnull thread;
+
+    CEParamRef _Nullable param;
+    CEParamRef _Nullable resultReceiver;
+
+} CETaskContext_s;
+typedef CETaskContext_s * CETaskContextPtr;
+
 
 
 

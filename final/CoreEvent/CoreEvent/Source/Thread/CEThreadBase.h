@@ -133,7 +133,7 @@ struct _CESyncTask {
 struct _CETask {
     CETaskContextPtr _Nullable prev;
 
-    //waiter
+    //thread waiter
     
     CEParamRef _Nullable resultReceiver;
     CEParamRef _Nullable param;

@@ -11,12 +11,12 @@
 
 #include "CERunLoopBase.h"
 
-CESemRef _Nonnull CESemInit(unsigned int value);
-void CESemDeinit(CESemRef _Nonnull sem);
+CESemPtr _Nonnull CESemInit(unsigned int value);
+void CESemDeinit(CESemPtr _Nonnull sem);
 
 
-void CESemWait(CESemRef _Nonnull sem);
-void CESemWakeUp(CESemRef _Nonnull sem);
+void CESemWait(CESemPtr _Nonnull sem);
+void CESemWakeUp(CESemPtr _Nonnull sem);
 
 
 

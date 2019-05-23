@@ -7,3 +7,14 @@
 //
 
 #include "CETaskContext.h"
+
+CETaskContextPtr _Nonnull CETaskContextGetCurrent(void) {
+    return NULL;
+}
+
+CETaskContext_s CETaskContexPush(void) {
+    CETaskContext_s context = {};
+    context.prev = CETaskContextGetCurrent();
+    
+    return context;
+}

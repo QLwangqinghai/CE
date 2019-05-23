@@ -20,22 +20,22 @@ struct _CESem {
      dispatch_semaphore_t _Nonnull lock;
 };
 
-CESemRef _Nonnull CESemInit(unsigned int value) {
-    CESemRef sem = CEAllocate(sizeof(CESem_s));
+CESemPtr _Nonnull CESemInit(unsigned int value) {
+    CESemPtr sem = CEAllocate(sizeof(CESem_s));
     dispatch_semaphore_t lock = dispatch_semaphore_create(value);
     assert(lock);
     sem->lock = lock;
     return sem;
 }
 
-void CESemDeinit(CESemRef _Nonnull sem) {
+void CESemDeinit(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     dispatch_release(sem->lock);
     CEDeallocate(sem);
 }
 
-void CESemWait(CESemRef _Nonnull sem) {
+void CESemWait(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     
@@ -45,7 +45,7 @@ void CESemWait(CESemRef _Nonnull sem) {
     }
 }
 
-void CESemWakeUp(CESemRef _Nonnull sem) {
+void CESemWakeUp(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     if (0 != dispatch_semaphore_signal(sem->lock)) {
@@ -63,8 +63,8 @@ struct _CESem {
     char name[32];
 };
 
-CESemRef _Nonnull CESemInit(unsigned int value) {
-    CESemRef sem = CEAllocate(sizeof(CESem_s));
+CESemPtr _Nonnull CESemInit(unsigned int value) {
+    CESemPtr sem = CEAllocate(sizeof(CESem_s));
     
     char name[48] = {};
     snprintf(name, 31, "/%x.%llx.", getpid(), (long long)pthread_self());
@@ -90,7 +90,7 @@ CESemRef _Nonnull CESemInit(unsigned int value) {
     return sem;
 }
 
-void CESemDeinit(CESemRef _Nonnull sem) {
+void CESemDeinit(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
 
@@ -100,7 +100,7 @@ void CESemDeinit(CESemRef _Nonnull sem) {
     CEDeallocate(sem);
 }
 
-void CESemWait(CESemRef _Nonnull sem) {
+void CESemWait(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     if (0 != sem_wait(sem->lock)) {
@@ -109,7 +109,7 @@ void CESemWait(CESemRef _Nonnull sem) {
     }
 }
 
-void CESemWakeUp(CESemRef _Nonnull sem) {
+void CESemWakeUp(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     if (0 != sem_post(sem->lock)) {
@@ -125,8 +125,8 @@ struct _CESem {
     sem_t * _Nonnull lock;
     sem_t lockValue;//private
 };
-CESemRef _Nonnull CESemInit(unsigned int value) {
-    CESemRef sem = CEAllocate(sizeof(CESem_s));
+CESemPtr _Nonnull CESemInit(unsigned int value) {
+    CESemPtr sem = CEAllocate(sizeof(CESem_s));
     if (0 != sem_init(&(sem->lockValue), 0, value)) {
         CELogError("CEThreadWaiterInit sem_init error %s; \n", strerror(errno));
         abort();
@@ -134,14 +134,14 @@ CESemRef _Nonnull CESemInit(unsigned int value) {
     sem->lock = &(sem->lockValue);
     return sem;
 }
-void CESemDeinit(CESemRef _Nonnull sem) {
+void CESemDeinit(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     sem_destroy(sem->lock);
     CEDeallocate(sem);
 }
 
-void CESemWait(CESemRef _Nonnull sem) {
+void CESemWait(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     if (0 != sem_wait(sem->lock)) {
@@ -150,7 +150,7 @@ void CESemWait(CESemRef _Nonnull sem) {
     }
 }
 
-void CESemWakeUp(CESemRef _Nonnull sem) {
+void CESemWakeUp(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     if (0 != sem_post(sem->lock)) {

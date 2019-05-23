@@ -13,6 +13,7 @@
 
 CETaskContextPtr _Nonnull CETaskContextGetCurrent(void);
 
+CETaskContext_s CETaskContexPush(void);
 
 
 #endif /* CETaskContext_h */

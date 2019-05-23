@@ -14,12 +14,15 @@
 #include "CERuntime.h"
 #include "CEParam.h"
 
-#define CETaskParamItemBufferSize 16
-
+#if __APPLE__
+typedef os_unfair_lock CESpinLock_t;
+#else
+typedef pthread_spinlock_t CESpinLock_t;
+#endif
 
 struct _CESem;
 typedef struct _CESem CESem_s;
-typedef CESem_s * CESemRef;
+typedef CESem_s * CESemPtr;
 
 
 struct _CEThread;
@@ -53,13 +56,6 @@ typedef CESource_s * CESourceRef;
 struct _CEThreadSpecific;
 typedef struct _CEThreadSpecific CEThreadSpecific_s;
 typedef CEThreadSpecific_s * CEThreadSpecificRef;
-
-
-
-struct _CETaskContext;
-typedef struct _CETaskContext CETaskContext_s;
-typedef CETaskContext_s * CETaskContextRef;
-
 
 
 struct _CETaskExecuteContext;
@@ -112,18 +108,16 @@ struct _CETaskResult {
 //};
 
 struct _CETaskExecuteObserver {
-    CETaskExecuteObserverGetResultReceiver_f _Nullable getResultReceiver;
     CETaskExecuteObserverFinish_f _Nullable finish;
+
+
 };
 
-typedef struct _CETaskBase {
-    uint64_t tid: 60;
-    uint64_t type: 4;
-    void * _Nullable relatedTask;//CENoescapingTaskRef, 同步任务的上下文中用到
-    CETaskExecute_f _Nonnull execute;
-    CEQueueRef _Nonnull targetQueue;
-    CETaskExecuteObserverRef _Nullable observer;
-} CETaskBase_t;
+
+
+struct _CETaskContext;
+typedef struct _CETaskContext CETaskContext_s;
+typedef CETaskContext_s * CETaskContextPtr;
 
 /*
  CEQueueRef _Nonnull targetQueue;
@@ -131,21 +125,26 @@ typedef struct _CETaskBase {
 */
 struct _CESyncTask {
     CERuntimeBase_t runtime;
-    CETaskBase_t base;
-    CETaskContextRef _Nonnull context;
+//    CETaskBase_t base;
+    CETaskContextPtr _Nonnull context;
     CEQueueRef _Nullable sourceQueue;
+};
+
+struct _CETask {
+    CETaskContextPtr _Nullable prev;
+
+    //waiter
     
+    CEParamRef _Nullable resultReceiver;
+    CEParamRef _Nullable param;
     
-    CEParamType_e paramTypes[CETaskParamItemBufferSize];
-    CEParamItemValue_u paramItems[CETaskParamItemBufferSize];
+    CETaskContextPtr _Nonnull context;
+    CETaskExecute_f _Nonnull execute;
+    CETaskExecuteObserverRef _Nullable observer;
 };
 
 
-#if __APPLE__
-typedef os_unfair_lock CESpinLock_t;
-#else
-typedef pthread_spinlock_t CESpinLock_t;
-#endif
+
 
 void CESpinLockInit(CESpinLock_t * _Nonnull lockPtr);
 void CESpinLockDeinit(CESpinLock_t * _Nonnull lockPtr);

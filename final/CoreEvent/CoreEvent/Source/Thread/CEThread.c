@@ -122,7 +122,7 @@ struct __CEThreadContext {
     void * _Nullable (* _Nonnull main)(void * _Nullable);
     void * _Nullable params;
     void (* _Nullable paramsDealloc)(void * _Nonnull);
-    CESemRef _Nonnull sem;
+    CESemPtr _Nonnull sem;
     CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull);
     CEThreadRef _Nullable thread;
 };

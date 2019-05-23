@@ -49,7 +49,7 @@ struct _CETaskWorker {
     CEThreadRef _Nonnull thread;
     CEQueueRef _Nonnull queue;
     void * owmerQueue;
-    CESemRef _Nonnull sem;
+    CESemPtr _Nonnull sem;
 };
 
 struct _CEThreadSpecific {
@@ -58,12 +58,14 @@ struct _CEThreadSpecific {
     CETaskWorkerRef _Nullable worker;
     
     CEQueueBaseRef _Nullable queue;
-    CETaskBase_t * _Nullable task;
     CETaskSyncContextPtr _Nullable syncContext;
     
 };
 
-
+typedef struct _CEThreadContext {
+    CEThreadRef _Nonnull thread;
+    CEQueueBaseRef _Nonnull queue;
+} CEThreadContext_t;
 
 
 
@@ -83,18 +85,20 @@ typedef struct _CETaskSyncContext {
 typedef CETaskSyncContext_t * CETaskSyncContextPtr;
 
 
-typedef struct _CETaskContext {
-    struct _CETaskContext * _Nullable prev;
 
-
+struct _CETaskContext {
+    CETaskContextPtr _Nullable prev;
+//thread sem
+    CEParamRef _Nullable resultReceiver;
+    CEParamRef _Nullable param;
+    //当前队列
     CEQueueBaseRef _Nullable queue;
+    
+    //当前线程
     CEThreadRef _Nonnull thread;
 
-    CEParamRef _Nullable param;
-    CEParamRef _Nullable resultReceiver;
 
-} CETaskContext_s;
-typedef CETaskContext_s * CETaskContextPtr;
+};
 
 
 

@@ -121,6 +121,10 @@
 		D6A24A1F2268CEB000C8E4B8 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24A1E2268CEB000C8E4B8 /* Test.swift */; };
 		D6FB5C8E22956C7100859829 /* CETaskContext.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FB5C8C22956C7100859829 /* CETaskContext.h */; };
 		D6FB5C8F22956C7100859829 /* CETaskContext.c in Sources */ = {isa = PBXBuildFile; fileRef = D6FB5C8D22956C7100859829 /* CETaskContext.c */; };
+		D6FB5C9622978A5200859829 /* CEThreadWaiter.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FB5C9422978A5200859829 /* CEThreadWaiter.h */; };
+		D6FB5C9722978A5200859829 /* CEThreadWaiter.c in Sources */ = {isa = PBXBuildFile; fileRef = D6FB5C9522978A5200859829 /* CEThreadWaiter.c */; };
+		D6FB5C9B2297A6DA00859829 /* CETaskStack.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FB5C992297A6DA00859829 /* CETaskStack.h */; };
+		D6FB5C9C2297A6DA00859829 /* CETaskStack.c in Sources */ = {isa = PBXBuildFile; fileRef = D6FB5C9A2297A6DA00859829 /* CETaskStack.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -364,6 +368,10 @@
 		D6A24A1E2268CEB000C8E4B8 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		D6FB5C8C22956C7100859829 /* CETaskContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETaskContext.h; sourceTree = "<group>"; };
 		D6FB5C8D22956C7100859829 /* CETaskContext.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETaskContext.c; sourceTree = "<group>"; };
+		D6FB5C9422978A5200859829 /* CEThreadWaiter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadWaiter.h; sourceTree = "<group>"; };
+		D6FB5C9522978A5200859829 /* CEThreadWaiter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEThreadWaiter.c; sourceTree = "<group>"; };
+		D6FB5C992297A6DA00859829 /* CETaskStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETaskStack.h; sourceTree = "<group>"; };
+		D6FB5C9A2297A6DA00859829 /* CETaskStack.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETaskStack.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -543,6 +551,10 @@
 				D64C4069228D28C60002BFEB /* CETaskSyncContext.c */,
 				D6FB5C8C22956C7100859829 /* CETaskContext.h */,
 				D6FB5C8D22956C7100859829 /* CETaskContext.c */,
+				D6FB5C9422978A5200859829 /* CEThreadWaiter.h */,
+				D6FB5C9522978A5200859829 /* CEThreadWaiter.c */,
+				D6FB5C992297A6DA00859829 /* CETaskStack.h */,
+				D6FB5C9A2297A6DA00859829 /* CETaskStack.c */,
 			);
 			path = Thread;
 			sourceTree = "<group>";
@@ -803,6 +815,7 @@
 				D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */,
 				64BEEE17217F00AD00204CB0 /* CoreEvent.h in Headers */,
 				D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */,
+				D6FB5C9B2297A6DA00859829 /* CETaskStack.h in Headers */,
 				D644ABCB227C806300F6B333 /* CEThread.h in Headers */,
 				D64C406A228D28C60002BFEB /* CETaskSyncContext.h in Headers */,
 				D647C89322866D0F004AAA19 /* CERuntime.h in Headers */,
@@ -812,6 +825,7 @@
 				D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */,
 				D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */,
 				D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */,
+				D6FB5C9622978A5200859829 /* CEThreadWaiter.h in Headers */,
 				D644ABBE227C7CD200F6B333 /* CEBaseType.h in Headers */,
 				D644ABD5227C952200F6B333 /* CELog.h in Headers */,
 				D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */,
@@ -1168,11 +1182,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6FB5C9C2297A6DA00859829 /* CETaskStack.c in Sources */,
 				D644ABBF227C7CD200F6B333 /* CEBaseType.c in Sources */,
 				D647C852227DDE7F004AAA19 /* CETask.c in Sources */,
 				D6FB5C8F22956C7100859829 /* CETaskContext.c in Sources */,
 				D647C856227DFE3A004AAA19 /* CEParam.c in Sources */,
 				D644ABCA227C806300F6B333 /* CEThread.c in Sources */,
+				D6FB5C9722978A5200859829 /* CEThreadWaiter.c in Sources */,
 				D647C89422866D0F004AAA19 /* CERuntime.c in Sources */,
 				D644ABD4227C952200F6B333 /* CELog.c in Sources */,
 				D644ABB7227C7C3F00F6B333 /* CETime.c in Sources */,

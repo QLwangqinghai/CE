@@ -19,6 +19,46 @@
 
 #include "CESem.h"
 
+void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript);
+
+size_t _CEThreadGetSize(CERef _Nonnull p) {
+    return sizeof(CEThread_s);
+}
+const CEType_s __CETypeThread = {
+    .type = CETypeMate,
+    .version = CERuntimeVersion,
+    .masks = CETypeMaskNoRc,
+    .objectSize = sizeof(CEThread_s),
+    .name = "CEThread",
+    .identifier = (uintptr_t)(&__CETypeThread),
+    .alloctor = &__CETypeDefaultAlloctor,
+    
+    .getSize = _CEThreadGetSize,
+    .deinit = CETypeDefaultDeinit,
+    .descript = _CEThreadDescript,
+};
+
+CETypeRef _Nonnull CETypeThread = &__CETypeThread;
+
+void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript) {
+    assert(object);
+    CETypeRef type = CERefGetType(object);
+    assert(CETypeIsEqual(type, CETypeThread));
+
+    CEThreadRef thread = object;
+    
+    char buffer[32] = {};
+    descript(handler, "<");
+    descript(handler, ((CEType_s *)object)->name);
+    snprintf(buffer, 31, ":%p,", object);
+    descript(handler, buffer);
+    descript(handler, " threadName: ");
+    descript(handler, thread->name);
+    descript(handler, ">");
+}
+
+
+
 #if __APPLE__
 _Bool CEIsMainThread(void) {
     return pthread_main_np() == 1;
@@ -63,7 +103,9 @@ CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable thread
     CEThreadSpecificRef specific = (CEThreadSpecificRef)pthread_getspecific(CEThreadSpecificKeyShared());
     if (NULL == specific) {
         specific = CEThreadSpecificInit();
-        specific->thread.pthread = pthread_self();
+        CEThread_s * thread = &(specific->thread);
+        memcpy(&(thread->runtime), &CETypeThread, sizeof(CETypeRef));
+        thread->pthread = pthread_self();
         if (threadName && !copyThreadName) {
             specific->thread.name = threadName;
         } else {

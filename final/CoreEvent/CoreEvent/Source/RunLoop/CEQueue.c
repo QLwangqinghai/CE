@@ -42,9 +42,9 @@ void CEQueueSync(CEQueueRef _Nonnull queue, CEParamRef _Nonnull param, CEParamRe
 
     CETaskContext_s context = CETaskContexPush();
     
-    if (queue->base.maxConcurrentCount <= 1) {
-        CEQueueSerialSync(queue, task, specific);
-    } else {
-        CEQueueConcurrentSync(queue, task, specific);
-    }
+//    if (queue->base.maxConcurrentCount <= 1) {
+//        CEQueueSerialSync(queue, task, specific);
+//    } else {
+//        CEQueueConcurrentSync(queue, task, specific);
+//    }
 }

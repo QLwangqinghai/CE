@@ -9,7 +9,7 @@
 #ifndef CESem_h
 #define CESem_h
 
-#include "CERunLoopBase.h"
+#include "CEThreadBase.h"
 
 CESemPtr _Nonnull CESemInit(unsigned int value);
 void CESemDeinit(CESemPtr _Nonnull sem);

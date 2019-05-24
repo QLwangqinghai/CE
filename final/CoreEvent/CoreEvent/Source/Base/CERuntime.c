@@ -331,3 +331,9 @@ _Bool CETypeIsEqual(CETypeRef _Nonnull type0, CETypeRef _Nonnull type1) {
     assert(type1);
     return type0->identifier == type1->identifier;
 }
+CETypeRef _Nonnull CERefGetType(CERef _Nonnull ref) {
+    CERuntimeBase_t * base = ref;
+    CETypeRef type = base->type;
+    assert(type);
+    return type;
+}

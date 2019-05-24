@@ -15,6 +15,11 @@ struct _CETaskSyncContext;
 typedef struct _CETaskSyncContext CETaskSyncContext_t;
 typedef CETaskSyncContext_t * CETaskSyncContextPtr;
 
+
+struct _CETaskStack;
+typedef struct _CETaskStack CETaskStack_s;
+typedef CETaskStack_s * CETaskStackPtr;
+
 typedef struct _CEQueueBase {
     char * _Nonnull label;
     size_t maxConcurrentCount;//[1, ...], 取值为1 时 为串行队列
@@ -23,6 +28,7 @@ typedef struct _CEQueueBase {
 typedef CEQueueBase_t * CEQueueBaseRef;
 
 struct _CEThread {
+    CERuntimeBase_t runtime;
 #if __APPLE__
     pthread_t _Nullable pthread;
 #else
@@ -59,6 +65,9 @@ struct _CEThreadSpecific {
     
     CEQueueBaseRef _Nullable queue;
     CETaskSyncContextPtr _Nullable syncContext;
+    CETaskStackPtr _Nonnull taskStack;
+    
+    
     
 };
 

@@ -153,6 +153,7 @@ void CERelease(CERef _Nonnull object);
 
 
 _Bool CETypeIsEqual(CETypeRef _Nonnull type0, CETypeRef _Nonnull type1);
+CETypeRef _Nonnull CERefGetType(CERef _Nonnull ref);
 
 
 #endif /* CERuntime_h */

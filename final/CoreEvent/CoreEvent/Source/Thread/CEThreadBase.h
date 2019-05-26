@@ -78,9 +78,6 @@ struct _CESyncTask;
 typedef struct _CESyncTask CENoescapingTask_s;
 typedef CENoescapingTask_s * CENoescapingTaskRef;
 
-typedef void (*CETaskExecute_f)(CETaskExecuteContextRef _Nonnull context);
-typedef void (*CETaskRelease_f)(CETaskRef _Nonnull task);
-
 
 typedef uint64_t CETaskType_e;
 static const CETaskType_e CETaskTypeAsync = 0;
@@ -92,7 +89,6 @@ typedef struct _CETaskExecuteObserver CETaskExecuteObserver_s;
 typedef CETaskExecuteObserver_s * CETaskExecuteObserverRef;
 
 
-typedef CEParamRef _Nullable * _Nullable (*CETaskExecuteObserverGetResultReceiver_f)(CETaskExecuteObserverRef _Nonnull observer);
 typedef void (*CETaskExecuteObserverFinish_f)(CETaskExecuteObserverRef _Nonnull observer);
 
 struct _CETaskResult {
@@ -131,16 +127,16 @@ struct _CESyncTask {
 };
 
 struct _CETask {
-    CETaskContextPtr _Nullable prev;
-
     //thread waiter
     
-    CEParamRef _Nullable resultReceiver;
     CEParamRef _Nullable param;
-    
-    CETaskContextPtr _Nonnull context;
-    CETaskExecute_f _Nonnull execute;
+    CEParamRef _Nullable resultReceiver;
+    CEFunction_f _Nonnull execute;
     CETaskExecuteObserverRef _Nullable observer;
+
+    
+    //
+    CETaskContextPtr _Nonnull context;
 };
 
 

@@ -92,7 +92,6 @@
 		D644ABD5227C952200F6B333 /* CELog.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD3227C952200F6B333 /* CELog.h */; };
 		D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD8227D58E200F6B333 /* CEQueue.h */; };
 		D644ABDB227D58E200F6B333 /* CEQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD9227D58E200F6B333 /* CEQueue.c */; };
-		D647C84A227D7C41004AAA19 /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
 		D647C84D227DCC09004AAA19 /* CEOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C84B227DCC09004AAA19 /* CEOperation.h */; };
 		D647C84E227DCC09004AAA19 /* CEOperation.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C84C227DCC09004AAA19 /* CEOperation.c */; };
 		D647C851227DDE7F004AAA19 /* CETask.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C84F227DDE7F004AAA19 /* CETask.h */; };
@@ -418,7 +417,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D647C84A227D7C41004AAA19 /* CoreEvent.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

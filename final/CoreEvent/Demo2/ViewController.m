@@ -8,10 +8,19 @@
 
 #import "ViewController.h"
 
+#pragma pack(push)
+#pragma pack(1)
 
 struct __CETypeBaseInfo111 {
-    uint32_t objectSize1: 6;
-    uint32_t objectSize: 26;
+    uint8_t objectSize1;
+    uint16_t objectSize2;
+};
+
+#pragma pack(pop)
+
+struct __CETypeBaseInfo112 {
+    uint8_t objectSize1;
+    uint16_t objectSize2;
 };
 
 @implementation ViewController
@@ -21,6 +30,26 @@ struct __CETypeBaseInfo111 {
 //    CESemRef sem = CESemInit(0);
 //
     NSLog(@"%ld", sizeof(struct __CETypeBaseInfo111));
+    NSLog(@"%ld", sizeof(struct __CETypeBaseInfo112));
+
+    
+    NSInteger i=3;
+    
+    while (i < 243) {
+        int j=0;
+        while (j < 16) {
+            j ++;
+            printf("%ld, ", i);
+            
+            i++;
+        }
+        
+        printf("\n");
+
+    }
+
+    
+    
 //
     // Do any additional setup after loading the view.
 }

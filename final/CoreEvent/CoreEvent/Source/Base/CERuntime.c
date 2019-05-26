@@ -82,6 +82,8 @@ CEType_s __CETypeMate = {
     .getSize = __CETypeMateGetSize,
     .deinit = __CETypeMateDeinit,
     .descript = __CETypeMateDescript,
+    
+    .ext = NULL,
 };
 
 

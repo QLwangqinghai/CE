@@ -18,7 +18,6 @@
 
 
 //struct _CETaskExecuteObserver {
-//    CETaskExecuteObserverGetResultReceiver_f _Nullable getResultReceiver;
 //    CETaskExecuteObserverFinish_f _Nullable finish;
 //
 //    CEParamRef _Nullable * _Nullable resultReceiver;

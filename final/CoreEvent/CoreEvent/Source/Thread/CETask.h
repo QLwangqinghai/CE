@@ -20,26 +20,29 @@
 
 
 
-_Bool CENoescapingTaskInit(CENoescapingTaskRef _Nonnull task,
-                           CETaskExecute_f _Nonnull execute,
-                           CETaskExecuteObserverRef _Nullable observer,
-                           uint32_t itemCount);
+//_Bool CENoescapingTaskInit(CENoescapingTaskRef _Nonnull task,
+//                           CETaskExecute_f _Nonnull execute,
+//                           CETaskExecuteObserverRef _Nullable observer,
+//                           uint32_t itemCount);
+//
+//CEEscapingTaskRef _Nullable CEEscapingTaskInit(CETaskExecute_f _Nonnull execute,
+//                                               CETaskExecuteObserverRef _Nullable observer,
+//                                               uint32_t itemCount);
+//
+//void CEEscapingTaskRelease(CEEscapingTaskRef _Nonnull task);
+//
+////_Bool CEEscapingTaskSetParamItem(CEEscapingTaskRef _Nonnull task,
+////                                uint32_t index,
+////                                CEParamType_e type,
+////                                CETaskParamItemRelease_f _Nullable release,
+////                                void * _Nonnull valuePtr);
+//
+//_Bool CEEscapingTaskGetParamItem(CEEscapingTaskRef _Nonnull task,
+//                                 uint32_t index,
+//                                 CEParamItemValue_u * _Nullable itemRef,
+//                                 CEParamType_e * _Nullable itemTypeRef);
 
-CEEscapingTaskRef _Nullable CEEscapingTaskInit(CETaskExecute_f _Nonnull execute,
-                                               CETaskExecuteObserverRef _Nullable observer,
-                                               uint32_t itemCount);
 
-void CEEscapingTaskRelease(CEEscapingTaskRef _Nonnull task);
 
-//_Bool CEEscapingTaskSetParamItem(CEEscapingTaskRef _Nonnull task,
-//                                uint32_t index,
-//                                CEParamType_e type,
-//                                CETaskParamItemRelease_f _Nullable release,
-//                                void * _Nonnull valuePtr);
-
-_Bool CEEscapingTaskGetParamItem(CEEscapingTaskRef _Nonnull task,
-                                 uint32_t index,
-                                 CEParamItemValue_u * _Nullable itemRef,
-                                 CEParamType_e * _Nullable itemTypeRef);
 
 #endif /* CETask_h */

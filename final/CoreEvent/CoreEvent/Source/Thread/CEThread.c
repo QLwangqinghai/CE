@@ -36,6 +36,8 @@ const CEType_s __CETypeThread = {
     .getSize = _CEThreadGetSize,
     .deinit = CETypeDefaultDeinit,
     .descript = _CEThreadDescript,
+    
+    .ext = NULL,
 };
 
 CETypeRef _Nonnull CETypeThread = &__CETypeThread;

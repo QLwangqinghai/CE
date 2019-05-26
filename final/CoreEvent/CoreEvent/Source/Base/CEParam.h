@@ -13,6 +13,9 @@
 #include "CEParamItem.h"
 #include "CERuntime.h"
 
+#define CEParamBufferItemsTotalSizeMax 3872
+#define CEParamItemMaxCount 16
+
 
 //tuple
 
@@ -20,34 +23,28 @@ typedef void * CEStackParamRef;
 typedef void * CEHeapParamRef;
 typedef void * CEParamRef;
 
+typedef void (*CEFunction_f)(CEParamRef _Nullable param, CEParamRef _Nullable result);
+
+typedef struct _CESelector {
+    uint8_t paramTypes[CEParamItemMaxCount];
+    uint8_t resultTypes[CEParamItemMaxCount];
+    CEFunction_f _Nonnull func;
+} CESelector_s;
+
+
+
 extern CETypeRef _Nonnull CETypeStackParam;
 extern CETypeRef _Nonnull CETypeHeapParam;
 
-// 26(1+15+10)
-
-//16kb
-#define CEParamBufferItemsTotalSizeMax 16384
-
-#define CEParamBufferItemSizeMax 512
-
-#define CEParamItemContentLocationBitCount 15
-#define CEParamItemContentLocationMask 0x7FFFu
-
-#define CEParamItemContentLengthBitCount 10
-#define CEParamItemContentLengthMask 0x3FFu
-
-#define CEParamItemMaxCount 16
 
 typedef void (*CEParamItemRelease_f)(CEParamType_e type, void * _Nonnull itemPtr);
 
-#define CEStackParamSize(capacity, structSize) (CECpuWordByteSize * 3 + 8 + 12 * capacity + structSize)
+#define CEStackParamSize(structSize) (308 + structSize)
 
+size_t CEStackParamGoodSize(uint32_t capacity, size_t bufferItemsTotalSize);
 
 CEStackParamRef _Nullable CEStackParamInit(void * _Nonnull ptr, size_t size, uint32_t capacity);
 CEHeapParamRef _Nonnull CEHeapParamCreate(uint32_t capacity, size_t bufferItemsTotalSize);
-
-
-
 
 
 uint32_t CEParamGetCount(CEParamRef _Nonnull param);
@@ -73,6 +70,8 @@ _Bool CEParamGetPtr(CEParamRef _Nonnull param, uint32_t index, void * _Nullable 
 _Bool CEParamGetRef(CEParamRef _Nonnull param, uint32_t index, CERef _Nullable * _Nonnull item);
 _Bool CEParamGetBuffer(CEParamRef _Nonnull param, uint32_t index, void * _Nonnull buffer, size_t size);
 
+_Bool CEParamGetItem(CEParamRef _Nonnull param, uint32_t index, CEParamType_e * _Nullable typePtr, size_t * _Nullable sizePtr, void * _Nonnull ptr, size_t maxSize);
+
 
 _Bool CEParamAppendBool(CEParamRef _Nonnull param, _Bool item);
 
@@ -95,6 +94,7 @@ _Bool CEParamAppendRef(CEParamRef _Nonnull param, CERef _Nullable item);
 
 _Bool CEParamAppendBuffer(CEParamRef _Nonnull param, void * _Nonnull buffer, size_t size);
 
+_Bool CEParamAppendItem(CEParamRef _Nonnull param, CEParamType_e type, void * _Nonnull itemPtr);
 
 
 #endif /* CETaskParam_h */

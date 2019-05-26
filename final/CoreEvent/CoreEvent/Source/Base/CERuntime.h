@@ -56,9 +56,9 @@ typedef uint16_t CETypeMask_t;
 #define CETypeMaskVersionBitCount 16
 
 #if CEBuild64Bit
-#define CETypeBaseLayoutSize 64
+#define CETypeBaseLayoutSize 72
 #else
-#define CETypeBaseLayoutSize 36
+#define CETypeBaseLayoutSize 40
 #endif
 
 #if CEBuild64Bit
@@ -128,6 +128,7 @@ struct __CEType {
     size_t (* _Nonnull getSize)(CERef _Nonnull object);
     void (* _Nonnull deinit)(CERef _Nonnull object);
     void (* _Nonnull descript)(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript/*会被调用多次*/);
+    void * _Nullable ext;
 };
 
 struct __CEAlloctor {
@@ -154,6 +155,12 @@ void CERelease(CERef _Nonnull object);
 
 _Bool CETypeIsEqual(CETypeRef _Nonnull type0, CETypeRef _Nonnull type1);
 CETypeRef _Nonnull CERefGetType(CERef _Nonnull ref);
+
+
+
+
+
+
 
 
 #endif /* CERuntime_h */

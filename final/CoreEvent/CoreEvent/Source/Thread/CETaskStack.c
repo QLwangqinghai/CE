@@ -15,6 +15,15 @@ typedef struct _CETaskStackPage CETaskStackPage_s;
 typedef CETaskStackPage_s * CETaskStackPagePtr;
 
 
+typedef uint16_t CETaskStackItemType_e;
+static CETaskStackItemType_e CETaskStackItemTypeFlag = 0;
+static CETaskStackItemType_e CETaskStackItemTypeStackResult = 1;
+static CETaskStackItemType_e CETaskStackItemTypeStackParam = 2;
+static CETaskStackItemType_e CETaskStackItemTypeTaskContext = 3;
+static CETaskStackItemType_e CETaskStackItemTypeTask = 4;
+
+
+
 typedef struct _CETaskStackItem {
     uint16_t type;
     uint16_t length;
@@ -70,7 +79,61 @@ CETaskStackPtr _Nonnull CETaskStackGetCurrent(void) {
     return result;
 }
 
+void CETaskStackPush(CETaskStackPtr _Nonnull stackPtr) {
+    assert(stackPtr);
 
+}
+
+void CETaskStackPop(CETaskStackPtr _Nonnull stackPtr) {
+    assert(stackPtr);
+    
+}
+
+
+/*
+ param
+ result
+ task
+ context
+ */
+
+
+CEStackParamRef _Nullable CETaskStackPopParam(CETaskStackPtr _Nonnull stackPtr, uint32_t capacity, size_t bufferItemsTotalSize) {
+    assert(stackPtr);
+    
+//    assert(bufferItemsTotalSize <= CEParamBufferItemsTotalSizeMax);
+//
+//    if (0 == bufferItemsTotalSize) {
+//        bufferItemsTotalSize = 64;
+//    }
+//
+//    size_t size = sizeof(CEHeapParam_s) + (sizeof(CEParamItem_s) + sizeof(void *) + sizeof(double)) * capacity + bufferItemsTotalSize;
+//    size = (size + sizeof(void *) - 1) / sizeof(void *) * sizeof(void *);
+//
+//    CEHeapParamRef ptr = CETypeHeapParam->alloctor->allocate(CETypeHeapParam, size);
+//
+//    CEHeapParam_s * result = ptr;
+//    result->base.capacity = capacity;
+//
+//    size_t contentSize = size - sizeof(CEStackParam_s);
+//    if (contentSize > 0xFFFFFFu) {
+//        result->base.contentSize = 0xFFFFFFu;
+//    } else {
+//        result->base.contentSize = (uint32_t)contentSize;
+//    }
+//    result->base.contentUsedSize = capacity * sizeof(CEParamItem_s);
+    return NULL;
+    
+}
+CEStackParamRef _Nullable CEStackParamInit(void * _Nonnull ptr, size_t size, uint32_t capacity);
+CEHeapParamRef _Nonnull CEHeapParamCreate(uint32_t capacity, size_t bufferItemsTotalSize);
+
+
+
+
+
+uint32_t CEParamGetCount(CEParamRef _Nonnull param);
+_Bool CEParamGetItemType(CEParamRef _Nonnull param, uint32_t index, CEParamType_e * _Nonnull itemType);
 
 
 

@@ -24,14 +24,14 @@ void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CED
 size_t _CEThreadGetSize(CERef _Nonnull p) {
     return sizeof(CEThread_s);
 }
-const CEType_s __CETypeThread = {
+const CEDefaultType_s __CEDefaultTypeThread = {
     .type = CETypeMate,
     .version = CERuntimeVersion,
     .masks = CETypeMaskNoRc,
     .objectSize = sizeof(CEThread_s),
     .name = "CEThread",
-    .identifier = (uintptr_t)(&__CETypeThread),
-    .alloctor = &__CETypeDefaultAlloctor,
+    .identifier = (uintptr_t)(&__CEDefaultTypeThread),
+    .alloctor = &__CEDefaultTypeDefaultAlloctor,
     
     .deinit = CETypeDefaultDeinit,
     .descript = _CEThreadDescript,
@@ -39,7 +39,7 @@ const CEType_s __CETypeThread = {
     .class = NULL,
 };
 
-CETypeRef _Nonnull CETypeThread = &__CETypeThread;
+CETypeRef _Nonnull CETypeThread = &__CEDefaultTypeThread;
 
 void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript) {
     assert(object);
@@ -50,7 +50,7 @@ void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CED
     
     char buffer[32] = {};
     descript(handler, "<");
-    descript(handler, ((CEType_s *)object)->name);
+    descript(handler, ((CEDefaultType_s *)object)->name);
     snprintf(buffer, 31, ":%p,", object);
     descript(handler, buffer);
     descript(handler, " threadName: ");

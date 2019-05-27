@@ -28,7 +28,7 @@ typedef struct _CEQueueBase {
 typedef CEQueueBase_t * CEQueueBaseRef;
 
 struct _CEThread {
-    CERuntimeBase_t runtime;
+    CERuntimeBase_s runtime;
 #if __APPLE__
     pthread_t _Nullable pthread;
 #else

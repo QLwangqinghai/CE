@@ -23,21 +23,25 @@ typedef void (*CERuntimeRelease_f)(CERef _Nonnull object);
 typedef void (*CEDescript_f)(void const * _Nonnull handler, char const * _Nonnull buffer);
 
 struct __CERuntimeBase;
-typedef struct __CERuntimeBase CERuntimeBase_t;
+typedef struct __CERuntimeBase CERuntimeBase_s;
 
 struct __CERuntimeAtomicRcBase;
-typedef struct __CERuntimeAtomicRcBase CERuntimeAtomicRcBase_t;
+typedef struct __CERuntimeAtomicRcBase CERuntimeAtomicRcBase_s;
 
 struct __CERuntimeUnsafeRcBase;
-typedef struct __CERuntimeUnsafeRcBase CERuntimeUnsafeRcBase_t;
+typedef struct __CERuntimeUnsafeRcBase CERuntimeUnsafeRcBase_s;
 
-struct __CEType;
-typedef struct __CEType CEType_s;
-typedef CEType_s const * CETypeRef;
+struct __CEDefaultType;
+typedef struct __CEDefaultType CEDefaultType_s;
 
-struct __CETypeDescripter;
-typedef struct __CETypeDescripter CETypeDescripter_s;
-typedef CETypeDescripter_s const * CETypeDescripterPtr;
+struct __CERcableType;
+typedef struct __CERcableType CERcableType_s;
+
+typedef void * CETypeRef;
+
+struct __CEDefaultTypeSpecific;
+typedef struct __CEDefaultTypeSpecific CETypeSpecific_s;
+typedef CETypeSpecific_s const * CETypeSpecificPtr;
 
 struct __CEAlloctor;
 typedef struct __CEAlloctor CEAlloctor_s;
@@ -59,9 +63,9 @@ typedef uint16_t CETypeMask_t;
 #define CETypeMaskVersionBitCount 16
 
 #if CEBuild64Bit
-#define CETypeBaseLayoutSize 72
+#define CEDefaultTypeLayoutSize 72
 #else
-#define CETypeBaseLayoutSize 40
+#define CEDefaultTypeLayoutSize 40
 #endif
 
 #if CEBuild64Bit
@@ -119,16 +123,27 @@ struct __CERuntimeUnsafeRcBase {
 #endif
 };
 
-struct __CEType {
-    CETypeRef const _Nonnull type;
+typedef struct __CETypeContent {
     uint16_t version;
     uint16_t masks;
     uint32_t objectSize;//objectSize 不能为0
     uintptr_t identifier;
     
     CEAlloctorPtr _Nonnull alloctor;
-    CETypeDescripterPtr _Nonnull descripter;
+    CETypeSpecificPtr _Nonnull specific;
     CERef _Nullable class;
+} CETypeContent_s;
+typedef CETypeContent_s * CETypeContentPtr;
+
+
+struct __CEDefaultType {
+    CERuntimeBase_s runtime;
+    CETypeContent_s content;
+};
+
+struct __CERcableType {
+    CERuntimeAtomicRcBase_s runtime;
+    CETypeContent_s content;
 };
 
 struct __CEAlloctor {
@@ -140,34 +155,61 @@ struct __CEAlloctor {
     CERuntimeRetain_f _Nonnull retain;
     CERuntimeTryRetain_f _Nonnull tryRetain;
     CERuntimeRelease_f _Nonnull release;
-    void (* _Nonnull deinit)(CERef _Nonnull object);
 };
 
-struct __CETypeDescripter {
+struct __CEDefaultTypeSpecific {
     char * _Nonnull name;
     void (* _Nonnull descript)(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript/*会被调用多次*/);
+    void (* _Nonnull deinit)(CERef _Nonnull object);
 };
 
 #pragma pack(pop)
 
-extern CEType_s __CETypeMate;
-#define CETypeMate &__CETypeMate
+extern CEDefaultType_s __CEDefaultTypeMate;
+#define CETypeMate &__CEDefaultTypeMate
 
-extern const CEAlloctor_s __CETypeDefaultAlloctor;
+extern const CEAlloctor_s CERuntimeDefaultAlloctor;
 
 
-CERef _Nonnull CERetain(CERef _Nonnull object);
-CERef _Nullable CETryRetain(CERef _Nonnull object);
-void CERelease(CERef _Nonnull object);
+#define CEDefaultType(identifier, specific) {\
+    .runtime = {.type = CETypeMate},\
+    .content = {\
+        .version = CERuntimeVersion,\
+        .masks = CETypeMaskNoRc,\
+        .objectSize = CEDefaultTypeLayoutSize,\
+        .identifier = identifier,\
+        .alloctor = &CERuntimeDefaultAlloctor,\
+        .specific = specific,\
+        .class = NULL,\
+    },\
+}
+
+
+
+CERef _Nonnull CERetain(const CERef _Nonnull object);
+CERef _Nullable CETryRetain(const CERef _Nonnull object);
+void CERelease(const CERef _Nonnull object);
 
 
 _Bool CETypeIsEqual(CETypeRef _Nonnull type0, CETypeRef _Nonnull type1);
 CETypeRef _Nonnull CERefGetType(CERef _Nonnull ref);
 
+CETypeContent_s * _Nonnull CERefGetTypeContent(CERef _Nonnull ref);
 
 
 
+void * _Nonnull CERuntimeDefaultAllocate(CETypeRef _Nonnull type, size_t size);
 
+void CERuntimeDefaultDeallocate(CETypeRef _Nonnull type, void * _Nonnull ptr);
+
+void CERuntimeDefaultDestroyWeakRefrences(CERef _Nonnull object);
+
+static inline CERef _Nullable ___CERuntimeRetain(CERef _Nonnull object, _Bool tryR);
+
+CERef _Nonnull CERuntimeDefaultRetain(CERef _Nonnull object);
+CERef _Nullable CERuntimeDefaultTryRetain(CERef _Nonnull object);
+
+void CERuntimeDefaultRelease(CERef _Nonnull object);
 
 
 

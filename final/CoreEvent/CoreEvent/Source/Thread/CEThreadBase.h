@@ -120,7 +120,7 @@ typedef CETaskContext_s * CETaskContextPtr;
  CETaskExecuteObserverRef _Nullable observer;
 */
 struct _CESyncTask {
-    CERuntimeBase_t runtime;
+    CERuntimeBase_s runtime;
 //    CETaskBase_t base;
     CETaskContextPtr _Nonnull context;
     CEQueueRef _Nullable sourceQueue;

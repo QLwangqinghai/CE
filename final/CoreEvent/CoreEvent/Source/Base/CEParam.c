@@ -18,14 +18,18 @@ size_t _CEHeapParamGetSize(CERef _Nonnull p);
 void _CEHeapParamDeinit(CERef _Nonnull heapParam);
 
 
-const CEType_s __CETypeStackParam = {
+const CEDefaultType_s __CEDefaultTypeStackParam = CEDefaultType((uintptr_t)(&__CEDefaultTypeStackParam), <#specific#>)
+
+
+
+{
     .type = CETypeMate,
     .version = CERuntimeVersion,
     .masks = CETypeMaskNoRc,
     .objectSize = 0,
     .name = "CEStackParam",
-    .identifier = (uintptr_t)(&__CETypeStackParam),
-    .alloctor = &__CETypeDefaultAlloctor,
+    .identifier = (uintptr_t)(&__CEDefaultTypeStackParam),
+    .alloctor = &__CEDefaultTypeDefaultAlloctor,
     
     .getSize = _CEStackParamGetSize,
     .deinit = CETypeDefaultDeinit,
@@ -34,14 +38,14 @@ const CEType_s __CETypeStackParam = {
     .class = NULL,
 };
 
-const CEType_s __CETypeHeapParam = {
+const CEDefaultType_s __CEDefaultTypeHeapParam = {
     .type = CETypeMate,
     .version = CERuntimeVersion,
     .masks = CETypeMaskRcAtomic,
     .objectSize = 0,
     .name = "CEHeapParam",
-    .identifier = (uintptr_t)(&__CETypeHeapParam),
-    .alloctor = &__CETypeDefaultAlloctor,
+    .identifier = (uintptr_t)(&__CEDefaultTypeHeapParam),
+    .alloctor = &__CEDefaultTypeDefaultAlloctor,
     
     .getSize = _CEHeapParamGetSize,
     .deinit = _CEHeapParamDeinit,
@@ -51,8 +55,8 @@ const CEType_s __CETypeHeapParam = {
 };
 
 
-CETypeRef _Nonnull CETypeStackParam = &__CETypeStackParam;
-CETypeRef _Nonnull CETypeHeapParam = &__CETypeHeapParam;
+CETypeRef _Nonnull CETypeStackParam = &__CEDefaultTypeStackParam;
+CETypeRef _Nonnull CETypeHeapParam = &__CEDefaultTypeHeapParam;
 
 
 #pragma pack(push)
@@ -80,7 +84,7 @@ typedef struct _CEParamBase {
 
 
 typedef struct _CEParam {
-    CERuntimeAtomicRcBase_t runtime;
+    CERuntimeAtomicRcBase_s runtime;
     CEParamBase_t base;
     uint8_t itemsAndExt[0];
 } CEParam_s;
@@ -229,7 +233,7 @@ size_t _CEStackParamGetSize(CERef _Nonnull p) {
 
 void _CEHeapParamDeinit(CERef _Nonnull heapParam) {
     assert(heapParam);
-    CERuntimeBase_t * base = heapParam;
+    CERuntimeBase_s * base = heapParam;
     CETypeRef type = base->type;
     assert(type);
     assert(CETypeIsEqual(type, CETypeHeapParam));
@@ -331,7 +335,7 @@ CEHeapParamRef _Nonnull CEHeapParamCreate(uint32_t capacity, size_t bufferItemsT
 
 uint32_t CEParamGetCount(CEParamRef _Nonnull param) {
     assert(param);
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     
@@ -350,7 +354,7 @@ _Bool CEParamGetItemType(CEParamRef _Nonnull param, uint32_t index, CEParamType_
     assert(param);
     assert(itemType);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     
@@ -383,7 +387,7 @@ _Bool CEParamGetBool(CEParamRef _Nonnull param, uint32_t index, _Bool * _Nonnull
     assert(param);
     assert(item);
 
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeBool;
@@ -405,7 +409,7 @@ _Bool CEParamGetSInt8(CEParamRef _Nonnull param, uint32_t index, int8_t * _Nonnu
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeSInt8;
@@ -425,7 +429,7 @@ _Bool CEParamGetSInt16(CEParamRef _Nonnull param, uint32_t index, int16_t * _Non
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeSInt16;
@@ -445,7 +449,7 @@ _Bool CEParamGetSInt32(CEParamRef _Nonnull param, uint32_t index, int32_t * _Non
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeSInt32;
@@ -465,7 +469,7 @@ _Bool CEParamGetSInt64(CEParamRef _Nonnull param, uint32_t index, int64_t * _Non
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeSInt64;
@@ -486,7 +490,7 @@ _Bool CEParamGetUInt8(CEParamRef _Nonnull param, uint32_t index, uint8_t * _Nonn
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeUInt8;
@@ -506,7 +510,7 @@ _Bool CEParamGetUInt16(CEParamRef _Nonnull param, uint32_t index, uint16_t * _No
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeUInt16;
@@ -526,7 +530,7 @@ _Bool CEParamGetUInt32(CEParamRef _Nonnull param, uint32_t index, uint32_t * _No
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeUInt32;
@@ -546,7 +550,7 @@ _Bool CEParamGetUInt64(CEParamRef _Nonnull param, uint32_t index, uint64_t * _No
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeUInt64;
@@ -567,7 +571,7 @@ _Bool CEParamGetFloat(CEParamRef _Nonnull param, uint32_t index, float * _Nonnul
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeFloat;
@@ -587,7 +591,7 @@ _Bool CEParamGetDouble(CEParamRef _Nonnull param, uint32_t index, double * _Nonn
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeDouble;
@@ -608,7 +612,7 @@ _Bool CEParamGetPtr(CEParamRef _Nonnull param, uint32_t index, void * _Nullable 
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypePtr;
@@ -628,7 +632,7 @@ _Bool CEParamGetRef(CEParamRef _Nonnull param, uint32_t index, CERef _Nullable *
     assert(param);
     assert(item);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeRef;
@@ -648,7 +652,7 @@ _Bool CEParamGetBuffer(CEParamRef _Nonnull param, uint32_t index, void * _Nonnul
     assert(param);
     assert(buffer);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     
@@ -675,7 +679,7 @@ _Bool CEParamGetItem(CEParamRef _Nonnull param, uint32_t index, CEParamType_e * 
     assert(param);
     assert(ptr);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     
@@ -701,7 +705,7 @@ _Bool CEParamGetItem(CEParamRef _Nonnull param, uint32_t index, CEParamType_e * 
 _Bool CEParamAppendBool(CEParamRef _Nonnull param, _Bool item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeBool;
@@ -722,7 +726,7 @@ _Bool CEParamAppendBool(CEParamRef _Nonnull param, _Bool item) {
 _Bool CEParamAppendSInt8(CEParamRef _Nonnull param, int8_t item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeSInt8;
@@ -741,7 +745,7 @@ _Bool CEParamAppendSInt8(CEParamRef _Nonnull param, int8_t item) {
 _Bool CEParamAppendSInt16(CEParamRef _Nonnull param, int16_t item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeSInt16;
@@ -760,7 +764,7 @@ _Bool CEParamAppendSInt16(CEParamRef _Nonnull param, int16_t item) {
 _Bool CEParamAppendSInt32(CEParamRef _Nonnull param, int32_t item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeSInt32;
@@ -779,7 +783,7 @@ _Bool CEParamAppendSInt32(CEParamRef _Nonnull param, int32_t item) {
 _Bool CEParamAppendSInt64(CEParamRef _Nonnull param, int64_t item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeSInt64;
@@ -799,7 +803,7 @@ _Bool CEParamAppendSInt64(CEParamRef _Nonnull param, int64_t item) {
 _Bool CEParamAppendUInt8(CEParamRef _Nonnull param, uint8_t item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeUInt8;
@@ -818,7 +822,7 @@ _Bool CEParamAppendUInt8(CEParamRef _Nonnull param, uint8_t item) {
 _Bool CEParamAppendUInt16(CEParamRef _Nonnull param, uint16_t item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeUInt16;
@@ -837,7 +841,7 @@ _Bool CEParamAppendUInt16(CEParamRef _Nonnull param, uint16_t item) {
 _Bool CEParamAppendUInt32(CEParamRef _Nonnull param, uint32_t item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeUInt32;
@@ -856,7 +860,7 @@ _Bool CEParamAppendUInt32(CEParamRef _Nonnull param, uint32_t item) {
 _Bool CEParamAppendUInt64(CEParamRef _Nonnull param, uint64_t item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeUInt64;
@@ -876,7 +880,7 @@ _Bool CEParamAppendUInt64(CEParamRef _Nonnull param, uint64_t item) {
 _Bool CEParamAppendFloat(CEParamRef _Nonnull param, float item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeFloat;
@@ -895,7 +899,7 @@ _Bool CEParamAppendFloat(CEParamRef _Nonnull param, float item) {
 _Bool CEParamAppendDouble(CEParamRef _Nonnull param, double item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeDouble;
@@ -915,7 +919,7 @@ _Bool CEParamAppendDouble(CEParamRef _Nonnull param, double item) {
 _Bool CEParamAppendPtr(CEParamRef _Nonnull param, void * _Nullable item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypePtr;
@@ -935,7 +939,7 @@ _Bool CEParamAppendPtr(CEParamRef _Nonnull param, void * _Nullable item) {
 _Bool CEParamAppendRef(CEParamRef _Nonnull param, CERef _Nullable item) {
     assert(param);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     CEParamType_e itemType = CEParamTypeRef;
@@ -961,7 +965,7 @@ _Bool CEParamAppendBuffer(CEParamRef _Nonnull param, void * _Nonnull buffer, siz
         return false;
     }
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
 
@@ -981,7 +985,7 @@ _Bool CEParamAppendItem(CEParamRef _Nonnull param, CEParamType_e t, void * _Nonn
     assert(param);
     assert(itemPtr);
     
-    CERuntimeBase_t * base = param;
+    CERuntimeBase_s * base = param;
     CETypeRef type = base->type;
     assert(type);
     

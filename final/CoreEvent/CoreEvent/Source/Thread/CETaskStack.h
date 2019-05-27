@@ -11,7 +11,9 @@
 
 #include "CEThreadBaseInternal.h"
 
-
+/*
+    param result
+ */
 
 CETaskStackPtr _Nonnull CETaskStackGetCurrent(void);
 

@@ -33,11 +33,10 @@ const CEType_s __CETypeThread = {
     .identifier = (uintptr_t)(&__CETypeThread),
     .alloctor = &__CETypeDefaultAlloctor,
     
-    .getSize = _CEThreadGetSize,
     .deinit = CETypeDefaultDeinit,
     .descript = _CEThreadDescript,
     
-    .ext = NULL,
+    .class = NULL,
 };
 
 CETypeRef _Nonnull CETypeThread = &__CETypeThread;

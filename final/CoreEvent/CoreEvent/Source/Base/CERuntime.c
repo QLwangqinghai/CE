@@ -11,9 +11,12 @@
 
 
 void CETypeDefaultDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript) {
+    CETypeRef type = CERefGetType(object);
+    
     char buffer[32] = {};
     descript(handler, "<");
-    descript(handler, ((CEType_s *)object)->name);
+    descript(handler, type->descripter->name);
+    
     snprintf(buffer, 31, ":%p>", object);
     descript(handler, buffer);
 }
@@ -22,10 +25,10 @@ void CETypeDefaultDeinit(CERef _Nonnull object) {}
 
 void * _Nonnull __CETypeMateAllocate(CETypeRef _Nonnull type, size_t size) {
     void * ptr = CEAllocateClear(size);
-    memcpy(ptr, &type, sizeof(void *));
+    memcpy(ptr, &type, sizeof(CERef));
     return ptr;
 }
-void __CETypeMateDeallocate(CETypeRef _Nonnull type, void * _Nonnull ptr, size_t size) {
+void __CETypeMateDeallocate(CETypeRef _Nonnull type, void * _Nonnull ptr) {
     CEDeallocate(ptr);
 }
 
@@ -69,21 +72,32 @@ void __CETypeMateDescript(CERef _Nonnull object, void const * _Nonnull handler, 
     CETypeDefaultDescript(object, handler, descript);
 }
 
+static const CETypeDescripter_s __CETypeMateDescripter = {
+    .name = "Type",
+    .descript = __CETypeMateDescript,
+};
 
+/*
+ CETypeRef const _Nonnull type;
+ uint16_t version;
+ uint16_t masks;
+ uint32_t objectSize;//objectSize 不能为0
+ uintptr_t identifier;
+ 
+ CEAlloctorPtr _Nonnull alloctor;
+ CETypeDescripterPtr _Nonnull descripter;
+ void * _Nullable class;
+ */
 CEType_s __CETypeMate = {
     .type = &__CETypeMate,
     .version = CERuntimeVersion,
     .masks = CETypeMaskNoRc,
     .objectSize = CETypeBaseLayoutSize,
-    .name = "Type",
     .identifier = UINTPTR_MAX,
-    .alloctor = &__CETypeMateAlloctor,
-
-    .getSize = __CETypeMateGetSize,
-    .deinit = __CETypeMateDeinit,
-    .descript = __CETypeMateDescript,
     
-    .ext = NULL,
+    .alloctor = &__CETypeMateAlloctor,
+    .descripter = &__CETypeMateDescripter,
+    .class = NULL,
 };
 
 
@@ -126,7 +140,7 @@ void * _Nonnull __CETypeAllocate(CETypeRef _Nonnull type, size_t size) {
     
     return ptr;
 }
-void __CETypeDeallocate(CETypeRef _Nonnull type, void * _Nonnull ptr, size_t size) {
+void __CETypeDeallocate(CETypeRef _Nonnull type, void * _Nonnull ptr) {
     CEDeallocate(ptr);
 }
 
@@ -266,13 +280,12 @@ void __CETypeRelease(CERef _Nonnull object) {
                     weakBit = rcInfo & CERuntimeRcWeakBit;
                     newRcInfo = weakBit | rc;
                 } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
-                size_t size = type->getSize(object);
                 //清除weak
                 type->alloctor->destroyWeakRefrences(object);
                 //deinit
-                type->deinit(object);
+                type->alloctor->deinit(object);
                 //回收内存
-                type->alloctor->deallocate(type, object, size);
+                type->alloctor->deallocate(type, object);
             }
         } else {
             CERuntimeUnsafeRcBase_t * header = object;
@@ -305,13 +318,12 @@ void __CETypeRelease(CERef _Nonnull object) {
                 newRcInfo = weakBit | rc;
                 header->rcInfo = newRcInfo;
 
-                size_t size = type->getSize(object);
                 //清除weak
                 type->alloctor->destroyWeakRefrences(object);
                 //deinit
-                type->deinit(object);
+                type->alloctor->deinit(object);
                 //回收内存
-                type->alloctor->deallocate(type, object, size);
+                type->alloctor->deallocate(type, object);
             }
         }
     }

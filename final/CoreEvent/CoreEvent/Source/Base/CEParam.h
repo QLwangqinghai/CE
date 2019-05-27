@@ -13,8 +13,8 @@
 #include "CEParamItem.h"
 #include "CERuntime.h"
 
-#define CEParamBufferItemsTotalSizeMax 3872
-#define CEParamItemMaxCount 16
+#define CEParamBufferItemsTotalSizeMax 1936
+#define CEParamItemMaxCount 8
 
 
 //tuple

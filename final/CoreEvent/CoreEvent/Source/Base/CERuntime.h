@@ -35,10 +35,13 @@ struct __CEType;
 typedef struct __CEType CEType_s;
 typedef CEType_s const * CETypeRef;
 
+struct __CETypeDescripter;
+typedef struct __CETypeDescripter CETypeDescripter_s;
+typedef CETypeDescripter_s const * CETypeDescripterPtr;
 
 struct __CEAlloctor;
 typedef struct __CEAlloctor CEAlloctor_s;
-typedef const CEAlloctor_s * CEAlloctorRef;
+typedef CEAlloctor_s const * CEAlloctorPtr;
 
 typedef uint16_t CETypeMask_t;
 
@@ -120,26 +123,31 @@ struct __CEType {
     CETypeRef const _Nonnull type;
     uint16_t version;
     uint16_t masks;
-    uint32_t objectSize;//objectSize 为0 时 size 为变长
-    char * _Nonnull name;
+    uint32_t objectSize;//objectSize 不能为0
     uintptr_t identifier;
-    CEAlloctor_s const * _Nullable alloctor;//CMAlloctor_s * description
     
-    size_t (* _Nonnull getSize)(CERef _Nonnull object);
-    void (* _Nonnull deinit)(CERef _Nonnull object);
-    void (* _Nonnull descript)(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript/*会被调用多次*/);
-    void * _Nullable ext;
+    CEAlloctorPtr _Nonnull alloctor;
+    CETypeDescripterPtr _Nonnull descripter;
+    CERef _Nullable class;
 };
 
 struct __CEAlloctor {
     void * _Nullable context;
     void * _Nonnull (* _Nonnull allocate)(CETypeRef _Nonnull type, size_t size);
-    void (* _Nonnull deallocate)(CETypeRef _Nonnull type, void * _Nonnull ptr, size_t size);
+    void (* _Nonnull deallocate)(CETypeRef _Nonnull type, void * _Nonnull ptr);
     void (* _Nonnull destroyWeakRefrences)(CERef _Nonnull object);
+    
     CERuntimeRetain_f _Nonnull retain;
     CERuntimeTryRetain_f _Nonnull tryRetain;
     CERuntimeRelease_f _Nonnull release;
+    void (* _Nonnull deinit)(CERef _Nonnull object);
 };
+
+struct __CETypeDescripter {
+    char * _Nonnull name;
+    void (* _Nonnull descript)(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript/*会被调用多次*/);
+};
+
 #pragma pack(pop)
 
 extern CEType_s __CETypeMate;

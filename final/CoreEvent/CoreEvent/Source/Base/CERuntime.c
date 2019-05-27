@@ -33,6 +33,21 @@ void __CETypeMateDeallocate(CETypeRef _Nonnull type, void * _Nonnull ptr) {
 }
 
 
+void __CETypeMateDestroyWeakRefrences(CERef _Nonnull object) {
+    assert(object);
+}
+CERef _Nonnull __CETypeMateRetain(CERef _Nonnull object) {
+    assert(object);
+    return object;
+}
+CERef _Nullable __CETypeMateTryRetain(CERef _Nonnull object) {
+    assert(object);
+    return object;
+}
+void __CETypeMateRelease(CERef _Nonnull object) {
+    assert(object);
+}
+
 static const CEAlloctor_s __CETypeMateAlloctor = {
     .context = NULL,
     .allocate = __CETypeMateAllocate,

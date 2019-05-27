@@ -21,25 +21,20 @@
 
 void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript);
 
+
+const CETypeSpecific_s __CETypeSpecificThread = {
+    .name = "CEThread",
+    .descript = _CEThreadDescript,
+    .deinit = CERuntimeDefaultDeinit,
+};
+
 size_t _CEThreadGetSize(CERef _Nonnull p) {
     return sizeof(CEThread_s);
 }
-const CEDefaultType_s __CEDefaultTypeThread = {
-    .type = CETypeMate,
-    .version = CERuntimeVersion,
-    .masks = CETypeMaskNoRc,
-    .objectSize = sizeof(CEThread_s),
-    .name = "CEThread",
-    .identifier = (uintptr_t)(&__CEDefaultTypeThread),
-    .alloctor = &__CEDefaultTypeDefaultAlloctor,
-    
-    .deinit = CETypeDefaultDeinit,
-    .descript = _CEThreadDescript,
-    
-    .class = NULL,
-};
 
-CETypeRef _Nonnull CETypeThread = &__CEDefaultTypeThread;
+const CEType_s __CETypeThread = CEType(sizeof(CEThread_s), (uintptr_t)(&__CETypeThread), &__CETypeSpecificThread);
+
+CETypeRef _Nonnull CETypeThread = &__CETypeThread;
 
 void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript) {
     assert(object);
@@ -47,10 +42,10 @@ void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CED
     assert(CETypeIsEqual(type, CETypeThread));
 
     CEThreadRef thread = object;
-    
+
     char buffer[32] = {};
     descript(handler, "<");
-    descript(handler, ((CEDefaultType_s *)object)->name);
+    descript(handler, type->specific->name);
     snprintf(buffer, 31, ":%p,", object);
     descript(handler, buffer);
     descript(handler, " threadName: ");

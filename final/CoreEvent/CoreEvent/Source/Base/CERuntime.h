@@ -31,16 +31,12 @@ typedef struct __CERuntimeAtomicRcBase CERuntimeAtomicRcBase_s;
 struct __CERuntimeUnsafeRcBase;
 typedef struct __CERuntimeUnsafeRcBase CERuntimeUnsafeRcBase_s;
 
-struct __CEDefaultType;
-typedef struct __CEDefaultType CEDefaultType_s;
+struct __CEType;
+typedef struct __CEType CEType_s;
+typedef const CEType_s * CETypeRef;
 
-struct __CERcableType;
-typedef struct __CERcableType CERcableType_s;
-
-typedef void * CETypeRef;
-
-struct __CEDefaultTypeSpecific;
-typedef struct __CEDefaultTypeSpecific CETypeSpecific_s;
+struct __CETypeSpecific;
+typedef struct __CETypeSpecific CETypeSpecific_s;
 typedef CETypeSpecific_s const * CETypeSpecificPtr;
 
 struct __CEAlloctor;
@@ -50,14 +46,8 @@ typedef CEAlloctor_s const * CEAlloctorPtr;
 typedef uint16_t CETypeMask_t;
 
 #define CETypeBitHasRc 0x8000u
-#define CETypeBitRcAtomic 0x4000u
+#define CETypeBitStatic 0x4000u
 #define CETypeBitWeakable 0x2000u
-
-#define CETypeMaskRcAtomic (CETypeBitHasRc | CETypeBitRcAtomic)
-#define CETypeMaskRcUnsafe (CETypeBitHasRc)
-#define CETypeMaskNoRc 0x0u
-
-#define CETypeMaskDefaultRc CETypeMaskRcAtomic
 
 
 #define CETypeMaskVersionBitCount 16
@@ -89,7 +79,7 @@ typedef uint16_t CETypeMask_t;
 void CETypeDefaultDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript);
 
 //do nothing
-void CETypeDefaultDeinit(CERef _Nonnull object);
+void CERuntimeDefaultDeinit(CERef _Nonnull object);
 
 
 #if CEBuild64Bit
@@ -114,16 +104,9 @@ struct __CERuntimeAtomicRcBase {
     _Atomic(uint_fast32_t) rcInfo;
 #endif
 };
-struct __CERuntimeUnsafeRcBase {
-    CETypeRef const _Nonnull type;
-#if CEBuild64Bit
-    uint64_t rcInfo;
-#else
-    uint32_t rcInfo;
-#endif
-};
 
-typedef struct __CETypeContent {
+struct __CEType {
+    CERuntimeAtomicRcBase_s runtime;
     uint16_t version;
     uint16_t masks;
     uint32_t objectSize;//objectSize 不能为0
@@ -132,19 +115,8 @@ typedef struct __CETypeContent {
     CEAlloctorPtr _Nonnull alloctor;
     CETypeSpecificPtr _Nonnull specific;
     CERef _Nullable class;
-} CETypeContent_s;
-typedef CETypeContent_s * CETypeContentPtr;
-
-
-struct __CEDefaultType {
-    CERuntimeBase_s runtime;
-    CETypeContent_s content;
 };
 
-struct __CERcableType {
-    CERuntimeAtomicRcBase_s runtime;
-    CETypeContent_s content;
-};
 
 struct __CEAlloctor {
     void * _Nullable context;
@@ -157,7 +129,7 @@ struct __CEAlloctor {
     CERuntimeRelease_f _Nonnull release;
 };
 
-struct __CEDefaultTypeSpecific {
+struct __CETypeSpecific {
     char * _Nonnull name;
     void (* _Nonnull descript)(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript/*会被调用多次*/);
     void (* _Nonnull deinit)(CERef _Nonnull object);
@@ -165,25 +137,22 @@ struct __CEDefaultTypeSpecific {
 
 #pragma pack(pop)
 
-extern CEDefaultType_s __CEDefaultTypeMate;
-#define CETypeMate &__CEDefaultTypeMate
+extern CEType_s __CETypeMate;
+#define CETypeMate &__CETypeMate
 
 extern const CEAlloctor_s CERuntimeDefaultAlloctor;
 
 
-#define CEDefaultType(identifier, specific) {\
+#define CEType(_objectSize, _identifier, _specific) {\
     .runtime = {.type = CETypeMate},\
-    .content = {\
-        .version = CERuntimeVersion,\
-        .masks = CETypeMaskNoRc,\
-        .objectSize = CEDefaultTypeLayoutSize,\
-        .identifier = identifier,\
-        .alloctor = &CERuntimeDefaultAlloctor,\
-        .specific = specific,\
-        .class = NULL,\
-    },\
+    .version = CERuntimeVersion,\
+    .masks = CETypeBitHasRc | CETypeBitStatic,\
+    .objectSize = _objectSize,\
+    .identifier = _identifier,\
+    .alloctor = &CERuntimeDefaultAlloctor,\
+    .specific = _specific,\
+    .class = NULL,\
 }
-
 
 
 CERef _Nonnull CERetain(const CERef _Nonnull object);
@@ -193,9 +162,6 @@ void CERelease(const CERef _Nonnull object);
 
 _Bool CETypeIsEqual(CETypeRef _Nonnull type0, CETypeRef _Nonnull type1);
 CETypeRef _Nonnull CERefGetType(CERef _Nonnull ref);
-
-CETypeContent_s * _Nonnull CERefGetTypeContent(CERef _Nonnull ref);
-
 
 
 void * _Nonnull CERuntimeDefaultAllocate(CETypeRef _Nonnull type, size_t size);

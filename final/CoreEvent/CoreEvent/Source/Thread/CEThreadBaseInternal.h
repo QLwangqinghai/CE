@@ -98,8 +98,8 @@ typedef CETaskSyncContext_t * CETaskSyncContextPtr;
 struct _CETaskContext {
     CETaskContextPtr _Nullable prev;
 //thread sem
-    CEParamRef _Nullable resultReceiver;
-    CEParamRef _Nullable param;
+    CETaskRef _Nonnull task;
+    
     //当前队列
     CEQueueBaseRef _Nullable queue;
     

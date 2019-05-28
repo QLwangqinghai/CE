@@ -23,9 +23,6 @@ void CETypeDefaultDescript(CERef _Nonnull object, void const * _Nonnull handler,
 }
 void CERuntimeDefaultDeinit(CERef _Nonnull object) {}
 
-void __CETypeMateDeinit(CERef _Nonnull object) {
-}
-
 void __CETypeMateDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript) {
     CETypeDefaultDescript(object, handler, descript);
 }

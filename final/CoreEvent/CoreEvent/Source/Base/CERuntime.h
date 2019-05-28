@@ -48,6 +48,7 @@ typedef uint16_t CETypeMask_t;
 #define CETypeBitHasRc 0x8000u
 #define CETypeBitStatic 0x4000u
 #define CETypeBitWeakable 0x2000u
+#define CETypeMaskNone 0x0u
 
 
 #define CETypeMaskVersionBitCount 16
@@ -143,10 +144,10 @@ extern CEType_s __CETypeMate;
 extern const CEAlloctor_s CERuntimeDefaultAlloctor;
 
 
-#define CEType(_objectSize, _identifier, _specific) {\
+#define CEType(_masks, _objectSize, _identifier, _specific) {\
     .runtime = {.type = CETypeMate},\
     .version = CERuntimeVersion,\
-    .masks = CETypeBitHasRc | CETypeBitStatic,\
+    .masks = _masks,\
     .objectSize = _objectSize,\
     .identifier = _identifier,\
     .alloctor = &CERuntimeDefaultAlloctor,\

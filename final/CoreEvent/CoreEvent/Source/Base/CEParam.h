@@ -37,13 +37,21 @@ extern CETypeRef _Nonnull CETypeStackParam;
 extern CETypeRef _Nonnull CETypeHeapParam;
 
 
-typedef void (*CEParamItemRelease_f)(CEParamType_e type, void * _Nonnull itemPtr);
+//typedef void (*CEParamDeinitHandle_f)(CEParamRef _Nonnull param);
+//typedef struct _CEParamDeinitObserver {
+//    
+//} CEParamDeinitObserver_s;
+
+
 
 #define CEStackParamSize(structSize) (308 + structSize)
 
 size_t CEStackParamGoodSize(uint32_t capacity, size_t bufferItemsTotalSize);
 
 CEStackParamRef _Nullable CEStackParamInit(void * _Nonnull ptr, size_t size, uint32_t capacity);
+void CEStackParamDeinit(CEStackParamRef _Nonnull stackParam);
+
+
 CEHeapParamRef _Nonnull CEHeapParamCreate(uint32_t capacity, size_t bufferItemsTotalSize);
 
 

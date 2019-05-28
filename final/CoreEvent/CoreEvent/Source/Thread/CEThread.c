@@ -32,7 +32,7 @@ size_t _CEThreadGetSize(CERef _Nonnull p) {
     return sizeof(CEThread_s);
 }
 
-const CEType_s __CETypeThread = CEType(sizeof(CEThread_s), (uintptr_t)(&__CETypeThread), &__CETypeSpecificThread);
+const CEType_s __CETypeThread = CEType(CETypeBitHasRc | CETypeBitStatic, sizeof(CEThread_s), (uintptr_t)(&__CETypeThread), &__CETypeSpecificThread);
 
 CETypeRef _Nonnull CETypeThread = &__CETypeThread;
 
@@ -98,12 +98,11 @@ static char * __CEMainThreadDefaultName = "main";
 CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable threadName, _Bool copyThreadName) {
     CEThreadSpecificRef specific = (CEThreadSpecificRef)pthread_getspecific(CEThreadSpecificKeyShared());
     if (NULL == specific) {
-        specific = CEThreadSpecificInit();
-        CEThread_s * thread = &(specific->thread);
+        CEThreadRef thread = CETypeThread->alloctor->allocate(CETypeThread, sizeof(CEThread_s));
         memcpy(&(thread->runtime), &CETypeThread, sizeof(CETypeRef));
         thread->pthread = pthread_self();
         if (threadName && !copyThreadName) {
-            specific->thread.name = threadName;
+            thread->name = threadName;
         } else {
             char * name = NULL;
             size_t size = 0;
@@ -124,9 +123,11 @@ CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable thread
                 name = CEAllocateClear(64);
                 snprintf(name, 63, "thread: %p", specific);
             }
-            specific->thread.name = name;
-            specific->thread.nameBufferLength = size;
+            thread->name = name;
+            thread->nameBufferLength = size;
         }
+        specific = CEThreadSpecificInit();
+        specific->thread = thread;
         pthread_setspecific(CEThreadSpecificKeyShared(), specific);
     }
     return specific;
@@ -141,7 +142,7 @@ CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void) {
 }
 
 CEThreadRef _Nonnull CEThreadGetCurrent(void) {
-    return &(CEThreadSpecificGetCurrent()->thread);
+    return CEThreadSpecificGetCurrent()->thread;
 }
 
 CEThreadLoaderRef _Nonnull CEThreadLooperGetCurrent(void) {

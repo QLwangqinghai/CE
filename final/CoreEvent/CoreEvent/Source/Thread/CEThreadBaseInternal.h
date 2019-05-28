@@ -28,7 +28,7 @@ typedef struct _CEQueueBase {
 typedef CEQueueBase_t * CEQueueBaseRef;
 
 struct _CEThread {
-    CERuntimeBase_s runtime;
+    CERuntimeAtomicRcBase_s runtime;
 #if __APPLE__
     pthread_t _Nullable pthread;
 #else
@@ -59,7 +59,7 @@ struct _CETaskWorker {
 };
 
 struct _CEThreadSpecific {
-    CEThread_s thread;
+    CEThreadRef _Nonnull thread;
     CEThreadLoaderRef _Nullable loader;
     CETaskWorkerRef _Nullable worker;
     

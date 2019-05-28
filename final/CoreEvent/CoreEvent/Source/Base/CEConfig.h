@@ -19,6 +19,16 @@
 #include <features.h>
 #endif
 
+#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
+#include <unistd.h>
+#endif
+#ifdef __ANDROID__
+#include <linux/sysctl.h>
+#else
+#include <sys/sysctl.h>
+#endif /* __ANDROID__ */
+
+
 #if (defined(__CYGWIN32__) || defined(_WIN32)) && !defined(__WIN32__)
 #define __WIN32__ 1
 #endif

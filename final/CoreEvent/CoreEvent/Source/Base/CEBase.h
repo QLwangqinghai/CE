@@ -25,7 +25,6 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/resource.h>
-#include <sys/sysctl.h>
 #include <fcntl.h>
 
 #if __APPLE__

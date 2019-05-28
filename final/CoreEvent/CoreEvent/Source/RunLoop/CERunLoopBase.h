@@ -38,20 +38,6 @@ struct _CEQueue {
 
 //高1 位 表示执行中的count， 其余为任务个数 running = countInfos != 0
 
-struct _CESource {
-#if CEBuild64Bit
-    //高14 位 表示执行中的count， 其余为任务个数
-    _Atomic(uint_fast64_t) countInfos;// 0->1 do wake; 1->0 do wait
-#else
-    //高8 位 表示执行中的count， 其余为任务个数
-    _Atomic(uint_fast32_t) countInfos;// 0->1 do wake; 1->0 do wait
-#endif
-    uint32_t concurrency: 7;//[1-127]
-    uint32_t concurrencyBitCount: 3;//[1-255]
-
-    
-    
-};
 
 
 #endif /* CERunLoopBase_h */

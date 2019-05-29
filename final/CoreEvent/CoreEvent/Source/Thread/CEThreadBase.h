@@ -135,9 +135,9 @@ struct _CETask {
     CEFunction_f _Nonnull execute;
     CETaskExecuteObserverRef _Nullable observer;
 
-    
+    CEQueueRef _Nullable targetQueue;
     //
-    CETaskContextPtr _Nonnull context;
+    CETaskContextPtr _Nullable context;
 };
 
 

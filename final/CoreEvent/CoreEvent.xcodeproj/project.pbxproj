@@ -28,6 +28,7 @@
 		D603ECC42276C8C4005F22BF /* CFMessagePort.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB92276C8C4005F22BF /* CFMessagePort.c */; };
 		D603ECC52276C8C4005F22BF /* CFMachPort_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECBA2276C8C4005F22BF /* CFMachPort_Internal.h */; };
 		D603ECC62276C8C4005F22BF /* CFMachPort_Lifetime.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */; };
+		D61B299C229FC45F002A85BA /* Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61B299B229FC45F002A85BA /* Swift.swift */; };
 		D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6378D93228177CD006A46E6 /* CEThreadBase.h */; };
 		D6378D96228178AE006A46E6 /* CEThreadBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6378D95228178AE006A46E6 /* CEThreadBase.c */; };
 		D644A9F4227C248400F6B333 /* CoreEventV5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D644A9EB227C248400F6B333 /* CoreEventV5.framework */; };
@@ -229,6 +230,8 @@
 		D603ECB92276C8C4005F22BF /* CFMessagePort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMessagePort.c; sourceTree = "<group>"; };
 		D603ECBA2276C8C4005F22BF /* CFMachPort_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFMachPort_Internal.h; sourceTree = "<group>"; };
 		D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMachPort_Lifetime.c; sourceTree = "<group>"; };
+		D61B299A229FC45E002A85BA /* Demo2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo2-Bridging-Header.h"; sourceTree = "<group>"; };
+		D61B299B229FC45F002A85BA /* Swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swift.swift; sourceTree = "<group>"; };
 		D6378D93228177CD006A46E6 /* CEThreadBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadBase.h; sourceTree = "<group>"; };
 		D6378D95228178AE006A46E6 /* CEThreadBase.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEThreadBase.c; sourceTree = "<group>"; };
 		D644A9EB227C248400F6B333 /* CoreEventV5.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreEventV5.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -535,8 +538,8 @@
 			isa = PBXGroup;
 			children = (
 				D6378D93228177CD006A46E6 /* CEThreadBase.h */,
-				D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */,
 				D6378D95228178AE006A46E6 /* CEThreadBase.c */,
+				D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */,
 				D644ABC9227C806300F6B333 /* CEThread.h */,
 				D644ABC8227C806300F6B333 /* CEThread.c */,
 				D6802B2E227D717A0083EDBF /* CESem.h */,
@@ -634,6 +637,8 @@
 				D644AAED227C7AE900F6B333 /* Info.plist */,
 				D644AAEE227C7AE900F6B333 /* main.m */,
 				D644AAF0227C7AE900F6B333 /* Demo2.entitlements */,
+				D61B299B229FC45F002A85BA /* Swift.swift */,
+				D61B299A229FC45E002A85BA /* Demo2-Bridging-Header.h */,
 			);
 			path = Demo2;
 			sourceTree = "<group>";
@@ -1067,6 +1072,7 @@
 					};
 					D644AADF227C7AE700F6B333 = {
 						CreatedOnToolsVersion = 10.2.1;
+						LastSwiftMigration = 1020;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -1264,6 +1270,7 @@
 				D644AAE7227C7AE700F6B333 /* ViewController.m in Sources */,
 				D644AAEF227C7AE900F6B333 /* main.m in Sources */,
 				D644AAE4227C7AE700F6B333 /* AppDelegate.m in Sources */,
+				D61B299C229FC45F002A85BA /* Swift.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1713,6 +1720,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Demo2/Info.plist;
@@ -1722,6 +1730,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.Demo2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Demo2/Demo2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1729,6 +1740,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Demo2/Info.plist;
@@ -1738,12 +1750,15 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.Demo2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Demo2/Demo2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
 		D644AB0B227C7AE900F6B333 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1762,6 +1777,7 @@
 		D644AB0C227C7AE900F6B333 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1780,6 +1796,7 @@
 		D644AB0E227C7AE900F6B333 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Demo2UITests/Info.plist;
@@ -1797,6 +1814,7 @@
 		D644AB0F227C7AE900F6B333 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Demo2UITests/Info.plist;

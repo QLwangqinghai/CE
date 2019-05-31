@@ -40,9 +40,9 @@ typedef struct _CERunLoop CERunLoop_s;
 typedef CERunLoop_s * CERunLoopRef;
 
 
-struct _CEThreadLoader;
-typedef struct _CEThreadLoader CEThreadLoader_s;
-typedef CEThreadLoader_s * CEThreadLoaderRef;
+struct _CEThreadSpecificDelegate;
+typedef struct _CEThreadSpecificDelegate CEThreadSpecificDelegate_s;
+typedef CEThreadSpecificDelegate_s * CEThreadSpecificDelegatePtr;
 
 struct _CETaskWorker;
 typedef struct _CETaskWorker CETaskWorker_s;

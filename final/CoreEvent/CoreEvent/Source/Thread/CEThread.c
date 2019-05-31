@@ -76,7 +76,7 @@ CEThreadSpecificRef _Nonnull CEThreadSpecificInit(void) {
 }
 
 void CEThreadSpecificDeinit(CEThreadSpecificRef _Nonnull specific) {
-
+    specific->thread->status = CEThreadStatusFinished;
 }
 
 
@@ -94,38 +94,30 @@ pthread_key_t CEThreadSpecificKeyShared(void) {
 }
 
 static char * __CEMainThreadDefaultName = "main";
+CEThreadRef _Nonnull _CEThreadCreate(char * _Nullable threadName, CEThreadStatus_t status) {
+    CEThreadRef thread = CETypeThread->alloctor->allocate(CETypeThread, sizeof(CEThread_s));
+    thread->pthread = pthread_self();
+    thread->status = status;
+    if (threadName) {
+        size_t len = strlen(threadName);
+        assert(len <= 63);
+        memcpy(thread->name, threadName, len + 1);
+    } else {
+        if (CEIsMainThread()) {
+            size_t len = strlen(__CEMainThreadDefaultName);
+            memcpy(thread->name, __CEMainThreadDefaultName, len + 1);
+        } else {
+            memset(thread->name, 0, 64);
+        }
+    }
+    return thread;
+}
+
 
 CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable threadName, _Bool copyThreadName) {
     CEThreadSpecificRef specific = (CEThreadSpecificRef)pthread_getspecific(CEThreadSpecificKeyShared());
     if (NULL == specific) {
-        CEThreadRef thread = CETypeThread->alloctor->allocate(CETypeThread, sizeof(CEThread_s));
-        memcpy(&(thread->runtime), &CETypeThread, sizeof(CETypeRef));
-        thread->pthread = pthread_self();
-        if (threadName && !copyThreadName) {
-            thread->name = threadName;
-        } else {
-            char * name = NULL;
-            size_t size = 0;
-            if (threadName) {
-                if (copyThreadName) {
-                    size_t len = strlen(threadName);
-                    if (len <= 63) {
-                        size = 64;
-                    } else {
-                        size = (len /*(+ 1 - 1)*/ + CECpuWordByteSize ) / CECpuWordByteSize * CECpuWordByteSize;
-                    }
-                    name = CEAllocateClear(size);
-                    memcpy(name, threadName, len);
-                } else {
-                    name = threadName;
-                }
-            } else {
-                name = CEAllocateClear(64);
-                snprintf(name, 63, "thread: %p", specific);
-            }
-            thread->name = name;
-            thread->nameBufferLength = size;
-        }
+        CEThreadRef thread = _CEThreadCreate(threadName, CEThreadStatusExecuting);
         specific = CEThreadSpecificInit();
         specific->thread = thread;
         pthread_setspecific(CEThreadSpecificKeyShared(), specific);
@@ -134,31 +126,22 @@ CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable thread
 }
 
 CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void) {
-    if (CEIsMainThread()) {
-        return _CEThreadSpecificGetCurrent(__CEMainThreadDefaultName, false);
-    } else {
-        return _CEThreadSpecificGetCurrent(NULL, false);
-    }
+    return _CEThreadSpecificGetCurrent(NULL, false);
 }
 
 CEThreadRef _Nonnull CEThreadGetCurrent(void) {
     return CEThreadSpecificGetCurrent()->thread;
 }
 
-CEThreadLoaderRef _Nonnull CEThreadLooperGetCurrent(void) {
-    return CEThreadSpecificGetCurrent()->loader;
-}
-
-
-CEThreadLoaderRef _Nonnull __CEThreadLooperCreate(CEThreadRef _Nonnull thread) {
-    CEThreadLoaderRef looper = CEAllocateClear(sizeof(CEThreadLoader_s));
+CEThreadSpecificDelegatePtr _Nonnull __CEThreadLooperCreate(CEThreadRef _Nonnull thread) {
+    CEThreadSpecificDelegatePtr looper = CEAllocateClear(sizeof(CEThreadSpecificDelegate_s));
     looper->thread = thread;
     return looper;
 }
 
 
 struct __CEThreadContext {
-    void * _Nullable (* _Nonnull main)(void * _Nullable);
+    void (* _Nonnull main)(void * _Nullable);
     void * _Nullable params;
     void (* _Nullable paramsDealloc)(void * _Nonnull);
     CESemPtr _Nonnull sem;
@@ -166,32 +149,43 @@ struct __CEThreadContext {
     CEThreadRef _Nullable thread;
 };
 
-void * __CEThreadMain(void * args) {
-    struct __CEThreadContext * context = (struct __CEThreadContext *)args;
+
+CEThreadSpecificRef __CEThreadCreateSpecific(struct __CEThreadContext * context) {
+    CEThreadRef thread = _CEThreadCreate(NULL, CEThreadStatusStarting);
+    CEThreadSpecificRef specific = CEThreadSpecificInit();
+    specific->thread = thread;
+    pthread_setspecific(CEThreadSpecificKeyShared(), specific);
     
-    CEThreadRef thread = CEThreadGetCurrent();
-    CEThreadLoaderRef looper = __CEThreadLooperCreate(thread);
+    CEThreadSpecificDelegatePtr looper = __CEThreadLooperCreate(thread);
     looper->loadRunLoop = context->runLoopLoader;
     looper->status = CEThreadStatusStarting;
     context->thread = thread;
+    return specific;
+}
+
+
+void * __CEThreadMain(void * args) {
+    struct __CEThreadContext * context = (struct __CEThreadContext *)args;
+    CEThreadSpecificRef specific = __CEThreadCreateSpecific(context);
     void * _Nullable params = context->params;
-    void (* _Nullable paramsDealloc)(void * _Nonnull) = context->paramsDealloc;
     CESemWakeUp(context->sem);
-    context = NULL;
-    looper->status = CEThreadStatusExecuting;
-    void * result = context->main(params);
-    looper->status = CEThreadStatusFinished;
+    specific->thread->status = CEThreadStatusExecuting;
+    context->main(params);
+    specific->thread->status = CEThreadStatusFinished;
+    
+    void (* _Nullable paramsDealloc)(void * _Nonnull) = context->paramsDealloc;
     if (params && paramsDealloc) {
         paramsDealloc(params);
     };
-    return result;
+    return NULL;
 }
+
 
 #define CEThreadCreateDeallocParmas if (params && paramsDealloc) { paramsDealloc(params); }
 
 CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
                                      CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull),
-                                     void * _Nullable (* _Nonnull main)(void * _Nullable),
+                                     void (* _Nonnull main)(void * _Nullable),
                                      void * _Nullable params,
                                      void (* _Nullable paramsDealloc)(void * _Nonnull)) {
     pthread_t tid;

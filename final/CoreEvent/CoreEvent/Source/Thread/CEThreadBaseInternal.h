@@ -37,19 +37,17 @@ struct _CEThread {
 #else
     pthread_t pthread;
 #endif
-    size_t nameBufferLength;//==0时 为静态数据
-    char * _Nonnull name;
-    CEQueuePtr _Nullable queue;
+    char name[64];
+    CEThreadStatus_t status;
 };
 
 struct _CERunLoop {
     pthread_t _Nullable thread;
 };
 
-struct _CEThreadLoader {
+struct _CEThreadSpecificDelegate {
     CEThreadRef _Nonnull thread;
     CEThreadStatus_t status;
-    
     CERunLoopRef _Nonnull (* _Nullable loadRunLoop)(CEThreadRef _Nonnull);
     CERunLoopRef _Nonnull runLoop;
 };
@@ -57,18 +55,41 @@ struct _CEThreadLoader {
 struct _CETaskWorker {
     CEThreadRef _Nonnull thread;
     CEQueuePtr _Nonnull queue;
-    void * owmerQueue;
     CESemPtr _Nonnull sem;
+    
+    _Atomic(uint_fast32_t) actionCode;
+
+    CESourceRef _Nullable source;
+};
+
+struct _CEThreadScheduler;
+typedef struct _CEThreadScheduler CEThreadScheduler_s;
+typedef CEThreadScheduler_s * CEThreadSchedulerPtr;
+
+struct _CEThreadScheduler {
+    CEThreadRef _Nonnull thread;
+    CEQueuePtr _Nullable ownerQueue;
+
+    
+    
+    CEThreadSpecificDelegatePtr _Nullable loader;
+    CETaskWorkerRef _Nullable worker;
+    
+    CETaskSyncContextPtr _Nullable syncContext;
+    CETaskStackPtr _Nonnull taskStack;
 };
 
 struct _CEThreadSpecific {
     CEThreadRef _Nonnull thread;
-    CEThreadLoaderRef _Nullable loader;
-    CETaskWorkerRef _Nullable worker;
     
-    CEQueueBaseRef _Nullable queue;
-    CETaskSyncContextPtr _Nullable syncContext;
-    CETaskStackPtr _Nonnull taskStack;
+    CEThreadSchedulerPtr _Nullable scheduler;
+
+    
+    CEThreadSpecificDelegatePtr _Nullable delegate11;
+
+    
+    
+
     
     CETaskContextPtr _Nullable executing;
     

@@ -59,35 +59,35 @@ void CETaskStackPageDestroy(CETaskStackPagePtr _Nonnull pagePtr) {
     CEDeallocate(pagePtr);
 }
 
-CETaskStackPtr _Nonnull CETaskStackCreate(void) {
-    CETaskStackPtr result = CEAllocate(sizeof(CETaskStack_s));
- 
-    return result;
-}
-
-void CETaskStackDestroy(CETaskStackPtr _Nonnull pagePtr) {
-    CEDeallocate(pagePtr);
-}
-
-CETaskStackPtr _Nonnull CETaskStackGetCurrent(void) {
-    CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
-    CETaskStackPtr result = specific->taskStack;
-    if (NULL == result) {
-        result = CETaskStackCreate();
-        specific->taskStack = result;
-    }
-    return result;
-}
-
-void CETaskStackPush(CETaskStackPtr _Nonnull stackPtr) {
-    assert(stackPtr);
-
-}
-
-void CETaskStackPop(CETaskStackPtr _Nonnull stackPtr) {
-    assert(stackPtr);
-    
-}
+//CETaskStackPtr _Nonnull CETaskStackCreate(void) {
+//    CETaskStackPtr result = CEAllocate(sizeof(CETaskStack_s));
+// 
+//    return result;
+//}
+//
+//void CETaskStackDestroy(CETaskStackPtr _Nonnull pagePtr) {
+//    CEDeallocate(pagePtr);
+//}
+//
+//CETaskStackPtr _Nonnull CETaskStackGetCurrent(void) {
+//    CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
+//    CETaskStackPtr result = specific->taskStack;
+//    if (NULL == result) {
+//        result = CETaskStackCreate();
+//        specific->taskStack = result;
+//    }
+//    return result;
+//}
+//
+//void CETaskStackPush(CETaskStackPtr _Nonnull stackPtr) {
+//    assert(stackPtr);
+//
+//}
+//
+//void CETaskStackPop(CETaskStackPtr _Nonnull stackPtr) {
+//    assert(stackPtr);
+//    
+//}
 
 
 /*

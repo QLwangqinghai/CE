@@ -32,8 +32,6 @@ struct _CEThreadWaiter;
 typedef struct _CEThreadWaiter * CEThreadWaiterRef;
 
 
-
-
 CEThreadRef _Nullable CEThreadGetCurrent(void);
 
 void CEThreadWaiterWait(CEThreadWaiterRef _Nonnull waiter);

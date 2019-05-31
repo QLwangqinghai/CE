@@ -18,7 +18,7 @@ void aa () {
     
 }
 
-void CEQueueSync(CEQueueRef _Nonnull queue, CEParamRef _Nonnull param, CEParamRef _Nullable result, CEFunction_f _Nonnull execute);
+void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEParamRef _Nullable result, CEFunction_f _Nonnull execute);
 
 
 

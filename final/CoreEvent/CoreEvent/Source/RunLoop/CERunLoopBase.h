@@ -14,15 +14,6 @@
 
 
 
-//队列状态
-struct _CEQueue {
-    CEQueueBase_t base;
-    char * _Nonnull label;
-    CESourceRef _Nonnull source;
-    CEThreadRef _Nonnull thread;
-    
-};
-
 
 
 

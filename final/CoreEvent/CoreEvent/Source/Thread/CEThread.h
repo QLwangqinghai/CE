@@ -14,13 +14,14 @@
 CEThreadRef _Nonnull CEThreadGetCurrent(void);
 
 
+static const float CEThreadConfigSchedPriorityMin = -1.0f;
+static const float CEThreadConfigSchedPriorityMax = 1.0f;
+static const float CEThreadConfigSchedPriorityDefault = 0.0f;
 
 typedef struct _CEThreadConfig {
     pthread_t _Nullable thread;
-    size_t stacksize;//0 use default
-    
-#warning 待完善
-    int schedPriority;
+    uint32_t stacksize;//0 use default
+    float schedPriority;//[-1, 1]
 } CEThreadConfig_s;
 
 _Bool CEIsMainThread(void);

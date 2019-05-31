@@ -248,14 +248,27 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
         }
     }
     
-#warning 待完善 优先级设置
-    int priority = sched_get_priority_max(policy);
-    if (-1 == priority) {
+    int maxPriority = sched_get_priority_max(policy);
+    if (-1 == maxPriority) {
         CELogError("sched_get_priority_max error %s\n", strerror(result));
         CEThreadCreateDeallocParmas;
         return NULL;
     }
-    
+    int minPriority = sched_get_priority_max(policy);
+    if (-1 == minPriority) {
+        CELogError("sched_get_priority_max error %s\n", strerror(result));
+        CEThreadCreateDeallocParmas;
+        return NULL;
+    }
+    int priority = 0;
+    if (config.schedPriority <= CEThreadConfigSchedPriorityMin) {
+        priority = minPriority;
+    } else if (config.schedPriority >= CEThreadConfigSchedPriorityMax) {
+        priority = maxPriority;
+    } else {
+        double offset = (double)(config.schedPriority);
+        priority = (int)(((double)maxPriority + (double)minPriority)/2.0 + ((double)maxPriority - (double)minPriority)*offset);
+    }
     param.sched_priority = priority;
     
     result = pthread_attr_setschedparam(&attr, &param);

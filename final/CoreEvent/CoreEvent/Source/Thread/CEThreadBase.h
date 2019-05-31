@@ -20,6 +20,12 @@ typedef os_unfair_lock CESpinLock_t;
 typedef pthread_spinlock_t CESpinLock_t;
 #endif
 
+typedef uint8_t CEQueuePriority_t;
+static const CEQueuePriority_t CEQueuePriorityHigh = 192;
+static const CEQueuePriority_t CEQueuePriorityDefault = 128;
+static const CEQueuePriority_t CEQueuePriorityLow = 64;
+
+
 struct _CESem;
 typedef struct _CESem CESem_s;
 typedef CESem_s * CESemPtr;
@@ -42,11 +48,7 @@ struct _CETaskWorker;
 typedef struct _CETaskWorker CETaskWorker_s;
 typedef CETaskWorker_s * CETaskWorkerRef;
 
-
-
-struct _CEQueue;
-typedef struct _CEQueue CEQueue_s;
-typedef CEQueue_s * CEQueueRef;
+typedef void * CEQueuePtr;
 
 struct _CESource;
 typedef struct _CESource CESource_s;
@@ -115,15 +117,16 @@ struct _CETaskContext;
 typedef struct _CETaskContext CETaskContext_s;
 typedef CETaskContext_s * CETaskContextPtr;
 
+
 /*
- CEQueueRef _Nonnull targetQueue;
+ CEQueuePtr _Nonnull targetQueue;
  CETaskExecuteObserverRef _Nullable observer;
 */
 struct _CESyncTask {
     CERuntimeBase_s runtime;
 //    CETaskBase_t base;
     CETaskContextPtr _Nonnull context;
-    CEQueueRef _Nullable sourceQueue;
+    CEQueuePtr _Nullable sourceQueue;
 };
 
 struct _CETask {
@@ -135,7 +138,8 @@ struct _CETask {
     CEFunction_f _Nonnull execute;
     CETaskExecuteObserverRef _Nullable observer;
 
-    CEQueueRef _Nullable targetQueue;
+
+    CEQueuePtr _Nullable targetQueue;
     //
     CETaskContextPtr _Nullable context;
 };

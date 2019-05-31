@@ -20,6 +20,9 @@ struct _CETaskStack;
 typedef struct _CETaskStack CETaskStack_s;
 typedef CETaskStack_s * CETaskStackPtr;
 
+struct _CEQueue;
+typedef struct _CEQueue CEQueue_s;
+
 typedef struct _CEQueueBase {
     char * _Nonnull label;
     size_t maxConcurrentCount;//[1, ...], 取值为1 时 为串行队列
@@ -36,7 +39,7 @@ struct _CEThread {
 #endif
     size_t nameBufferLength;//==0时 为静态数据
     char * _Nonnull name;
-    CEQueueRef _Nullable queue;
+    CEQueuePtr _Nullable queue;
 };
 
 struct _CERunLoop {
@@ -53,7 +56,7 @@ struct _CEThreadLoader {
 
 struct _CETaskWorker {
     CEThreadRef _Nonnull thread;
-    CEQueueRef _Nonnull queue;
+    CEQueuePtr _Nonnull queue;
     void * owmerQueue;
     CESemPtr _Nonnull sem;
 };
@@ -108,6 +111,13 @@ struct _CETaskContext {
 
 
 };
+
+typedef void (*CESourceCallback_f)(CESourceRef _Nonnull source);
+typedef void (*CESourceAppendTask_f)(CESourceRef _Nonnull source, CETaskRef _Nonnull task);
+typedef CETaskRef _Nullable (*CESourceRemoveTask_f)(CESourceRef _Nonnull source);
+
+
+
 struct _CESource {
 #if CEBuild64Bit
     //高14 位 表示执行中的count， 其余为任务个数
@@ -123,13 +133,22 @@ struct _CESource {
     uint32_t count;
     uint32_t executingCount;
 
+    _Atomic(uint_fast64_t) limitWorkerCount;// 0->1 do wake; 1->0 do wait
+
     
-    CESpinLock_t lock;
+    void * _Nonnull consumer;
+    
+    void * _Nonnull scheduler;
+    
+//    CESpinLock_t lock;
     
     CETaskRef _Nullable head;
     CETaskRef _Nullable last;
 
+    CESourceCallback_f _Nonnull weakUp;
     
+    CESourceAppendTask_f _Nonnull append;
+    CESourceRemoveTask_f _Nonnull remove;
 };
 
 
@@ -182,7 +201,13 @@ typedef struct _CETaskWorkerManager {
 #endif
     
     uint32_t capacity;
-    
+    CESourceRef _Nonnull highLevelSource;
+    CESourceRef _Nonnull defaultLevelSource;
+    CESourceRef _Nonnull lowLevelSource;
+
+    _Atomic(uint_fast32_t) activeThreadCountInfo;//[6-8-8][1:2]
+    _Atomic(uint_fast32_t) activeRc;
+
     
 } CETaskWorkerManager_s;
 
@@ -212,7 +237,9 @@ void __CETaskWorkerManagerDefaultInitialize(void) {
 #endif
     
     size_t n = MIN(activecpu * CENTHREADS, wq_max_threads - 2);
-    assert(n >= 16);
+    if (n < 16) {
+        n = 16;
+    }
     
 #if CEBuild64Bit
     if (n > 512) {
@@ -238,6 +265,7 @@ void __CETaskWorkerManagerDefaultInitialize(void) {
     }
 #endif
     __CETaskWorkerManagerDefault.capacity = (uint32_t)n;
+    
 }
 
 CETaskWorkerManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
@@ -246,33 +274,49 @@ CETaskWorkerManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
     return &__CETaskWorkerManagerDefault;
 }
 
+////append
+//void CESourceLock(CESourceRef _Nonnull source) {
+//    CESpinLockLock(&(source->lock));
+//
+//
+//}
+//
+//void CESourceUnlock(CESourceRef _Nonnull source) {
+//    CESpinLockUnlock(&(source->lock));
+//
+//
+//
+//}
 
-//append
-
-void CESourceLock(CESourceRef _Nonnull source) {
-    
-    
-    
-}
-
-void CESourceUnlock(CESourceRef _Nonnull source) {
-    
-    
-    
-}
-void CESourceWeakup(CESourceRef _Nonnull source) {
-    
-    
-    
-}
-void CESourceWait(CESourceRef _Nonnull source) {
-    
-    
-    
-}
+//队列状态
+struct _CEQueue {
+    CERuntimeAtomicRcBase_s runtime;
+    char * _Nonnull label;
+    uint8_t isSerialQueue;
+    uint8_t level;
+    CEQueueBase_t base;
+    CESourceRef _Nonnull source;
+    CEThreadRef _Nonnull thread;
+    CESpinLock_t lock;
+};
 
 
 void CESourceAppend(CESourceRef _Nonnull source, CETaskRef _Nonnull task) {
+    assert(source);
+    assert(task);
+    assert(NULL == task->next);
+    
+    source->append(source, task);
+}
+
+//执行中任务的百分比 4 : 2 : 1
+
+CETaskRef _Nullable CESourceRemove(CESourceRef _Nonnull source) {
+    assert(source);
+    return source->remove(source);
+}
+
+void CESourceSerialQueueAppend(CESourceRef _Nonnull source, CETaskRef _Nonnull task) {
     assert(source);
     assert(task);
     assert(NULL == task->next);
@@ -297,17 +341,18 @@ void CESourceAppend(CESourceRef _Nonnull source, CETaskRef _Nonnull task) {
     }
     CESourceUnlock(source);
     if (weakup) {
-        CESourceWeakup(source);
+        source->weakUp(source);
     }
 }
 
-CETaskRef _Nullable CESourceRemoveFirst(CESourceRef _Nonnull source) {
+//执行中任务的百分比 4 : 2 : 1
+
+CETaskRef _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
     assert(source);
     
     CETaskRef result = NULL;
     uint32_t count = 0;
     CESourceLock(source);
-    
     if (source->head == NULL) {
         assert(source->last == NULL);
     } else {
@@ -316,7 +361,6 @@ CETaskRef _Nullable CESourceRemoveFirst(CESourceRef _Nonnull source) {
             result = source->head;
             source->head = result->next;
             result->next = NULL;
-            
             assert(source->count > 1);
             source->count -= 1;
             count = source->count;
@@ -325,7 +369,6 @@ CETaskRef _Nullable CESourceRemoveFirst(CESourceRef _Nonnull source) {
             source->head = NULL;
             source->last = NULL;
             result->next = NULL;
-            
             assert(source->count == 1);
             source->count = 0;
         }
@@ -334,6 +377,8 @@ CETaskRef _Nullable CESourceRemoveFirst(CESourceRef _Nonnull source) {
     
     return result;
 }
+
+//
 
 //removeFirst
 

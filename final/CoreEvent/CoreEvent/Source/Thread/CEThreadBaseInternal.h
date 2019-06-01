@@ -23,13 +23,6 @@ typedef CETaskStack_s * CETaskStackPtr;
 struct _CEQueue;
 typedef struct _CEQueue CEQueue_s;
 
-typedef struct _CEQueueBase {
-    char * _Nonnull label;
-    size_t maxConcurrentCount;//[1, ...], 取值为1 时 为串行队列
-} CEQueueBase_t;
-
-typedef CEQueueBase_t * CEQueueBaseRef;
-
 struct _CEThread {
     CERuntimeAtomicRcBase_s runtime;
 #if __APPLE__
@@ -64,9 +57,11 @@ struct _CETaskWorker {
 
 struct _CEThreadScheduler;
 typedef struct _CEThreadScheduler CEThreadScheduler_s;
-typedef CEThreadScheduler_s * CEThreadSchedulerPtr;
+typedef CEThreadScheduler_s * CEThreadSchedulerRef;
 
 struct _CEThreadScheduler {
+    CERuntimeAtomicRcBase_s runtime;
+    CESourceRef _Nonnull owner;
     CEThreadRef _Nonnull thread;
     CEQueuePtr _Nullable ownerQueue;
 
@@ -74,37 +69,51 @@ struct _CEThreadScheduler {
     
     CEThreadSpecificDelegatePtr _Nullable loader;
     CETaskWorkerRef _Nullable worker;
+
+    
+    uint32_t type;//main queue
+    
+};
+
+struct _CETaskScheduler;
+typedef struct _CETaskScheduler CETaskScheduler_s;
+typedef CETaskScheduler_s * CETaskSchedulerRef;
+
+struct _CETaskScheduler {
+    CERuntimeAtomicRcBase_s runtime;
+    
+    CEThreadRef _Nonnull thread;
+    CEQueuePtr _Nullable ownerQueue;
+    
+    
+    
+    CEThreadSpecificDelegatePtr _Nullable loader;
+    CETaskWorkerRef _Nullable worker;
     
     CETaskSyncContextPtr _Nullable syncContext;
     CETaskStackPtr _Nonnull taskStack;
+    
+    uint32_t type;//main queue
+    uint32_t actionCode;
+
 };
 
 struct _CEThreadSpecific {
     CEThreadRef _Nonnull thread;
-    
-    CEThreadSchedulerPtr _Nullable scheduler;
-
-    
-    CEThreadSpecificDelegatePtr _Nullable delegate11;
-
-    
-    
-
-    
-    CETaskContextPtr _Nullable executing;
-    
+    CETaskSchedulerRef _Nullable scheduler;
+    CETaskContextPtr _Nullable taskContext;
 };
 
 typedef struct _CEThreadContext {
     CEThreadRef _Nonnull thread;
-    CEQueueBaseRef _Nonnull queue;
+    CEQueuePtr _Nonnull queue;
 } CEThreadContext_t;
 
 
 
 typedef struct _CETaskSyncContextItem {
     void * _Nonnull task;
-    CEQueueBaseRef _Nonnull queue;
+    CEQueuePtr _Nonnull queue;
 } CETaskSyncContextItem_t;
 
 typedef struct _CETaskSyncContext {
@@ -125,7 +134,7 @@ struct _CETaskContext {
     CETaskRef _Nonnull task;
     
     //当前队列
-    CEQueueBaseRef _Nullable queue;
+    CEQueuePtr _Nullable queue;
     
     //当前线程
     CEThreadRef _Nonnull thread;
@@ -156,10 +165,10 @@ struct _CESource {
 
     _Atomic(uint_fast64_t) limitWorkerCount;// 0->1 do wake; 1->0 do wait
 
+    CEThreadSchedulerRef _Nullable scheduler;
     
     void * _Nonnull consumer;
     
-    void * _Nonnull scheduler;
     
 //    CESpinLock_t lock;
     
@@ -314,10 +323,8 @@ struct _CEQueue {
     CERuntimeAtomicRcBase_s runtime;
     char * _Nonnull label;
     uint8_t isSerialQueue;
-    uint8_t level;
-    CEQueueBase_t base;
+    uint8_t schedPriority;
     CESourceRef _Nonnull source;
-    CEThreadRef _Nonnull thread;
     CESpinLock_t lock;
 };
 
@@ -408,11 +415,6 @@ CETaskRef _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
 //信号量
 
 //count
-
-
-
-
-extern CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable threadName, _Bool copyThreadName);
 
 extern CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void);
 

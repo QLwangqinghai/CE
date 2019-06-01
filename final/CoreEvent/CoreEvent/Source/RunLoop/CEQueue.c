@@ -58,9 +58,9 @@ void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEPara
     
     
     CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
-
+    CEThreadSchedulerRef scheduler = specific->scheduler;
     //获取sync任务的上下文 获取不到， 则创建
-    CETaskSyncContextPtr syncContext = specific->syncContext;
+//    CETaskSyncContextPtr syncContext = specific->syncContext;
 
     CETaskContext_s context = CETaskContexPush();
     

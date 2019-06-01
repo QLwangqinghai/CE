@@ -28,7 +28,11 @@
 		D603ECC42276C8C4005F22BF /* CFMessagePort.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB92276C8C4005F22BF /* CFMessagePort.c */; };
 		D603ECC52276C8C4005F22BF /* CFMachPort_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECBA2276C8C4005F22BF /* CFMachPort_Internal.h */; };
 		D603ECC62276C8C4005F22BF /* CFMachPort_Lifetime.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */; };
+		D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D608C1E222A2800B001FE51D /* CETaskScheduler.h */; };
+		D608C1E522A2800B001FE51D /* CETaskScheduler.c in Sources */ = {isa = PBXBuildFile; fileRef = D608C1E322A2800B001FE51D /* CETaskScheduler.c */; };
 		D61B299C229FC45F002A85BA /* Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61B299B229FC45F002A85BA /* Swift.swift */; };
+		D630255F22A242CB00A7561F /* CEThreadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D630255D22A242CB00A7561F /* CEThreadScheduler.h */; };
+		D630256022A242CB00A7561F /* CEThreadScheduler.c in Sources */ = {isa = PBXBuildFile; fileRef = D630255E22A242CB00A7561F /* CEThreadScheduler.c */; };
 		D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6378D93228177CD006A46E6 /* CEThreadBase.h */; };
 		D6378D96228178AE006A46E6 /* CEThreadBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6378D95228178AE006A46E6 /* CEThreadBase.c */; };
 		D644A9F4227C248400F6B333 /* CoreEventV5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D644A9EB227C248400F6B333 /* CoreEventV5.framework */; };
@@ -230,8 +234,12 @@
 		D603ECB92276C8C4005F22BF /* CFMessagePort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMessagePort.c; sourceTree = "<group>"; };
 		D603ECBA2276C8C4005F22BF /* CFMachPort_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFMachPort_Internal.h; sourceTree = "<group>"; };
 		D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMachPort_Lifetime.c; sourceTree = "<group>"; };
+		D608C1E222A2800B001FE51D /* CETaskScheduler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETaskScheduler.h; sourceTree = "<group>"; };
+		D608C1E322A2800B001FE51D /* CETaskScheduler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETaskScheduler.c; sourceTree = "<group>"; };
 		D61B299A229FC45E002A85BA /* Demo2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo2-Bridging-Header.h"; sourceTree = "<group>"; };
 		D61B299B229FC45F002A85BA /* Swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swift.swift; sourceTree = "<group>"; };
+		D630255D22A242CB00A7561F /* CEThreadScheduler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadScheduler.h; sourceTree = "<group>"; };
+		D630255E22A242CB00A7561F /* CEThreadScheduler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEThreadScheduler.c; sourceTree = "<group>"; };
 		D6378D93228177CD006A46E6 /* CEThreadBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadBase.h; sourceTree = "<group>"; };
 		D6378D95228178AE006A46E6 /* CEThreadBase.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEThreadBase.c; sourceTree = "<group>"; };
 		D644A9EB227C248400F6B333 /* CoreEventV5.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreEventV5.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -556,6 +564,10 @@
 				D6FB5C9522978A5200859829 /* CEThreadWaiter.c */,
 				D6FB5C992297A6DA00859829 /* CETaskStack.h */,
 				D6FB5C9A2297A6DA00859829 /* CETaskStack.c */,
+				D630255D22A242CB00A7561F /* CEThreadScheduler.h */,
+				D630255E22A242CB00A7561F /* CEThreadScheduler.c */,
+				D608C1E222A2800B001FE51D /* CETaskScheduler.h */,
+				D608C1E322A2800B001FE51D /* CETaskScheduler.c */,
 			);
 			path = Thread;
 			sourceTree = "<group>";
@@ -827,10 +839,12 @@
 				D6724909227E9E1400FC8B7A /* CEParamItem.h in Headers */,
 				D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */,
 				D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */,
+				D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */,
 				D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */,
 				D6FB5C9622978A5200859829 /* CEThreadWaiter.h in Headers */,
 				D644ABBE227C7CD200F6B333 /* CEBaseType.h in Headers */,
 				D644ABD5227C952200F6B333 /* CELog.h in Headers */,
+				D630255F22A242CB00A7561F /* CEThreadScheduler.h in Headers */,
 				D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */,
 				D644ABD1227C824300F6B333 /* CEInternal.h in Headers */,
 				D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */,
@@ -1192,11 +1206,13 @@
 				D6FB5C8F22956C7100859829 /* CETaskContext.c in Sources */,
 				D647C856227DFE3A004AAA19 /* CEParam.c in Sources */,
 				D644ABCA227C806300F6B333 /* CEThread.c in Sources */,
+				D608C1E522A2800B001FE51D /* CETaskScheduler.c in Sources */,
 				D6FB5C9722978A5200859829 /* CEThreadWaiter.c in Sources */,
 				D647C89422866D0F004AAA19 /* CERuntime.c in Sources */,
 				D644ABD4227C952200F6B333 /* CELog.c in Sources */,
 				D644ABB7227C7C3F00F6B333 /* CETime.c in Sources */,
 				D647C85A227F2910004AAA19 /* CETaskExecuteObserver.c in Sources */,
+				D630256022A242CB00A7561F /* CEThreadScheduler.c in Sources */,
 				D672490A227E9E1400FC8B7A /* CEParamItem.c in Sources */,
 				D647C85E227F4251004AAA19 /* CETaskQueue.c in Sources */,
 				D67248F5227CABFF00FC8B7A /* CESource.c in Sources */,

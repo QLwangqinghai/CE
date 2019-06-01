@@ -79,13 +79,26 @@ struct _CETaskScheduler;
 typedef struct _CETaskScheduler CETaskScheduler_s;
 typedef CETaskScheduler_s * CETaskSchedulerRef;
 
+typedef uint_fast32_t CETaskSchedulerStatus_t;
+static const CETaskSchedulerStatus_t CETaskSchedulerStatusNoThread = 0;
+static const CETaskSchedulerStatus_t CETaskSchedulerStatusCreatingThread = 1;
+static const CETaskSchedulerStatus_t CETaskSchedulerStatusRunning = 2;
+static const CETaskSchedulerStatus_t CETaskSchedulerStatusWaiting = 3;
+
+
 struct _CETaskScheduler {
     CERuntimeAtomicRcBase_s runtime;
-    
     CEThreadRef _Nonnull thread;
     CEQueuePtr _Nullable ownerQueue;
     
+    CESourceRef _Nonnull source;
+
+    CESpinLock_t lock;
     
+    uint32_t id;
+
+    _Atomic(uint_fast32_t) status;
+
     
     CEThreadSpecificDelegatePtr _Nullable loader;
     CETaskWorkerRef _Nullable worker;
@@ -94,7 +107,6 @@ struct _CETaskScheduler {
     CETaskStackPtr _Nonnull taskStack;
     
     uint32_t type;//main queue
-    uint32_t actionCode;
 
 };
 
@@ -221,7 +233,7 @@ struct _CESource {
 //} CETaskWorkerManager_s;
 //#endif
 
-typedef struct _CETaskWorkerManager {
+typedef struct _CEGlobalThreadManager {
 #if CEBuild64Bit
     _Atomic(uint_fast64_t) workerStatus[8];
     CETaskWorkerRef _Nonnull works[512];
@@ -239,11 +251,31 @@ typedef struct _CETaskWorkerManager {
     _Atomic(uint_fast32_t) activeRc;
 
     
-} CETaskWorkerManager_s;
+} CEGlobalThreadManager_s;
 
-typedef void * CETaskWorkerManagerPtr;
+CETaskSchedulerRef _Nullable CEGlobalThreadManagerDeQueue(void) {
+    //    static const CEQueuePriority_t CEQueuePriorityHigh = 192;
+    //    static const CEQueuePriority_t CEQueuePriorityDefault = 128;
+    //    static const CEQueuePriority_t CEQueuePriorityLow = 64;
+    
+    return NULL;
+}
 
-static CETaskWorkerManager_s __CETaskWorkerManagerDefault = {};
+
+
+ void CEGlobalThreadManagerEnQueue(CETaskSchedulerRef _Nonnull schedule) {
+//    static const CEQueuePriority_t CEQueuePriorityHigh = 192;
+//    static const CEQueuePriority_t CEQueuePriorityDefault = 128;
+//    static const CEQueuePriority_t CEQueuePriorityLow = 64;
+    
+     
+     
+}
+
+
+typedef CEGlobalThreadManager_s * CEGlobalThreadManagerPtr;
+
+static CEGlobalThreadManager_s __CEGlobalThreadManager = {};
 
 
 #if defined(__i386__) || defined(__x86_64__)
@@ -252,7 +284,7 @@ static CETaskWorkerManager_s __CETaskWorkerManagerDefault = {};
 #define CENTHREADS 16
 #endif
 
-void __CETaskWorkerManagerDefaultInitialize(void) {
+void __CEGlobalThreadManagerDefaultInitialize(void) {
     
     uint32_t activecpu;
     uint32_t wq_max_threads;
@@ -283,26 +315,29 @@ void __CETaskWorkerManagerDefaultInitialize(void) {
 
 #if CEBuild64Bit
     for (int i=0; i<8; i++) {
-        _Atomic(uint_fast64_t) * status = &(__CETaskWorkerManagerDefault.workerStatus[i]);
+        _Atomic(uint_fast64_t) * status = &(__CEGlobalThreadManager.workerStatus[i]);
         uint_fast64_t s = 0;
         atomic_store(status, s);
     }
 #else
     for (int i=0; i<8; i++) {
-        _Atomic(uint_fast32_t) * status = &(__CETaskWorkerManagerDefault.workerStatus[i]);
+        _Atomic(uint_fast32_t) * status = &(__CEGlobalThreadManager.workerStatus[i]);
         uint_fast32_t s = 0;
         atomic_store(status, s);
     }
 #endif
-    __CETaskWorkerManagerDefault.capacity = (uint32_t)n;
+    __CEGlobalThreadManager.capacity = (uint32_t)n;
     
 }
 
-CETaskWorkerManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
+CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
     static pthread_once_t token = PTHREAD_ONCE_INIT;
-    pthread_once(&token,&__CETaskWorkerManagerDefaultInitialize);
-    return &__CETaskWorkerManagerDefault;
+    pthread_once(&token,&__CEGlobalThreadManagerDefaultInitialize);
+    return &__CEGlobalThreadManager;
 }
+
+
+
 
 ////append
 //void CESourceLock(CESourceRef _Nonnull source) {
@@ -417,5 +452,14 @@ CETaskRef _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
 //count
 
 extern CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void);
+
+extern CEThreadRef _Nullable _CEThreadCreate(CEThreadConfig_s config,
+                                             CETaskSchedulerRef _Nullable scheduler,
+                                             void (* _Nullable beforeMain)(CEThreadSpecificRef _Nonnull specific),
+                                             void (* _Nonnull main)(void * _Nullable),
+                                             void * _Nullable params,
+                                             void (* _Nullable paramsDealloc)(void * _Nonnull));
+
+
 
 #endif /* CEThreadBaseInternal_h */

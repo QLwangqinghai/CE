@@ -94,7 +94,7 @@ pthread_key_t CEThreadSpecificKeyShared(void) {
 }
 
 static char * __CEMainThreadDefaultName = "main";
-CEThreadRef _Nonnull _CEThreadCreate(char * _Nullable threadName, CEThreadStatus_t status) {
+CEThreadRef _Nonnull _CEThreadAllocInit(char * _Nullable threadName, CEThreadStatus_t status) {
     CEThreadRef thread = CETypeThread->alloctor->allocate(CETypeThread, sizeof(CEThread_s));
     thread->pthread = pthread_self();
     thread->status = status;
@@ -117,7 +117,7 @@ CEThreadRef _Nonnull _CEThreadCreate(char * _Nullable threadName, CEThreadStatus
 CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable threadName, _Bool copyThreadName) {
     CEThreadSpecificRef specific = (CEThreadSpecificRef)pthread_getspecific(CEThreadSpecificKeyShared());
     if (NULL == specific) {
-        CEThreadRef thread = _CEThreadCreate(threadName, CEThreadStatusExecuting);
+        CEThreadRef thread = _CEThreadAllocInit(threadName, CEThreadStatusExecuting);
         specific = CEThreadSpecificInit();
         specific->thread = thread;
         pthread_setspecific(CEThreadSpecificKeyShared(), specific);
@@ -141,32 +141,37 @@ CEThreadSpecificDelegatePtr _Nonnull __CEThreadLooperCreate(CEThreadRef _Nonnull
 
 
 struct __CEThreadContext {
+    void (* _Nullable beforeMain)(CEThreadSpecificRef _Nonnull specific);
     void (* _Nonnull main)(void * _Nullable);
     void * _Nullable params;
     void (* _Nullable paramsDealloc)(void * _Nonnull);
     CESemPtr _Nonnull sem;
-    CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull);
+    CETaskSchedulerRef _Nullable scheduler;
     CEThreadRef _Nullable thread;
 };
 
 
-CEThreadSpecificRef __CEThreadCreateSpecific(struct __CEThreadContext * context) {
-    CEThreadRef thread = _CEThreadCreate(NULL, CEThreadStatusStarting);
+CEThreadSpecificRef _Nonnull __CEThreadCreateSpecific(struct __CEThreadContext * _Nonnull context) {
+    CEThreadRef thread = _CEThreadAllocInit(NULL, CEThreadStatusStarting);
     CEThreadSpecificRef specific = CEThreadSpecificInit();
     specific->thread = thread;
+    specific->scheduler = context->scheduler;
     pthread_setspecific(CEThreadSpecificKeyShared(), specific);
-    
-    CEThreadSpecificDelegatePtr looper = __CEThreadLooperCreate(thread);
-    looper->loadRunLoop = context->runLoopLoader;
-    looper->status = CEThreadStatusStarting;
-    context->thread = thread;
+    return specific;
+}
+
+CEThreadSpecificRef _Nonnull __CEThreadBeforeMain(struct __CEThreadContext * _Nonnull context) {
+    CEThreadSpecificRef specific = __CEThreadCreateSpecific(context);
+    if (context->beforeMain) {
+        context->beforeMain(specific);
+    }
     return specific;
 }
 
 
 void * __CEThreadMain(void * args) {
     struct __CEThreadContext * context = (struct __CEThreadContext *)args;
-    CEThreadSpecificRef specific = __CEThreadCreateSpecific(context);
+    CEThreadSpecificRef specific = __CEThreadBeforeMain(context);
     void * _Nullable params = context->params;
     CESemWakeUp(context->sem);
     specific->thread->status = CEThreadStatusExecuting;
@@ -183,11 +188,21 @@ void * __CEThreadMain(void * args) {
 
 #define CEThreadCreateDeallocParmas if (params && paramsDealloc) { paramsDealloc(params); }
 
-CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
-                                     CERunLoopRef _Nonnull (* _Nonnull runLoopLoader)(CEThreadRef _Nonnull),
-                                     void (* _Nonnull main)(void * _Nullable),
-                                     void * _Nullable params,
-                                     void (* _Nullable paramsDealloc)(void * _Nonnull)) {
+CEThreadRef _Nullable _CEThreadCreate(CEThreadConfig_s config,
+                                      CETaskSchedulerRef _Nullable scheduler,
+                                      void (* _Nullable beforeMain)(CEThreadSpecificRef _Nonnull specific),
+                                      void (* _Nonnull main)(void * _Nullable),
+                                      void * _Nullable params,
+                                      void (* _Nullable paramsDealloc)(void * _Nonnull)) {
+    
+    //check scheduler
+    if (NULL != scheduler) {
+        
+        
+        
+        
+    }
+    
     pthread_t tid;
     pthread_attr_t attr;
     struct sched_param param;
@@ -272,9 +287,10 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
         return NULL;
     }
     struct __CEThreadContext context = {};
+    context.beforeMain = beforeMain;
     context.main = main;
     context.sem = CESemInit(0);
-    context.runLoopLoader = runLoopLoader;
+    context.scheduler = scheduler;
     context.params = params;
     context.paramsDealloc = paramsDealloc;
 
@@ -288,4 +304,11 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
     CESemDeinit(context.sem);
     
     return context.thread;
+}
+
+CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
+                                     void (* _Nonnull main)(void * _Nullable),
+                                     void * _Nullable params,
+                                     void (* _Nullable paramsDealloc)(void * _Nonnull)) {
+    return _CEThreadCreate(config, NULL, NULL, main, params, paramsDealloc);
 }

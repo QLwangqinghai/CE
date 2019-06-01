@@ -145,6 +145,11 @@ struct _CETask {
 };
 
 
+typedef struct _CEThreadConfig {
+    char name[64];
+    uint32_t stacksize;//0 use default
+    float schedPriority;//[-1, 1]
+} CEThreadConfig_s;
 
 
 void CESpinLockInit(CESpinLock_t * _Nonnull lockPtr);

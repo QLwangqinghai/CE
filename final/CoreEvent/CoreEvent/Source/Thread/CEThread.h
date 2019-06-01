@@ -18,11 +18,6 @@ static const float CEThreadConfigSchedPriorityMin = -1.0f;
 static const float CEThreadConfigSchedPriorityMax = 1.0f;
 static const float CEThreadConfigSchedPriorityDefault = 0.0f;
 
-typedef struct _CEThreadConfig {
-    pthread_t _Nullable thread;
-    uint32_t stacksize;//0 use default
-    float schedPriority;//[-1, 1]
-} CEThreadConfig_s;
 
 _Bool CEIsMainThread(void);
 
@@ -37,6 +32,11 @@ CEThreadRef _Nullable CEThreadGetCurrent(void);
 void CEThreadWaiterWait(CEThreadWaiterRef _Nonnull waiter);
 void CEThreadWaiterWakeUp(CEThreadWaiterRef _Nonnull waiter);
 
+
+CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
+                                     void (* _Nonnull main)(void * _Nullable),
+                                     void * _Nullable params,
+                                     void (* _Nullable paramsDealloc)(void * _Nonnull));
 
 
 

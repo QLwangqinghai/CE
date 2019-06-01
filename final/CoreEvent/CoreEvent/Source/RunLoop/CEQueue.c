@@ -84,3 +84,149 @@ void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEPara
 //        CEQueueConcurrentSync(queue, task, specific);
 //    }
 }
+
+CETaskRef _Nullable CETaskSchedulerRemoveTask(CETaskSchedulerRef _Nonnull scheduler) {
+    assert(scheduler);
+
+    CETaskRef task = NULL;
+    CESpinLockLock(&(scheduler->lock));
+    if (NULL != scheduler->source) {
+        task = CESourceRemove(scheduler->source);
+    }
+    CESpinLockUnlock(&(scheduler->lock));
+
+    return task;
+}
+
+_Bool CETaskSchedulerBindSource(CETaskSchedulerRef _Nonnull scheduler, CESourceRef _Nonnull source) {
+    assert(scheduler);
+    _Bool result = true;
+    CESpinLockLock(&(scheduler->lock));
+    if (NULL == scheduler->source) {
+        scheduler->source = source;
+    } else {
+        result = false;
+    }
+    CESpinLockUnlock(&(scheduler->lock));
+    
+    return result;
+}
+CESourceRef _Nullable CETaskSchedulerUnbindSource(CETaskSchedulerRef _Nonnull scheduler) {
+    assert(scheduler);
+    CESourceRef _Nonnull source = NULL;
+    CESpinLockLock(&(scheduler->lock));
+    source = scheduler->source;
+    scheduler->source = NULL;
+    CESpinLockUnlock(&(scheduler->lock));
+    return source;
+}
+void CETaskSchedulerWait(CETaskSchedulerRef _Nonnull scheduler) {
+    
+    
+    //wait
+}
+void CETaskSchedulerWakeUp(CETaskSchedulerRef _Nonnull scheduler) {
+    uint_fast32_t status = 0;
+    uint_fast32_t newStatus = 0;
+    uint32_t times = 0;
+    do {
+        times += 1;
+        assert(1 == times);
+        status = atomic_load(&(scheduler->status));
+        
+        switch (status) {
+            case CETaskSchedulerStatusNoThread: {
+                newStatus = CETaskSchedulerStatusCreatingThread;
+            }
+                break;
+            case CETaskSchedulerStatusWaiting: {
+                newStatus = CETaskSchedulerStatusRunning;
+            }
+                break;
+            case CETaskSchedulerStatusRunning://穿透
+            default: {
+                abort();
+                return;
+            }
+                break;
+        }
+    } while (!atomic_compare_exchange_strong(&(scheduler->status), &status, newStatus));
+
+    if (CETaskSchedulerStatusNoThread == newStatus) {
+        CEThreadConfig_s config = {};
+        snprintf(config.name, 63, "CoreEvent.global.thread.%u", scheduler->id);
+        config.schedPriority = 0;
+        _CEThreadCreate(config, scheduler, CEQueueBeforeMainFunc, CEQueueMainFunc, NULL, NULL);
+    } else if (CETaskSchedulerStatusWaiting == newStatus) {
+        //do wake up
+
+    } else {
+        abort();
+    }
+}
+
+void CEGlobalThreadManagerDispatch(CESourceRef _Nonnull source) {
+    CETaskSchedulerRef scheduler = CEGlobalThreadManagerDeQueue();
+    if (scheduler) {
+        assert(CETaskSchedulerBindSource(scheduler, source));
+        CETaskSchedulerWakeUp(scheduler);
+    }
+}
+
+void CEQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific) {
+    CETaskSchedulerRef scheduler = specific->scheduler;
+    assert(scheduler);
+    uint_fast32_t status = 0;
+    uint_fast32_t newStatus = 0;
+    uint32_t times = 0;
+    do {
+        times += 1;
+        assert(1 == times);
+        status = atomic_load(&(scheduler->status));
+        assert(CETaskSchedulerStatusCreatingThread == status);
+        newStatus = CETaskSchedulerStatusRunning;
+    } while (!atomic_compare_exchange_strong(&(scheduler->status), &status, newStatus));
+}
+
+
+void CEQueueMainFunc(void * _Nullable param) {
+    CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
+    CETaskSchedulerRef scheduler = specific->scheduler;
+    assert(scheduler);
+    
+    uint_fast32_t status = atomic_load(&(scheduler->status));
+    assert(CETaskSchedulerStatusRunning == status);
+    while (1) {
+        switch (status) {
+            case CETaskSchedulerStatusWaiting: {
+                CETaskSchedulerUnbindSource(scheduler);
+                CEGlobalThreadManagerEnQueue(scheduler);
+                CETaskSchedulerWait(scheduler);
+            }
+                break;
+            case CETaskSchedulerStatusRunning: {
+                CETaskRef task = CETaskSchedulerRemoveTask(scheduler);
+                if (task) {
+                    //do task
+                    
+                    
+                } else {
+                    //change status
+                    uint_fast32_t newStatus = CETaskSchedulerStatusWaiting;
+                    if (atomic_compare_exchange_strong(&(scheduler->status), &status, newStatus)) {
+                        status = newStatus;
+                        continue;
+                    }
+                }
+            }
+                break;
+            case CETaskSchedulerStatusCreatingThread://穿透
+            case CETaskSchedulerStatusNoThread://穿透
+            default: {
+                abort();
+            }
+                break;
+        }
+        status = atomic_load(&(scheduler->status));
+    }
+}

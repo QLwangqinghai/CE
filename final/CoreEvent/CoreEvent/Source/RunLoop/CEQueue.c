@@ -32,17 +32,9 @@ static inline CEQueue_s * _Nonnull CEQueueCheck(CEQueuePtr _Nonnull queuePtr) {
 
 
 
-void CEQueueSerialSync(CEQueuePtr _Nonnull queue, CENoescapingTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
-    
-    
-    
-    
+void CEQueueSerialSync(CEQueuePtr _Nonnull queue, CESyncTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
 }
-void CEQueueConcurrentSync(CEQueuePtr _Nonnull queue, CENoescapingTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
-
-    
-    
-    
+void CEQueueConcurrentSync(CEQueuePtr _Nonnull queue, CESyncTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
 }
 
 void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEParamRef _Nullable result, CEFunction_f _Nonnull execute) {
@@ -64,31 +56,24 @@ void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEPara
 
     CETaskContext_s context = CETaskContexPush();
     
-    if (queue->isSerialQueue == 0) {
-        //并发队列
-        
-        
-        
-        
-        
-    } else {
-        //串行队列
-        
-        
-        
-    }
+    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
+    CETaskPtr task = NULL;
+    task->isSyncTask = 1;
+    task->condPtr = &cond;
+    CESourceAppend(queue->source, task);//转移
+    assert(0 == pthread_cond_init(&cond, NULL));
     
-//    if (queue->base.maxConcurrentCount <= 1) {
-//        CEQueueSerialSync(queue, task, specific);
-//    } else {
-//        CEQueueConcurrentSync(queue, task, specific);
-//    }
+    pthread_cond_wait(<#pthread_cond_t *restrict _Nonnull#>, <#pthread_mutex_t *restrict _Nonnull#>)
+    //task 不可再用
+    pthread_cond_destroy(&cond);
+    
 }
 
-CETaskRef _Nullable CETaskSchedulerRemoveTask(CETaskSchedulerRef _Nonnull scheduler) {
+CETaskPtr _Nullable CETaskSchedulerRemoveTask(CETaskSchedulerRef _Nonnull scheduler) {
     assert(scheduler);
 
-    CETaskRef task = NULL;
+    CETaskPtr task = NULL;
     CESpinLockLock(&(scheduler->lock));
     if (NULL != scheduler->source) {
         task = CESourceRemove(scheduler->source);
@@ -205,7 +190,7 @@ void CEQueueMainFunc(void * _Nullable param) {
             }
                 break;
             case CETaskSchedulerStatusRunning: {
-                CETaskRef task = CETaskSchedulerRemoveTask(scheduler);
+                CETaskPtr task = CETaskSchedulerRemoveTask(scheduler);
                 if (task) {
                     //do task
                     

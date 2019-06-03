@@ -30,6 +30,9 @@ struct _CESem;
 typedef struct _CESem CESem_s;
 typedef CESem_s * CESemPtr;
 
+struct _CECondition;
+typedef struct _CECondition CECondition_s;
+typedef CECondition_s * CEConditionPtr;
 
 struct _CEThread;
 typedef struct _CEThread CEThread_s;
@@ -73,13 +76,7 @@ struct _CETaskExecuteContext {
 
 struct _CETask;
 typedef struct _CETask CETask_s;
-typedef CETask_s * CETaskRef;
-typedef CETaskRef CEEscapingTaskRef;
-
-struct _CESyncTask;
-typedef struct _CESyncTask CENoescapingTask_s;
-typedef CENoescapingTask_s * CENoescapingTaskRef;
-
+typedef CETask_s * CETaskPtr;
 
 typedef uint64_t CETaskType_e;
 static const CETaskType_e CETaskTypeAsync = 0;
@@ -106,9 +103,8 @@ struct _CETaskResult {
 //};
 
 struct _CETaskExecuteObserver {
-    CETaskExecuteObserverFinish_f _Nullable finish;
-
-
+    CETaskExecuteObserverFinish_f _Nonnull finish;
+    void * _Nullable context;
 };
 
 
@@ -131,13 +127,15 @@ struct _CESyncTask {
 
 struct _CETask {
     //thread waiter
-    CETaskRef _Nullable next;
+    CETaskPtr _Nullable next;
     
     CEParamRef _Nullable param;
     CEParamRef _Nullable resultReceiver;
     CEFunction_f _Nonnull execute;
     CETaskExecuteObserverRef _Nullable observer;
-
+    uint32_t isSyncTask: 1;
+    
+    pthread_cond_t * _Nullable condPtr;// = PTHREAD_COND_INITIALIZER;/*初始化条件变量*/
 
     CEQueuePtr _Nullable targetQueue;
     //

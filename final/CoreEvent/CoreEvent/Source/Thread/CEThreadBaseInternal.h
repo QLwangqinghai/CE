@@ -143,7 +143,7 @@ typedef CETaskSyncContext_t * CETaskSyncContextPtr;
 struct _CETaskContext {
     CETaskContextPtr _Nullable prev;
 //thread sem
-    CETaskRef _Nonnull task;
+    CETaskPtr _Nonnull task;
     
     //当前队列
     CEQueuePtr _Nullable queue;
@@ -155,8 +155,8 @@ struct _CETaskContext {
 };
 
 typedef void (*CESourceCallback_f)(CESourceRef _Nonnull source);
-typedef void (*CESourceAppendTask_f)(CESourceRef _Nonnull source, CETaskRef _Nonnull task);
-typedef CETaskRef _Nullable (*CESourceRemoveTask_f)(CESourceRef _Nonnull source);
+typedef void (*CESourceAppendTask_f)(CESourceRef _Nonnull source, CETaskPtr _Nonnull task);
+typedef CETaskPtr _Nullable (*CESourceRemoveTask_f)(CESourceRef _Nonnull source);
 
 
 
@@ -184,8 +184,8 @@ struct _CESource {
     
 //    CESpinLock_t lock;
     
-    CETaskRef _Nullable head;
-    CETaskRef _Nullable last;
+    CETaskPtr _Nullable head;
+    CETaskPtr _Nullable last;
 
     CESourceCallback_f _Nonnull weakUp;
     
@@ -208,8 +208,8 @@ struct _CESource {
 //
 //    CESpinLock_t lock;
 //
-//    CETaskRef _Nullable head;
-//    CETaskRef _Nullable last;
+//    CETaskPtr _Nullable head;
+//    CETaskPtr _Nullable last;
 //
 //
 //} CETaskWorkerManager_s;
@@ -226,8 +226,8 @@ struct _CESource {
 //
 //    CESpinLock_t lock;
 //
-//    CETaskRef _Nullable head;
-//    CETaskRef _Nullable last;
+//    CETaskPtr _Nullable head;
+//    CETaskPtr _Nullable last;
 //
 //
 //} CETaskWorkerManager_s;
@@ -364,7 +364,7 @@ struct _CEQueue {
 };
 
 
-void CESourceAppend(CESourceRef _Nonnull source, CETaskRef _Nonnull task) {
+void CESourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
     assert(source);
     assert(task);
     assert(NULL == task->next);
@@ -374,12 +374,12 @@ void CESourceAppend(CESourceRef _Nonnull source, CETaskRef _Nonnull task) {
 
 //执行中任务的百分比 4 : 2 : 1
 
-CETaskRef _Nullable CESourceRemove(CESourceRef _Nonnull source) {
+CETaskPtr _Nullable CESourceRemove(CESourceRef _Nonnull source) {
     assert(source);
     return source->remove(source);
 }
 
-void CESourceSerialQueueAppend(CESourceRef _Nonnull source, CETaskRef _Nonnull task) {
+void CESourceSerialQueueAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
     assert(source);
     assert(task);
     assert(NULL == task->next);
@@ -410,10 +410,10 @@ void CESourceSerialQueueAppend(CESourceRef _Nonnull source, CETaskRef _Nonnull t
 
 //执行中任务的百分比 4 : 2 : 1
 
-CETaskRef _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
+CETaskPtr _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
     assert(source);
     
-    CETaskRef result = NULL;
+    CETaskPtr result = NULL;
     uint32_t count = 0;
     CESourceLock(source);
     if (source->head == NULL) {

@@ -20,7 +20,7 @@
 
 
 
-//_Bool CENoescapingTaskInit(CENoescapingTaskRef _Nonnull task,
+//_Bool CENoescapingTaskInit(CESyncTaskRef _Nonnull task,
 //                           CETaskExecute_f _Nonnull execute,
 //                           CETaskExecuteObserverRef _Nullable observer,
 //                           uint32_t itemCount);
@@ -43,6 +43,7 @@
 //                                 CEParamType_e * _Nullable itemTypeRef);
 
 
-
+void CETaskWaitFinish(CETaskPtr _Nonnull task);
+void CETaskFinish(CETaskPtr _Nonnull task);
 
 #endif /* CETask_h */

@@ -41,9 +41,10 @@ typedef struct _CEConditionLock {
 } CEConditionLock_s;
 typedef CEConditionLock_s * CEConditionLockPtr;
 
-
-struct _CECondition;
-typedef struct _CECondition CECondition_s;
+typedef struct _CECondition {
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+} CECondition_s;
 typedef CECondition_s * CEConditionPtr;
 
 
@@ -54,11 +55,6 @@ typedef CEThread_s * CEThreadRef;
 struct _CERunLoop;
 typedef struct _CERunLoop CERunLoop_s;
 typedef CERunLoop_s * CERunLoopRef;
-
-
-struct _CEThreadSpecificDelegate;
-typedef struct _CEThreadSpecificDelegate CEThreadSpecificDelegate_s;
-typedef CEThreadSpecificDelegate_s * CEThreadSpecificDelegatePtr;
 
 struct _CETaskWorker;
 typedef struct _CETaskWorker CETaskWorker_s;

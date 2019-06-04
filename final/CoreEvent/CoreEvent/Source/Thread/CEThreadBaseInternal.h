@@ -38,13 +38,6 @@ struct _CERunLoop {
     pthread_t _Nullable thread;
 };
 
-struct _CEThreadSpecificDelegate {
-    CEThreadRef _Nonnull thread;
-    CEThreadStatus_t status;
-    CERunLoopRef _Nonnull (* _Nullable loadRunLoop)(CEThreadRef _Nonnull);
-    CERunLoopRef _Nonnull runLoop;
-};
-
 struct _CETaskWorker {
     CEThreadRef _Nonnull thread;
     CEQueuePtr _Nonnull queue;
@@ -67,7 +60,6 @@ struct _CEThreadScheduler {
 
     
     
-    CEThreadSpecificDelegatePtr _Nullable loader;
     CETaskWorkerRef _Nullable worker;
 
     
@@ -77,7 +69,7 @@ struct _CEThreadScheduler {
 
 struct _CETaskScheduler;
 typedef struct _CETaskScheduler CETaskScheduler_s;
-typedef CETaskScheduler_s * CETaskSchedulerRef;
+typedef CETaskScheduler_s * CETaskSchedulerPtr;
 
 typedef uint_fast32_t CETaskSchedulerStatus_t;
 static const CETaskSchedulerStatus_t CETaskSchedulerStatusNoThread = 0;
@@ -87,26 +79,25 @@ static const CETaskSchedulerStatus_t CETaskSchedulerStatusWaiting = 3;
 
 
 struct _CETaskScheduler {
-    CERuntimeAtomicRcBase_s runtime;
     CEThreadRef _Nonnull thread;
-    CEQueuePtr _Nullable ownerQueue;
+    CEQueuePtr _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值
     
     CESourceRef _Nonnull source;
 
     CESpinLock_t lock;
     
-    uint32_t id;
+    uint32_t id;//全局的线程的scheduler 才有这个属性
 
-    _Atomic(uint_fast32_t) status;
+    _Atomic(uint_fast32_t) status;//全局的线程的scheduler 才有这个属性
 
     
-    CEThreadSpecificDelegatePtr _Nullable loader;
     CETaskWorkerRef _Nullable worker;
     
     CETaskSyncContextPtr _Nullable syncContext;
     CETaskStackPtr _Nonnull taskStack;
     
-    
+    CESemPtr _Nonnull syncTaskWaiter;
+
     CESemPtr _Nonnull waiter;
     
     uint32_t type;//main queue
@@ -114,7 +105,7 @@ struct _CETaskScheduler {
 
 struct _CEThreadSpecific {
     CEThreadRef _Nonnull thread;
-    CETaskSchedulerRef _Nullable scheduler;
+    CETaskSchedulerPtr _Nullable scheduler;
     CETaskContextPtr _Nullable taskContext;
 };
 
@@ -179,12 +170,12 @@ struct _CESource {
 
     _Atomic(uint_fast64_t) limitWorkerCount;// 0->1 do wake; 1->0 do wait
 
-    CEThreadSchedulerRef _Nullable scheduler;
+    CEThreadSchedulerRef _Nonnull scheduler;
     
     void * _Nonnull consumer;
     
     
-//    CESpinLock_t lock;
+    CESpinLock_t lock;
     
     CETaskPtr _Nullable head;
     CETaskPtr _Nullable last;
@@ -255,7 +246,7 @@ typedef struct _CEGlobalThreadManager {
     
 } CEGlobalThreadManager_s;
 
-CETaskSchedulerRef _Nullable CEGlobalThreadManagerDeQueue(void) {
+CETaskSchedulerPtr _Nullable CEGlobalThreadManagerDeQueue(void) {
     //    static const CEQueuePriority_t CEQueuePriorityHigh = 192;
     //    static const CEQueuePriority_t CEQueuePriorityDefault = 128;
     //    static const CEQueuePriority_t CEQueuePriorityLow = 64;
@@ -265,7 +256,7 @@ CETaskSchedulerRef _Nullable CEGlobalThreadManagerDeQueue(void) {
 
 
 
- void CEGlobalThreadManagerEnQueue(CETaskSchedulerRef _Nonnull schedule) {
+ void CEGlobalThreadManagerEnQueue(CETaskSchedulerPtr _Nonnull schedule) {
 //    static const CEQueuePriority_t CEQueuePriorityHigh = 192;
 //    static const CEQueuePriority_t CEQueuePriorityDefault = 128;
 //    static const CEQueuePriority_t CEQueuePriorityLow = 64;
@@ -281,9 +272,9 @@ static CEGlobalThreadManager_s __CEGlobalThreadManager = {};
 
 
 #if defined(__i386__) || defined(__x86_64__)
-#define CENTHREADS 32
-#else
 #define CENTHREADS 16
+#else
+#define CENTHREADS 4
 #endif
 
 void __CEGlobalThreadManagerDefaultInitialize(void) {
@@ -301,8 +292,8 @@ void __CEGlobalThreadManagerDefaultInitialize(void) {
 #endif
     
     size_t n = MIN(activecpu * CENTHREADS, wq_max_threads - 2);
-    if (n < 16) {
-        n = 16;
+    if (n < 8) {
+        n = 8;
     }
     
 #if CEBuild64Bit
@@ -354,11 +345,23 @@ CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
 //
 //
 //}
+void CESourceLock(CESourceRef _Nonnull source) {
+    CESpinLockLock(&(source->lock));
+
+
+}
+
+void CESourceUnlock(CESourceRef _Nonnull source) {
+    CESpinLockUnlock(&(source->lock));
+
+
+
+}
 
 //队列状态
 struct _CEQueue {
     CERuntimeAtomicRcBase_s runtime;
-    char * _Nonnull label;
+    char label[64];
     uint8_t isSerialQueue;
     uint8_t schedPriority;
     CESourceRef _Nonnull source;
@@ -456,7 +459,7 @@ CETaskPtr _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
 extern CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void);
 
 extern CEThreadRef _Nullable _CEThreadCreate(CEThreadConfig_s config,
-                                             CETaskSchedulerRef _Nullable scheduler,
+                                             CETaskSchedulerPtr _Nullable scheduler,
                                              void (* _Nullable beforeMain)(CEThreadSpecificRef _Nonnull specific),
                                              void (* _Nonnull main)(void * _Nullable),
                                              void * _Nullable params,

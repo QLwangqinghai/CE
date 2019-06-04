@@ -11,11 +11,10 @@
 
 #include "CEThreadBase.h"
 
-CESemPtr _Nonnull CESemInit(unsigned int value);
-void CESemDeinit(CESemPtr _Nonnull sem);
+void CEConditionInit(CEConditionPtr _Nonnull lock);
+void CEConditionDestroy(CEConditionPtr _Nonnull lock);
 
-
-void CESemWait(CESemPtr _Nonnull sem);
-void CESemSignal(CESemPtr _Nonnull sem);
+void CEConditionWait(CEConditionPtr _Nonnull lock);
+void CEConditionSignal(CEConditionPtr _Nonnull lock);
 
 #endif /* CECondition_h */

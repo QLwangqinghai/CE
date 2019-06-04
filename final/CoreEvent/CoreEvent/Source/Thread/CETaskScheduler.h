@@ -9,6 +9,13 @@
 #ifndef CETaskScheduler_h
 #define CETaskScheduler_h
 
-#include <stdio.h>
+#include "CEThreadBaseInternal.h"
+
+
+void CETaskSchedulerWait(CETaskSchedulerPtr _Nonnull scheduler);
+
+void CETaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler);
+
+
 
 #endif /* CETaskScheduler_h */

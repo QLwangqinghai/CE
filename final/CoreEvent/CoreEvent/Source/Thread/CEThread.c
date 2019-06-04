@@ -133,12 +133,6 @@ CEThreadRef _Nonnull CEThreadGetCurrent(void) {
     return CEThreadSpecificGetCurrent()->thread;
 }
 
-CEThreadSpecificDelegatePtr _Nonnull __CEThreadLooperCreate(CEThreadRef _Nonnull thread) {
-    CEThreadSpecificDelegatePtr looper = CEAllocateClear(sizeof(CEThreadSpecificDelegate_s));
-    looper->thread = thread;
-    return looper;
-}
-
 
 struct __CEThreadContext {
     void (* _Nullable beforeMain)(CEThreadSpecificRef _Nonnull specific);
@@ -146,7 +140,7 @@ struct __CEThreadContext {
     void * _Nullable params;
     void (* _Nullable paramsDealloc)(void * _Nonnull);
     CESemPtr _Nonnull sem;
-    CETaskSchedulerRef _Nullable scheduler;
+    CETaskSchedulerPtr _Nullable scheduler;
     CEThreadRef _Nullable thread;
 };
 
@@ -189,7 +183,7 @@ void * __CEThreadMain(void * args) {
 #define CEThreadCreateDeallocParmas if (params && paramsDealloc) { paramsDealloc(params); }
 
 CEThreadRef _Nullable _CEThreadCreate(CEThreadConfig_s config,
-                                      CETaskSchedulerRef _Nullable scheduler,
+                                      CETaskSchedulerPtr _Nullable scheduler,
                                       void (* _Nullable beforeMain)(CEThreadSpecificRef _Nonnull specific),
                                       void (* _Nonnull main)(void * _Nullable),
                                       void * _Nullable params,

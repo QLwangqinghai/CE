@@ -173,7 +173,7 @@ void * __CEThreadMain(void * args) {
     struct __CEThreadContext * context = (struct __CEThreadContext *)args;
     CEThreadSpecificRef specific = __CEThreadBeforeMain(context);
     void * _Nullable params = context->params;
-    CESemWakeUp(context->sem);
+    CESemSignal(context->sem);
     specific->thread->status = CEThreadStatusExecuting;
     context->main(params);
     specific->thread->status = CEThreadStatusFinished;

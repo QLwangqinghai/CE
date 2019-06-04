@@ -106,8 +106,10 @@ struct _CETaskScheduler {
     CETaskSyncContextPtr _Nullable syncContext;
     CETaskStackPtr _Nonnull taskStack;
     
+    
+    CESemPtr _Nonnull waiter;
+    
     uint32_t type;//main queue
-
 };
 
 struct _CEThreadSpecific {

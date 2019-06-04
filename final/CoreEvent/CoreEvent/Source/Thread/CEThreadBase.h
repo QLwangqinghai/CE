@@ -30,9 +30,22 @@ struct _CESem;
 typedef struct _CESem CESem_s;
 typedef CESem_s * CESemPtr;
 
+//typedef struct _CEConditionContext {
+//
+//} CEConditionContext_s;
+
+typedef struct _CEConditionLock {
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+    long value;
+} CEConditionLock_s;
+typedef CEConditionLock_s * CEConditionLockPtr;
+
+
 struct _CECondition;
 typedef struct _CECondition CECondition_s;
 typedef CECondition_s * CEConditionPtr;
+
 
 struct _CEThread;
 typedef struct _CEThread CEThread_s;
@@ -135,7 +148,7 @@ struct _CETask {
     CETaskExecuteObserverRef _Nullable observer;
     uint32_t isSyncTask: 1;
     
-    pthread_cond_t * _Nullable condPtr;// = PTHREAD_COND_INITIALIZER;/*初始化条件变量*/
+    CEConditionLockPtr _Nullable conditionLockPtr;// = PTHREAD_COND_INITIALIZER;/*初始化条件变量*/
 
     CEQueuePtr _Nullable targetQueue;
     //

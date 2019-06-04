@@ -11,5 +11,17 @@
 
 #include "CEThreadBase.h"
 
+void CEConditionLockInit(CEConditionLockPtr _Nonnull lock);
+
+void CEConditionLockDestroy(CEConditionLockPtr _Nonnull lock);
+
+
+
+
+
+
+
+
+
 
 #endif /* CEConditionLock_h */

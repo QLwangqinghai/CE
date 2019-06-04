@@ -20,7 +20,7 @@
 //
 //
 //void CESemWait(CESemPtr _Nonnull sem);
-//void CESemWakeUp(CESemPtr _Nonnull sem);
+//void CESemSignal(CESemPtr _Nonnull sem);
 
 
 

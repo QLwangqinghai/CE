@@ -11,6 +11,7 @@
 #include "CEThreadBaseInternal.h"
 #include "CETaskContext.h"
 #include "CERuntime.h"
+#include "CEConditionLock.h"
 
 const CETypeSpecific_s CETypeSpecificQueue = {
     .name = "CEQueue",
@@ -30,12 +31,10 @@ static inline CEQueue_s * _Nonnull CEQueueCheck(CEQueuePtr _Nonnull queuePtr) {
     return (CEQueue_s *)queuePtr;
 }
 
-
-
-void CEQueueSerialSync(CEQueuePtr _Nonnull queue, CESyncTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
-}
-void CEQueueConcurrentSync(CEQueuePtr _Nonnull queue, CESyncTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
-}
+//void CEQueueSerialSync(CEQueuePtr _Nonnull queue, CESyncTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
+//}
+//void CEQueueConcurrentSync(CEQueuePtr _Nonnull queue, CESyncTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
+//}
 
 void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEParamRef _Nullable result, CEFunction_f _Nonnull execute) {
     CEQueue_s * queue = CEQueueCheck(queuePtr);
@@ -56,15 +55,16 @@ void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEPara
 
     CETaskContext_s context = CETaskContexPush();
     
+    CEConditionLock_s lock = {};
+    CEConditionLockInit(&lock);
     pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
     CETaskPtr task = NULL;
     task->isSyncTask = 1;
-    task->condPtr = &cond;
+    task->conditionLockPtr = &lock;
     CESourceAppend(queue->source, task);//转移
     assert(0 == pthread_cond_init(&cond, NULL));
     
-    pthread_cond_wait(<#pthread_cond_t *restrict _Nonnull#>, <#pthread_mutex_t *restrict _Nonnull#>)
     //task 不可再用
     pthread_cond_destroy(&cond);
     

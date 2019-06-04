@@ -45,7 +45,7 @@ void CESemWait(CESemPtr _Nonnull sem) {
     }
 }
 
-void CESemWakeUp(CESemPtr _Nonnull sem) {
+void CESemSignal(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     if (0 != dispatch_semaphore_signal(sem->lock)) {
@@ -109,7 +109,7 @@ void CESemWait(CESemPtr _Nonnull sem) {
     }
 }
 
-void CESemWakeUp(CESemPtr _Nonnull sem) {
+void CESemSignal(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     if (0 != sem_post(sem->lock)) {
@@ -150,7 +150,7 @@ void CESemWait(CESemPtr _Nonnull sem) {
     }
 }
 
-void CESemWakeUp(CESemPtr _Nonnull sem) {
+void CESemSignal(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     if (0 != sem_post(sem->lock)) {

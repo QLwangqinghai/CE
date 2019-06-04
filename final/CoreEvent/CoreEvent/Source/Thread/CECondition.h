@@ -16,6 +16,6 @@ void CESemDeinit(CESemPtr _Nonnull sem);
 
 
 void CESemWait(CESemPtr _Nonnull sem);
-void CESemWakeUp(CESemPtr _Nonnull sem);
+void CESemSignal(CESemPtr _Nonnull sem);
 
 #endif /* CECondition_h */

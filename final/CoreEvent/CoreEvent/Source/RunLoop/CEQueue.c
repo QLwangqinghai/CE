@@ -119,16 +119,17 @@ void CEGlobalThreadManagerDispatch(CESourceRef _Nonnull source) {
 void CEQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific) {
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
+    CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
     uint_fast32_t status = 0;
     uint_fast32_t newStatus = 0;
     uint32_t times = 0;
     do {
         times += 1;
         assert(1 == times);
-        status = atomic_load(&(scheduler->status));
+        status = atomic_load(&(context->status));
         assert(CETaskSchedulerStatusCreatingThread == status);
         newStatus = CETaskSchedulerStatusRunning;
-    } while (!atomic_compare_exchange_strong(&(scheduler->status), &status, newStatus));
+    } while (!atomic_compare_exchange_strong(&(context->status), &status, newStatus));
 }
 
 
@@ -136,8 +137,9 @@ void CEQueueMainFunc(void * _Nullable param) {
     CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
-    
-    uint_fast32_t status = atomic_load(&(scheduler->status));
+    CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
+
+    uint_fast32_t status = atomic_load(&(context->status));
     assert(CETaskSchedulerStatusRunning == status);
     while (1) {
         switch (status) {
@@ -156,7 +158,7 @@ void CEQueueMainFunc(void * _Nullable param) {
                 } else {
                     //change status
                     uint_fast32_t newStatus = CETaskSchedulerStatusWaiting;
-                    if (atomic_compare_exchange_strong(&(scheduler->status), &status, newStatus)) {
+                    if (atomic_compare_exchange_strong(&(context->status), &status, newStatus)) {
                         status = newStatus;
                         continue;
                     }
@@ -170,6 +172,6 @@ void CEQueueMainFunc(void * _Nullable param) {
             }
                 break;
         }
-        status = atomic_load(&(scheduler->status));
+        status = atomic_load(&(context->status));
     }
 }

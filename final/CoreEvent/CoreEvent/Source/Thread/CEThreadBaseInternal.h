@@ -77,13 +77,13 @@ static const CETaskSchedulerStatus_t CETaskSchedulerStatusCreatingThread = 1;
 static const CETaskSchedulerStatus_t CETaskSchedulerStatusRunning = 2;
 static const CETaskSchedulerStatus_t CETaskSchedulerStatusWaiting = 3;
 
-typedef struct _CETaskSchedulerContext {
+typedef struct _CEGlobalThreadTaskSchedulerContext {
     uint32_t id;
     _Atomic(uint_fast32_t) status;
     
     
     
-} CETaskSchedulerContext_s;
+} CEGlobalThreadTaskSchedulerContext_s;
 
 struct _CETaskScheduler {
     CEThreadRef _Nonnull thread;
@@ -93,9 +93,8 @@ struct _CETaskScheduler {
 
     CESpinLock_t lock;
     
-    uint32_t id;//全局的线程的scheduler 才有这个属性
-
-    _Atomic(uint_fast32_t) status;//全局的线程的scheduler 才有这个属性
+//    uint32_t id;//全局的线程的scheduler 才有这个属性
+//    _Atomic(uint_fast32_t) status;//全局的线程的scheduler 才有这个属性
 
     
     CETaskWorkerRef _Nullable worker;
@@ -108,6 +107,8 @@ struct _CETaskScheduler {
     CESemPtr _Nonnull waiter;
     
     uint32_t type;//main queue
+    
+    uint8_t context[64];
 };
 
 struct _CEThreadSpecific {

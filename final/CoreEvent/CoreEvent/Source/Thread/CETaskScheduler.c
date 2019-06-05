@@ -58,13 +58,16 @@ void CETaskSchedulerWait(CETaskSchedulerPtr _Nonnull scheduler) {
     CESemWait(scheduler->waiter);
 }
 void CETaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
+    assert(scheduler);
     uint_fast32_t status = 0;
     uint_fast32_t newStatus = 0;
     uint32_t times = 0;
+    CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
+
     do {
         times += 1;
         assert(1 == times);
-        status = atomic_load(&(scheduler->status));
+        status = atomic_load(&(context->status));
         
         switch (status) {
             case CETaskSchedulerStatusNoThread: {
@@ -82,7 +85,7 @@ void CETaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
             }
                 break;
         }
-    } while (!atomic_compare_exchange_strong(&(scheduler->status), &status, newStatus));
+    } while (!atomic_compare_exchange_strong(&(context->status), &status, newStatus));
     
     
     if (CETaskSchedulerStatusNoThread == newStatus) {
@@ -98,7 +101,7 @@ void CETaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
             }
         }
         if (!hasName) {
-            snprintf(config.name, 63, "CoreEvent.global.thread.%u", scheduler->id);
+            snprintf(config.name, 63, "CoreEvent.global.thread.%u", context->id);
         }
         config.schedPriority = schedPriority;
         _CEThreadCreate(config, scheduler, CEQueueBeforeMainFunc, CEQueueMainFunc, NULL, NULL);

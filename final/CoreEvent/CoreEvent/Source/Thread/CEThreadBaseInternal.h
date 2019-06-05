@@ -77,6 +77,13 @@ static const CETaskSchedulerStatus_t CETaskSchedulerStatusCreatingThread = 1;
 static const CETaskSchedulerStatus_t CETaskSchedulerStatusRunning = 2;
 static const CETaskSchedulerStatus_t CETaskSchedulerStatusWaiting = 3;
 
+typedef struct _CETaskSchedulerContext {
+    uint32_t id;
+    _Atomic(uint_fast32_t) status;
+    
+    
+    
+} CETaskSchedulerContext_s;
 
 struct _CETaskScheduler {
     CEThreadRef _Nonnull thread;

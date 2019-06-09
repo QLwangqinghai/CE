@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#include "CETime.h"
 
 #pragma pack(push)
 #pragma pack(1)
@@ -48,8 +49,23 @@ struct __CETypeBaseInfo112 {
 
     }
 
+    NSInteger count = 1024;
+    CFAbsoluteTime beginTime = CFAbsoluteTimeGetCurrent();
+    NSLog(@"beginTime %lf", beginTime);
     
+    for (NSInteger i=0; i<128; i++) {
+        for (NSInteger j=0; j<count; j++) {
+            for (NSInteger k=0; k<count; k++) {
+                struct timespec t = CESystemBootInterval();
+            }
+        }
+//        NSLog(@"i: %ld %lf", i, CFAbsoluteTimeGetCurrent());
+    }
     
+    CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
+    NSLog(@"endTime %lf", endTime);
+    NSLog(@"used %lf, per: %lf", endTime - beginTime, (endTime - beginTime)/(double)128.0);
+
 //
     // Do any additional setup after loading the view.
 }

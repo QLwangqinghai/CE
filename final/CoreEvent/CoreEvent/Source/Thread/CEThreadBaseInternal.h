@@ -187,30 +187,7 @@ typedef struct _CESourceCounter {
 } CESourceCounter_s;
 
 struct _CESource {
-#if CEBuild64Bit
-    //高14 位 表示执行中的count， 其余为任务个数
-    _Atomic(uint_fast64_t) countInfos;// 0->1 do wake; 1->0 do wait
-#else
-    //高8 位 表示执行中的count， 其余为任务个数
-    _Atomic(uint_fast32_t) countInfos;// 0->1 do wake; 1->0 do wait
-#endif
-    CESourceCount_t concurrencyCountLimit;//硬限制
-
-//    uint32_t concurrency: 7;//[1-127]
-//    uint32_t concurrencyBitCount: 3;//[1-255]
-//
-//    uint32_t unfinishedCount;
-//    uint32_t count;
-//    uint32_t executingCount;
-//
-//    _Atomic(uint_fast64_t) limitWorkerCount;// 0->1 do wake; 1->0 do wait
-
-    CESourceCounter_s counter;
-    
     CEThreadSchedulerRef _Nonnull scheduler;
-    
-    void * _Nonnull consumer;
-    
     
     CESpinLock_t lock;
     

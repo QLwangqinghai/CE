@@ -10,7 +10,5 @@ import Foundation
 import Dispatch
 
 
-DispatchQueue(label: "g", qos: DispatchQoS.utility, attributes: DispatchQueue.Attributes.concurrent, autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: <#T##DispatchQueue?#>)
-
 
 

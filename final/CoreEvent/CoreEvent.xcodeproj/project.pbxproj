@@ -30,6 +30,7 @@
 		D603ECC62276C8C4005F22BF /* CFMachPort_Lifetime.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */; };
 		D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D608C1E222A2800B001FE51D /* CETaskScheduler.h */; };
 		D608C1E522A2800B001FE51D /* CETaskScheduler.c in Sources */ = {isa = PBXBuildFile; fileRef = D608C1E322A2800B001FE51D /* CETaskScheduler.c */; };
+		D60B005C22AD326E00B1BEA8 /* CETime.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B005B22AD326E00B1BEA8 /* CETime.c */; };
 		D61B299C229FC45F002A85BA /* Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61B299B229FC45F002A85BA /* Swift.swift */; };
 		D630255F22A242CB00A7561F /* CEThreadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D630255D22A242CB00A7561F /* CEThreadScheduler.h */; };
 		D630256022A242CB00A7561F /* CEThreadScheduler.c in Sources */ = {isa = PBXBuildFile; fileRef = D630255E22A242CB00A7561F /* CEThreadScheduler.c */; };
@@ -240,6 +241,8 @@
 		D603ECBB2276C8C4005F22BF /* CFMachPort_Lifetime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CFMachPort_Lifetime.c; sourceTree = "<group>"; };
 		D608C1E222A2800B001FE51D /* CETaskScheduler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETaskScheduler.h; sourceTree = "<group>"; };
 		D608C1E322A2800B001FE51D /* CETaskScheduler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETaskScheduler.c; sourceTree = "<group>"; };
+		D60B005A22AD326E00B1BEA8 /* CETime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CETime.h; sourceTree = "<group>"; };
+		D60B005B22AD326E00B1BEA8 /* CETime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CETime.c; sourceTree = "<group>"; };
 		D61B299A229FC45E002A85BA /* Demo2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo2-Bridging-Header.h"; sourceTree = "<group>"; };
 		D61B299B229FC45F002A85BA /* Swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swift.swift; sourceTree = "<group>"; };
 		D630255D22A242CB00A7561F /* CEThreadScheduler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadScheduler.h; sourceTree = "<group>"; };
@@ -652,6 +655,8 @@
 		D644AAE1227C7AE700F6B333 /* Demo2 */ = {
 			isa = PBXGroup;
 			children = (
+				D60B005B22AD326E00B1BEA8 /* CETime.c */,
+				D60B005A22AD326E00B1BEA8 /* CETime.h */,
 				D644AAE2227C7AE700F6B333 /* AppDelegate.h */,
 				D644AAE3227C7AE700F6B333 /* AppDelegate.m */,
 				D644AAE5227C7AE700F6B333 /* ViewController.h */,
@@ -1302,6 +1307,7 @@
 				D644AAE7227C7AE700F6B333 /* ViewController.m in Sources */,
 				D644AAEF227C7AE900F6B333 /* main.m in Sources */,
 				D644AAE4227C7AE700F6B333 /* AppDelegate.m in Sources */,
+				D60B005C22AD326E00B1BEA8 /* CETime.c in Sources */,
 				D61B299C229FC45F002A85BA /* Swift.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

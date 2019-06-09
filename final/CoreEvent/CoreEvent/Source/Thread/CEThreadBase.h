@@ -25,6 +25,7 @@ static const CEQueuePriority_t CEQueuePriorityHigh = 192;
 static const CEQueuePriority_t CEQueuePriorityDefault = 128;
 static const CEQueuePriority_t CEQueuePriorityLow = 64;
 
+typedef CERef CESyncWaiterRef;
 
 struct _CESem;
 typedef struct _CESem CESem_s;
@@ -117,7 +118,6 @@ struct _CETaskExecuteObserver {
 };
 
 
-
 struct _CETaskContext;
 typedef struct _CETaskContext CETaskContext_s;
 typedef CETaskContext_s * CETaskContextPtr;
@@ -144,7 +144,7 @@ struct _CETask {
     CETaskExecuteObserverRef _Nullable observer;
     uint32_t isSyncTask: 1;
     
-    CEConditionLockPtr _Nullable conditionLockPtr;// = PTHREAD_COND_INITIALIZER;/*初始化条件变量*/
+    CESemPtr _Nullable syncTaskWaiter;
 
     CEQueuePtr _Nullable targetQueue;
     //

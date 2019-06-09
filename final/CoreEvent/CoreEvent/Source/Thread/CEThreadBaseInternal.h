@@ -85,6 +85,12 @@ typedef struct _CEGlobalThreadTaskSchedulerContext {
     
 } CEGlobalThreadTaskSchedulerContext_s;
 
+typedef struct _CESyncWaiter {
+    CEPtr _Nonnull waiter;
+    uint32_t type;
+} CESyncWaiter_s;
+
+
 struct _CETaskScheduler {
     CEThreadRef _Nonnull thread;
     CEQueuePtr _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值
@@ -101,8 +107,6 @@ struct _CETaskScheduler {
     
     CETaskSyncContextPtr _Nullable syncContext;
     CETaskStackPtr _Nonnull taskStack;
-    
-    CESemPtr _Nonnull syncTaskWaiter;
 
     CESemPtr _Nonnull waiter;
     
@@ -113,8 +117,10 @@ struct _CETaskScheduler {
 
 struct _CEThreadSpecific {
     CEThreadRef _Nonnull thread;
+    CESemPtr _Nonnull syncWaiter;
     CETaskSchedulerPtr _Nullable scheduler;
     CETaskContextPtr _Nullable taskContext;
+    
 };
 
 typedef struct _CEThreadContext {

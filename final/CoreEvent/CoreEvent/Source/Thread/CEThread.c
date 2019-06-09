@@ -77,6 +77,12 @@ CEThreadSpecificRef _Nonnull CEThreadSpecificInit(void) {
 
 void CEThreadSpecificDeinit(CEThreadSpecificRef _Nonnull specific) {
     specific->thread->status = CEThreadStatusFinished;
+    
+    if (NULL != specific->syncWaiter) {
+        CESemDeinit(specific->syncWaiter);
+        specific->syncWaiter = NULL;
+    }
+    
 }
 
 
@@ -120,6 +126,7 @@ CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable thread
         CEThreadRef thread = _CEThreadAllocInit(threadName, CEThreadStatusExecuting);
         specific = CEThreadSpecificInit();
         specific->thread = thread;
+        specific->syncWaiter = CESemInit(0);
         pthread_setspecific(CEThreadSpecificKeyShared(), specific);
     }
     return specific;

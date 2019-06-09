@@ -36,12 +36,15 @@
  uint32_t type;//main queue
  };
  */
+
+
+
+
+
 CETaskSchedulerPtr _Nonnull CETaskSchedulerInit(void) {
     CETaskSchedulerPtr scheduler = CEAllocateClear(sizeof(CETaskScheduler_s));
     
     CESpinLockInit(&(scheduler->lock));
-    
-    scheduler->syncTaskWaiter = CESemInit(0);
     scheduler->waiter = CESemInit(0);
     
     return scheduler;
@@ -49,7 +52,6 @@ CETaskSchedulerPtr _Nonnull CETaskSchedulerInit(void) {
 
 void CETaskSchedulerDestroy(CETaskSchedulerPtr _Nonnull scheduler) {
     CESemDeinit(scheduler->waiter);
-    CESemDeinit(scheduler->syncTaskWaiter);
     CESpinLockDeinit(&(scheduler->lock));
 }
 

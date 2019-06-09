@@ -8,6 +8,7 @@
 
 #include "CEThreadBase.h"
 
+
 void CESpinLockInit(CESpinLock_t * _Nonnull lockPtr) {
     assert(lockPtr);
 #if __APPLE__

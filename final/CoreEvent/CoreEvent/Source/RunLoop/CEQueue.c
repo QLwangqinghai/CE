@@ -13,6 +13,7 @@
 #include "CERuntime.h"
 #include "CEConditionLock.h"
 #include "CESem.h"
+#include "CETaskScheduler.h"
 
 const CETypeSpecific_s CETypeSpecificQueue = {
     .name = "CEQueue",
@@ -47,28 +48,18 @@ void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEPara
         CERetain(result);
     }
     
-    
-    
     CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
-    CEThreadSchedulerRef scheduler = specific->scheduler;
+    CETaskSchedulerPtr scheduler = specific->scheduler;
     //获取sync任务的上下文 获取不到， 则创建
 //    CETaskSyncContextPtr syncContext = specific->syncContext;
-
-    CETaskContext_s context = CETaskContexPush();
     
-    CEConditionLock_s lock = {};
-    CEConditionLockInit(&lock);
-    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+    CETaskContext_s context = CETaskContexPush();
 
     CETaskPtr task = NULL;
     task->isSyncTask = 1;
-    task->conditionLockPtr = &lock;
+    task->syncTaskWaiter = specific->syncWaiter;
     CESourceAppend(queue->source, task);//转移
-    assert(0 == pthread_cond_init(&cond, NULL));
-    
-    //task 不可再用
-    pthread_cond_destroy(&cond);
-    
+    CESemWait(specific->syncWaiter);
 }
 
 CETaskPtr _Nullable CETaskSchedulerRemoveTask(CETaskSchedulerPtr _Nonnull scheduler) {
@@ -146,6 +137,7 @@ void CEQueueMainFunc(void * _Nullable param) {
             case CETaskSchedulerStatusWaiting: {
                 CETaskSchedulerUnbindSource(scheduler);
                 CEGlobalThreadManagerEnQueue(scheduler);
+                
                 CETaskSchedulerWait(scheduler);
             }
                 break;
@@ -155,6 +147,11 @@ void CEQueueMainFunc(void * _Nullable param) {
                     //do task
                     
                     
+                    
+                    
+                    if (NULL != task->syncTaskWaiter) {
+                        CESemSignal(task->syncTaskWaiter);
+                    }
                 } else {
                     //change status
                     uint_fast32_t newStatus = CETaskSchedulerStatusWaiting;

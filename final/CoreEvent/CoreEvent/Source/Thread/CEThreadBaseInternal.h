@@ -85,10 +85,14 @@ typedef struct _CEGlobalThreadTaskSchedulerContext {
     
 } CEGlobalThreadTaskSchedulerContext_s;
 
-typedef struct _CESyncWaiter {
-    CEPtr _Nonnull waiter;
-    uint32_t type;
-} CESyncWaiter_s;
+typedef struct _CESerialThreadTaskSchedulerContext {
+    uint32_t id;
+    _Atomic(uint_fast32_t) status;
+    
+    
+    
+} CESerialThreadTaskSchedulerContext_s;
+
 
 
 struct _CETaskScheduler {
@@ -120,7 +124,7 @@ struct _CEThreadSpecific {
     CESemPtr _Nonnull syncWaiter;
     CETaskSchedulerPtr _Nullable scheduler;
     CETaskContextPtr _Nullable taskContext;
-    
+    CEQueuePtr _Nullable owner;
 };
 
 typedef struct _CEThreadContext {
@@ -165,7 +169,22 @@ typedef void (*CESourceCallback_f)(CESourceRef _Nonnull source);
 typedef void (*CESourceAppendTask_f)(CESourceRef _Nonnull source, CETaskPtr _Nonnull task);
 typedef CETaskPtr _Nullable (*CESourceRemoveTask_f)(CESourceRef _Nonnull source);
 
+#if CEBuild64Bit
+typedef uint64_t CESourceCount_t;
+#else
+typedef uint32_t CESourceCount_t;
+#endif
 
+
+typedef struct _CESourceCounter {
+#if CEBuild64Bit
+    CESourceCount_t executingCount: 9;/*concurrencyCount*/
+    CESourceCount_t count: 55;/*总数 未完成的总数*/
+#else
+    CESourceCount_t executingCount: 7;/*concurrencyCount*/
+    CESourceCount_t count: 25;/*总数 未完成的总数*/
+#endif
+} CESourceCounter_s;
 
 struct _CESource {
 #if CEBuild64Bit
@@ -175,15 +194,19 @@ struct _CESource {
     //高8 位 表示执行中的count， 其余为任务个数
     _Atomic(uint_fast32_t) countInfos;// 0->1 do wake; 1->0 do wait
 #endif
-    uint32_t concurrency: 7;//[1-127]
-    uint32_t concurrencyBitCount: 3;//[1-255]
+    CESourceCount_t concurrencyCountLimit;//硬限制
+
+//    uint32_t concurrency: 7;//[1-127]
+//    uint32_t concurrencyBitCount: 3;//[1-255]
+//
+//    uint32_t unfinishedCount;
+//    uint32_t count;
+//    uint32_t executingCount;
+//
+//    _Atomic(uint_fast64_t) limitWorkerCount;// 0->1 do wake; 1->0 do wait
+
+    CESourceCounter_s counter;
     
-    uint32_t unfinishedCount;
-    uint32_t count;
-    uint32_t executingCount;
-
-    _Atomic(uint_fast64_t) limitWorkerCount;// 0->1 do wake; 1->0 do wait
-
     CEThreadSchedulerRef _Nonnull scheduler;
     
     void * _Nonnull consumer;
@@ -198,6 +221,9 @@ struct _CESource {
     
     CESourceAppendTask_f _Nonnull append;
     CESourceRemoveTask_f _Nonnull remove;
+    
+    uint8_t context[64];
+    
 };
 
 
@@ -409,17 +435,17 @@ void CESourceSerialQueueAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull t
     
     if (source->head == NULL) {
         assert(source->last == NULL);
-        assert(source->count == 0);
+        assert(source->counter.count == 0);
         source->head = task;
         source->last = task;
-        source->count = 1;
+        source->counter.count = 1;
         weakup = true;
     } else {
         assert(source->last != NULL);
-        assert(source->count > 0);
+        assert(source->counter.count > 0);
         source->last->next = task;
         source->last = task;
-        source->count += 1;
+        source->counter.count += 1;
     }
     CESourceUnlock(source);
     if (weakup) {
@@ -433,7 +459,7 @@ CETaskPtr _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
     assert(source);
     
     CETaskPtr result = NULL;
-    uint32_t count = 0;
+    CESourceCount_t count = 0;
     CESourceLock(source);
     if (source->head == NULL) {
         assert(source->last == NULL);
@@ -443,16 +469,16 @@ CETaskPtr _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
             result = source->head;
             source->head = result->next;
             result->next = NULL;
-            assert(source->count > 1);
-            source->count -= 1;
-            count = source->count;
+            assert(source->counter.count > 1);
+            source->counter.count -= 1;
+            count = source->counter.count;
         } else {
             result = source->head;
             source->head = NULL;
             source->last = NULL;
             result->next = NULL;
-            assert(source->count == 1);
-            source->count = 0;
+            assert(source->counter.count == 1);
+            source->counter.count = 0;
         }
     }
     CESourceUnlock(source);

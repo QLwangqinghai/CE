@@ -12,10 +12,11 @@
 #include "CEThreadBaseInternal.h"
 
 
-void CETaskSchedulerWait(CETaskSchedulerPtr _Nonnull scheduler);
+void CEGlobalTaskSchedulerWait(CETaskSchedulerPtr _Nonnull scheduler);
+void CEGlobalTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler);
 
-void CETaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler);
 
-
+void CESerialTaskSchedulerWait(CETaskSchedulerPtr _Nonnull scheduler);
+void CESerialTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler);
 
 #endif /* CETaskScheduler_h */

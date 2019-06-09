@@ -20,8 +20,7 @@ void aa () {
 
 void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEParamRef _Nullable result, CEFunction_f _Nonnull execute);
 
-void CEQueueMainFunc(void * _Nullable param);
-void CEQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific);
+
 
 
 #endif /* CEQueue_h */

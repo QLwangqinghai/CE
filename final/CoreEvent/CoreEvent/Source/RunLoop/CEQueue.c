@@ -62,41 +62,7 @@ void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEPara
     CESemWait(specific->syncWaiter);
 }
 
-CETaskPtr _Nullable CETaskSchedulerRemoveTask(CETaskSchedulerPtr _Nonnull scheduler) {
-    assert(scheduler);
 
-    CETaskPtr task = NULL;
-    CESpinLockLock(&(scheduler->lock));
-    if (NULL != scheduler->source) {
-        task = CESourceRemove(scheduler->source);
-    }
-    CESpinLockUnlock(&(scheduler->lock));
-
-    return task;
-}
-
-_Bool CETaskSchedulerBindSource(CETaskSchedulerPtr _Nonnull scheduler, CESourceRef _Nonnull source) {
-    assert(scheduler);
-    _Bool result = true;
-    CESpinLockLock(&(scheduler->lock));
-    if (NULL == scheduler->source) {
-        scheduler->source = source;
-    } else {
-        result = false;
-    }
-    CESpinLockUnlock(&(scheduler->lock));
-    
-    return result;
-}
-CESourceRef _Nullable CETaskSchedulerUnbindSource(CETaskSchedulerPtr _Nonnull scheduler) {
-    assert(scheduler);
-    CESourceRef _Nonnull source = NULL;
-    CESpinLockLock(&(scheduler->lock));
-    source = scheduler->source;
-    scheduler->source = NULL;
-    CESpinLockUnlock(&(scheduler->lock));
-    return source;
-}
 
 
 void CEGlobalThreadManagerDispatch(CESourceRef _Nonnull source) {
@@ -104,71 +70,5 @@ void CEGlobalThreadManagerDispatch(CESourceRef _Nonnull source) {
     if (scheduler) {
         assert(CETaskSchedulerBindSource(scheduler, source));
         CETaskSchedulerSignal(scheduler);
-    }
-}
-
-void CEQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific) {
-    CETaskSchedulerPtr scheduler = specific->scheduler;
-    assert(scheduler);
-    CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
-    uint_fast32_t status = 0;
-    uint_fast32_t newStatus = 0;
-    uint32_t times = 0;
-    do {
-        times += 1;
-        assert(1 == times);
-        status = atomic_load(&(context->status));
-        assert(CETaskSchedulerStatusCreatingThread == status);
-        newStatus = CETaskSchedulerStatusRunning;
-    } while (!atomic_compare_exchange_strong(&(context->status), &status, newStatus));
-}
-
-
-void CEQueueMainFunc(void * _Nullable param) {
-    CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
-    CETaskSchedulerPtr scheduler = specific->scheduler;
-    assert(scheduler);
-    CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
-
-    uint_fast32_t status = atomic_load(&(context->status));
-    assert(CETaskSchedulerStatusRunning == status);
-    while (1) {
-        switch (status) {
-            case CETaskSchedulerStatusWaiting: {
-                CETaskSchedulerUnbindSource(scheduler);
-                CEGlobalThreadManagerEnQueue(scheduler);
-                
-                CETaskSchedulerWait(scheduler);
-            }
-                break;
-            case CETaskSchedulerStatusRunning: {
-                CETaskPtr task = CETaskSchedulerRemoveTask(scheduler);
-                if (task) {
-                    //do task
-                    
-                    
-                    
-                    
-                    if (NULL != task->syncTaskWaiter) {
-                        CESemSignal(task->syncTaskWaiter);
-                    }
-                } else {
-                    //change status
-                    uint_fast32_t newStatus = CETaskSchedulerStatusWaiting;
-                    if (atomic_compare_exchange_strong(&(context->status), &status, newStatus)) {
-                        status = newStatus;
-                        continue;
-                    }
-                }
-            }
-                break;
-            case CETaskSchedulerStatusCreatingThread://穿透
-            case CETaskSchedulerStatusNoThread://穿透
-            default: {
-                abort();
-            }
-                break;
-        }
-        status = atomic_load(&(context->status));
     }
 }

@@ -242,6 +242,8 @@ void CESerialTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler);
 void CESerialQueueMainFunc(void * _Nullable param);
 void CESerialQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific);
 
+
+
 CETaskPtr _Nullable CESerialTaskSchedulerRemoveTask(CETaskSchedulerPtr _Nonnull scheduler) {
     assert(scheduler);
     
@@ -349,7 +351,7 @@ void CESerialQueueMainFunc(void * _Nullable param) {
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
 
-    CETaskPtr task = CETaskSchedulerRemoveTask(scheduler);
+    CETaskPtr task = CESerialTaskSchedulerRemoveTask(scheduler);
     if (task) {
         //do task
         CETaskSchedulerExecuteTask(scheduler, task);

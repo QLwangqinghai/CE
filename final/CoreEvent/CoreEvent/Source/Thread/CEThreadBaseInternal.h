@@ -186,13 +186,17 @@ typedef struct _CESourceCounter {
 #endif
 } CESourceCounter_s;
 
+typedef struct _CESourceNormalContext {
+    CESourceCounter_s counter;
+    CETaskPtr _Nullable head;
+    CETaskPtr _Nullable last;
+} CESourceNormalContext_s;
+
 struct _CESource {
     CEThreadSchedulerRef _Nonnull scheduler;
     
     CESpinLock_t lock;
     
-    CETaskPtr _Nullable head;
-    CETaskPtr _Nullable last;
 
     CESourceCallback_f _Nonnull weakUp;
     

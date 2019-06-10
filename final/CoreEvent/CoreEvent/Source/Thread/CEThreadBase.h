@@ -49,9 +49,7 @@ typedef struct _CECondition {
 typedef CECondition_s * CEConditionPtr;
 
 
-struct _CEThread;
-typedef struct _CEThread CEThread_s;
-typedef CEThread_s * CEThreadRef;
+typedef CERef CEThreadRef;
 
 struct _CERunLoop;
 typedef struct _CERunLoop CERunLoop_s;
@@ -61,16 +59,11 @@ struct _CETaskWorker;
 typedef struct _CETaskWorker CETaskWorker_s;
 typedef CETaskWorker_s * CETaskWorkerRef;
 
-typedef void * CEQueuePtr;
+typedef CERef CEQueueRef;
 
 struct _CESource;
 typedef struct _CESource CESource_s;
 typedef CESource_s * CESourceRef;
-
-
-struct _CEThreadSpecific;
-typedef struct _CEThreadSpecific CEThreadSpecific_s;
-typedef CEThreadSpecific_s * CEThreadSpecificRef;
 
 
 struct _CETaskExecuteContext;
@@ -83,10 +76,6 @@ struct _CETaskExecuteContext {
     CEParamItemValue_u * _Nullable paramItems;
     uint32_t paramCount;
 };
-
-struct _CETask;
-typedef struct _CETask CETask_s;
-typedef CETask_s * CETaskPtr;
 
 typedef uint64_t CETaskType_e;
 static const CETaskType_e CETaskTypeAsync = 0;
@@ -124,32 +113,17 @@ typedef CETaskContext_s * CETaskContextPtr;
 
 
 /*
- CEQueuePtr _Nonnull targetQueue;
+ CEQueueRef _Nonnull targetQueue;
  CETaskExecuteObserverRef _Nullable observer;
 */
 struct _CESyncTask {
     CERuntimeBase_s runtime;
 //    CETaskBase_t base;
     CETaskContextPtr _Nonnull context;
-    CEQueuePtr _Nullable sourceQueue;
+    CEQueueRef _Nullable sourceQueue;
 };
 
-struct _CETask {
-    //thread waiter
-    CETaskPtr _Nullable next;
-    
-    CEParamRef _Nullable param;
-    CEParamRef _Nullable resultReceiver;
-    CEFunction_f _Nonnull execute;
-    CETaskExecuteObserverRef _Nullable observer;
-    uint32_t isSyncTask: 1;
-    
-    CESemPtr _Nullable syncTaskWaiter;
 
-    CEQueuePtr _Nullable targetQueue;
-    //
-    CETaskContextPtr _Nullable context;
-};
 
 
 typedef struct _CEThreadConfig {

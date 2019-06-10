@@ -20,35 +20,8 @@ void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr
     }
 }
 
-
-
-/*
- struct _CETaskScheduler {
- CEThreadRef _Nonnull thread;
- CEQueuePtr _Nullable ownerQueue;
- 
- CESourceRef _Nonnull source;
- 
- CESpinLock_t lock;
- 
- uint32_t id;
- 
- _Atomic(uint_fast32_t) status;
- 
-  CETaskWorkerRef _Nullable worker;
- 
- CETaskSyncContextPtr _Nullable syncContext;
- CETaskStackPtr _Nonnull taskStack;
- 
- 
- CESemPtr _Nonnull waiter;
- 
- uint32_t type;//main queue
- };
- */
-
 void CEGlobalQueueMainFunc(void * _Nullable param);
-void CEGlobalQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific);
+void CEGlobalQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific);
 
 
 CETaskPtr _Nullable CEGlobalTaskSchedulerRemoveTask(CETaskSchedulerPtr _Nonnull scheduler) {
@@ -168,7 +141,7 @@ void CEGlobalTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
 
 
 
-void CEGlobalQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific) {
+void CEGlobalQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific) {
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
     CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
@@ -186,7 +159,7 @@ void CEGlobalQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific) {
 
 
 void CEGlobalQueueMainFunc(void * _Nullable param) {
-    CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
+    CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
     CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
@@ -240,7 +213,7 @@ void CESerialTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler);
 
 
 void CESerialQueueMainFunc(void * _Nullable param);
-void CESerialQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific);
+void CESerialQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific);
 
 
 
@@ -338,7 +311,7 @@ void CESerialTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
 
 
 
-void CESerialQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific) {
+void CESerialQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific) {
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
     assert(scheduler->ownerQueue);
@@ -347,7 +320,7 @@ void CESerialQueueBeforeMainFunc(CEThreadSpecificRef _Nonnull specific) {
 
 
 void CESerialQueueMainFunc(void * _Nullable param) {
-    CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
+    CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
 

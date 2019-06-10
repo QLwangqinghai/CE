@@ -9,11 +9,11 @@
 #include "CEQueue.h"
 #include "CEThread.h"
 #include "CEThreadBaseInternal.h"
-#include "CETaskContext.h"
 #include "CERuntime.h"
 #include "CEConditionLock.h"
 #include "CESem.h"
 #include "CETaskScheduler.h"
+#include "CETask.h"
 
 const CETypeSpecific_s CETypeSpecificQueue = {
     .name = "CEQueue",
@@ -26,43 +26,48 @@ const CEType_s __CETypeQueue = CEType(CETypeBitHasRc | CETypeBitStatic, 0, (uint
 
 CETypeRef _Nonnull CETypeQueue = &__CETypeQueue;
 
-static inline CEQueue_s * _Nonnull CEQueueCheck(CEQueuePtr _Nonnull queuePtr) {
+static inline CEQueue_s * _Nonnull CEQueueCheck(CEQueueRef _Nonnull queuePtr) {
     assert(queuePtr);
     CETypeRef type = CERefGetType(queuePtr);
     assert(CETypeIsEqual(type, CETypeQueue));
     return (CEQueue_s *)queuePtr;
 }
 
-//void CEQueueSerialSync(CEQueuePtr _Nonnull queue, CESyncTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
-//}
-//void CEQueueConcurrentSync(CEQueuePtr _Nonnull queue, CESyncTaskRef _Nonnull task, CEThreadSpecificRef _Nonnull specific) {
-//}
-
-void CEQueueSync(CEQueuePtr _Nonnull queuePtr, CEParamRef _Nonnull param, CEParamRef _Nullable result, CEFunction_f _Nonnull execute) {
-    CEQueue_s * queue = CEQueueCheck(queuePtr);
-    
-    if (param) {
-        CERetain(param);
-    }
-    if (result) {
-        CERetain(result);
-    }
-    
-    CEThreadSpecificRef specific = CEThreadSpecificGetCurrent();
-    CETaskSchedulerPtr scheduler = specific->scheduler;
-    //获取sync任务的上下文 获取不到， 则创建
-//    CETaskSyncContextPtr syncContext = specific->syncContext;
-    
-    CETaskContext_s context = CETaskContexPush();
-
-    CETaskPtr task = NULL;
-    task->isSyncTask = 1;
-    task->syncTaskWaiter = specific->syncWaiter;
-    CESourceAppend(queue->source, task);//转移
-    CESemWait(specific->syncWaiter);
+static inline void CEQueueAppend(CEQueue_s * _Nonnull queue, CETaskPtr _Nonnull task) {
+    queue->append(queue, task);
 }
 
 
+static inline void _CEQueueJoin(CEQueue_s * _Nonnull queue, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param, CEParamRef _Nullable result, CEThreadSyncWaiter_s * _Nullable syncTaskWaiter, _Bool isBarrier) {
+
+    CETaskPtr task = CETaskCreate(execute, param, result, syncTaskWaiter, isBarrier);
+    CEQueueAppend(queue, task);
+    
+    if (syncTaskWaiter) {
+        CEThreadSyncWaiterWait(syncTaskWaiter);
+    }
+}
+
+void CEQueueSync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param, CEParamRef _Nullable result) {
+    CEQueue_s * queue = CEQueueCheck(queuePtr);
+    CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
+    _CEQueueJoin(queue, execute, param, result, specific->syncWaiter, false);
+}
+
+void CEQueueAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param) {
+    CEQueue_s * queue = CEQueueCheck(queuePtr);
+    _CEQueueJoin(queue, execute, param, NULL, NULL, false);
+}
+
+void CEQueueBarrierSync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param, CEParamRef _Nullable result) {
+    CEQueue_s * queue = CEQueueCheck(queuePtr);
+    CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
+    _CEQueueJoin(queue, execute, param, result, specific->syncWaiter, true);
+}
+void CEQueueBarrierAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param) {
+    CEQueue_s * queue = CEQueueCheck(queuePtr);
+    _CEQueueJoin(queue, execute, param, NULL, NULL, true);
+}
 
 
 void CEGlobalThreadManagerDispatch(CESourceRef _Nonnull source) {

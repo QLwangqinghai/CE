@@ -41,7 +41,7 @@ void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CED
     CETypeRef type = CERefGetType(object);
     assert(CETypeIsEqual(type, CETypeThread));
 
-    CEThreadRef thread = object;
+    CEThread_s * thread = object;
 
     char buffer[32] = {};
     descript(handler, "<");
@@ -70,16 +70,16 @@ _Bool CEIsMainThread(void) {
 }
 #endif
 
-CEThreadSpecificRef _Nonnull CEThreadSpecificInit(void) {
-    CEThreadSpecificRef specific = CEAllocateClear(sizeof(CEThreadSpecific_s));
+CEThreadSpecificPtr _Nonnull CEThreadSpecificInit(void) {
+    CEThreadSpecificPtr specific = CEAllocateClear(sizeof(CEThreadSpecific_s));
     return specific;
 }
 
-void CEThreadSpecificDeinit(CEThreadSpecificRef _Nonnull specific) {
+void CEThreadSpecificDeinit(CEThreadSpecificPtr _Nonnull specific) {
     specific->thread->status = CEThreadStatusFinished;
     
     if (NULL != specific->syncWaiter) {
-        CESemDeinit(specific->syncWaiter);
+        CEThreadSyncWaiterDestroy(specific->syncWaiter);
         specific->syncWaiter = NULL;
     }
     
@@ -100,8 +100,8 @@ pthread_key_t CEThreadSpecificKeyShared(void) {
 }
 
 static char * __CEMainThreadDefaultName = "main";
-CEThreadRef _Nonnull _CEThreadAllocInit(char * _Nullable threadName, CEThreadStatus_t status) {
-    CEThreadRef thread = CETypeThread->alloctor->allocate(CETypeThread, sizeof(CEThread_s));
+CEThread_s * _Nonnull _CEThreadAllocInit(char * _Nullable threadName, CEThreadStatus_t status) {
+    CEThread_s * thread = CETypeThread->alloctor->allocate(CETypeThread, sizeof(CEThread_s));
     thread->pthread = pthread_self();
     thread->status = status;
     if (threadName) {
@@ -119,21 +119,27 @@ CEThreadRef _Nonnull _CEThreadAllocInit(char * _Nullable threadName, CEThreadSta
     return thread;
 }
 
+CEThreadSpecificPtr _Nonnull _CEThreadSpecificLoad(char * _Nullable threadName, CEThreadStatus_t status, CETaskSchedulerPtr _Nullable scheduler) {
+    CEThread_s * thread = _CEThreadAllocInit(threadName, CEThreadStatusExecuting);
+    CEThreadSpecificPtr specific = CEThreadSpecificInit();
+    specific = CEThreadSpecificInit();
+    specific->thread = thread;
+    specific->syncWaiter = CEThreadSyncWaiterCreate(thread);
+    specific->scheduler = scheduler;
+    return specific;
+}
 
-CEThreadSpecificRef _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable threadName, _Bool copyThreadName) {
-    CEThreadSpecificRef specific = (CEThreadSpecificRef)pthread_getspecific(CEThreadSpecificKeyShared());
+CEThreadSpecificPtr _Nonnull _CEThreadSpecificGetCurrent(char * _Nullable threadName) {
+    CEThreadSpecificPtr specific = (CEThreadSpecificPtr)pthread_getspecific(CEThreadSpecificKeyShared());
     if (NULL == specific) {
-        CEThreadRef thread = _CEThreadAllocInit(threadName, CEThreadStatusExecuting);
-        specific = CEThreadSpecificInit();
-        specific->thread = thread;
-        specific->syncWaiter = CESemInit(0);
+        specific = _CEThreadSpecificLoad(threadName, CEThreadStatusExecuting, NULL);
         pthread_setspecific(CEThreadSpecificKeyShared(), specific);
     }
     return specific;
 }
 
-CEThreadSpecificRef _Nonnull CEThreadSpecificGetCurrent(void) {
-    return _CEThreadSpecificGetCurrent(NULL, false);
+CEThreadSpecificPtr _Nonnull CEThreadSpecificGetCurrent(void) {
+    return _CEThreadSpecificGetCurrent(NULL);
 }
 
 CEThreadRef _Nonnull CEThreadGetCurrent(void) {
@@ -142,7 +148,7 @@ CEThreadRef _Nonnull CEThreadGetCurrent(void) {
 
 
 struct __CEThreadContext {
-    void (* _Nullable beforeMain)(CEThreadSpecificRef _Nonnull specific);
+    void (* _Nullable beforeMain)(CEThreadSpecificPtr _Nonnull specific);
     void (* _Nonnull main)(void * _Nullable);
     void * _Nullable params;
     void (* _Nullable paramsDealloc)(void * _Nonnull);
@@ -152,17 +158,14 @@ struct __CEThreadContext {
 };
 
 
-CEThreadSpecificRef _Nonnull __CEThreadCreateSpecific(struct __CEThreadContext * _Nonnull context) {
-    CEThreadRef thread = _CEThreadAllocInit(NULL, CEThreadStatusStarting);
-    CEThreadSpecificRef specific = CEThreadSpecificInit();
-    specific->thread = thread;
-    specific->scheduler = context->scheduler;
+CEThreadSpecificPtr _Nonnull __CEThreadCreateSpecific(struct __CEThreadContext * _Nonnull context) {
+    CEThreadSpecificPtr specific = _CEThreadSpecificLoad(NULL, CEThreadStatusStarting, context->scheduler);
     pthread_setspecific(CEThreadSpecificKeyShared(), specific);
     return specific;
 }
 
-CEThreadSpecificRef _Nonnull __CEThreadBeforeMain(struct __CEThreadContext * _Nonnull context) {
-    CEThreadSpecificRef specific = __CEThreadCreateSpecific(context);
+CEThreadSpecificPtr _Nonnull __CEThreadBeforeMain(struct __CEThreadContext * _Nonnull context) {
+    CEThreadSpecificPtr specific = __CEThreadCreateSpecific(context);
     if (context->beforeMain) {
         context->beforeMain(specific);
     }
@@ -172,7 +175,7 @@ CEThreadSpecificRef _Nonnull __CEThreadBeforeMain(struct __CEThreadContext * _No
 
 void * __CEThreadMain(void * args) {
     struct __CEThreadContext * context = (struct __CEThreadContext *)args;
-    CEThreadSpecificRef specific = __CEThreadBeforeMain(context);
+    CEThreadSpecificPtr specific = __CEThreadBeforeMain(context);
     void * _Nullable params = context->params;
     CESemSignal(context->sem);
     specific->thread->status = CEThreadStatusExecuting;
@@ -189,12 +192,12 @@ void * __CEThreadMain(void * args) {
 
 #define CEThreadCreateDeallocParmas if (params && paramsDealloc) { paramsDealloc(params); }
 
-CEThreadRef _Nullable _CEThreadCreate(CEThreadConfig_s config,
-                                      CETaskSchedulerPtr _Nullable scheduler,
-                                      void (* _Nullable beforeMain)(CEThreadSpecificRef _Nonnull specific),
-                                      void (* _Nonnull main)(void * _Nullable),
-                                      void * _Nullable params,
-                                      void (* _Nullable paramsDealloc)(void * _Nonnull)) {
+CEThread_s * _Nullable _CEThreadCreate(CEThreadConfig_s config,
+                                       CETaskSchedulerPtr _Nullable scheduler,
+                                       void (* _Nullable beforeMain)(CEThreadSpecificPtr _Nonnull specific),
+                                       void (* _Nonnull main)(void * _Nullable),
+                                       void * _Nullable params,
+                                       void (* _Nullable paramsDealloc)(void * _Nonnull)) {
     
     //check scheduler
     if (NULL != scheduler) {
@@ -308,8 +311,8 @@ CEThreadRef _Nullable _CEThreadCreate(CEThreadConfig_s config,
 }
 
 CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
-                                     void (* _Nonnull main)(void * _Nullable),
-                                     void * _Nullable params,
-                                     void (* _Nullable paramsDealloc)(void * _Nonnull)) {
+                                      void (* _Nonnull main)(void * _Nullable),
+                                      void * _Nullable params,
+                                      void (* _Nullable paramsDealloc)(void * _Nonnull)) {
     return _CEThreadCreate(config, NULL, NULL, main, params, paramsDealloc);
 }

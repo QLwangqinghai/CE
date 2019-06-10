@@ -88,7 +88,7 @@ void CERelease(const CERef _Nonnull object) {
 
 
 void * _Nonnull CERuntimeDefaultAllocate(CETypeRef _Nonnull typeRef, size_t size) {
-    CERetain(typeRef);
+    CERetain((void *)typeRef);
 
     void * object = CEAllocateClear(size);
     memcpy(object, &typeRef, sizeof(void *));

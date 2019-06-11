@@ -111,30 +111,9 @@ CESource_s * _Nonnull CESerialSourceCreate(CEQueue_s * _Nonnull queue) {
 }
 
 //queue
-//void CESerialSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task);
-//void CESerialTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler);
 
-
-CEQueue_s * _Nonnull CESerialQueueCreate(CEQueue_s * _Nonnull queue) {
-    assert(queue);
-    CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
-    context->scheduler = CESerialTaskSchedulerCreate(queue);
-    CESource_s * source = CESourceCreate(queue, context, CESerialSourceAppend);
-    return source;
+CEQueue_s * _Nonnull CESerialQueueCreate(char * _Nullable label, CEQueuePriority_t priority) {
+    CEQueue_s * queue = CEQueueCreate(label, 1, priority, CEQueueTypeSerial);
+    queue->source = CESerialSourceCreate(queue);
+    return queue;
 }
-
-
-
-struct _CEQueue {
-    CERuntimeAtomicRcBase_s runtime;
-    char label[64];
-    uint32_t concurrencyCount;
-    CEQueuePriority_t priority;
-    CEQueueType_t type;
-    CESourceRef _Nonnull source;
-    CESpinLock_t lock;
-    CEPtr _Nonnull context;
-};
-
-
-

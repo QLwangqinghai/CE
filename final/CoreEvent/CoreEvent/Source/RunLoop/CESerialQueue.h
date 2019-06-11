@@ -11,5 +11,6 @@
 
 #include "CEQueueInternal.h"
 
+CEQueue_s * _Nonnull CESerialQueueCreate(char * _Nullable label, CEQueuePriority_t priority);
 
 #endif /* CESerialQueue_h */

@@ -451,118 +451,12 @@ CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
 }
 
 
-
-
-////append
-//void CESourceLock(CESourceRef _Nonnull source) {
-//    CESpinLockLock(&(source->lock));
-//
-//
-//}
-//
-//void CESourceUnlock(CESourceRef _Nonnull source) {
-//    CESpinLockUnlock(&(source->lock));
-//
-//
-//
-//}
-
-void CESourceLock(CESourceRef _Nonnull source) {
-    CESpinLockLock(&(source->lock));
-
-
-}
-
-void CESourceUnlock(CESourceRef _Nonnull source) {
-    CESpinLockUnlock(&(source->lock));
-
-
-
-}
-
-
-
-
 struct _CERunLoop {
     pthread_t _Nullable thread;
 };
 
 
 
-
-
-//执行中任务的百分比 4 : 2 : 1
-
-//CETaskPtr _Nullable CESourceRemove(CESourceRef _Nonnull source) {
-//    assert(source);
-//    return source->remove(source);
-//
-//    return NULL;
-//}
-
-//void CESourceSerialQueueAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
-//    assert(source);
-//    assert(task);
-//    assert(NULL == task->next);
-//
-//    _Bool weakup = false;
-//
-//    CESourceLock(source);
-//
-//    if (source->head == NULL) {
-//        assert(source->last == NULL);
-//        assert(source->counter.count == 0);
-//        source->head = task;
-//        source->last = task;
-//        source->counter.count = 1;
-//        weakup = true;
-//    } else {
-//        assert(source->last != NULL);
-//        assert(source->counter.count > 0);
-//        source->last->next = task;
-//        source->last = task;
-//        source->counter.count += 1;
-//    }
-//    CESourceUnlock(source);
-//    if (weakup) {
-//        source->weakUp(source);
-//    }
-//}
-//
-////执行中任务的百分比 4 : 2 : 1
-//
-//CETaskPtr _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
-//    assert(source);
-//
-//    CETaskPtr result = NULL;
-//    CESourceCount_t count = 0;
-//    CESourceLock(source);
-//    if (source->head == NULL) {
-//        assert(source->last == NULL);
-//    } else {
-//        assert(source->last != NULL);
-//        if (source->head != source->last) {
-//            result = source->head;
-//            source->head = result->next;
-//            result->next = NULL;
-//            assert(source->counter.count > 1);
-//            source->counter.count -= 1;
-//            count = source->counter.count;
-//        } else {
-//            result = source->head;
-//            source->head = NULL;
-//            source->last = NULL;
-//            result->next = NULL;
-//            assert(source->counter.count == 1);
-//            source->counter.count = 0;
-//        }
-//    }
-//    CESourceUnlock(source);
-//    
-//    return result;
-//}
-
-//
 
 //removeFirst
 

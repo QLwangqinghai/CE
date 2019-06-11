@@ -30,7 +30,7 @@ static inline void _CEQueueJoin(CEQueue_s * _Nonnull queue, CEFunction_f _Nonnul
 }
 
 
-extern CEQueue_s * _Nonnull CEQueueCreate();
+extern CEQueue_s * _Nonnull CEQueueCreate(char * _Nullable label, uint32_t concurrencyCount, CEQueuePriority_t priority, CEQueueType_t type);
 
 
 

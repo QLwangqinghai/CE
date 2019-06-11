@@ -30,6 +30,7 @@ void CEGlobalQueueMainFunc(void * _Nullable param);
 void CEGlobalQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific);
 
 
+
 CETaskPtr _Nullable CEGlobalTaskSchedulerRemoveTask(CETaskSchedulerPtr _Nonnull scheduler) {
     assert(scheduler);
     
@@ -195,3 +196,20 @@ void CEGlobalQueueMainFunc(void * _Nullable param) {
 }
 
 
+//source
+
+CESource_s * _Nonnull CEGlobalSourceCreate(CEQueue_s * _Nonnull queue) {
+    assert(queue);
+    CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
+    context->scheduler = CEGlobalTaskSchedulerCreate(queue);
+    CESource_s * source = CESourceCreate(queue, context, CESerialSourceAppend);
+    return source;
+}
+
+//queue
+
+CEQueue_s * _Nonnull CEGlobalQueueCreate(char * _Nullable label, CEQueuePriority_t priority) {
+    CEQueue_s * queue = CEQueueCreate(label, 1, priority, CEQueueTypeGolbal);
+    queue->source = CEGlobalSourceCreate(queue);
+    return queue;
+}

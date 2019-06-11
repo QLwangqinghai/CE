@@ -15,6 +15,7 @@
 #include "CETaskScheduler.h"
 #include "CETask.h"
 
+
 const CETypeSpecific_s CETypeSpecificQueue = {
     .name = "CEQueue",
     .descript = CETypeDefaultDescript,
@@ -56,3 +57,14 @@ void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _N
 
 
 
+CEQueue_s * _Nonnull CEQueueCreate(char * _Nullable label, uint32_t concurrencyCount, CEQueuePriority_t priority, CEQueueType_t type) {
+    CEQueue_s * queue = CETypeQueue->alloctor->allocate(CETypeQueue, sizeof(CEQueue_s));;
+    if (label) {
+        snprintf(queue->label, 64, "%s", label);
+    }
+    queue->concurrencyCount = concurrencyCount;
+    queue->priority = priority;
+    queue->type = type;
+    
+    return queue;
+}

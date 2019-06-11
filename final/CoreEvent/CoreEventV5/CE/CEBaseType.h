@@ -38,17 +38,6 @@
 #include "CELog.h"
 
 
-typedef struct _CEThreadWaiter {
-    _Atomic(uintptr_t) whoWakeUp;
-#if __APPLE__
-    char name[1024];
-#endif
-    sem_t * _Nonnull lock;
-    
-    sem_t lockValue;//private
-    
-} CEThreadWaiter_s;
-
 
 static const uint64_t CETimeBetweenFrames = 125000;//每秒钟8帧
 

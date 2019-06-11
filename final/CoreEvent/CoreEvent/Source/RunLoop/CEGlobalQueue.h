@@ -9,6 +9,11 @@
 #ifndef CEGlobalQueue_h
 #define CEGlobalQueue_h
 
-#include <stdio.h>
+#include "CEQueueInternal.h"
+
+
+CETaskSchedulerPtr _Nonnull CEGlobalTaskSchedulerCreate(uint32_t id);
+
+
 
 #endif /* CEGlobalQueue_h */

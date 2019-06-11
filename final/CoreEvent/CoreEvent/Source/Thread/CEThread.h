@@ -22,15 +22,6 @@ static const float CEThreadConfigSchedPriorityDefault = 0.0f;
 _Bool CEIsMainThread(void);
 
 
-struct _CEThreadWaiter;
-
-typedef struct _CEThreadWaiter * CEThreadWaiterRef;
-
-
-void CEThreadWaiterWait(CEThreadWaiterRef _Nonnull waiter);
-void CEThreadWaiterWakeUp(CEThreadWaiterRef _Nonnull waiter);
-
-
 CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
                                      void (* _Nonnull main)(void * _Nullable),
                                      void * _Nullable params,

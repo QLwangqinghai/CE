@@ -9,18 +9,12 @@
 #ifndef CESource_h
 #define CESource_h
 
-#include "CERunLoopBase.h"
+#include "CEThreadBaseInternal.h"
 
 
-//append
+CESource_s * _Nonnull CESourceCreate(CEQueue_s * _Nonnull queue, CEPtr _Nonnull context, CESourceAppendTask_f _Nonnull append);
 
-//removeFirst
-
-//status
-
-//信号量
-
-//count
+void CESourceDestroy(CESource_s * _Nonnull source);
 
 
 #endif /* CESource_h */

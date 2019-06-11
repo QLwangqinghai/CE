@@ -16,6 +16,7 @@
 
 
 CETaskPtr _Nonnull CETaskCreate(CEFunction_f _Nonnull execute, CEParamRef _Nullable param, CEParamRef _Nullable resultReceiver, CEThreadSyncWaiter_s * _Nullable syncTaskWaiter, _Bool isBarrier);
+
 void CETaskDestroy(CETaskPtr _Nonnull task);
 
 #endif /* CETask_h */

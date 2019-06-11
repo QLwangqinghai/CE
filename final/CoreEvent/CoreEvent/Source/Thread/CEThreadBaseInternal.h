@@ -13,6 +13,10 @@
 #include "CESem.h"
 #include "CEMemory.h"
 
+struct _CEQueue;
+typedef struct _CEQueue CEQueue_s;
+
+
 
 #pragma mark - CEThread
 
@@ -26,6 +30,7 @@ typedef struct _CEThread {
     char name[64];
     CEThreadStatus_t status;
 } CEThread_s;
+
 
 
 #pragma mark - CEThreadSyncWaiter
@@ -62,19 +67,26 @@ static inline void CEThreadSyncWaiterSignal(CEThreadSyncWaiter_s * _Nonnull wait
 struct _CETaskScheduler;
 typedef struct _CETaskScheduler * CETaskSchedulerPtr;
 
+typedef void (*CETaskSchedulerSignal_f)(CETaskSchedulerPtr _Nonnull scheduler);
+
 typedef struct _CETaskScheduler {
-    CEThread_s * _Nonnull thread;
-    CEQueueRef _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值
-    
-    CESourceRef _Nonnull source;
-    
     CESpinLockPtr _Nonnull lock;
     CESemPtr _Nonnull waiter;
-    
-    uint32_t type;//main queue
-    
+    CETaskSchedulerSignal_f _Nonnull signal;
+
+    CEThread_s * _Nonnull thread;
+    CEQueue_s * _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值
+    CESourceRef _Nonnull source;
+        
     uint8_t context[64];
 } CETaskScheduler_s;
+
+static inline void CETaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
+    assert(scheduler);
+    assert(scheduler->signal);
+    scheduler->signal(scheduler);
+}
+
 
 
 #pragma mark - CEThreadSpecific
@@ -110,72 +122,31 @@ struct _CETask {
 
 #pragma mark - CEQueue
 
-struct _CEQueue;
-typedef struct _CEQueue CEQueue_s;
+
 
 typedef void (*CEQueueAppendTask_f)(CEQueue_s * _Nonnull queue, CETaskPtr _Nonnull task);
 struct _CEQueue {
     CERuntimeAtomicRcBase_s runtime;
     char label[64];
-    uint8_t isSerialQueue;
-    uint8_t schedPriority;
+    uint32_t concurrencyCount;
+    CEQueuePriority_t priority;
+    CEQueueType_t type;
     CESourceRef _Nonnull source;
-    CESpinLock_t lock;
-    CEQueueAppendTask_f _Nonnull append;
-    CEPtr _Nonnull context;
 };
+
+static inline float CEQueuePriorityToThreadPriority(CEQueuePriority_t priority) {
+    CEQueuePriority_t p = priority;
+    if (p > 256) {
+        p = 256;
+    }
+    return (float)(p) / 128.0f - 1.0f;
+}
 
 #pragma mark - CETaskScheduler
 
 
 
-struct _CERunLoop {
-    pthread_t _Nullable thread;
-};
-
-struct _CEThreadScheduler;
-typedef struct _CEThreadScheduler CEThreadScheduler_s;
-typedef CEThreadScheduler_s * CEThreadSchedulerRef;
-
-struct _CEThreadScheduler {
-    CERuntimeAtomicRcBase_s runtime;
-    CESourceRef _Nonnull owner;
-    CEThreadRef _Nonnull thread;
-    CEQueueRef _Nullable ownerQueue;
-
-    
-    
-    CETaskWorkerRef _Nullable worker;
-
-    
-    uint32_t type;//main queue
-    
-};
-
-
-typedef uint_fast32_t CETaskSchedulerStatus_t;
-static const CETaskSchedulerStatus_t CETaskSchedulerStatusNoThread = 0;
-static const CETaskSchedulerStatus_t CETaskSchedulerStatusCreatingThread = 1;
-static const CETaskSchedulerStatus_t CETaskSchedulerStatusRunning = 2;
-static const CETaskSchedulerStatus_t CETaskSchedulerStatusWaiting = 3;
-
-typedef struct _CEGlobalThreadTaskSchedulerContext {
-    uint32_t id;
-    _Atomic(uint_fast32_t) status;
-    
-    
-    
-} CEGlobalThreadTaskSchedulerContext_s;
-
-typedef struct _CESerialThreadTaskSchedulerContext {
-    uint32_t id;
-    _Atomic(uint_fast32_t) status;
-    
-    
-    
-} CESerialThreadTaskSchedulerContext_s;
-
-
+#pragma mark - CESource
 
 typedef void (*CESourceCallback_f)(CESourceRef _Nonnull source);
 typedef void (*CESourceAppendTask_f)(CESourceRef _Nonnull source, CETaskPtr _Nonnull task);
@@ -183,9 +154,12 @@ typedef CETaskPtr _Nullable (*CESourceRemoveTask_f)(CESourceRef _Nonnull source)
 
 #if CEBuild64Bit
 typedef uint64_t CESourceCount_t;
+static const CESourceCount_t CESourceCountMax = UINT64_MAX;
 #else
 typedef uint32_t CESourceCount_t;
+static const CESourceCount_t CESourceCountMax = UINT32_MAX;
 #endif
+
 
 
 typedef struct _CESourceCounter {
@@ -198,28 +172,102 @@ typedef struct _CESourceCounter {
 #endif
 } CESourceCounter_s;
 
-typedef struct _CESourceConcurrentContext {
+typedef struct _CESourceListStore {
     CETaskPtr _Nullable head;
     CETaskPtr _Nullable last;
-    CESourceCount_t count;
+    CESourceCount_t count;//列表中存储的个数
+} CESourceListStore_s;
+
+static inline void CESourceTaskStoreAppend(CESourceListStore_s * _Nonnull list, CETaskPtr _Nonnull task) {
+    assert(list);
+    assert(task);
+    assert(NULL == task->next);
+    if (list->head == NULL) {
+        assert(list->last == NULL);
+        assert(list->count == 0);
+        list->head = task;
+        list->last = task;
+        list->count = 1;
+    } else {
+        assert(list->last != NULL);
+        assert(list->count > 0);
+        list->last->next = task;
+        list->last = task;
+        list->count += 1;
+    }
+}
+
+static inline CETaskPtr _Nullable CESourceTaskStoreRemove(CESourceListStore_s * _Nonnull list) {
+    CETaskPtr result = NULL;
+    if (list->head == NULL) {
+        assert(list->last == NULL);
+    } else {
+        assert(list->last != NULL);
+        if (list->head != list->last) {
+            result = list->head;
+            list->head = result->next;
+            result->next = NULL;
+            assert(list->count > 1);
+            list->count -= 1;
+        } else {
+            result = list->head;
+            list->head = NULL;
+            list->last = NULL;
+            result->next = NULL;
+            assert(list->count == 1);
+            list->count = 0;
+        }
+    }
+    return result;
+}
+
+typedef struct _CESourceConcurrentGolbalContext {
+    CESourceListStore_s tasks;
     uint16_t executingCount;
     uint16_t maxExecutingCount;
     uint32_t isBarrier: 1;
+    
+    //    uint32_t concurrencyCount: 10;//队列并发数
+    //    uint32_t activeCount: 10;//当前并发数
+} CESourceConcurrentGolbalContext_s;
 
-//    uint32_t concurrencyCount: 10;//队列并发数
-//    uint32_t activeCount: 10;//当前并发数
+typedef struct _CESourceConcurrentContext {
+    CESourceListStore_s tasks;
+    uint16_t executingCount;
+    uint16_t maxExecutingCount;
+    uint32_t isBarrier: 1;
+    
+    //    uint32_t concurrencyCount: 10;//队列并发数
+    //    uint32_t activeCount: 10;//当前并发数
 } CESourceConcurrentContext_s;
 
+typedef struct _CESourceSerialContext {
+    CESourceCount_t count;
+    CESourceListStore_s tasks;
+    CETaskSchedulerPtr _Nonnull scheduler;
+} CESourceSerialContext_s;
+
+typedef struct _CESourceSerialMainContext {
+    CESourceCount_t count;
+    CESourceListStore_s tasks;
+    CESourceListStore_s interactiveTasks;
+    CETaskSchedulerPtr _Nonnull scheduler;
+} CESourceSerialMainContext_s;
+
+
 struct _CESource {
-    CEThreadSchedulerRef _Nonnull scheduler;
+    CEQueue_s * _Nonnull queue;
     CESpinLockPtr _Nonnull lock;
-    CESourceCallback_f _Nonnull weakUp;
-    CESourceAppendTask_f _Nonnull append;
-    CESourceRemoveTask_f _Nonnull remove;
-    uint16_t type;
-    
-    uint8_t context[];
+    CESourceAppendTask_f _Nonnull append;    
+    CEPtr _Nonnull context;
 };
+static inline void CESourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
+    assert(source);
+    assert(task);
+    assert(NULL == task->next);
+    
+    source->append(source, task);
+}
 
 
 typedef struct _CESourceStatus {
@@ -258,8 +306,6 @@ typedef struct _CESourceStatus {
  
  执行屏障
  */
-
-
 
 //#if CEBuild64Bit
 //typedef struct _CETaskWorkerManager {
@@ -420,6 +466,7 @@ CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
 //
 //
 //}
+
 void CESourceLock(CESourceRef _Nonnull source) {
     CESpinLockLock(&(source->lock));
 
@@ -436,32 +483,32 @@ void CESourceUnlock(CESourceRef _Nonnull source) {
 
 
 
+struct _CERunLoop {
+    pthread_t _Nullable thread;
+};
 
 
-void CESourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
-    assert(source);
-    assert(task);
-    assert(NULL == task->next);
-    
-    source->append(source, task);
-}
+
+
 
 //执行中任务的百分比 4 : 2 : 1
 
-CETaskPtr _Nullable CESourceRemove(CESourceRef _Nonnull source) {
-    assert(source);
-    return source->remove(source);
-}
+//CETaskPtr _Nullable CESourceRemove(CESourceRef _Nonnull source) {
+//    assert(source);
+//    return source->remove(source);
+//
+//    return NULL;
+//}
 
 //void CESourceSerialQueueAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
 //    assert(source);
 //    assert(task);
 //    assert(NULL == task->next);
-//    
+//
 //    _Bool weakup = false;
-//    
+//
 //    CESourceLock(source);
-//    
+//
 //    if (source->head == NULL) {
 //        assert(source->last == NULL);
 //        assert(source->counter.count == 0);
@@ -486,7 +533,7 @@ CETaskPtr _Nullable CESourceRemove(CESourceRef _Nonnull source) {
 //
 //CETaskPtr _Nullable CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
 //    assert(source);
-//    
+//
 //    CETaskPtr result = NULL;
 //    CESourceCount_t count = 0;
 //    CESourceLock(source);

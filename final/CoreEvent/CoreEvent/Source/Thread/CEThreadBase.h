@@ -22,12 +22,18 @@ typedef pthread_spinlock_t CESpinLock_t;
 
 typedef CESpinLock_t * CESpinLockPtr;
 
-typedef uint8_t CEQueuePriority_t;
+typedef uint16_t CEQueuePriority_t;
 static const CEQueuePriority_t CEQueuePriorityHigh = 192;
 static const CEQueuePriority_t CEQueuePriorityDefault = 128;
 static const CEQueuePriority_t CEQueuePriorityLow = 64;
 
-typedef CERef CESyncWaiterRef;
+
+typedef uint16_t CEQueueType_t;
+static const CEQueueType_t CEQueueTypeMain = 1;
+static const CEQueueType_t CEQueueTypeGolbal = 2;
+static const CEQueueType_t CEQueueTypeSerial = 3;
+static const CEQueueType_t CEQueueTypeConcurrent = 4;
+
 
 struct _CESem;
 typedef struct _CESem CESem_s;

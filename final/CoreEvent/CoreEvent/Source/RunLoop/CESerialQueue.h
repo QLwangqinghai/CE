@@ -9,6 +9,7 @@
 #ifndef CESerialQueue_h
 #define CESerialQueue_h
 
-#include <stdio.h>
+#include "CEQueueInternal.h"
+
 
 #endif /* CESerialQueue_h */

@@ -37,6 +37,9 @@
 		D60B006422AE9DD000B1BEA8 /* CESerialQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B006222AE9DD000B1BEA8 /* CESerialQueue.c */; };
 		D60B006722AE9E0500B1BEA8 /* CEConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006522AE9E0500B1BEA8 /* CEConcurrentQueue.h */; };
 		D60B006822AE9E0500B1BEA8 /* CEConcurrentQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B006622AE9E0500B1BEA8 /* CEConcurrentQueue.c */; };
+		D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006922AFF01B00B1BEA8 /* CEMainQueue.h */; };
+		D60B006C22AFF01B00B1BEA8 /* CEMainQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B006A22AFF01B00B1BEA8 /* CEMainQueue.c */; };
+		D60B006E22AFF0A100B1BEA8 /* CEQueueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */; };
 		D61B299C229FC45F002A85BA /* Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61B299B229FC45F002A85BA /* Swift.swift */; };
 		D630255F22A242CB00A7561F /* CEThreadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D630255D22A242CB00A7561F /* CEThreadScheduler.h */; };
 		D630256022A242CB00A7561F /* CEThreadScheduler.c in Sources */ = {isa = PBXBuildFile; fileRef = D630255E22A242CB00A7561F /* CEThreadScheduler.c */; };
@@ -245,6 +248,9 @@
 		D60B006222AE9DD000B1BEA8 /* CESerialQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CESerialQueue.c; sourceTree = "<group>"; };
 		D60B006522AE9E0500B1BEA8 /* CEConcurrentQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEConcurrentQueue.h; sourceTree = "<group>"; };
 		D60B006622AE9E0500B1BEA8 /* CEConcurrentQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEConcurrentQueue.c; sourceTree = "<group>"; };
+		D60B006922AFF01B00B1BEA8 /* CEMainQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEMainQueue.h; sourceTree = "<group>"; };
+		D60B006A22AFF01B00B1BEA8 /* CEMainQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEMainQueue.c; sourceTree = "<group>"; };
+		D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEQueueInternal.h; sourceTree = "<group>"; };
 		D61B299A229FC45E002A85BA /* Demo2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo2-Bridging-Header.h"; sourceTree = "<group>"; };
 		D61B299B229FC45F002A85BA /* Swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swift.swift; sourceTree = "<group>"; };
 		D630255D22A242CB00A7561F /* CEThreadScheduler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadScheduler.h; sourceTree = "<group>"; };
@@ -789,6 +795,7 @@
 				D644ABB8227C7C8200F6B333 /* CEPoolBaseApi.h */,
 				D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */,
 				D644ABD8227D58E200F6B333 /* CEQueue.h */,
+				D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */,
 				D644ABD9227D58E200F6B333 /* CEQueue.c */,
 				D60B005D22AE9DBD00B1BEA8 /* CEGlobalQueue.h */,
 				D60B005E22AE9DBD00B1BEA8 /* CEGlobalQueue.c */,
@@ -796,6 +803,8 @@
 				D60B006622AE9E0500B1BEA8 /* CEConcurrentQueue.c */,
 				D60B006122AE9DD000B1BEA8 /* CESerialQueue.h */,
 				D60B006222AE9DD000B1BEA8 /* CESerialQueue.c */,
+				D60B006922AFF01B00B1BEA8 /* CEMainQueue.h */,
+				D60B006A22AFF01B00B1BEA8 /* CEMainQueue.c */,
 			);
 			path = RunLoop;
 			sourceTree = "<group>";
@@ -822,6 +831,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D60B006E22AFF0A100B1BEA8 /* CEQueueInternal.h in Headers */,
 				D647C860227F50EB004AAA19 /* CERunLoopBase.h in Headers */,
 				D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */,
 				D647C84D227DCC09004AAA19 /* CEOperation.h in Headers */,
@@ -843,6 +853,7 @@
 				D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */,
 				D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */,
 				D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */,
+				D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */,
 				D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */,
 				D644ABBE227C7CD200F6B333 /* CEBaseType.h in Headers */,
 				D644ABD5227C952200F6B333 /* CELog.h in Headers */,
@@ -1219,6 +1230,7 @@
 				D630256022A242CB00A7561F /* CEThreadScheduler.c in Sources */,
 				D672490A227E9E1400FC8B7A /* CEParamItem.c in Sources */,
 				D647C85E227F4251004AAA19 /* CETaskQueue.c in Sources */,
+				D60B006C22AFF01B00B1BEA8 /* CEMainQueue.c in Sources */,
 				D67248F5227CABFF00FC8B7A /* CESource.c in Sources */,
 				D60B006422AE9DD000B1BEA8 /* CESerialQueue.c in Sources */,
 				D644ABCF227C80E500F6B333 /* CEMemory.c in Sources */,

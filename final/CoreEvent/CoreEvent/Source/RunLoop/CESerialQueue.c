@@ -67,7 +67,6 @@ CETaskSchedulerPtr _Nonnull CESerialTaskSchedulerCreate(CEQueue_s * _Nonnull que
     assert(queue);
     CETaskSchedulerPtr scheduler = CETaskSchedulerCreate(queue, CESerialTaskSchedulerSignal);
 
-    
     CEThreadConfig_s config = {};
     float schedPriority = 0;
     memcpy(config.name, queue->label, 64);
@@ -101,7 +100,6 @@ void CESerialQueueMainFunc(void * _Nullable param) {
 
 
 //source
-
 CESource_s * _Nonnull CESerialSourceCreate(CEQueue_s * _Nonnull queue) {
     assert(queue);
     CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
@@ -111,7 +109,6 @@ CESource_s * _Nonnull CESerialSourceCreate(CEQueue_s * _Nonnull queue) {
 }
 
 //queue
-
 CEQueue_s * _Nonnull CESerialQueueCreate(char * _Nullable label, CEQueuePriority_t priority) {
     CEQueue_s * queue = CEQueueCreate(label, 1, priority, CEQueueTypeSerial);
     queue->source = CESerialSourceCreate(queue);

@@ -7,9 +7,19 @@
 //
 
 #include "CEThreadBase.h"
+#include "CEMemory.h"
 
+CESpinLockPtr _Nonnull CESpinLockCreate(void) {
+    CESpinLockPtr lockPtr = CEAllocateClear(sizeof(CESpinLock_t));
+    CESpinLockInit(lockPtr);
+    return lockPtr;
+}
+void CESpinLockDestroy(CESpinLockPtr _Nonnull lockPtr) {
+    CESpinLockDeinit(lockPtr);
+    CEDeallocate(lockPtr);
+}
 
-void CESpinLockInit(CESpinLock_t * _Nonnull lockPtr) {
+void CESpinLockInit(CESpinLockPtr _Nonnull lockPtr) {
     assert(lockPtr);
 #if __APPLE__
     *lockPtr = OS_UNFAIR_LOCK_INIT;
@@ -18,7 +28,7 @@ void CESpinLockInit(CESpinLock_t * _Nonnull lockPtr) {
     assert(result == 0);
 #endif
 }
-void CESpinLockDeinit(CESpinLock_t * _Nonnull lockPtr) {
+void CESpinLockDeinit(CESpinLockPtr _Nonnull lockPtr) {
     assert(lockPtr);
     
 #if __APPLE__
@@ -28,7 +38,7 @@ void CESpinLockDeinit(CESpinLock_t * _Nonnull lockPtr) {
 #endif
 }
 
-void CESpinLockLock(CESpinLock_t * _Nonnull lockPtr) {
+void CESpinLockLock(CESpinLockPtr _Nonnull lockPtr) {
     assert(lockPtr);
     
 #if __APPLE__
@@ -38,7 +48,7 @@ void CESpinLockLock(CESpinLock_t * _Nonnull lockPtr) {
 #endif
 }
 
-void CESpinLockUnlock(CESpinLock_t * _Nonnull lockPtr) {
+void CESpinLockUnlock(CESpinLockPtr _Nonnull lockPtr) {
     assert(lockPtr);
 #if __APPLE__
     os_unfair_lock_unlock(lockPtr);

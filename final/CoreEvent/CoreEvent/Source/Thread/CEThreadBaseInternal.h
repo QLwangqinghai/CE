@@ -68,7 +68,7 @@ typedef struct _CETaskScheduler {
     
     CESourceRef _Nonnull source;
     
-    CESpinLock_t lock;
+    CESpinLockPtr _Nonnull lock;
     CESemPtr _Nonnull waiter;
     
     uint32_t type;//main queue
@@ -108,23 +108,29 @@ struct _CETask {
     uint32_t mask: 31;
 };
 
+#pragma mark - CEQueue
 
 struct _CEQueue;
 typedef struct _CEQueue CEQueue_s;
 
+typedef void (*CEQueueAppendTask_f)(CEQueue_s * _Nonnull queue, CETaskPtr _Nonnull task);
+struct _CEQueue {
+    CERuntimeAtomicRcBase_s runtime;
+    char label[64];
+    uint8_t isSerialQueue;
+    uint8_t schedPriority;
+    CESourceRef _Nonnull source;
+    CESpinLock_t lock;
+    CEQueueAppendTask_f _Nonnull append;
+    CEPtr _Nonnull context;
+};
+
+#pragma mark - CETaskScheduler
+
+
 
 struct _CERunLoop {
     pthread_t _Nullable thread;
-};
-
-struct _CETaskWorker {
-    CEThreadRef _Nonnull thread;
-    CEQueueRef _Nonnull queue;
-    CESemPtr _Nonnull sem;
-    
-    _Atomic(uint_fast32_t) actionCode;
-
-    CESourceRef _Nullable source;
 };
 
 struct _CEThreadScheduler;
@@ -192,26 +198,67 @@ typedef struct _CESourceCounter {
 #endif
 } CESourceCounter_s;
 
-typedef struct _CESourceNormalContext {
-    CESourceCounter_s counter;
+typedef struct _CESourceConcurrentContext {
     CETaskPtr _Nullable head;
     CETaskPtr _Nullable last;
-} CESourceNormalContext_s;
+    CESourceCount_t count;
+    uint16_t executingCount;
+    uint16_t maxExecutingCount;
+    uint32_t isBarrier: 1;
+
+//    uint32_t concurrencyCount: 10;//队列并发数
+//    uint32_t activeCount: 10;//当前并发数
+} CESourceConcurrentContext_s;
 
 struct _CESource {
     CEThreadSchedulerRef _Nonnull scheduler;
-    
-    CESpinLock_t lock;
-    
-
+    CESpinLockPtr _Nonnull lock;
     CESourceCallback_f _Nonnull weakUp;
-    
     CESourceAppendTask_f _Nonnull append;
     CESourceRemoveTask_f _Nonnull remove;
+    uint16_t type;
     
-    uint8_t context[64];
-    
+    uint8_t context[];
 };
+
+
+typedef struct _CESourceStatus {
+    
+#if CEBuild64Bit
+    CESourceCount_t executingCount: 9;/*concurrencyCount*/
+    CESourceCount_t count: 55;/*总数 未完成的总数*/
+#else
+    CESourceCount_t executingCount: 7;/*concurrencyCount*/
+    CESourceCount_t count: 25;/*总数 未完成的总数*/
+#endif
+} CESourceStatus_s;
+
+/*
+ queue 状态
+ 
+ 
+ 挂起
+ 
+ 执行
+ 
+ 执行屏障等待
+ 
+ 解除屏障
+
+ */
+
+/*
+ worker 状态
+ 
+ 普通挂起
+ 
+ 挂起 等待屏障解除
+
+ 普通执行
+ 
+ 执行屏障
+ */
+
 
 
 //#if CEBuild64Bit
@@ -261,7 +308,7 @@ typedef struct _CEGlobalThreadManager {
     _Atomic(uint_fast32_t) workerStatus[8];
     CETaskWorkerRef _Nonnull works[256];
 #endif
-    
+    uint32_t activecpu;
     uint32_t capacity;
     CESourceRef _Nonnull highLevelSource;
     CESourceRef _Nonnull defaultLevelSource;
@@ -346,6 +393,7 @@ void __CEGlobalThreadManagerDefaultInitialize(void) {
         atomic_store(status, s);
     }
 #endif
+    __CEGlobalThreadManager.activecpu = activecpu;
     __CEGlobalThreadManager.capacity = (uint32_t)n;
     
 }
@@ -386,20 +434,8 @@ void CESourceUnlock(CESourceRef _Nonnull source) {
 }
 
 
-typedef void (*CEQueueAppendTask_f)(CEQueue_s * _Nonnull queue, CETaskPtr _Nonnull task);
 
-//队列
-struct _CEQueue {
-    CERuntimeAtomicRcBase_s runtime;
-    char label[64];
-    uint8_t isSerialQueue;
-    uint8_t schedPriority;
-    CESourceRef _Nonnull source;
-    CESpinLock_t lock;
-    CEQueueAppendTask_f _Nonnull append;
-    CEPtr _Nonnull context;
 
-};
 
 
 void CESourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {

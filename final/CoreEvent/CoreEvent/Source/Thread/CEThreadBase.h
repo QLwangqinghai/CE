@@ -20,6 +20,8 @@ typedef os_unfair_lock CESpinLock_t;
 typedef pthread_spinlock_t CESpinLock_t;
 #endif
 
+typedef CESpinLock_t * CESpinLockPtr;
+
 typedef uint8_t CEQueuePriority_t;
 static const CEQueuePriority_t CEQueuePriorityHigh = 192;
 static const CEQueuePriority_t CEQueuePriorityDefault = 128;
@@ -38,7 +40,7 @@ typedef CESem_s * CESemPtr;
 typedef struct _CEConditionLock {
     pthread_mutex_t mutex;
     pthread_cond_t cond;
-    long value;
+    CEPtr _Nonnull value;
 } CEConditionLock_s;
 typedef CEConditionLock_s * CEConditionLockPtr;
 
@@ -133,11 +135,15 @@ typedef struct _CEThreadConfig {
 } CEThreadConfig_s;
 
 
-void CESpinLockInit(CESpinLock_t * _Nonnull lockPtr);
-void CESpinLockDeinit(CESpinLock_t * _Nonnull lockPtr);
 
-void CESpinLockLock(CESpinLock_t * _Nonnull lockPtr);
-void CESpinLockUnlock(CESpinLock_t * _Nonnull lockPtr);
+CESpinLockPtr _Nonnull CESpinLockCreate(void);
+void CESpinLockDestroy(CESpinLockPtr _Nonnull lockPtr);
+
+void CESpinLockInit(CESpinLockPtr _Nonnull lockPtr);
+void CESpinLockDeinit(CESpinLockPtr _Nonnull lockPtr);
+
+void CESpinLockLock(CESpinLockPtr _Nonnull lockPtr);
+void CESpinLockUnlock(CESpinLockPtr _Nonnull lockPtr);
 
 
 

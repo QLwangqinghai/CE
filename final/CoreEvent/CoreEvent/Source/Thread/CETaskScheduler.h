@@ -19,7 +19,6 @@
  typedef struct _CETaskScheduler {
  CESpinLockPtr _Nonnull lock;
  CESemPtr _Nonnull waiter;
- CETaskSchedulerSignal_f _Nonnull signal;
  
  CEThread_s * _Nonnull thread;
  CEQueueRef _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值

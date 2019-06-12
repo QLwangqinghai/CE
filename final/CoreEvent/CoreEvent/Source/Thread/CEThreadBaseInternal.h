@@ -67,7 +67,6 @@ static inline void CEThreadSyncWaiterSignal(CEThreadSyncWaiter_s * _Nonnull wait
 struct _CETaskScheduler;
 typedef struct _CETaskScheduler * CETaskSchedulerPtr;
 
-typedef void (*CETaskSchedulerSignal_f)(CETaskSchedulerPtr _Nonnull scheduler);
 
 typedef struct _CETaskScheduler {
     CESpinLockPtr _Nonnull lock;

@@ -16,9 +16,6 @@ static const uint_fast32_t CETaskSchedulerConcurrentGlobalPrivateMask = 0x400000
 static const uint_fast32_t CETaskSchedulerConcurrentUsingMask = 0x30000000uL;//2bit
 static const uint_fast32_t CETaskSchedulerConcurrentUsingMaskOffset = 28;
 
-static const uint_fast32_t CETaskSchedulerConcurrentSharedIdMask = 0xFFF000uL;//12bit
-static const uint_fast32_t CETaskSchedulerConcurrentSharedIdMaskOffset = 12;
-
 static const uint_fast32_t CETaskSchedulerConcurrentIndexMask = 0xFFFuL;//12bit
 static const uint_fast32_t CETaskSchedulerConcurrentIndexMaskOffset = 0;
 
@@ -27,7 +24,6 @@ typedef struct _CETaskSchedulerConcurrentContextOwnerInfo {
     uint32_t isGlobal: 1;// isGlobal==0 时, 只有index 是有效的
     uint32_t isPrivate: 1;//isGlobal==1 时，isPrivate=0 Global共享的，isPrivate=1 Global独享
     uint32_t using: 2;//isPrivate=0 时有用 谁在使用 0 队列中, 1 high, 2 normal, 3 low
-    uint32_t sharedId: 12;
     uint32_t index: 12;//scheduler 在 CESourceConcurrentContext中的位置
 } CETaskSchedulerConcurrentContextOwnerInfo_s;
 
@@ -37,8 +33,8 @@ static const uint16_t CETaskSchedulerConcurrentTypeGlobalExclusive = 3;//独享
 
 typedef struct _CETaskSchedulerConcurrentContext {
     _Atomic(uint_fast32_t) status;
+    _Atomic(uint_fast32_t) * _Nullable adjust;//全局共享的scheduler 属性有值
     _Atomic(uint_fast32_t) info;
-    
 } CETaskSchedulerConcurrentContext_s;
 
 
@@ -52,19 +48,15 @@ static const uint32_t CESourceConcurrentContextTypeCustom = 4;//普通并发队�
 
 typedef struct _CESourceConcurrentContext {
     CESourceListStore_s tasks;
-
-#if CEBuild64Bit
-    uint64_t schedulerStatus[4];
+ 
     CETaskSchedulerPtr _Nonnull schedulers[256];
-#else
-    uint32_t schedulerStatus[8];
-    CETaskSchedulerPtr _Nonnull schedulers[256];
-#endif
+    CETaskSchedulerPtr _Nonnull schedulersBuffer[256];
+    
     uint32_t type: 16;//4 普通并发队列, 1 global high, 2 global normal, 3 global low
     uint32_t privateSchedulerCount: 16;
-    uint32_t sharedSchedulerBeginIndex: 16;
     uint32_t maxConcurrencyCount: 16;
     uint32_t currentConcurrencyCount: 16;
+    uint32_t bufferCount: 16;
     uint32_t executingCount: 15;
     uint32_t isBarrier: 1;
     

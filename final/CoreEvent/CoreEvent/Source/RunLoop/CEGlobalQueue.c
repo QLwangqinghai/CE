@@ -17,20 +17,39 @@ static const CETaskSchedulerStatus_t CETaskSchedulerStatusRunning = 2;
 static const CETaskSchedulerStatus_t CETaskSchedulerStatusWaiting = 3;
 
 typedef struct _CEGlobalQueueManager {
-#if CEBuild64Bit
-    _Atomic(uint_fast64_t) workerStatus;
-    CETaskSchedulerPtr _Nonnull works[64];
-#else
-    _Atomic(uint_fast32_t) workerStatus[2];
-    CETaskSchedulerPtr _Nonnull works[64];
-#endif
-    uint32_t activecpu;
-    uint16_t capacity;
     CEQueue_s * _Nonnull highLevelQueue;
     CEQueue_s * _Nonnull defaultLevelQueue;
     CEQueue_s * _Nonnull lowLevelQueue;
     
+    CETaskSchedulerPtr _Nonnull schedulers[256];
+    CETaskSchedulerPtr _Nonnull schedulersBuffer[256];
+    
+    CESpinLockPtr _Nonnull lock;
+
+    uint32_t activecpu: 16;
+    uint32_t capacity: 16;
+    
+    uint32_t bufferCount: 16;
+    uint32_t defaultLevelCanUsed: 16;//3/4
+    uint32_t lowLevelCanUsed: 16;//1/2
+    uint32_t highLevelUsed: 16;
+    uint32_t defaultLevelUsed: 16;
+    uint32_t lowLevelUsed: 16;
+    
+    //未开始的个数
+#if CEBuild64Bit
+    _Atomic(uint_fast64_t) highLevelTaskCount;
+    _Atomic(uint_fast64_t) defaultLevelTaskCount;
+    _Atomic(uint_fast64_t) lowLevelTaskCount;
+#else
+    _Atomic(uint_fast32_t) highLevelTaskCount;
+    _Atomic(uint_fast32_t) defaultLevelTaskCount;
+    _Atomic(uint_fast32_t) lowLevelTaskCount;
+#endif
+
     //[4, 2, 1]
+    
+    _Atomic(uint_fast32_t) adjust;//线程调整
     
     _Atomic(uint_fast32_t) activeThreadCountInfo;//[6-8-8][1:2]
     _Atomic(uint_fast32_t) activeRc;
@@ -84,39 +103,107 @@ void __CEGlobalQueueManagerDefaultInitialize(void) {
 #endif
     
     size_t n = MIN(activecpu * CENTHREADS, wq_max_threads - 2);
+    
     if (n < 4) {
         n = 4;
     }
+
+    if (n > 128) {
+        n = 128;
+    }
     
-#if CEBuild64Bit
-    if (n > 64) {
-        n = 64;
-    }
-#else
-    if (n > 64) {
-        n = 64;
-    }
-#endif
-    
-#if CEBuild64Bit
-    _Atomic(uint_fast64_t) * status = &(__CEGlobalQueueManager.workerStatus);
-    uint_fast64_t newStatus = 0;
-    atomic_store(status, newStatus);
-#else
-    for (int i=0; i<2; i++) {
-        _Atomic(uint_fast32_t) * status = &(__CEGlobalQueueManager.workerStatus[i]);
-        uint_fast32_t newStatus = 0;
-        atomic_store(status, newStatus);
-    }
-#endif
+//#if CEBuild64Bit
+//    _Atomic(uint_fast64_t) * status = &(__CEGlobalQueueManager.workerStatus);
+//    uint_fast64_t newStatus = 0;
+//    atomic_store(status, newStatus);
+//#else
+//    for (int i=0; i<2; i++) {
+//        _Atomic(uint_fast32_t) * status = &(__CEGlobalQueueManager.workerStatus[i]);
+//        uint_fast32_t newStatus = 0;
+//        atomic_store(status, newStatus);
+//    }
+//#endif
     __CEGlobalQueueManager.activecpu = activecpu;
     __CEGlobalQueueManager.capacity = (uint32_t)n;
 }
 
-CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
+CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetShared(void) {
     static pthread_once_t token = PTHREAD_ONCE_INIT;
     pthread_once(&token,&__CEGlobalQueueManagerDefaultInitialize);
     return &__CEGlobalQueueManager;
+}
+
+
+
+
+static inline CETaskSchedulerPtr _Nullable _CEGlobalSourceGetAPrivateSchedulerToSignal(CESourceRef _Nonnull source, CESourceConcurrentContext_s * context) {
+    if (context->bufferCount <= 0) {
+        return NULL;
+    }
+    CETaskSchedulerPtr result = context->schedulersBuffer[context->bufferCount - 1];
+    context->bufferCount -= 1;
+    return result;
+}
+
+static inline CETaskSchedulerPtr _Nullable _CEGlobalSourceGetASharedSchedulerToSignal(CESourceRef _Nonnull source, CESourceConcurrentContext_s * context) {
+    CEGlobalThreadManagerPtr manager = CETaskWorkerManagerGetShared();
+    
+    
+    switch (context->type) {
+        case CESourceConcurrentContextTypeGlobalHigh: {
+            if (manager->bufferCount <= 0) {
+                //剥夺其他线程
+                
+                return NULL;
+            }
+            CETaskSchedulerPtr result = manager->schedulersBuffer[manager->bufferCount - 1];
+            manager->bufferCount -= 1;
+            return result;
+        }
+            break;
+        case CESourceConcurrentContextTypeGlobalDefault: {
+            
+            
+            
+        }
+            break;
+        case CESourceConcurrentContextTypeGlobalLow: {
+            
+            
+            
+        }
+            break;
+        default: {
+            abort();
+        }
+            break;
+    }
+    
+    return NULL;
+}
+
+void CEGlobalSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
+    CESourceConcurrentContext_s * context = source->context;
+    
+    assert(CESourceConcurrentContextTypeGlobalHigh <= context->type && CESourceConcurrentContextTypeGlobalLow >= context->type);
+    
+    //添加任务最多只能唤醒一个线程
+    CETaskSchedulerPtr scheduler = NULL;
+    CESourceCount_t count = 0;
+    CESpinLockLock(source->lock);
+    CESourceTaskStoreAppend(&(context->tasks), task);
+    count = context->tasks.count;
+    
+    scheduler = _CEGlobalSourceGetAPrivateSchedulerToSignal(source, context);
+    if (NULL == scheduler) {
+        scheduler = _CEGlobalSourceGetASharedSchedulerToSignal(source, context);
+    }
+    CESpinLockUnlock(source->lock);
+    
+    if (NULL != scheduler) {
+        CESemSignal(scheduler->waiter);
+    }
+    
 }
 
 
@@ -140,21 +227,6 @@ void CEGlobalTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler);
 
 void CEGlobalQueueMainFunc(void * _Nullable param);
 void CEGlobalQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific);
-
-
-void CEGlobalSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
-    CESourceCount_t count = 0;
-    CESpinLockLock(source->lock);
-    CESourceConcurrentContext_s * context = source->context;
-    CESourceTaskStoreAppend(&(context->tasks), task);
-    context->count += 1;
-    count = context->count;
-    CESpinLockUnlock(source->lock);
-    if (count == 1) {
-        //weak up
-        CEGlobalTaskSchedulerSignal(context->scheduler);
-    }
-}
 
 
 CETaskPtr _Nullable CEGlobalTaskSchedulerRemoveTask(CETaskSchedulerPtr _Nonnull scheduler) {

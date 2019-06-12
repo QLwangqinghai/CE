@@ -30,9 +30,48 @@ struct __CETypeBaseInfo112 {
     [super viewDidLoad];
 //    CESemRef sem = CESemInit(0);
 //
-    NSLog(@"%ld", sizeof(struct __CETypeBaseInfo111));
-    NSLog(@"%ld", sizeof(struct __CETypeBaseInfo112));
+//    NSLog(@"%ld", sizeof(struct __CETypeBaseInfo111));
+//    NSLog(@"%ld", sizeof(struct __CETypeBaseInfo112));
 
+    static dispatch_queue_t queue;
+    queue = dispatch_queue_create("co11", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(queue, ^{
+        sleep(5);
+        NSLog(@"1 exit");
+    });
+    
+    dispatch_async(queue, ^{
+        sleep(5);
+        NSLog(@"2 exit");
+    });
+    
+    dispatch_async(queue, ^{
+        sleep(10);
+        NSLog(@"3 exit");
+    });
+    
+    dispatch_barrier_async(queue, ^{
+        NSLog(@"dispatch_barrier_async 0");
+
+        sleep(3);
+        
+        NSLog(@"dispatch_barrier_async 1");
+    });
+
+    dispatch_async(queue, ^{
+        NSLog(@"dispatch_async 0");
+        sleep(1);
+        NSLog(@"dispatch_async 0 - ");
+    });
+    
+    dispatch_async(queue, ^{
+        NSLog(@"dispatch_async 1");
+        sleep(1);
+        NSLog(@"dispatch_async 1 - ");
+    });
+    
+    return;
     
     NSInteger i=3;
     

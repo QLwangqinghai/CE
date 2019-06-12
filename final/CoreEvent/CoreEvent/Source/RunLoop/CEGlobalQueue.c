@@ -8,11 +8,123 @@
 
 #include "CEGlobalQueue.h"
 #include "CETaskScheduler.h"
+#include "CEConcurrentQueue.h"
 
-typedef struct _CEGlobalThreadTaskSchedulerContext {
-    uint32_t id;
-    _Atomic(uint_fast32_t) status;
-} CEGlobalThreadTaskSchedulerContext_s;
+typedef uint_fast32_t CETaskSchedulerStatus_t;
+static const CETaskSchedulerStatus_t CETaskSchedulerStatusNoThread = 0;
+static const CETaskSchedulerStatus_t CETaskSchedulerStatusCreatingThread = 1;
+static const CETaskSchedulerStatus_t CETaskSchedulerStatusRunning = 2;
+static const CETaskSchedulerStatus_t CETaskSchedulerStatusWaiting = 3;
+
+typedef struct _CEGlobalQueueManager {
+#if CEBuild64Bit
+    _Atomic(uint_fast64_t) workerStatus;
+    CETaskSchedulerPtr _Nonnull works[64];
+#else
+    _Atomic(uint_fast32_t) workerStatus[2];
+    CETaskSchedulerPtr _Nonnull works[64];
+#endif
+    uint32_t activecpu;
+    uint16_t capacity;
+    CEQueue_s * _Nonnull highLevelQueue;
+    CEQueue_s * _Nonnull defaultLevelQueue;
+    CEQueue_s * _Nonnull lowLevelQueue;
+    
+    //[4, 2, 1]
+    
+    _Atomic(uint_fast32_t) activeThreadCountInfo;//[6-8-8][1:2]
+    _Atomic(uint_fast32_t) activeRc;
+} CEGlobalQueueManager_s;
+
+
+
+CETaskSchedulerPtr _Nullable CEGlobalThreadManagerDeQueue(void) {
+    //    static const CEQueuePriority_t CEQueuePriorityHigh = 192;
+    //    static const CEQueuePriority_t CEQueuePriorityDefault = 128;
+    //    static const CEQueuePriority_t CEQueuePriorityLow = 64;
+    
+    return NULL;
+}
+
+
+
+void CEGlobalThreadManagerEnQueue(CETaskSchedulerPtr _Nonnull schedule) {
+    //    static const CEQueuePriority_t CEQueuePriorityHigh = 192;
+    //    static const CEQueuePriority_t CEQueuePriorityDefault = 128;
+    //    static const CEQueuePriority_t CEQueuePriorityLow = 64;
+    
+    
+    
+}
+
+
+typedef CEGlobalQueueManager_s * CEGlobalThreadManagerPtr;
+
+static CEGlobalQueueManager_s __CEGlobalQueueManager = {};
+
+
+#if defined(__i386__) || defined(__x86_64__)
+#define CENTHREADS 16
+#else
+#define CENTHREADS 4
+#endif
+
+void __CEGlobalQueueManagerDefaultInitialize(void) {
+    
+    uint32_t activecpu;
+    uint32_t wq_max_threads;
+#ifdef __linux__
+    activecpu = (uint32_t)sysconf(_SC_NPROCESSORS_ONLN);
+    wq_max_threads = activecpu * CENTHREADS + 2;
+#else
+    size_t s = sizeof(uint32_t);
+    sysctlbyname("hw.activecpu", &activecpu, &s, NULL, 0);
+    s = sizeof(uint32_t);
+    sysctlbyname("kern.wq_max_threads", &wq_max_threads, &s, NULL, 0);
+#endif
+    
+    size_t n = MIN(activecpu * CENTHREADS, wq_max_threads - 2);
+    if (n < 4) {
+        n = 4;
+    }
+    
+#if CEBuild64Bit
+    if (n > 64) {
+        n = 64;
+    }
+#else
+    if (n > 64) {
+        n = 64;
+    }
+#endif
+    
+#if CEBuild64Bit
+    _Atomic(uint_fast64_t) * status = &(__CEGlobalQueueManager.workerStatus);
+    uint_fast64_t newStatus = 0;
+    atomic_store(status, newStatus);
+#else
+    for (int i=0; i<2; i++) {
+        _Atomic(uint_fast32_t) * status = &(__CEGlobalQueueManager.workerStatus[i]);
+        uint_fast32_t newStatus = 0;
+        atomic_store(status, newStatus);
+    }
+#endif
+    __CEGlobalQueueManager.activecpu = activecpu;
+    __CEGlobalQueueManager.capacity = (uint32_t)n;
+}
+
+CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
+    static pthread_once_t token = PTHREAD_ONCE_INIT;
+    pthread_once(&token,&__CEGlobalQueueManagerDefaultInitialize);
+    return &__CEGlobalQueueManager;
+}
+
+
+
+
+
+
+
 
 //void CEGlobalThreadManagerDispatch(CESourceRef _Nonnull source) {
 //    CETaskSchedulerPtr scheduler = CEGlobalThreadManagerDeQueue();
@@ -29,6 +141,20 @@ void CEGlobalTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler);
 void CEGlobalQueueMainFunc(void * _Nullable param);
 void CEGlobalQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific);
 
+
+void CEGlobalSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
+    CESourceCount_t count = 0;
+    CESpinLockLock(source->lock);
+    CESourceConcurrentContext_s * context = source->context;
+    CESourceTaskStoreAppend(&(context->tasks), task);
+    context->count += 1;
+    count = context->count;
+    CESpinLockUnlock(source->lock);
+    if (count == 1) {
+        //weak up
+        CEGlobalTaskSchedulerSignal(context->scheduler);
+    }
+}
 
 
 CETaskPtr _Nullable CEGlobalTaskSchedulerRemoveTask(CETaskSchedulerPtr _Nonnull scheduler) {
@@ -69,9 +195,9 @@ CESourceRef _Nullable CEGlobalTaskSchedulerUnbindSource(CETaskSchedulerPtr _Nonn
 
 
 CETaskSchedulerPtr _Nonnull CEGlobalTaskSchedulerCreate(uint32_t id) {
-    CETaskSchedulerPtr scheduler = CETaskSchedulerCreate(NULL, CEGlobalTaskSchedulerSignal);
+    CETaskSchedulerPtr scheduler = CETaskSchedulerCreate(NULL);
     
-    CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
+    CETaskSchedulerConcurrentContext_s * context = (CETaskSchedulerConcurrentContext_s *)scheduler->context;
     context->id = id;
     atomic_store(&(context->status), CETaskSchedulerStatusNoThread);
     return scheduler;
@@ -94,7 +220,7 @@ void CEGlobalTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
     uint_fast32_t status = 0;
     uint_fast32_t newStatus = 0;
     uint32_t times = 0;
-    CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
+    CETaskSchedulerConcurrentContext_s * context = (CETaskSchedulerConcurrentContext_s *)scheduler->context;
     
     do {
         times += 1;
@@ -138,7 +264,7 @@ void CEGlobalTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
 void CEGlobalQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific) {
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
-    CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
+    CETaskSchedulerConcurrentContext_s * context = (CETaskSchedulerConcurrentContext_s *)scheduler->context;
     uint_fast32_t status = 0;
     uint_fast32_t newStatus = 0;
     uint32_t times = 0;
@@ -155,7 +281,7 @@ void CEGlobalQueueMainFunc(void * _Nullable param) {
     CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
-    CEGlobalThreadTaskSchedulerContext_s * context = (CEGlobalThreadTaskSchedulerContext_s *)scheduler->context;
+    CETaskSchedulerConcurrentContext_s * context = (CETaskSchedulerConcurrentContext_s *)scheduler->context;
     
     uint_fast32_t status = atomic_load(&(context->status));
     assert(CETaskSchedulerStatusRunning == status);
@@ -200,9 +326,9 @@ void CEGlobalQueueMainFunc(void * _Nullable param) {
 
 CESource_s * _Nonnull CEGlobalSourceCreate(CEQueue_s * _Nonnull queue) {
     assert(queue);
-    CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
+    CESourceConcurrentContext_s * context = CEAllocateClear(sizeof(CESourceConcurrentContext_s));
     context->scheduler = CEGlobalTaskSchedulerCreate(queue);
-    CESource_s * source = CESourceCreate(queue, context, CESerialSourceAppend);
+    CESource_s * source = CESourceCreate(queue, context, CEGlobalSourceAppend);
     return source;
 }
 

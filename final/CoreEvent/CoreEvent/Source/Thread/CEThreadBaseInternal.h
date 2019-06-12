@@ -72,21 +72,12 @@ typedef void (*CETaskSchedulerSignal_f)(CETaskSchedulerPtr _Nonnull scheduler);
 typedef struct _CETaskScheduler {
     CESpinLockPtr _Nonnull lock;
     CESemPtr _Nonnull waiter;
-    CETaskSchedulerSignal_f _Nonnull signal;
-
     CEThread_s * _Nonnull thread;
     CEQueue_s * _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值
     CESourceRef _Nonnull source;
         
     uint8_t context[64];
 } CETaskScheduler_s;
-
-static inline void CETaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
-    assert(scheduler);
-    assert(scheduler->signal);
-    scheduler->signal(scheduler);
-}
-
 
 
 #pragma mark - CEThreadSpecific
@@ -120,9 +111,9 @@ struct _CETask {
     uint32_t mask: 31;
 };
 
+
+
 #pragma mark - CEQueue
-
-
 
 typedef void (*CEQueueAppendTask_f)(CEQueue_s * _Nonnull queue, CETaskPtr _Nonnull task);
 struct _CEQueue {
@@ -159,8 +150,6 @@ static const CESourceCount_t CESourceCountMax = UINT64_MAX;
 typedef uint32_t CESourceCount_t;
 static const CESourceCount_t CESourceCountMax = UINT32_MAX;
 #endif
-
-
 
 typedef struct _CESourceCounter {
 #if CEBuild64Bit
@@ -220,32 +209,6 @@ static inline CETaskPtr _Nullable CESourceTaskStoreRemove(CESourceListStore_s * 
     }
     return result;
 }
-
-typedef struct _CESourceConcurrentGolbalContext {
-    CESourceListStore_s tasks;
-    uint16_t executingCount;
-    uint16_t maxExecutingCount;
-    uint32_t isBarrier: 1;
-    
-    //    uint32_t concurrencyCount: 10;//队列并发数
-    //    uint32_t activeCount: 10;//当前并发数
-} CESourceConcurrentGolbalContext_s;
-
-typedef struct _CESourceConcurrentContext {
-    CESourceListStore_s tasks;
-    uint16_t executingCount;
-    uint16_t maxExecutingCount;
-    uint32_t isBarrier: 1;
-    
-    //    uint32_t concurrencyCount: 10;//队列并发数
-    //    uint32_t activeCount: 10;//当前并发数
-} CESourceConcurrentContext_s;
-
-typedef struct _CESourceSerialContext {
-    CESourceCount_t count;
-    CESourceListStore_s tasks;
-    CETaskSchedulerPtr _Nonnull scheduler;
-} CESourceSerialContext_s;
 
 typedef struct _CESourceSerialMainContext {
     CESourceCount_t count;
@@ -346,109 +309,6 @@ typedef struct _CESourceStatus {
 //} CETaskWorkerManager_s;
 //#endif
 
-typedef struct _CEGlobalThreadManager {
-#if CEBuild64Bit
-    _Atomic(uint_fast64_t) workerStatus[8];
-    CETaskWorkerRef _Nonnull works[512];
-#else
-    _Atomic(uint_fast32_t) workerStatus[8];
-    CETaskWorkerRef _Nonnull works[256];
-#endif
-    uint32_t activecpu;
-    uint32_t capacity;
-    CESourceRef _Nonnull highLevelSource;
-    CESourceRef _Nonnull defaultLevelSource;
-    CESourceRef _Nonnull lowLevelSource;
-
-    _Atomic(uint_fast32_t) activeThreadCountInfo;//[6-8-8][1:2]
-    _Atomic(uint_fast32_t) activeRc;
-
-    
-} CEGlobalThreadManager_s;
-
-CETaskSchedulerPtr _Nullable CEGlobalThreadManagerDeQueue(void) {
-    //    static const CEQueuePriority_t CEQueuePriorityHigh = 192;
-    //    static const CEQueuePriority_t CEQueuePriorityDefault = 128;
-    //    static const CEQueuePriority_t CEQueuePriorityLow = 64;
-    
-    return NULL;
-}
-
-
-
- void CEGlobalThreadManagerEnQueue(CETaskSchedulerPtr _Nonnull schedule) {
-//    static const CEQueuePriority_t CEQueuePriorityHigh = 192;
-//    static const CEQueuePriority_t CEQueuePriorityDefault = 128;
-//    static const CEQueuePriority_t CEQueuePriorityLow = 64;
-    
-     
-     
-}
-
-
-typedef CEGlobalThreadManager_s * CEGlobalThreadManagerPtr;
-
-static CEGlobalThreadManager_s __CEGlobalThreadManager = {};
-
-
-#if defined(__i386__) || defined(__x86_64__)
-#define CENTHREADS 16
-#else
-#define CENTHREADS 4
-#endif
-
-void __CEGlobalThreadManagerDefaultInitialize(void) {
-    
-    uint32_t activecpu;
-    uint32_t wq_max_threads;
-#ifdef __linux__
-    activecpu = (uint32_t)sysconf(_SC_NPROCESSORS_ONLN);
-    wq_max_threads = activecpu * CENTHREADS + 2;
-#else
-    size_t s = sizeof(uint32_t);
-    sysctlbyname("hw.activecpu", &activecpu, &s, NULL, 0);
-    s = sizeof(uint32_t);
-    sysctlbyname("kern.wq_max_threads", &wq_max_threads, &s, NULL, 0);
-#endif
-    
-    size_t n = MIN(activecpu * CENTHREADS, wq_max_threads - 2);
-    if (n < 8) {
-        n = 8;
-    }
-    
-#if CEBuild64Bit
-    if (n > 512) {
-        n = 512;
-    }
-#else
-    if (n > 256) {
-        n = 256;
-    }
-#endif
-
-#if CEBuild64Bit
-    for (int i=0; i<8; i++) {
-        _Atomic(uint_fast64_t) * status = &(__CEGlobalThreadManager.workerStatus[i]);
-        uint_fast64_t s = 0;
-        atomic_store(status, s);
-    }
-#else
-    for (int i=0; i<8; i++) {
-        _Atomic(uint_fast32_t) * status = &(__CEGlobalThreadManager.workerStatus[i]);
-        uint_fast32_t s = 0;
-        atomic_store(status, s);
-    }
-#endif
-    __CEGlobalThreadManager.activecpu = activecpu;
-    __CEGlobalThreadManager.capacity = (uint32_t)n;
-    
-}
-
-CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetDefault(void) {
-    static pthread_once_t token = PTHREAD_ONCE_INIT;
-    pthread_once(&token,&__CEGlobalThreadManagerDefaultInitialize);
-    return &__CEGlobalThreadManager;
-}
 
 
 struct _CERunLoop {

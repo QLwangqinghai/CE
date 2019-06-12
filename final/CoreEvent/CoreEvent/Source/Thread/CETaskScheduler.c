@@ -21,12 +21,11 @@ void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr
 }
 
 
-CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(CEQueue_s * _Nullable ownerQueue, CETaskSchedulerSignal_f _Nonnull signal) {
+CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(CEQueue_s * _Nullable ownerQueue) {
     assert(signal);
     CETaskSchedulerPtr scheduler = CEAllocateClear(sizeof(CETaskScheduler_s));
     scheduler->lock = CESpinLockCreate();
     scheduler->waiter = CESemInit(0);
-    scheduler->signal = signal;
     scheduler->ownerQueue = ownerQueue;
     return scheduler;
 }

@@ -11,10 +11,22 @@
 #include "CESource.h"
 #include "CEQueueInternal.h"
 
+typedef struct _CESourceSerialContext {
+    CESourceCount_t count;
+    CESourceListStore_s tasks;
+    CETaskSchedulerPtr _Nonnull scheduler;
+} CESourceSerialContext_s;
+
 //scheduler
 
 void CESerialQueueMainFunc(void * _Nullable param);
 void CESerialQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific);
+
+void CESerialTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
+    assert(scheduler);
+    //do wake up
+    CESemSignal(scheduler->waiter);
+}
 
 void CESerialSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
     CESourceCount_t count = 0;
@@ -26,7 +38,7 @@ void CESerialSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) 
     CESpinLockUnlock(source->lock);
     if (count == 1) {
         //weak up
-        CETaskSchedulerSignal(context->scheduler);
+        CESerialTaskSchedulerSignal(context->scheduler);
     }
 }
 
@@ -57,15 +69,11 @@ CETaskPtr _Nonnull CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
     assert(result);
     return result;
 }
-void CESerialTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
-    assert(scheduler);
-    //do wake up
-    CESemSignal(scheduler->waiter);
-}
+
 
 CETaskSchedulerPtr _Nonnull CESerialTaskSchedulerCreate(CEQueue_s * _Nonnull queue) {
     assert(queue);
-    CETaskSchedulerPtr scheduler = CETaskSchedulerCreate(queue, CESerialTaskSchedulerSignal);
+    CETaskSchedulerPtr scheduler = CETaskSchedulerCreate(queue);
 
     CEThreadConfig_s config = {};
     float schedPriority = 0;

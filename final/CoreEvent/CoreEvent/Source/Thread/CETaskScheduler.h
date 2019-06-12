@@ -12,11 +12,7 @@
 #include "CEThreadBaseInternal.h"
 
 
-typedef uint_fast32_t CETaskSchedulerStatus_t;
-static const CETaskSchedulerStatus_t CETaskSchedulerStatusNoThread = 0;
-static const CETaskSchedulerStatus_t CETaskSchedulerStatusCreatingThread = 1;
-static const CETaskSchedulerStatus_t CETaskSchedulerStatusRunning = 2;
-static const CETaskSchedulerStatus_t CETaskSchedulerStatusWaiting = 3;
+
 
 
 /*
@@ -36,7 +32,7 @@ static const CETaskSchedulerStatus_t CETaskSchedulerStatusWaiting = 3;
 
 void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr _Nonnull task);
 
-CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(CEQueue_s * _Nullable ownerQueue, CETaskSchedulerSignal_f _Nonnull signal);
+CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(CEQueue_s * _Nullable ownerQueue);
 
 void CETaskSchedulerDestroy(CETaskSchedulerPtr _Nonnull scheduler);
 

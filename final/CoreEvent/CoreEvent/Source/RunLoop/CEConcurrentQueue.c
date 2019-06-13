@@ -69,16 +69,65 @@ void CEConcurrentSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull ta
     }
 }
 
-void CEConcurrentSourceFinishOneTaskAndRemove(CESourceRef _Nonnull source, CETaskSchedulerPtr _Nonnull scheduler) {
-    
+CETaskPtr _Nonnull CEConcurrentSourceFinishOneTaskAndRemove(CESourceRef _Nonnull source, CETaskSchedulerPtr _Nonnull scheduler, uint32_t isBarrierTask) {
+    if (0 != isBarrierTask) {
+        isBarrierTask = 1;
+    }
+    CETaskPtr result;
     CESourceConcurrentContext_s * context = source->context;
     
     assert(CESourceConcurrentContextTypeCustom == context->type);
     
-    //添加任务最多只能唤醒一个线程
-    CETaskSchedulerPtr scheduler = NULL;
-    CESourceCount_t count = 0;
+    //移除任务会改变 isBarrier
     CESpinLockLock(source->lock);
+    CESourceCount_t count = context->tasks.count;
+    if (isBarrierTask) {//屏障task 执行完成
+        assert(context->isBarrier);
+        result = CESourceTaskStoreRemove(&(context->tasks));
+        if (NULL == result) {
+            context->isBarrier = 0;
+            context->executingCount -= 1;
+            
+            //挂起
+            
+            
+        } else {
+            uint32_t headTaskIsBarrier = context->tasks.head->isBarrier;
+            if (0 == headTaskIsBarrier) { //解除屏障
+                context->isBarrier = 0;
+                
+                //唤醒更多线程
+                
+            }
+        }
+    } else {
+        //非屏障task 执行完成
+        if (0 == context->isBarrier) {//当前不在屏障状态下
+            result = CESourceTaskStoreRemove(&(context->tasks));
+            if (NULL == result) {
+                context->executingCount -= 1;
+                
+                //挂起
+                
+                
+            } else {
+                uint32_t headTaskIsBarrier = context->tasks.head->isBarrier;
+                if (0 != headTaskIsBarrier) { //开始屏障
+                    context->isBarrier = 1;
+                }
+            }
+        } else {
+            context->executingCount -= 1;
+            
+            //挂起
+            
+            
+        }
+    }
+    
+
+
+    
     CESourceTaskStoreAppend(&(context->tasks), task);
     count = context->tasks.count;
     
@@ -145,12 +194,15 @@ void CEConcurrentSourceFinishOneTaskAndRemove(CESourceRef _Nonnull source, CETas
     }
 }
 
-CETaskPtr _Nonnull CEConcurrentSourceRemove(CESourceRef _Nonnull source) {
+CETaskPtr _Nonnull CEConcurrentSourceRemove(CESourceRef _Nonnull source, CETaskSchedulerPtr _Nonnull scheduler) {
     assert(source);
+    assert(scheduler);
     
+    CESourceConcurrentContext_s * context = source->context;
+    CESemWait(scheduler->waiter);
+
     CETaskPtr result = NULL;
     CESpinLockLock(source->lock);
-    CESourceConcurrentContext_s * context = source->context;
     result = CESourceTaskStoreRemove(&(context->tasks));
     CESpinLockUnlock(source->lock);
     assert(result);

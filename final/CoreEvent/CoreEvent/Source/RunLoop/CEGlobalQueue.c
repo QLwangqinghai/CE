@@ -152,7 +152,7 @@ static inline CETaskSchedulerPtr _Nullable _CEGlobalSourceGetASharedSchedulerToS
     switch (context->type) {
         case CESourceConcurrentContextTypeGlobalHigh: {
             if (manager->bufferCount <= 0) {
-                //剥夺其他线程
+                //剥夺其他队列中的线程
                 
                 return NULL;
             }

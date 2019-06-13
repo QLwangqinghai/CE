@@ -19,6 +19,9 @@
 
 #include "CESem.h"
 
+static pthread_t _CECMainThread = NULL;
+
+
 void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript);
 
 
@@ -316,3 +319,31 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
                                       void (* _Nullable paramsDealloc)(void * _Nonnull)) {
     return _CEThreadCreate(config, NULL, NULL, main, params, paramsDealloc);
 }
+
+
+static CEThread_s * __CEMainThreadShared = NULL;
+void __CEMainThreadSharedOnceBlockFunc(void) {
+    CEThread_s * thread = CETypeThread->alloctor->allocate(CETypeThread, sizeof(CEThread_s));
+    thread->pthread = _CECMainThread;
+    thread->status = CEThreadStatusExecuting;
+    memcpy(thread->name, "main", 4);
+    __CEMainThreadShared = thread;
+}
+
+CEThreadRef _Nonnull CEMainThreadShared(void) {
+    static pthread_once_t token = PTHREAD_ONCE_INIT;
+    pthread_once(&token,&__CEMainThreadSharedOnceBlockFunc);
+    return __CEMainThreadShared;
+}
+
+static void __CEInitialize(void) __attribute__ ((constructor));
+static _Bool __CEInitializing = 0;
+_Bool __CEInitialized = 0;
+void __CEInitialize(void) {
+    if (!__CEInitializing && !__CEInitialized) {
+        _CECMainThread = pthread_self();
+        __CEInitializing = 0;
+        __CEInitialized = 1;
+    }
+}
+

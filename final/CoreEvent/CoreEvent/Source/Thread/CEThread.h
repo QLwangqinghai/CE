@@ -28,6 +28,7 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
                                      void (* _Nullable paramsDealloc)(void * _Nonnull));
 
 
+CEThreadRef _Nonnull CEMainThreadShared(void);
 
 
 

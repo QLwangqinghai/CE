@@ -31,8 +31,6 @@
 		D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D608C1E222A2800B001FE51D /* CETaskScheduler.h */; };
 		D608C1E522A2800B001FE51D /* CETaskScheduler.c in Sources */ = {isa = PBXBuildFile; fileRef = D608C1E322A2800B001FE51D /* CETaskScheduler.c */; };
 		D60B005C22AD326E00B1BEA8 /* CETime.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B005B22AD326E00B1BEA8 /* CETime.c */; };
-		D60B005F22AE9DBD00B1BEA8 /* CEGlobalQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B005D22AE9DBD00B1BEA8 /* CEGlobalQueue.h */; };
-		D60B006022AE9DBD00B1BEA8 /* CEGlobalQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B005E22AE9DBD00B1BEA8 /* CEGlobalQueue.c */; };
 		D60B006322AE9DD000B1BEA8 /* CESerialQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006122AE9DD000B1BEA8 /* CESerialQueue.h */; };
 		D60B006422AE9DD000B1BEA8 /* CESerialQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B006222AE9DD000B1BEA8 /* CESerialQueue.c */; };
 		D60B006722AE9E0500B1BEA8 /* CEConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006522AE9E0500B1BEA8 /* CEConcurrentQueue.h */; };
@@ -242,8 +240,6 @@
 		D608C1E322A2800B001FE51D /* CETaskScheduler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETaskScheduler.c; sourceTree = "<group>"; };
 		D60B005A22AD326E00B1BEA8 /* CETime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CETime.h; sourceTree = "<group>"; };
 		D60B005B22AD326E00B1BEA8 /* CETime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CETime.c; sourceTree = "<group>"; };
-		D60B005D22AE9DBD00B1BEA8 /* CEGlobalQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEGlobalQueue.h; sourceTree = "<group>"; };
-		D60B005E22AE9DBD00B1BEA8 /* CEGlobalQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEGlobalQueue.c; sourceTree = "<group>"; };
 		D60B006122AE9DD000B1BEA8 /* CESerialQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CESerialQueue.h; sourceTree = "<group>"; };
 		D60B006222AE9DD000B1BEA8 /* CESerialQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CESerialQueue.c; sourceTree = "<group>"; };
 		D60B006522AE9E0500B1BEA8 /* CEConcurrentQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEConcurrentQueue.h; sourceTree = "<group>"; };
@@ -797,8 +793,6 @@
 				D644ABD8227D58E200F6B333 /* CEQueue.h */,
 				D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */,
 				D644ABD9227D58E200F6B333 /* CEQueue.c */,
-				D60B005D22AE9DBD00B1BEA8 /* CEGlobalQueue.h */,
-				D60B005E22AE9DBD00B1BEA8 /* CEGlobalQueue.c */,
 				D60B006522AE9E0500B1BEA8 /* CEConcurrentQueue.h */,
 				D60B006622AE9E0500B1BEA8 /* CEConcurrentQueue.c */,
 				D60B006122AE9DD000B1BEA8 /* CESerialQueue.h */,
@@ -846,7 +840,6 @@
 				D644ABCB227C806300F6B333 /* CEThread.h in Headers */,
 				D647C89322866D0F004AAA19 /* CERuntime.h in Headers */,
 				D60B006722AE9E0500B1BEA8 /* CEConcurrentQueue.h in Headers */,
-				D60B005F22AE9DBD00B1BEA8 /* CEGlobalQueue.h in Headers */,
 				D647C855227DFE3A004AAA19 /* CEParam.h in Headers */,
 				D647C851227DDE7F004AAA19 /* CETask.h in Headers */,
 				D6724909227E9E1400FC8B7A /* CEParamItem.h in Headers */,
@@ -1240,7 +1233,6 @@
 				D6378D96228178AE006A46E6 /* CEThreadBase.c in Sources */,
 				D644ABDB227D58E200F6B333 /* CEQueue.c in Sources */,
 				D644ABBB227C7C8200F6B333 /* CEPoolBaseApi.c in Sources */,
-				D60B006022AE9DBD00B1BEA8 /* CEGlobalQueue.c in Sources */,
 				D644ABC7227C7DEA00F6B333 /* CEBase.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -74,8 +74,6 @@ typedef struct _CETaskScheduler {
     CEThread_s * _Nonnull thread;
     CEQueue_s * _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值
     CESourceRef _Nonnull source;
-        
-    uint8_t context[64];
 } CETaskScheduler_s;
 
 

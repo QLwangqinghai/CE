@@ -21,39 +21,64 @@ typedef struct _CEGlobalQueueManager {
     CEQueue_s * _Nonnull defaultLevelQueue;
     CEQueue_s * _Nonnull lowLevelQueue;
     
-    CETaskSchedulerPtr _Nonnull schedulers[256];
-    CETaskSchedulerPtr _Nonnull schedulersBuffer[256];
-    
     CESpinLockPtr _Nonnull lock;
-
+    
+    CESourceListStore_s highTasks;
+    CESourceListStore_s defaultTasks;
+    CESourceListStore_s lowTasks;
+    
+    CETaskSchedulerPtr _Nonnull highSchedulers[16];
+    CETaskSchedulerPtr _Nonnull highSchedulersBuffer[16];
+    
+    CETaskSchedulerPtr _Nonnull defaultSchedulers[8];
+    CETaskSchedulerPtr _Nonnull defaultSchedulersBuffer[8];
+    
+    CETaskSchedulerPtr _Nonnull lowSchedulers[4];
+    CETaskSchedulerPtr _Nonnull lowSchedulersBuffer[4];
+    
+    CETaskSchedulerPtr _Nonnull globalSchedulers[32];
+    CETaskSchedulerPtr _Nonnull globalSchedulersBuffer[32];
+    
     uint32_t activecpu: 16;
-    uint32_t capacity: 16;
+    uint32_t privateHighSchedulerCount: 16;
+    uint32_t privateDefaultSchedulerCount: 16;
+    uint32_t privateLowSchedulerCount: 16;
+    uint32_t privateSchedulerCount: 16;
+    uint32_t globalSchedulerCount: 16;
     
-    uint32_t bufferCount: 16;
-    uint32_t defaultLevelCanUsed: 16;//3/4
-    uint32_t lowLevelCanUsed: 16;//1/2
-    uint32_t highLevelUsed: 16;
-    uint32_t defaultLevelUsed: 16;
-    uint32_t lowLevelUsed: 16;
+    uint32_t highExecutingCount;
+    uint32_t defaultExecutingCount;
+    uint32_t lowExecutingCount;
     
-    //未开始的个数
-#if CEBuild64Bit
-    _Atomic(uint_fast64_t) highLevelTaskCount;
-    _Atomic(uint_fast64_t) defaultLevelTaskCount;
-    _Atomic(uint_fast64_t) lowLevelTaskCount;
-#else
-    _Atomic(uint_fast32_t) highLevelTaskCount;
-    _Atomic(uint_fast32_t) defaultLevelTaskCount;
-    _Atomic(uint_fast32_t) lowLevelTaskCount;
-#endif
 
-    //[4, 2, 1]
     
-    _Atomic(uint_fast32_t) adjust;//线程调整
+    uint32_t currentHighConcurrencyCount;
+    uint32_t currentDefaultConcurrencyCount;
+    uint32_t currentLowConcurrencyCount;
     
-    _Atomic(uint_fast32_t) activeThreadCountInfo;//[6-8-8][1:2]
-    _Atomic(uint_fast32_t) activeRc;
+    uint32_t highBufferCount;
+    uint32_t defaultBufferCount;
+    uint32_t lowBufferCount;
+    uint32_t globalBufferCount;
+    
+    _Atomic(uint_fast32_t) executingInfo;
 } CEGlobalQueueManager_s;
+typedef CEGlobalQueueManager_s * CEGlobalThreadManagerPtr;
+
+//uint32_t currentConcurrencyCount;
+//uint32_t executingCount;
+
+static inline uint_fast32_t CEGlobalThreadManagerGetExecutingInfo(CEGlobalThreadManagerPtr _Nonnull context, uint32_t * _Nonnull currentConcurrencyCount, uint32_t * _Nonnull executingCount) {
+    uint_fast32_t result = atomic_load(&(context->executingInfo));
+    *currentConcurrencyCount = ((result >> 16) & 0xFFFFul);
+    *executingCount = (result & 0xffff);
+    return result;
+}
+
+static inline _Bool CEGlobalThreadManagerSetExecutingInfo(CEGlobalThreadManagerPtr _Nonnull context, uint32_t currentConcurrencyCount, uint32_t executingCount, uint_fast32_t status) {
+    uint_fast32_t newStatus = ((currentConcurrencyCount << 16) & 0xFFFF0000ul) | (executingCount & 0xFFFF0000ul);
+    return atomic_compare_exchange_strong(&(context->executingInfo), &status, newStatus);
+}
 
 
 
@@ -77,7 +102,6 @@ void CEGlobalThreadManagerEnQueue(CETaskSchedulerPtr _Nonnull schedule) {
 }
 
 
-typedef CEGlobalQueueManager_s * CEGlobalThreadManagerPtr;
 
 static CEGlobalQueueManager_s __CEGlobalQueueManager = {};
 
@@ -124,7 +148,7 @@ void __CEGlobalQueueManagerDefaultInitialize(void) {
 //    }
 //#endif
     __CEGlobalQueueManager.activecpu = activecpu;
-    __CEGlobalQueueManager.capacity = (uint32_t)n;
+//    __CEGlobalQueueManager.capacity = (uint32_t)n;
 }
 
 CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetShared(void) {
@@ -136,77 +160,257 @@ CEGlobalThreadManagerPtr _Nonnull CETaskWorkerManagerGetShared(void) {
 
 
 
-static inline CETaskSchedulerPtr _Nullable _CEGlobalSourceGetAPrivateSchedulerToSignal(CESourceRef _Nonnull source, CESourceConcurrentContext_s * context) {
-    if (context->bufferCount <= 0) {
-        return NULL;
-    }
-    CETaskSchedulerPtr result = context->schedulersBuffer[context->bufferCount - 1];
-    context->bufferCount -= 1;
-    return result;
-}
+typedef struct _CESourceGlobalContext {
 
-static inline CETaskSchedulerPtr _Nullable _CEGlobalSourceGetASharedSchedulerToSignal(CESourceRef _Nonnull source, CESourceConcurrentContext_s * context) {
-    CEGlobalThreadManagerPtr manager = CETaskWorkerManagerGetShared();
-    
-    
-    switch (context->type) {
-        case CESourceConcurrentContextTypeGlobalHigh: {
-            if (manager->bufferCount <= 0) {
-                //剥夺其他队列中的线程
-                
-                return NULL;
-            }
-            CETaskSchedulerPtr result = manager->schedulersBuffer[manager->bufferCount - 1];
-            manager->bufferCount -= 1;
-            return result;
-        }
-            break;
-        case CESourceConcurrentContextTypeGlobalDefault: {
-            
-            
-            
-        }
-            break;
-        case CESourceConcurrentContextTypeGlobalLow: {
-            
-            
-            
-        }
-            break;
-        default: {
-            abort();
-        }
-            break;
-    }
-    
-    return NULL;
-}
+} CESourceGlobalContext_s;
 
-void CEGlobalSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
-    CESourceConcurrentContext_s * context = source->context;
-    
-    assert(CESourceConcurrentContextTypeGlobalHigh <= context->type && CESourceConcurrentContextTypeGlobalLow >= context->type);
-    
+
+
+
+//static inline CETaskSchedulerPtr _Nullable _CEGlobalSourceGetAPrivateSchedulerToSignal(CESourceRef _Nonnull source, CEGlobalThreadManagerPtr context) {
+//    if (context->bufferCount <= 0) {
+//        return NULL;
+//    }
+//    CETaskSchedulerPtr result = context->schedulersBuffer[context->bufferCount - 1];
+//    context->bufferCount -= 1;
+//    return result;
+//}
+//
+//static inline CETaskSchedulerPtr _Nullable _CEGlobalSourceGetASharedSchedulerToSignal(CESourceRef _Nonnull source, CEGlobalThreadManagerPtr context) {
+//    CEGlobalThreadManagerPtr manager = CETaskWorkerManagerGetShared();
+//
+//
+//    switch (context->type) {
+//        case CESourceConcurrentContextTypeGlobalHigh: {
+//            if (manager->bufferCount <= 0) {
+//                //剥夺其他队列中的线程
+//
+//                return NULL;
+//            }
+//            CETaskSchedulerPtr result = manager->schedulersBuffer[manager->bufferCount - 1];
+//            manager->bufferCount -= 1;
+//            return result;
+//        }
+//            break;
+//        case CESourceConcurrentContextTypeGlobalDefault: {
+//
+//
+//
+//        }
+//            break;
+//        case CESourceConcurrentContextTypeGlobalLow: {
+//
+//
+//
+//        }
+//            break;
+//        default: {
+//            abort();
+//        }
+//            break;
+//    }
+//
+//    return NULL;
+//}
+
+void CEGlobalSourceHighAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
+    CEGlobalThreadManagerPtr context = source->context;
+    CESourceListStore_s * tasksPtr = &(context->highTasks);
     //添加任务最多只能唤醒一个线程
     CETaskSchedulerPtr scheduler = NULL;
     CESourceCount_t count = 0;
-    CESpinLockLock(source->lock);
-    CESourceTaskStoreAppend(&(context->tasks), task);
-    count = context->tasks.count;
+    uint32_t * executingCountPtr = &(context->highExecutingCount);
     
-    scheduler = _CEGlobalSourceGetAPrivateSchedulerToSignal(source, context);
-    if (NULL == scheduler) {
-        scheduler = _CEGlobalSourceGetASharedSchedulerToSignal(source, context);
+    
+    
+    CESpinLockLock(source->lock);
+    CESourceTaskStoreAppend(tasksPtr, task);
+    count = tasksPtr->count;
+    
+    if (count == 1) {//列表数据从空到有
+
+        //链表中存储的task+正在执行的 task个数
+        CESourceCount_t totalCount = count + context->highExecutingCount;
+        uint32_t workerCount = context->privateHighSchedulerCount - context->highBufferCount + context->globalSchedulerCount - context->globalBufferCount;
+        
+        
+        if (context->highExecutingCount < totalCount) {//当前并发数小于task总个数
+            //do weak up a taskScheduler
+            
+            
+            
+            
+        }
+    } else {//列表数据增加
+        if (0 == context->isBarrier) {//当前不在屏障状态下
+            if (context->currentConcurrencyCount < context->maxConcurrencyCount) {
+                //链表中存储的task+正在执行的 task个数
+                CESourceCount_t totalCount = count + context->executingCount;
+                if (context->currentConcurrencyCount < totalCount) {//当前并发数小于task总个数
+                    //do weak up a taskScheduler
+                    scheduler = _CEConcurrentSourceGetASchedulerToSignal(source, context);
+                }
+            }
+        }
     }
+    
     CESpinLockUnlock(source->lock);
     
     if (NULL != scheduler) {
         CESemSignal(scheduler->waiter);
     }
-    
 }
 
+CETaskPtr _Nonnull CEGlobalSourceFinishOneTaskAndRemove(CESourceRef _Nonnull source, CETaskSchedulerPtr _Nonnull scheduler, uint32_t isBarrierTask) {
+    if (0 != isBarrierTask) {
+        isBarrierTask = 1;
+    }
+    
+    CETaskSchedulerPtr _Nonnull schedulersBuffer[256] = {};
+    uint32_t weakUpCount = 0;
+    
+    int action = 0;
+    CETaskPtr result = NULL;
+    CESourceConcurrentContext_s * context = source->context;
+    
+    //移除任务会改变 isBarrier
+    CESpinLockLock(source->lock);
+    CESourceCount_t count = context->tasks.count;
+    if (isBarrierTask) {//屏障task 执行完成
+        assert(context->isBarrier);
+        result = CESourceTaskStoreRemove(&(context->tasks));
+        if (NULL == result) {
+            context->isBarrier = 0;
+            context->executingCount -= 1;
+            
+            //挂起
+            action = -1;
+            
+        } else {
+            uint32_t headTaskIsBarrier = context->tasks.head->isBarrier;
+            if (0 == headTaskIsBarrier) { //解除屏障
+                context->isBarrier = 0;
+                
+                //唤醒更多线程
+                action = 1;
+                
+                uint32_t loopCount = context->maxConcurrencyCount - context->executingCount;
+                if (loopCount > context->tasks.count) {
+                    loopCount = (uint32_t)(context->tasks.count);
+                }
+                
+                CETaskPtr tmp = context->tasks.head;
+                weakUpCount = loopCount;
+                
+                for (uint32_t index=0; index<loopCount; index++) {
+                    assert(tmp);
+                    if (0 != tmp->isBarrier) {
+                        weakUpCount = index;
+                        break;
+                    }
+                    tmp = tmp->next;
+                }
+                
+                assert(weakUpCount <= context->bufferCount);
+                
+                memcpy(schedulersBuffer, &(context->schedulersBuffer[context->bufferCount - weakUpCount]), sizeof(CETaskSchedulerPtr) * weakUpCount);
+                
+                context->bufferCount -= weakUpCount;
+            }
+        }
+    } else {
+        //非屏障task 执行完成
+        if (0 == context->isBarrier) {//当前不在屏障状态下
+            result = CESourceTaskStoreRemove(&(context->tasks));
+            if (NULL == result) {
+                context->executingCount -= 1;
+                
+                //挂起
+                action = -1;
+            } else {
+                uint32_t headTaskIsBarrier = context->tasks.head->isBarrier;
+                if (0 != headTaskIsBarrier) { //开始屏障
+                    context->isBarrier = 1;
+                }
+            }
+        } else {
+            context->executingCount -= 1;
+            
+            //挂起
+            
+            action = -1;
+        }
+    }
+    
+    if (action < 0) {
+        context->currentConcurrencyCount -= 1;
+        context->schedulersBuffer[context->bufferCount] = scheduler;
+        context->bufferCount += 1;
+    }
+    
+    CESpinLockUnlock(source->lock);
+    
+    
+    if (NULL != result) {
+        if (action > 1) {
+            for (uint32_t index=0; index<weakUpCount; index++) {
+                CETaskSchedulerPtr s = schedulersBuffer[index];
+                assert(s);
+                CESemSignal(s->waiter);
+            }
+        }
+        return result;
+    } else {
+        if (action < 0) {
+            CESemWait(scheduler->waiter);
+        }
+        while (NULL == result) {
+            CESpinLockLock(source->lock);
+            _Bool wait = false;
+            if (0 == context->isBarrier) {//当前不在屏障状态下
+                result = CESourceTaskStoreRemove(&(context->tasks));
+                if (NULL == result) {
+                    context->executingCount -= 1;
+                    
+                    //挂起
+                    wait = true;
+                } else {
+                    uint32_t headTaskIsBarrier = context->tasks.head->isBarrier;
+                    if (0 != headTaskIsBarrier) { //开始屏障
+                        context->isBarrier = 1;
+                    }
+                }
+            } else {
+                context->executingCount -= 1;
+                
+                //挂起
+                wait = true;
+            }
+            if (wait) {
+                context->currentConcurrencyCount -= 1;
+                context->schedulersBuffer[context->bufferCount] = scheduler;
+                context->bufferCount += 1;
+            }
+            CESpinLockUnlock(source->lock);
+        }
+        return result;
+    }
+}
 
+CETaskPtr _Nonnull CEConcurrentSourceRemove(CESourceRef _Nonnull source, CETaskSchedulerPtr _Nonnull scheduler) {
+    assert(source);
+    assert(scheduler);
+    
+    CESourceConcurrentContext_s * context = source->context;
+    CESemWait(scheduler->waiter);
+    
+    CETaskPtr result = NULL;
+    CESpinLockLock(source->lock);
+    result = CESourceTaskStoreRemove(&(context->tasks));
+    CESpinLockUnlock(source->lock);
+    assert(result);
+    return result;
+}
 
 
 

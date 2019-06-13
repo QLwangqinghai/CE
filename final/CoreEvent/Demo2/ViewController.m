@@ -33,44 +33,28 @@ struct __CETypeBaseInfo112 {
 //    NSLog(@"%ld", sizeof(struct __CETypeBaseInfo111));
 //    NSLog(@"%ld", sizeof(struct __CETypeBaseInfo112));
 
-    static dispatch_queue_t queue;
-    queue = dispatch_queue_create("co11", DISPATCH_QUEUE_CONCURRENT);
-    
-    dispatch_async(queue, ^{
-        sleep(5);
-        NSLog(@"1 exit");
-    });
-    
-    dispatch_async(queue, ^{
-        sleep(5);
-        NSLog(@"2 exit");
-    });
-    
-    dispatch_async(queue, ^{
-        sleep(10);
-        NSLog(@"3 exit");
-    });
-    
-    dispatch_barrier_async(queue, ^{
-        NSLog(@"dispatch_barrier_async 0");
+    dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
+    NSMutableSet * set = [NSMutableSet set];
+    for (NSInteger i=0; i<1000; i++) {
+        dispatch_async(queue, ^{
+            [set addObject:[NSThread currentThread]];
+            sleep(1);
+            NSLog(@"%ld exit", i);
+        });
+        if (i==1000-1) {
+            dispatch_async(queue, ^{
+                [set addObject:[NSThread currentThread]];
+                sleep(5);
+                NSLog(@"%ld exit", i);
+                NSLog(@"count: %@, set: %@", @(set.count), set);
+                
+                [set enumerateObjectsUsingBlock:^(NSThread *  _Nonnull t, BOOL * _Nonnull stop) {
+                    NSLog(@"thread: %@, isExecuting: %@, isCancelled: %@, isFinished: %@", t, @(t.isExecuting), @(t.isCancelled), @(t.isFinished));
 
-        sleep(3);
-        
-        NSLog(@"dispatch_barrier_async 1");
-    });
-
-    dispatch_async(queue, ^{
-        NSLog(@"dispatch_async 0");
-        sleep(1);
-        NSLog(@"dispatch_async 0 - ");
-    });
-    
-    dispatch_async(queue, ^{
-        NSLog(@"dispatch_async 1");
-        sleep(1);
-        NSLog(@"dispatch_async 1 - ");
-    });
-    
+                }];
+            });
+        }
+    }
     return;
     
     NSInteger i=3;

@@ -27,15 +27,23 @@ typedef struct _CETaskSchedulerConcurrentContextOwnerInfo {
     uint32_t index: 12;//scheduler 在 CESourceConcurrentContext中的位置
 } CETaskSchedulerConcurrentContextOwnerInfo_s;
 
-static const uint16_t CETaskSchedulerConcurrentTypeNormal = 1;//普通并发队列
-static const uint16_t CETaskSchedulerConcurrentTypeGlobalShared = 2;//共享的
-static const uint16_t CETaskSchedulerConcurrentTypeGlobalExclusive = 3;//独享
+static const uint32_t CETaskSchedulerConcurrentTypeNormal = 1;//普通并发队列
+static const uint32_t CETaskSchedulerConcurrentTypeGlobalShared = 2;//共享的
+static const uint32_t CETaskSchedulerConcurrentTypeGlobalExclusiveHigh = 3;//独享
+static const uint32_t CETaskSchedulerConcurrentTypeGlobalExclusiveDefault = 4;//独享
+static const uint32_t CETaskSchedulerConcurrentTypeGlobalExclusiveLow = 5;//独享
 
 typedef struct _CETaskSchedulerConcurrentContext {
     _Atomic(uint_fast32_t) status;
-    _Atomic(uint_fast32_t) * _Nullable adjust;//全局共享的scheduler 属性有值
-    _Atomic(uint_fast32_t) info;
+    _Atomic(uint_fast32_t) type;
 } CETaskSchedulerConcurrentContext_s;
+
+static inline uint32_t CETaskSchedulerConcurrentContextGetType(CETaskSchedulerConcurrentContext_s * _Nonnull context) {
+    assert(context);
+    uint_fast32_t result = atomic_load(&(context->type));
+    return result;
+}
+
 
 
 static const uint32_t CESourceConcurrentContextTypeGlobalHigh = 1;
@@ -52,36 +60,14 @@ typedef struct _CESourceConcurrentContext {
     CETaskSchedulerPtr _Nonnull schedulers[256];
     CETaskSchedulerPtr _Nonnull schedulersBuffer[256];
     
-    uint32_t type: 16;//4 普通并发队列, 1 global high, 2 global normal, 3 global low
     uint32_t privateSchedulerCount: 16;
     uint32_t maxConcurrencyCount: 16;
     uint32_t currentConcurrencyCount: 16;
     uint32_t bufferCount: 16;
     uint32_t executingCount: 15;
     uint32_t isBarrier: 1;
-    
-    _Atomic(uint_fast32_t) executingStatus;
-
-
-    //    uint32_t concurrencyCount: 10;//队列并发数
-    //    uint32_t activeCount: 10;//当前并发数
 } CESourceConcurrentContext_s;
 
-
-//void CEGlobalSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
-//    CESourceCount_t count = 0;
-//    CESpinLockLock(source->lock);
-//    CESourceConcurrentContext_s * context = source->context;
-//    CESourceTaskStoreAppend(&(context->tasks), task);
-//    context->count += 1;
-//    count = context->count;
-//    CESpinLockUnlock(source->lock);
-//    if (count == 1) {
-//        //weak up
-//        CEGlobalTaskSchedulerSignal(context->scheduler);
-//    }
-//}
-//
 
 
 

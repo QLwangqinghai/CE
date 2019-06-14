@@ -9,8 +9,11 @@
 #ifndef CEThreadBase_h
 #define CEThreadBase_h
 
-#include "CEBase.h"
+
+
 #include <pthread.h>
+
+#include "CEBase.h"
 #include "CERuntime.h"
 #include "CEParam.h"
 

@@ -32,9 +32,9 @@
 #endif
 
 //custom
+#include <CoreEvent/CEConfig.h>
 #include <CoreEvent/CETime.h>
 #include <CoreEvent/CELog.h>
-#include <CoreEvent/CEConfig.h>
 #include <CoreEvent/CEMemory.h>
 
 

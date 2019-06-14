@@ -645,13 +645,6 @@ typedef void (*CEClosureClearData_f)(uintptr_t closure, const void * _Nullable d
 //    CEAtomicMemoryBlock_t context[0];
 //} CEBlockStorage_s;
 
-typedef struct _CEClosureType {
-    CEClosureExecute_f _Nonnull execute;
-    CEClosureClearData_f _Nullable clearData;
-    uint32_t dataSize;
-    uint32_t paramsSize;
-    uint32_t resultSize;
-} CEClosureType_s;
 
 //typedef struct _CEClosure {
 //    CEThreadWaiter_s * _Nullable waiter;
@@ -662,16 +655,7 @@ typedef struct _CEClosureType {
 //    uint32_t resultSize;
 //} CEClosure_s;
 
-typedef struct _CEClosure {
-    const CEClosureType_s * _Nonnull type;
-    const CEThreadWaiter_s * _Nullable waiter;
-    
-} CEClosure_s;
 
-typedef struct _CEClosureInfo {
-    CEClosure_s closure;
-    
-} CEClosureInfo_s;
 
 #define CEBlockQueuePageSize 2046
 typedef struct _CEBlockQueuePage {

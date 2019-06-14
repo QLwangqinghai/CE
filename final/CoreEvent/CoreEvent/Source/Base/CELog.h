@@ -9,7 +9,7 @@
 #ifndef CELog_h
 #define CELog_h
 
-#include "CETime.h"
+#include <CoreEvent/CETime.h>
 
 static const uint32_t CELogMaskVerbose = 1;
 static const uint32_t CELogMaskDebug = 2;

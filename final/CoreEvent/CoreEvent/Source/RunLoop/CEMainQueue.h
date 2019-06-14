@@ -12,4 +12,7 @@
 #include "CEQueueInternal.h"
 
 
+CEQueue_s * _Nonnull _CEQueueSharedMainQueue(void);
+
+
 #endif /* CEMainQueue_h */

@@ -32,10 +32,11 @@
 #endif
 
 //custom
-#include "CETime.h"
-#include "CELog.h"
+#include <CoreEvent/CETime.h>
+#include <CoreEvent/CELog.h>
+#include <CoreEvent/CEConfig.h>
+#include <CoreEvent/CEMemory.h>
 
-#include "CEConfig.h"
 
 typedef void * CEPtr;
 

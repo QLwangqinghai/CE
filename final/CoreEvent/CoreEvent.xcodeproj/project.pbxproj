@@ -15,8 +15,6 @@
 		77D3FDB42180DE2300E01B5C /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
 		77D3FDB52180DE2300E01B5C /* CoreEvent.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D603ECA82276C8A5005F22BF /* CERunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECA62276C8A5005F22BF /* CERunLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D603ECAB2276C8A5005F22BF /* CERunLoop.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D603ECA42276C8A5005F22BF /* CERunLoop.framework */; };
-		D603ECAC2276C8A5005F22BF /* CERunLoop.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D603ECA42276C8A5005F22BF /* CERunLoop.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D603ECBC2276C8C4005F22BF /* CFRunLoop.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB12276C8C4005F22BF /* CFRunLoop.c */; };
 		D603ECBD2276C8C4005F22BF /* CFSocket.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB22276C8C4005F22BF /* CFSocket.c */; };
 		D603ECBE2276C8C4005F22BF /* CFMessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECB32276C8C4005F22BF /* CFMessagePort.h */; };
@@ -38,13 +36,13 @@
 		D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006922AFF01B00B1BEA8 /* CEMainQueue.h */; };
 		D60B006C22AFF01B00B1BEA8 /* CEMainQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B006A22AFF01B00B1BEA8 /* CEMainQueue.c */; };
 		D60B006E22AFF0A100B1BEA8 /* CEQueueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */; };
+		D615B98F22B368F00095837D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D615B98E22B368F00095837D /* main.m */; };
+		D615B99322B368FE0095837D /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
 		D61B299C229FC45F002A85BA /* Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61B299B229FC45F002A85BA /* Swift.swift */; };
 		D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6378D93228177CD006A46E6 /* CEThreadBase.h */; };
 		D6378D96228178AE006A46E6 /* CEThreadBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6378D95228178AE006A46E6 /* CEThreadBase.c */; };
 		D644A9F4227C248400F6B333 /* CoreEventV5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D644A9EB227C248400F6B333 /* CoreEventV5.framework */; };
 		D644A9FD227C248400F6B333 /* CoreEventV5.h in Headers */ = {isa = PBXBuildFile; fileRef = D644A9ED227C248400F6B333 /* CoreEventV5.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D644AA00227C248400F6B333 /* CoreEventV5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D644A9EB227C248400F6B333 /* CoreEventV5.framework */; };
-		D644AA01227C248400F6B333 /* CoreEventV5.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D644A9EB227C248400F6B333 /* CoreEventV5.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D644AA0E227C24B100F6B333 /* CoreEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D644AA0A227C24B100F6B333 /* CoreEvent.h */; };
 		D644AA26227C259200F6B333 /* CEBaseApi.c in Sources */ = {isa = PBXBuildFile; fileRef = D644AA11227C259200F6B333 /* CEBaseApi.c */; };
 		D644AA27227C259200F6B333 /* CERunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D644AA12227C259200F6B333 /* CERunLoop.h */; };
@@ -84,7 +82,7 @@
 		D644AAEF227C7AE900F6B333 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D644AAEE227C7AE900F6B333 /* main.m */; };
 		D644AAFA227C7AE900F6B333 /* Demo2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = D644AAF9227C7AE900F6B333 /* Demo2Tests.m */; };
 		D644AB05227C7AE900F6B333 /* Demo2UITests.m in Sources */ = {isa = PBXBuildFile; fileRef = D644AB04227C7AE900F6B333 /* Demo2UITests.m */; };
-		D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABB4227C7C3F00F6B333 /* CETime.h */; };
+		D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABB4227C7C3F00F6B333 /* CETime.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D644ABB7227C7C3F00F6B333 /* CETime.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABB5227C7C3F00F6B333 /* CETime.c */; };
 		D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABB8227C7C8200F6B333 /* CEPoolBaseApi.h */; };
 		D644ABBB227C7C8200F6B333 /* CEPoolBaseApi.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */; };
@@ -92,35 +90,29 @@
 		D644ABBF227C7CD200F6B333 /* CEBaseType.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABBD227C7CD200F6B333 /* CEBaseType.c */; };
 		D644ABC2227C7CF500F6B333 /* CEDispatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABC0227C7CF500F6B333 /* CEDispatcher.c */; };
 		D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC1227C7CF500F6B333 /* CEDispatcher.h */; };
-		D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC4227C7DE900F6B333 /* CEBase.h */; };
+		D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC4227C7DE900F6B333 /* CEBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D644ABC7227C7DEA00F6B333 /* CEBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABC5227C7DE900F6B333 /* CEBase.c */; };
 		D644ABCA227C806300F6B333 /* CEThread.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABC8227C806300F6B333 /* CEThread.c */; };
 		D644ABCB227C806300F6B333 /* CEThread.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC9227C806300F6B333 /* CEThread.h */; };
-		D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABCC227C80E400F6B333 /* CEMemory.h */; };
+		D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABCC227C80E400F6B333 /* CEMemory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D644ABCF227C80E500F6B333 /* CEMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABCD227C80E500F6B333 /* CEMemory.c */; };
 		D644ABD1227C824300F6B333 /* CEInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD0227C824300F6B333 /* CEInternal.h */; };
 		D644ABD4227C952200F6B333 /* CELog.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD2227C952100F6B333 /* CELog.c */; };
-		D644ABD5227C952200F6B333 /* CELog.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD3227C952200F6B333 /* CELog.h */; };
+		D644ABD5227C952200F6B333 /* CELog.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD3227C952200F6B333 /* CELog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD8227D58E200F6B333 /* CEQueue.h */; };
 		D644ABDB227D58E200F6B333 /* CEQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD9227D58E200F6B333 /* CEQueue.c */; };
-		D647C84D227DCC09004AAA19 /* CEOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C84B227DCC09004AAA19 /* CEOperation.h */; };
-		D647C84E227DCC09004AAA19 /* CEOperation.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C84C227DCC09004AAA19 /* CEOperation.c */; };
 		D647C851227DDE7F004AAA19 /* CETask.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C84F227DDE7F004AAA19 /* CETask.h */; };
 		D647C852227DDE7F004AAA19 /* CETask.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C850227DDE7F004AAA19 /* CETask.c */; };
 		D647C855227DFE3A004AAA19 /* CEParam.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C853227DFE3A004AAA19 /* CEParam.h */; };
 		D647C856227DFE3A004AAA19 /* CEParam.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C854227DFE3A004AAA19 /* CEParam.c */; };
-		D647C85D227F4251004AAA19 /* CETaskQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C85B227F4251004AAA19 /* CETaskQueue.h */; };
-		D647C85E227F4251004AAA19 /* CETaskQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C85C227F4251004AAA19 /* CETaskQueue.c */; };
 		D647C860227F50EB004AAA19 /* CERunLoopBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C85F227F50EB004AAA19 /* CERunLoopBase.h */; };
 		D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */; };
-		D647C89322866D0F004AAA19 /* CERuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C89122866D0F004AAA19 /* CERuntime.h */; };
+		D647C89322866D0F004AAA19 /* CERuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C89122866D0F004AAA19 /* CERuntime.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D647C89422866D0F004AAA19 /* CERuntime.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C89222866D0F004AAA19 /* CERuntime.c */; };
 		D67248F4227CABFF00FC8B7A /* CESource.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F2227CABFF00FC8B7A /* CESource.h */; };
 		D67248F5227CABFF00FC8B7A /* CESource.c in Sources */ = {isa = PBXBuildFile; fileRef = D67248F3227CABFF00FC8B7A /* CESource.c */; };
-		D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F6227CAE7300FC8B7A /* CEConfig.h */; };
+		D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F6227CAE7300FC8B7A /* CEConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D67248FF227CB0FB00FC8B7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D67248FE227CB0FB00FC8B7A /* main.m */; };
-		D6724909227E9E1400FC8B7A /* CEParamItem.h in Headers */ = {isa = PBXBuildFile; fileRef = D6724907227E9E1400FC8B7A /* CEParamItem.h */; };
-		D672490A227E9E1400FC8B7A /* CEParamItem.c in Sources */ = {isa = PBXBuildFile; fileRef = D6724908227E9E1400FC8B7A /* CEParamItem.c */; };
 		D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */ = {isa = PBXBuildFile; fileRef = D672490B227E9EFA00FC8B7A /* CEParamType.h */; };
 		D6802B30227D717A0083EDBF /* CESem.h in Headers */ = {isa = PBXBuildFile; fileRef = D6802B2E227D717A0083EDBF /* CESem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6802B31227D717A0083EDBF /* CESem.c in Sources */ = {isa = PBXBuildFile; fileRef = D6802B2F227D717A0083EDBF /* CESem.c */; };
@@ -139,13 +131,6 @@
 			remoteGlobalIDString = 64BEEE11217F00AD00204CB0;
 			remoteInfo = CoreEvent;
 		};
-		D603ECA92276C8A5005F22BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 64BEEE09217F00AD00204CB0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D603ECA32276C8A5005F22BF;
-			remoteInfo = CERunLoop;
-		};
 		D644A9F5227C248400F6B333 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 64BEEE09217F00AD00204CB0 /* Project object */;
@@ -159,13 +144,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 64BEEE35217F011D00204CB0;
 			remoteInfo = Demo;
-		};
-		D644A9FE227C248400F6B333 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 64BEEE09217F00AD00204CB0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D644A9EA227C248400F6B333;
-			remoteInfo = CoreEventV5;
 		};
 		D644AAF6227C7AE900F6B333 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -190,12 +168,19 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D603ECAC2276C8A5005F22BF /* CERunLoop.framework in Embed Frameworks */,
 				77D3FDB52180DE2300E01B5C /* CoreEvent.framework in Embed Frameworks */,
-				D644AA01227C248400F6B333 /* CoreEventV5.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D615B98A22B368F00095837D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 		D67248FA227CB0FB00FC8B7A /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -245,6 +230,8 @@
 		D60B006922AFF01B00B1BEA8 /* CEMainQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEMainQueue.h; sourceTree = "<group>"; };
 		D60B006A22AFF01B00B1BEA8 /* CEMainQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEMainQueue.c; sourceTree = "<group>"; };
 		D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEQueueInternal.h; sourceTree = "<group>"; };
+		D615B98C22B368F00095837D /* TestCE */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestCE; sourceTree = BUILT_PRODUCTS_DIR; };
+		D615B98E22B368F00095837D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D61B299A229FC45E002A85BA /* Demo2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo2-Bridging-Header.h"; sourceTree = "<group>"; };
 		D61B299B229FC45F002A85BA /* Swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swift.swift; sourceTree = "<group>"; };
 		D6378D93228177CD006A46E6 /* CEThreadBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadBase.h; sourceTree = "<group>"; };
@@ -355,14 +342,10 @@
 		D644ABD3227C952200F6B333 /* CELog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CELog.h; sourceTree = "<group>"; };
 		D644ABD8227D58E200F6B333 /* CEQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEQueue.h; sourceTree = "<group>"; };
 		D644ABD9227D58E200F6B333 /* CEQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEQueue.c; sourceTree = "<group>"; };
-		D647C84B227DCC09004AAA19 /* CEOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEOperation.h; sourceTree = "<group>"; };
-		D647C84C227DCC09004AAA19 /* CEOperation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEOperation.c; sourceTree = "<group>"; };
 		D647C84F227DDE7F004AAA19 /* CETask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETask.h; sourceTree = "<group>"; };
 		D647C850227DDE7F004AAA19 /* CETask.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETask.c; sourceTree = "<group>"; };
 		D647C853227DFE3A004AAA19 /* CEParam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEParam.h; sourceTree = "<group>"; };
 		D647C854227DFE3A004AAA19 /* CEParam.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEParam.c; sourceTree = "<group>"; };
-		D647C85B227F4251004AAA19 /* CETaskQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETaskQueue.h; sourceTree = "<group>"; };
-		D647C85C227F4251004AAA19 /* CETaskQueue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETaskQueue.c; sourceTree = "<group>"; };
 		D647C85F227F50EB004AAA19 /* CERunLoopBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERunLoopBase.h; sourceTree = "<group>"; };
 		D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadBaseInternal.h; sourceTree = "<group>"; };
 		D647C89122866D0F004AAA19 /* CERuntime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERuntime.h; sourceTree = "<group>"; };
@@ -372,8 +355,6 @@
 		D67248F6227CAE7300FC8B7A /* CEConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEConfig.h; sourceTree = "<group>"; };
 		D67248FC227CB0FB00FC8B7A /* TGCD */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TGCD; sourceTree = BUILT_PRODUCTS_DIR; };
 		D67248FE227CB0FB00FC8B7A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D6724907227E9E1400FC8B7A /* CEParamItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEParamItem.h; sourceTree = "<group>"; };
-		D6724908227E9E1400FC8B7A /* CEParamItem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEParamItem.c; sourceTree = "<group>"; };
 		D672490B227E9EFA00FC8B7A /* CEParamType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEParamType.h; sourceTree = "<group>"; };
 		D6802B2E227D717A0083EDBF /* CESem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CESem.h; sourceTree = "<group>"; };
 		D6802B2F227D717A0083EDBF /* CESem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CESem.c; sourceTree = "<group>"; };
@@ -397,9 +378,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D603ECAB2276C8A5005F22BF /* CERunLoop.framework in Frameworks */,
 				77D3FDB42180DE2300E01B5C /* CoreEvent.framework in Frameworks */,
-				D644AA00227C248400F6B333 /* CoreEventV5.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,6 +386,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D615B98922B368F00095837D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D615B99322B368FE0095837D /* CoreEvent.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +454,7 @@
 				D644AAF8227C7AE900F6B333 /* Demo2Tests */,
 				D644AB03227C7AE900F6B333 /* Demo2UITests */,
 				D67248FD227CB0FB00FC8B7A /* TGCD */,
+				D615B98D22B368F00095837D /* TestCE */,
 				64BEEE13217F00AD00204CB0 /* Products */,
 				D647C849227D7C41004AAA19 /* Frameworks */,
 			);
@@ -484,6 +472,7 @@
 				D644AAF5227C7AE900F6B333 /* Demo2Tests.xctest */,
 				D644AB00227C7AE900F6B333 /* Demo2UITests.xctest */,
 				D67248FC227CB0FB00FC8B7A /* TGCD */,
+				D615B98C22B368F00095837D /* TestCE */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -541,6 +530,14 @@
 				D603ECB62276C8C4005F22BF /* CFSocket.h */,
 			);
 			path = Source;
+			sourceTree = "<group>";
+		};
+		D615B98D22B368F00095837D /* TestCE */ = {
+			isa = PBXGroup;
+			children = (
+				D615B98E22B368F00095837D /* main.m */,
+			);
+			path = TestCE;
 			sourceTree = "<group>";
 		};
 		D6378D922281777A006A46E6 /* Thread */ = {
@@ -761,15 +758,9 @@
 				D644ABB5227C7C3F00F6B333 /* CETime.c */,
 				D644ABD3227C952200F6B333 /* CELog.h */,
 				D644ABD2227C952100F6B333 /* CELog.c */,
-				D647C84B227DCC09004AAA19 /* CEOperation.h */,
-				D647C84C227DCC09004AAA19 /* CEOperation.c */,
-				D6724907227E9E1400FC8B7A /* CEParamItem.h */,
-				D6724908227E9E1400FC8B7A /* CEParamItem.c */,
 				D647C853227DFE3A004AAA19 /* CEParam.h */,
 				D647C854227DFE3A004AAA19 /* CEParam.c */,
 				D672490B227E9EFA00FC8B7A /* CEParamType.h */,
-				D647C85B227F4251004AAA19 /* CETaskQueue.h */,
-				D647C85C227F4251004AAA19 /* CETaskQueue.c */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -821,29 +812,26 @@
 			files = (
 				D60B006E22AFF0A100B1BEA8 /* CEQueueInternal.h in Headers */,
 				D647C860227F50EB004AAA19 /* CERunLoopBase.h in Headers */,
+				D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */,
+				D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */,
+				D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */,
+				D644ABD5227C952200F6B333 /* CELog.h in Headers */,
+				D647C89322866D0F004AAA19 /* CERuntime.h in Headers */,
+				D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */,
 				D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */,
-				D647C84D227DCC09004AAA19 /* CEOperation.h in Headers */,
 				D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */,
 				D6802B30227D717A0083EDBF /* CESem.h in Headers */,
-				D647C85D227F4251004AAA19 /* CETaskQueue.h in Headers */,
 				D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */,
 				D67248F4227CABFF00FC8B7A /* CESource.h in Headers */,
-				D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */,
 				64BEEE17217F00AD00204CB0 /* CoreEvent.h in Headers */,
-				D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */,
 				D644ABCB227C806300F6B333 /* CEThread.h in Headers */,
-				D647C89322866D0F004AAA19 /* CERuntime.h in Headers */,
 				D60B006722AE9E0500B1BEA8 /* CEConcurrentQueue.h in Headers */,
 				D647C855227DFE3A004AAA19 /* CEParam.h in Headers */,
 				D647C851227DDE7F004AAA19 /* CETask.h in Headers */,
-				D6724909227E9E1400FC8B7A /* CEParamItem.h in Headers */,
-				D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */,
 				D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */,
 				D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */,
 				D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */,
-				D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */,
 				D644ABBE227C7CD200F6B333 /* CEBaseType.h in Headers */,
-				D644ABD5227C952200F6B333 /* CELog.h in Headers */,
 				D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */,
 				D644ABD1227C824300F6B333 /* CEInternal.h in Headers */,
 				D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */,
@@ -926,8 +914,6 @@
 			);
 			dependencies = (
 				77D3FDB72180DE2300E01B5C /* PBXTargetDependency */,
-				D603ECAA2276C8A5005F22BF /* PBXTargetDependency */,
-				D644A9FF227C248400F6B333 /* PBXTargetDependency */,
 			);
 			name = Demo;
 			productName = Demo;
@@ -951,6 +937,23 @@
 			productName = CERunLoop;
 			productReference = D603ECA42276C8A5005F22BF /* CERunLoop.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		D615B98B22B368F00095837D /* TestCE */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D615B99022B368F00095837D /* Build configuration list for PBXNativeTarget "TestCE" */;
+			buildPhases = (
+				D615B98822B368F00095837D /* Sources */,
+				D615B98922B368F00095837D /* Frameworks */,
+				D615B98A22B368F00095837D /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestCE;
+			productName = TestCE;
+			productReference = D615B98C22B368F00095837D /* TestCE */;
+			productType = "com.apple.product-type.tool";
 		};
 		D644A9EA227C248400F6B333 /* CoreEventV5 */ = {
 			isa = PBXNativeTarget;
@@ -1079,6 +1082,9 @@
 					D603ECA32276C8A5005F22BF = {
 						CreatedOnToolsVersion = 10.2;
 					};
+					D615B98B22B368F00095837D = {
+						CreatedOnToolsVersion = 10.2;
+					};
 					D644A9EA227C248400F6B333 = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
@@ -1130,6 +1136,7 @@
 				D644AAF4227C7AE900F6B333 /* Demo2Tests */,
 				D644AAFF227C7AE900F6B333 /* Demo2UITests */,
 				D67248FB227CB0FB00FC8B7A /* TGCD */,
+				D615B98B22B368F00095837D /* TestCE */,
 			);
 		};
 /* End PBXProject section */
@@ -1213,14 +1220,11 @@
 				D644ABD4227C952200F6B333 /* CELog.c in Sources */,
 				D644ABB7227C7C3F00F6B333 /* CETime.c in Sources */,
 				D688137922A5283B00436E1E /* CEConditionLock.c in Sources */,
-				D672490A227E9E1400FC8B7A /* CEParamItem.c in Sources */,
-				D647C85E227F4251004AAA19 /* CETaskQueue.c in Sources */,
 				D60B006C22AFF01B00B1BEA8 /* CEMainQueue.c in Sources */,
 				D67248F5227CABFF00FC8B7A /* CESource.c in Sources */,
 				D60B006422AE9DD000B1BEA8 /* CESerialQueue.c in Sources */,
 				D644ABCF227C80E500F6B333 /* CEMemory.c in Sources */,
 				D644ABC2227C7CF500F6B333 /* CEDispatcher.c in Sources */,
-				D647C84E227DCC09004AAA19 /* CEOperation.c in Sources */,
 				D6802B31227D717A0083EDBF /* CESem.c in Sources */,
 				D6378D96228178AE006A46E6 /* CEThreadBase.c in Sources */,
 				D644ABDB227D58E200F6B333 /* CEQueue.c in Sources */,
@@ -1248,6 +1252,14 @@
 				D603ECC62276C8C4005F22BF /* CFMachPort_Lifetime.c in Sources */,
 				D603ECBD2276C8C4005F22BF /* CFSocket.c in Sources */,
 				D603ECC42276C8C4005F22BF /* CFMessagePort.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D615B98822B368F00095837D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D615B98F22B368F00095837D /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1324,11 +1336,6 @@
 			target = 64BEEE11217F00AD00204CB0 /* CoreEvent */;
 			targetProxy = 77D3FDB62180DE2300E01B5C /* PBXContainerItemProxy */;
 		};
-		D603ECAA2276C8A5005F22BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D603ECA32276C8A5005F22BF /* CERunLoop */;
-			targetProxy = D603ECA92276C8A5005F22BF /* PBXContainerItemProxy */;
-		};
 		D644A9F6227C248400F6B333 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D644A9EA227C248400F6B333 /* CoreEventV5 */;
@@ -1338,11 +1345,6 @@
 			isa = PBXTargetDependency;
 			target = 64BEEE35217F011D00204CB0 /* Demo */;
 			targetProxy = D644A9F7227C248400F6B333 /* PBXContainerItemProxy */;
-		};
-		D644A9FF227C248400F6B333 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D644A9EA227C248400F6B333 /* CoreEventV5 */;
-			targetProxy = D644A9FE227C248400F6B333 /* PBXContainerItemProxy */;
 		};
 		D644AAF7227C7AE900F6B333 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1638,6 +1640,22 @@
 			};
 			name = Release;
 		};
+		D615B99122B368F00095837D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D615B99222B368F00095837D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		D644AA02227C248400F6B333 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1898,6 +1916,15 @@
 			buildConfigurations = (
 				D603ECAD2276C8A5005F22BF /* Debug */,
 				D603ECAE2276C8A5005F22BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D615B99022B368F00095837D /* Build configuration list for PBXNativeTarget "TestCE" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D615B99122B368F00095837D /* Debug */,
+				D615B99222B368F00095837D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

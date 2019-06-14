@@ -19,5 +19,8 @@ void CEQueueAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, C
 void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param, CEParamRef _Nullable result);
 void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param);
 
+CEQueueRef _Nonnull CEQueueSharedMainQueue(void);
+void CEQueueMain(void);
+
 
 #endif /* CEQueue_h */

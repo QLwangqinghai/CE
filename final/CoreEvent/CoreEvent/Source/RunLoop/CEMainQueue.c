@@ -7,17 +7,11 @@
 //
 
 #include "CEMainQueue.h"
+#include "CESerialQueue.h"
 #include "CEThread.h"
 #include "CETaskScheduler.h"
 #include "CESource.h"
 #include "CEQueueInternal.h"
-
-typedef struct _CESourceMainContext {
-    CESourceCount_t count;
-    CESourceListStore_s tasks;
-    CESourceListStore_s highLevelTasks;
-    CETaskSchedulerPtr _Nonnull scheduler;
-} CESourceMainContext_s;
 
 
 void CEMainTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
@@ -29,7 +23,7 @@ void CEMainTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler) {
 void CEMainSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
     CESourceCount_t count = 0;
     CESpinLockLock(source->lock);
-    CESourceMainContext_s * context = source->context;
+    CESourceSerialContext_s * context = source->context;
     CESourceTaskStoreAppend(&(context->tasks), task);
     context->count += 1;
     count = context->count;
@@ -41,7 +35,7 @@ void CEMainSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull task) {
 }
 CETaskPtr _Nonnull CESourceMainQueueRemove(CESourceRef _Nonnull source) {
     assert(source);
-    CESourceMainContext_s * context = source->context;
+    CESourceSerialContext_s * context = source->context;
     CETaskPtr result = NULL;
     
     while (NULL == result) {
@@ -60,7 +54,7 @@ CETaskPtr _Nonnull CESourceMainQueueRemove(CESourceRef _Nonnull source) {
 CETaskPtr _Nonnull CESourceMainQueueFinishOneTaskAndRemove(CESourceRef _Nonnull source) {
     CESourceCount_t count = 0;
     CETaskPtr result = NULL;
-    CESourceMainContext_s * context = source->context;
+    CESourceSerialContext_s * context = source->context;
     CESpinLockLock(source->lock);
     context->count -= 1;
     count = context->count;
@@ -90,7 +84,7 @@ CETaskSchedulerPtr _Nonnull CEMainTaskSchedulerCreate(CEQueue_s * _Nonnull queue
 
 void CEQueueMain(void) {
     assert(CEIsMainThread());
-    
+    CEQueueSharedMainQueue();
     CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
@@ -106,7 +100,7 @@ void CEQueueMain(void) {
 //source
 CESource_s * _Nonnull CEMainSourceCreate(CEQueue_s * _Nonnull queue) {
     assert(queue);
-    CESourceMainContext_s * context = CEAllocateClear(sizeof(CESourceMainContext_s));
+    CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
     context->scheduler = CEMainTaskSchedulerCreate(queue);
     CESource_s * source = CESourceCreate(queue, context, CEMainSourceAppend);
     context->scheduler->source = source;
@@ -121,12 +115,16 @@ CEQueue_s * _Nonnull CEMainQueueCreate(void) {
 }
 
 
-static CEQueue_s * __CEMainQueueShared = NULL;
-void __CEMainQueueSharedOnceBlockFunc(void) {
-    __CEMainQueueShared = CEMainQueueCreate();
+static CEQueue_s * __CEQueueSharedMainQueue = NULL;
+void __CEQueueSharedMainQueueOnceBlockFunc(void) {
+    __CEQueueSharedMainQueue = CEMainQueueCreate();
 }
-CEQueue_s * _CEMainQueueShared(void) {
+CEQueue_s * _Nonnull _CEQueueSharedMainQueue(void) {
     static pthread_once_t token = PTHREAD_ONCE_INIT;
-    pthread_once(&token,&__CEMainQueueSharedOnceBlockFunc);
-    return __CEMainQueueShared;
+    pthread_once(&token,&__CEQueueSharedMainQueueOnceBlockFunc);
+    return __CEQueueSharedMainQueue;
+}
+
+CEQueueRef _Nonnull CEQueueSharedMainQueue(void) {
+    return _CEQueueSharedMainQueue();
 }

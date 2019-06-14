@@ -11,11 +11,7 @@
 #include "CESource.h"
 #include "CEQueueInternal.h"
 
-typedef struct _CESourceSerialContext {
-    CESourceCount_t count;
-    CESourceListStore_s tasks;
-    CETaskSchedulerPtr _Nonnull scheduler;
-} CESourceSerialContext_s;
+
 
 //scheduler
 
@@ -57,7 +53,7 @@ CETaskPtr _Nonnull CESourceSerialQueueFinishOneTaskAndRemove(CESourceRef _Nonnul
         CESpinLockLock(source->lock);
     }
     
-    result = CESourceTaskStoreRemove(&(context->tasks));
+    result = _CESourceSerialContextRemove(context);
     CESpinLockUnlock(source->lock);
     assert(result);
     return result;
@@ -70,7 +66,7 @@ CETaskPtr _Nonnull CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
     
     CETaskPtr result = NULL;
     CESpinLockLock(source->lock);
-    result = CESourceTaskStoreRemove(&(context->tasks));
+    result = _CESourceSerialContextRemove(context);
     CESpinLockUnlock(source->lock);
     assert(result);
     return result;

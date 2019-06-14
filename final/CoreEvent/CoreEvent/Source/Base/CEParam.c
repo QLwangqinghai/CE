@@ -49,12 +49,6 @@ CETypeRef _Nonnull CETypeHeapParam = &__CETypeHeapParam;
 #pragma pack(push)
 #pragma pack(1)
 
-//typedef struct _CEParamItem {
-//    uint32_t type: 8;
-//    uint32_t location: 24;
-//} CEParamItem_s;
-
-
 typedef struct _CEParamBase {
     uint32_t capacity: 6;
     uint32_t count: 6;
@@ -63,7 +57,6 @@ typedef struct _CEParamBase {
     uint16_t contentUsedSize;
     uint8_t types[CEParamItemMaxCount];
     uint16_t locations[CEParamItemMaxCount];
-//    CEParamDeinitHandle_f _Nullable beforeDeinit;
 } CEParamBase_t;
 
 #pragma pack(pop)

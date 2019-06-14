@@ -10,8 +10,26 @@
 #define CEParam_h
 
 #include "CEBase.h"
-#include "CEParamItem.h"
 #include "CERuntime.h"
+#include "CEParamType.h"
+
+/*
+ typedef union _CEParamItemValue {
+ void * _Nonnull * _Nullable ptrValue;
+ _Bool boolValue;
+ int8_t sint8Value;
+ uint8_t uint8Value;
+ int16_t sint16Value;
+ uint16_t uint16Value;
+ int32_t sint32Value;
+ uint32_t uint32Value;
+ int64_t sint64Value;
+ uint64_t uint64Value;
+ float floatValue;
+ double doubleValue;
+ } CEParamItemValue_u;
+
+ */
 
 #define CEParamBufferItemsTotalSizeMax 1936
 #define CEParamItemMaxCount 8
@@ -25,23 +43,8 @@ typedef void * CEParamRef;
 
 typedef void (*CEFunction_f)(CEParamRef _Nullable param, CEParamRef _Nullable result);
 
-typedef struct _CESelector {
-    uint8_t paramTypes[CEParamItemMaxCount];
-    uint8_t resultTypes[CEParamItemMaxCount];
-    CEFunction_f _Nonnull func;
-} CESelector_s;
-
-
-
 extern CETypeRef _Nonnull CETypeStackParam;
 extern CETypeRef _Nonnull CETypeHeapParam;
-
-
-//typedef void (*CEParamDeinitHandle_f)(CEParamRef _Nonnull param);
-//typedef struct _CEParamDeinitObserver {
-//    
-//} CEParamDeinitObserver_s;
-
 
 
 #define CEStackParamSize(structSize) (308 + structSize)

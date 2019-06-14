@@ -74,17 +74,6 @@ typedef struct _CESource CESource_s;
 typedef CESource_s * CESourceRef;
 
 
-struct _CETaskExecuteContext;
-typedef struct _CETaskExecuteContext CETaskExecuteContext_s;
-typedef CETaskExecuteContext_s * CETaskExecuteContextRef;
-
-struct _CETaskExecuteContext {
-    CEParamRef _Nullable * _Nullable resultReceiver;
-    CEParamType_e * _Nullable paramTypes;
-    CEParamItemValue_u * _Nullable paramItems;
-    uint32_t paramCount;
-};
-
 typedef uint64_t CETaskType_e;
 static const CETaskType_e CETaskTypeAsync = 0;
 static const CETaskType_e CETaskTypeSync = 1;

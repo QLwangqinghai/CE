@@ -9,7 +9,8 @@
 #ifndef CERuntime_h
 #define CERuntime_h
 
-#include "CEBase.h"
+#include <CoreEvent/CEBase.h>
+
 
 #define CERuntimeVersion 1
 

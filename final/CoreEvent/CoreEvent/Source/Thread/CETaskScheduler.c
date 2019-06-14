@@ -8,7 +8,6 @@
 
 #include "CETaskScheduler.h"
 #include "CEMemory.h"
-#include "CESem.h"
 #include "CEQueue.h"
 
 void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr _Nonnull task) {
@@ -25,12 +24,12 @@ CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(CEQueue_s * _Nullable ownerQue
     assert(signal);
     CETaskSchedulerPtr scheduler = CEAllocateClear(sizeof(CETaskScheduler_s));
     scheduler->lock = CESpinLockCreate();
-    scheduler->waiter = CESemInit(0);
+    scheduler->waiter = CESemCreate(0);
     scheduler->ownerQueue = ownerQueue;
     return scheduler;
 }
 
 void CETaskSchedulerDestroy(CETaskSchedulerPtr _Nonnull scheduler) {
-    CESemDeinit(scheduler->waiter);
+    CESemDestroy(scheduler->waiter);
     CESpinLockDestroy(scheduler->lock);
 }

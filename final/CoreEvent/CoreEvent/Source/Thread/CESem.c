@@ -6,8 +6,7 @@
 //  Copyright © 2019 com.wangqinghai. All rights reserved.
 //
 
-#include "CESem.h"
-
+#include "CEThreadBase.h"
 #include "CEMemory.h"
 #include "CEInternal.h"
 #include "CEConfig.h"
@@ -20,7 +19,7 @@ struct _CESem {
      dispatch_semaphore_t _Nonnull lock;
 };
 
-CESemPtr _Nonnull CESemInit(unsigned int value) {
+CESemPtr _Nonnull CESemCreate(unsigned int value) {
     CESemPtr sem = CEAllocate(sizeof(CESem_s));
     dispatch_semaphore_t lock = dispatch_semaphore_create(value);
     assert(lock);
@@ -28,7 +27,7 @@ CESemPtr _Nonnull CESemInit(unsigned int value) {
     return sem;
 }
 
-void CESemDeinit(CESemPtr _Nonnull sem) {
+void CESemDestroy(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     dispatch_release(sem->lock);
@@ -63,7 +62,7 @@ struct _CESem {
     char name[32];
 };
 
-CESemPtr _Nonnull CESemInit(unsigned int value) {
+CESemPtr _Nonnull CESemCreate(unsigned int value) {
     CESemPtr sem = CEAllocate(sizeof(CESem_s));
     
     char name[48] = {};
@@ -90,7 +89,7 @@ CESemPtr _Nonnull CESemInit(unsigned int value) {
     return sem;
 }
 
-void CESemDeinit(CESemPtr _Nonnull sem) {
+void CESemDestroy(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
 
@@ -125,7 +124,7 @@ struct _CESem {
     sem_t * _Nonnull lock;
     sem_t lockValue;//private
 };
-CESemPtr _Nonnull CESemInit(unsigned int value) {
+CESemPtr _Nonnull CESemCreate(unsigned int value) {
     CESemPtr sem = CEAllocate(sizeof(CESem_s));
     if (0 != sem_init(&(sem->lockValue), 0, value)) {
         CELogError("CEThreadWaiterInit sem_init error %s; \n", strerror(errno));
@@ -134,7 +133,7 @@ CESemPtr _Nonnull CESemInit(unsigned int value) {
     sem->lock = &(sem->lockValue);
     return sem;
 }
-void CESemDeinit(CESemPtr _Nonnull sem) {
+void CESemDestroy(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
     sem_destroy(sem->lock);

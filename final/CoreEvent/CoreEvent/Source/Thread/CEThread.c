@@ -11,15 +11,12 @@
 
 #include "CEMemory.h"
 #include "CEInternal.h"
-
+#include "CEMainQueue.h"
 
 //custom
 #include "CEThreadBaseInternal.h"
 #include "CELog.h"
-
-#include "CESem.h"
-
-static pthread_t _CECMainThread = NULL;
+#include "CETaskScheduler.h"
 
 
 void _CEThreadDescript(CERef _Nonnull object, void const * _Nonnull handler, CEDescript_f _Nonnull descript);
@@ -296,7 +293,7 @@ CEThread_s * _Nullable _CEThreadCreate(CEThreadConfig_s config,
     struct __CEThreadContext context = {};
     context.beforeMain = beforeMain;
     context.main = main;
-    context.sem = CESemInit(0);
+    context.sem = CESemCreate(0);
     context.scheduler = scheduler;
     context.params = params;
     context.paramsDealloc = paramsDealloc;
@@ -308,7 +305,7 @@ CEThread_s * _Nullable _CEThreadCreate(CEThreadConfig_s config,
         return NULL;
     }
     CESemWait(context.sem);
-    CESemDeinit(context.sem);
+    CESemDestroy(context.sem);
     
     return context.thread;
 }
@@ -321,29 +318,40 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
 }
 
 
-static CEThread_s * __CEMainThreadShared = NULL;
-void __CEMainThreadSharedOnceBlockFunc(void) {
-    CEThread_s * thread = CETypeThread->alloctor->allocate(CETypeThread, sizeof(CEThread_s));
-    thread->pthread = _CECMainThread;
-    thread->status = CEThreadStatusExecuting;
-    memcpy(thread->name, "main", 4);
-    __CEMainThreadShared = thread;
-}
-
-CEThreadRef _Nonnull CEMainThreadShared(void) {
-    static pthread_once_t token = PTHREAD_ONCE_INIT;
-    pthread_once(&token,&__CEMainThreadSharedOnceBlockFunc);
-    return __CEMainThreadShared;
-}
+static CEThread_s * __CEThreadMainShared = NULL;
+static CEQueue_s * __CEQueueSharedMainQueue = NULL;
 
 static void __CEInitialize(void) __attribute__ ((constructor));
 static _Bool __CEInitializing = 0;
 _Bool __CEInitialized = 0;
 void __CEInitialize(void) {
+    
     if (!__CEInitializing && !__CEInitialized) {
-        _CECMainThread = pthread_self();
+        assert(CEIsMainThread());
+
+        CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
+        __CEThreadMainShared = specific->thread;
+        
+        CETaskSchedulerPtr taskScheduler = CETaskSchedulerCreate(NULL);
+        taskScheduler->thread = __CEThreadMainShared;
+        specific->scheduler = taskScheduler;
+        
+        CEQueue_s * queue = CEQueueCreate("main", 1, UINT16_MAX, CEQueueTypeSerial);
+        taskScheduler->ownerQueue = queue;
+        
+        CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
+        context->scheduler = taskScheduler;
+        CESource_s * source = _CESourceMainCreate(queue, context);
+        queue->source = source;
+        taskScheduler->source = source;
+        
+        __CEQueueSharedMainQueue = queue;
+        
         __CEInitializing = 0;
         __CEInitialized = 1;
     }
 }
 
+CEQueueRef _Nonnull CEQueueSharedMainQueue(void) {
+    return __CEQueueSharedMainQueue;
+}

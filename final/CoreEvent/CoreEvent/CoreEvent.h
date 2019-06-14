@@ -8,3 +8,7 @@
 
 
 #import <CoreEvent/CEBase.h>
+#import <CoreEvent/CERuntime.h>
+#import <CoreEvent/CEThreadBase.h>
+#import <CoreEvent/CEThread.h>
+#import <CoreEvent/CEQueue.h>

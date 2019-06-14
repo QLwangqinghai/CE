@@ -75,13 +75,6 @@ CETaskPtr _Nonnull CESourceMainQueueFinishOneTaskAndRemove(CESourceRef _Nonnull 
     return result;
 }
 
-CETaskSchedulerPtr _Nonnull CEMainTaskSchedulerCreate(CEQueue_s * _Nonnull queue) {
-    assert(queue);
-    CETaskSchedulerPtr scheduler = CETaskSchedulerCreate(queue);
-    scheduler->thread = (CEThread_s *)CEMainThreadShared();
-    return scheduler;
-}
-
 void CEQueueMain(void) {
     assert(CEIsMainThread());
     CEQueueSharedMainQueue();
@@ -98,33 +91,9 @@ void CEQueueMain(void) {
 
 
 //source
-CESource_s * _Nonnull CEMainSourceCreate(CEQueue_s * _Nonnull queue) {
+CESource_s * _Nonnull _CESourceMainCreate(CEQueue_s * _Nonnull queue, CEPtr _Nonnull context) {
     assert(queue);
-    CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
-    context->scheduler = CEMainTaskSchedulerCreate(queue);
+    assert(context);
     CESource_s * source = CESourceCreate(queue, context, CEMainSourceAppend);
-    context->scheduler->source = source;
     return source;
-}
-
-//queue
-CEQueue_s * _Nonnull CEMainQueueCreate(void) {
-    CEQueue_s * queue = CEQueueCreate("main", 1, UINT16_MAX, CEQueueTypeSerial);
-    queue->source = CEMainSourceCreate(queue);
-    return queue;
-}
-
-
-static CEQueue_s * __CEQueueSharedMainQueue = NULL;
-void __CEQueueSharedMainQueueOnceBlockFunc(void) {
-    __CEQueueSharedMainQueue = CEMainQueueCreate();
-}
-CEQueue_s * _Nonnull _CEQueueSharedMainQueue(void) {
-    static pthread_once_t token = PTHREAD_ONCE_INIT;
-    pthread_once(&token,&__CEQueueSharedMainQueueOnceBlockFunc);
-    return __CEQueueSharedMainQueue;
-}
-
-CEQueueRef _Nonnull CEQueueSharedMainQueue(void) {
-    return _CEQueueSharedMainQueue();
 }

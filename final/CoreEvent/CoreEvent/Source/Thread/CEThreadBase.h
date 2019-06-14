@@ -13,9 +13,10 @@
 
 #include <pthread.h>
 
-#include "CEBase.h"
-#include "CERuntime.h"
-#include "CEParam.h"
+#include <CoreEvent/CEBase.h>
+#include <CoreEvent/CERuntime.h>
+#include <CoreEvent/CEParam.h>
+
 
 #if __APPLE__
 typedef os_unfair_lock CESpinLock_t;
@@ -144,5 +145,11 @@ void CESpinLockLock(CESpinLockPtr _Nonnull lockPtr);
 void CESpinLockUnlock(CESpinLockPtr _Nonnull lockPtr);
 
 
+
+CESemPtr _Nonnull CESemCreate(unsigned int value);
+void CESemDestroy(CESemPtr _Nonnull sem);
+
+void CESemWait(CESemPtr _Nonnull sem);
+void CESemSignal(CESemPtr _Nonnull sem);
 
 #endif /* CEThreadBase_h */

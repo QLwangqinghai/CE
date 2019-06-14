@@ -33,13 +33,13 @@
 		D60B006422AE9DD000B1BEA8 /* CESerialQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B006222AE9DD000B1BEA8 /* CESerialQueue.c */; };
 		D60B006722AE9E0500B1BEA8 /* CEConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006522AE9E0500B1BEA8 /* CEConcurrentQueue.h */; };
 		D60B006822AE9E0500B1BEA8 /* CEConcurrentQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B006622AE9E0500B1BEA8 /* CEConcurrentQueue.c */; };
-		D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006922AFF01B00B1BEA8 /* CEMainQueue.h */; };
+		D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006922AFF01B00B1BEA8 /* CEMainQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D60B006C22AFF01B00B1BEA8 /* CEMainQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D60B006A22AFF01B00B1BEA8 /* CEMainQueue.c */; };
 		D60B006E22AFF0A100B1BEA8 /* CEQueueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */; };
 		D615B98F22B368F00095837D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D615B98E22B368F00095837D /* main.m */; };
 		D615B99322B368FE0095837D /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
 		D61B299C229FC45F002A85BA /* Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61B299B229FC45F002A85BA /* Swift.swift */; };
-		D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6378D93228177CD006A46E6 /* CEThreadBase.h */; };
+		D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6378D93228177CD006A46E6 /* CEThreadBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6378D96228178AE006A46E6 /* CEThreadBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6378D95228178AE006A46E6 /* CEThreadBase.c */; };
 		D644A9F4227C248400F6B333 /* CoreEventV5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D644A9EB227C248400F6B333 /* CoreEventV5.framework */; };
 		D644A9FD227C248400F6B333 /* CoreEventV5.h in Headers */ = {isa = PBXBuildFile; fileRef = D644A9ED227C248400F6B333 /* CoreEventV5.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -86,24 +86,22 @@
 		D644ABB7227C7C3F00F6B333 /* CETime.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABB5227C7C3F00F6B333 /* CETime.c */; };
 		D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABB8227C7C8200F6B333 /* CEPoolBaseApi.h */; };
 		D644ABBB227C7C8200F6B333 /* CEPoolBaseApi.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */; };
-		D644ABBE227C7CD200F6B333 /* CEBaseType.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABBC227C7CD200F6B333 /* CEBaseType.h */; };
-		D644ABBF227C7CD200F6B333 /* CEBaseType.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABBD227C7CD200F6B333 /* CEBaseType.c */; };
 		D644ABC2227C7CF500F6B333 /* CEDispatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABC0227C7CF500F6B333 /* CEDispatcher.c */; };
 		D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC1227C7CF500F6B333 /* CEDispatcher.h */; };
 		D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC4227C7DE900F6B333 /* CEBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D644ABC7227C7DEA00F6B333 /* CEBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABC5227C7DE900F6B333 /* CEBase.c */; };
 		D644ABCA227C806300F6B333 /* CEThread.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABC8227C806300F6B333 /* CEThread.c */; };
-		D644ABCB227C806300F6B333 /* CEThread.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC9227C806300F6B333 /* CEThread.h */; };
+		D644ABCB227C806300F6B333 /* CEThread.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABC9227C806300F6B333 /* CEThread.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABCC227C80E400F6B333 /* CEMemory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D644ABCF227C80E500F6B333 /* CEMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABCD227C80E500F6B333 /* CEMemory.c */; };
 		D644ABD1227C824300F6B333 /* CEInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD0227C824300F6B333 /* CEInternal.h */; };
 		D644ABD4227C952200F6B333 /* CELog.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD2227C952100F6B333 /* CELog.c */; };
 		D644ABD5227C952200F6B333 /* CELog.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD3227C952200F6B333 /* CELog.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD8227D58E200F6B333 /* CEQueue.h */; };
+		D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = D644ABD8227D58E200F6B333 /* CEQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D644ABDB227D58E200F6B333 /* CEQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD9227D58E200F6B333 /* CEQueue.c */; };
 		D647C851227DDE7F004AAA19 /* CETask.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C84F227DDE7F004AAA19 /* CETask.h */; };
 		D647C852227DDE7F004AAA19 /* CETask.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C850227DDE7F004AAA19 /* CETask.c */; };
-		D647C855227DFE3A004AAA19 /* CEParam.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C853227DFE3A004AAA19 /* CEParam.h */; };
+		D647C855227DFE3A004AAA19 /* CEParam.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C853227DFE3A004AAA19 /* CEParam.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D647C856227DFE3A004AAA19 /* CEParam.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C854227DFE3A004AAA19 /* CEParam.c */; };
 		D647C860227F50EB004AAA19 /* CERunLoopBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C85F227F50EB004AAA19 /* CERunLoopBase.h */; };
 		D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */; };
@@ -113,8 +111,7 @@
 		D67248F5227CABFF00FC8B7A /* CESource.c in Sources */ = {isa = PBXBuildFile; fileRef = D67248F3227CABFF00FC8B7A /* CESource.c */; };
 		D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F6227CAE7300FC8B7A /* CEConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D67248FF227CB0FB00FC8B7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D67248FE227CB0FB00FC8B7A /* main.m */; };
-		D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */ = {isa = PBXBuildFile; fileRef = D672490B227E9EFA00FC8B7A /* CEParamType.h */; };
-		D6802B30227D717A0083EDBF /* CESem.h in Headers */ = {isa = PBXBuildFile; fileRef = D6802B2E227D717A0083EDBF /* CESem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */ = {isa = PBXBuildFile; fileRef = D672490B227E9EFA00FC8B7A /* CEParamType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6802B31227D717A0083EDBF /* CESem.c in Sources */ = {isa = PBXBuildFile; fileRef = D6802B2F227D717A0083EDBF /* CESem.c */; };
 		D688137822A5283B00436E1E /* CEConditionLock.h in Headers */ = {isa = PBXBuildFile; fileRef = D688137622A5283B00436E1E /* CEConditionLock.h */; };
 		D688137922A5283B00436E1E /* CEConditionLock.c in Sources */ = {isa = PBXBuildFile; fileRef = D688137722A5283B00436E1E /* CEConditionLock.c */; };
@@ -327,8 +324,6 @@
 		D644ABB5227C7C3F00F6B333 /* CETime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CETime.c; sourceTree = "<group>"; };
 		D644ABB8227C7C8200F6B333 /* CEPoolBaseApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPoolBaseApi.h; sourceTree = "<group>"; };
 		D644ABB9227C7C8200F6B333 /* CEPoolBaseApi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEPoolBaseApi.c; sourceTree = "<group>"; };
-		D644ABBC227C7CD200F6B333 /* CEBaseType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEBaseType.h; sourceTree = "<group>"; };
-		D644ABBD227C7CD200F6B333 /* CEBaseType.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEBaseType.c; sourceTree = "<group>"; };
 		D644ABC0227C7CF500F6B333 /* CEDispatcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEDispatcher.c; sourceTree = "<group>"; };
 		D644ABC1227C7CF500F6B333 /* CEDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEDispatcher.h; sourceTree = "<group>"; };
 		D644ABC4227C7DE900F6B333 /* CEBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEBase.h; sourceTree = "<group>"; };
@@ -356,7 +351,6 @@
 		D67248FC227CB0FB00FC8B7A /* TGCD */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TGCD; sourceTree = BUILT_PRODUCTS_DIR; };
 		D67248FE227CB0FB00FC8B7A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D672490B227E9EFA00FC8B7A /* CEParamType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEParamType.h; sourceTree = "<group>"; };
-		D6802B2E227D717A0083EDBF /* CESem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CESem.h; sourceTree = "<group>"; };
 		D6802B2F227D717A0083EDBF /* CESem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CESem.c; sourceTree = "<group>"; };
 		D688137622A5283B00436E1E /* CEConditionLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEConditionLock.h; sourceTree = "<group>"; };
 		D688137722A5283B00436E1E /* CEConditionLock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEConditionLock.c; sourceTree = "<group>"; };
@@ -548,7 +542,6 @@
 				D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */,
 				D644ABC9227C806300F6B333 /* CEThread.h */,
 				D644ABC8227C806300F6B333 /* CEThread.c */,
-				D6802B2E227D717A0083EDBF /* CESem.h */,
 				D6802B2F227D717A0083EDBF /* CESem.c */,
 				D688137A22A5383400436E1E /* CECondition.h */,
 				D688137B22A5383400436E1E /* CECondition.c */,
@@ -737,8 +730,6 @@
 				D6378D922281777A006A46E6 /* Thread */,
 				D644ABD7227C973100F6B333 /* RunLoop */,
 				D644ABD6227C952D00F6B333 /* Base */,
-				D644ABBC227C7CD200F6B333 /* CEBaseType.h */,
-				D644ABBD227C7CD200F6B333 /* CEBaseType.c */,
 				D644ABD0227C824300F6B333 /* CEInternal.h */,
 			);
 			path = Source;
@@ -818,23 +809,21 @@
 				D644ABD5227C952200F6B333 /* CELog.h in Headers */,
 				D647C89322866D0F004AAA19 /* CERuntime.h in Headers */,
 				D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */,
+				D644ABCB227C806300F6B333 /* CEThread.h in Headers */,
+				D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */,
+				D647C855227DFE3A004AAA19 /* CEParam.h in Headers */,
+				D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */,
 				D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */,
+				D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */,
 				D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */,
-				D6802B30227D717A0083EDBF /* CESem.h in Headers */,
 				D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */,
 				D67248F4227CABFF00FC8B7A /* CESource.h in Headers */,
 				64BEEE17217F00AD00204CB0 /* CoreEvent.h in Headers */,
-				D644ABCB227C806300F6B333 /* CEThread.h in Headers */,
 				D60B006722AE9E0500B1BEA8 /* CEConcurrentQueue.h in Headers */,
-				D647C855227DFE3A004AAA19 /* CEParam.h in Headers */,
 				D647C851227DDE7F004AAA19 /* CETask.h in Headers */,
-				D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */,
 				D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */,
-				D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */,
-				D644ABBE227C7CD200F6B333 /* CEBaseType.h in Headers */,
 				D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */,
 				D644ABD1227C824300F6B333 /* CEInternal.h in Headers */,
-				D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */,
 				D688137C22A5383400436E1E /* CECondition.h in Headers */,
 				D60B006322AE9DD000B1BEA8 /* CESerialQueue.h in Headers */,
 				D688137822A5283B00436E1E /* CEConditionLock.h in Headers */,
@@ -1210,7 +1199,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D688137D22A5383400436E1E /* CECondition.c in Sources */,
-				D644ABBF227C7CD200F6B333 /* CEBaseType.c in Sources */,
 				D647C852227DDE7F004AAA19 /* CETask.c in Sources */,
 				D647C856227DFE3A004AAA19 /* CEParam.c in Sources */,
 				D644ABCA227C806300F6B333 /* CEThread.c in Sources */,

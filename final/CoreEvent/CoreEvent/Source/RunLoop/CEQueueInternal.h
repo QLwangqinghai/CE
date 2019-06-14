@@ -11,6 +11,7 @@
 
 #include "CEQueue.h"
 #include "CETask.h"
+#include "CESerialQueue.h"
 
 static inline CEQueue_s * _Nonnull CEQueueCheck(CEQueueRef _Nonnull queuePtr) {
     assert(queuePtr);

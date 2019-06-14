@@ -10,8 +10,6 @@
 #define CEThreadBaseInternal_h
 
 #include "CEThreadBase.h"
-#include "CESem.h"
-#include "CEMemory.h"
 
 struct _CEQueue;
 typedef struct _CEQueue CEQueue_s;
@@ -45,12 +43,12 @@ static inline CEThreadSyncWaiter_s * _Nonnull CEThreadSyncWaiterCreate(CEThread_
     assert(thread);
     CEThreadSyncWaiter_s * result = CEAllocateClear(sizeof(CEThreadSyncWaiter_s));
     result->thread = thread;
-    result->sem = CESemInit(0);
+    result->sem = CESemCreate(0);
     return result;
 }
 static inline void CEThreadSyncWaiterDestroy(CEThreadSyncWaiter_s * _Nonnull waiter) {
     assert(waiter);
-    CESemDeinit(waiter->sem);
+    CESemDestroy(waiter->sem);
 }
 static inline void CEThreadSyncWaiterWait(CEThreadSyncWaiter_s * _Nonnull waiter) {
     assert(waiter);

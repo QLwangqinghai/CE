@@ -11,7 +11,6 @@
 #include "CEThreadBaseInternal.h"
 #include "CERuntime.h"
 #include "CEConditionLock.h"
-#include "CESem.h"
 #include "CETaskScheduler.h"
 #include "CETask.h"
 

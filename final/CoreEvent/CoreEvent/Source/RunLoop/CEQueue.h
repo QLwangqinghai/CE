@@ -9,7 +9,7 @@
 #ifndef CEQueue_h
 #define CEQueue_h
 
-#include "CERunLoopBase.h"
+#include <CoreEvent/CEThreadBase.h>
 
 extern CETypeRef _Nonnull CETypeQueue;;
 

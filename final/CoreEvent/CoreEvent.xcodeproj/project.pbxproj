@@ -38,6 +38,8 @@
 		D60B006E22AFF0A100B1BEA8 /* CEQueueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */; };
 		D615B98F22B368F00095837D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D615B98E22B368F00095837D /* main.m */; };
 		D615B99322B368FE0095837D /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
+		D615B9A522B4B5410095837D /* CETaskParam.h in Headers */ = {isa = PBXBuildFile; fileRef = D615B9A322B4B5410095837D /* CETaskParam.h */; };
+		D615B9A622B4B5410095837D /* CETaskParam.c in Sources */ = {isa = PBXBuildFile; fileRef = D615B9A422B4B5410095837D /* CETaskParam.c */; };
 		D61B299C229FC45F002A85BA /* Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61B299B229FC45F002A85BA /* Swift.swift */; };
 		D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6378D93228177CD006A46E6 /* CEThreadBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6378D96228178AE006A46E6 /* CEThreadBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6378D95228178AE006A46E6 /* CEThreadBase.c */; };
@@ -229,6 +231,8 @@
 		D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEQueueInternal.h; sourceTree = "<group>"; };
 		D615B98C22B368F00095837D /* TestCE */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestCE; sourceTree = BUILT_PRODUCTS_DIR; };
 		D615B98E22B368F00095837D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D615B9A322B4B5410095837D /* CETaskParam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETaskParam.h; sourceTree = "<group>"; };
+		D615B9A422B4B5410095837D /* CETaskParam.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETaskParam.c; sourceTree = "<group>"; };
 		D61B299A229FC45E002A85BA /* Demo2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo2-Bridging-Header.h"; sourceTree = "<group>"; };
 		D61B299B229FC45F002A85BA /* Swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swift.swift; sourceTree = "<group>"; };
 		D6378D93228177CD006A46E6 /* CEThreadBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEThreadBase.h; sourceTree = "<group>"; };
@@ -551,6 +555,8 @@
 				D647C850227DDE7F004AAA19 /* CETask.c */,
 				D608C1E222A2800B001FE51D /* CETaskScheduler.h */,
 				D608C1E322A2800B001FE51D /* CETaskScheduler.c */,
+				D615B9A322B4B5410095837D /* CETaskParam.h */,
+				D615B9A422B4B5410095837D /* CETaskParam.c */,
 			);
 			path = Thread;
 			sourceTree = "<group>";
@@ -803,6 +809,7 @@
 			files = (
 				D60B006E22AFF0A100B1BEA8 /* CEQueueInternal.h in Headers */,
 				D647C860227F50EB004AAA19 /* CERunLoopBase.h in Headers */,
+				D615B9A522B4B5410095837D /* CETaskParam.h in Headers */,
 				D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */,
 				D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */,
 				D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */,
@@ -1200,6 +1207,7 @@
 			files = (
 				D688137D22A5383400436E1E /* CECondition.c in Sources */,
 				D647C852227DDE7F004AAA19 /* CETask.c in Sources */,
+				D615B9A622B4B5410095837D /* CETaskParam.c in Sources */,
 				D647C856227DFE3A004AAA19 /* CEParam.c in Sources */,
 				D644ABCA227C806300F6B333 /* CEThread.c in Sources */,
 				D608C1E522A2800B001FE51D /* CETaskScheduler.c in Sources */,

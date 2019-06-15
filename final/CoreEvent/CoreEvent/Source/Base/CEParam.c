@@ -118,10 +118,6 @@ _Bool __CEParamAppendContentValue(CEParamRef _Nonnull paramRef, CEParamType_e t,
     if (offset + size > param->base.contentSize) {
         return false;
     }
-    if (CEParamTypeRef == t) {
-        CERef ref = *((CERef *)value);
-        CERetain(ref);
-    }
     
     uint32_t index = param->base.count;
     
@@ -620,26 +616,26 @@ _Bool CEParamGetPtr(CEParamRef _Nonnull param, uint32_t index, void * _Nullable 
         return false;
     }
 }
-_Bool CEParamGetRef(CEParamRef _Nonnull param, uint32_t index, CERef _Nullable * _Nonnull item) {
-    assert(param);
-    assert(item);
-    
-    CERuntimeBase_s * base = param;
-    CETypeRef type = base->type;
-    assert(type);
-    CEParamType_e itemType = CEParamTypeRef;
-    
-    if (CETypeIsEqual(type, CETypeStackParam)) {
-        CEParam_s * stackParam = param;
-        return _CEStackParamGetContentValue(stackParam, index, itemType, item);
-    } else if (CETypeIsEqual(type, CETypeHeapParam)) {
-        CEParam_s * heapParam = param;
-        return _CEHeapParamGetContentValue(heapParam, index, itemType, item);
-    } else {
-        abort();
-        return false;
-    }
-}
+//_Bool CEParamGetRef(CEParamRef _Nonnull param, uint32_t index, CERef _Nullable * _Nonnull item) {
+//    assert(param);
+//    assert(item);
+//    
+//    CERuntimeBase_s * base = param;
+//    CETypeRef type = base->type;
+//    assert(type);
+//    CEParamType_e itemType = CEParamTypeRef;
+//    
+//    if (CETypeIsEqual(type, CETypeStackParam)) {
+//        CEParam_s * stackParam = param;
+//        return _CEStackParamGetContentValue(stackParam, index, itemType, item);
+//    } else if (CETypeIsEqual(type, CETypeHeapParam)) {
+//        CEParam_s * heapParam = param;
+//        return _CEHeapParamGetContentValue(heapParam, index, itemType, item);
+//    } else {
+//        abort();
+//        return false;
+//    }
+//}
 _Bool CEParamGetBuffer(CEParamRef _Nonnull param, uint32_t index, void * _Nonnull buffer, size_t size) {
     assert(param);
     assert(buffer);
@@ -928,25 +924,25 @@ _Bool CEParamAppendPtr(CEParamRef _Nonnull param, void * _Nullable item) {
     }
 }
 
-_Bool CEParamAppendRef(CEParamRef _Nonnull param, CERef _Nullable item) {
-    assert(param);
-
-    CERuntimeBase_s * base = param;
-    CETypeRef type = base->type;
-    assert(type);
-    CEParamType_e itemType = CEParamTypeRef;
-
-    if (CETypeIsEqual(type, CETypeStackParam)) {
-        CEParam_s * stackParam = param;
-        return _CEStackParamAppendContentValue(stackParam, itemType, &item);
-    } else if (CETypeIsEqual(type, CETypeHeapParam)) {
-        CEParam_s * heapParam = param;
-        return _CEHeapParamAppendContentValue(heapParam, itemType, &item);
-    } else {
-        abort();
-        return false;
-    }
-}
+//_Bool CEParamAppendRef(CEParamRef _Nonnull param, CERef _Nullable item) {
+//    assert(param);
+//
+//    CERuntimeBase_s * base = param;
+//    CETypeRef type = base->type;
+//    assert(type);
+//    CEParamType_e itemType = CEParamTypeRef;
+//
+//    if (CETypeIsEqual(type, CETypeStackParam)) {
+//        CEParam_s * stackParam = param;
+//        return _CEStackParamAppendContentValue(stackParam, itemType, &item);
+//    } else if (CETypeIsEqual(type, CETypeHeapParam)) {
+//        CEParam_s * heapParam = param;
+//        return _CEHeapParamAppendContentValue(heapParam, itemType, &item);
+//    } else {
+//        abort();
+//        return false;
+//    }
+//}
 
 _Bool CEParamAppendBuffer(CEParamRef _Nonnull param, void * _Nonnull buffer, size_t size) {
     assert(param);

@@ -78,7 +78,7 @@ _Bool CEParamGetFloat(CEParamRef _Nonnull param, uint32_t index, float * _Nonnul
 _Bool CEParamGetDouble(CEParamRef _Nonnull param, uint32_t index, double * _Nonnull item);
 
 _Bool CEParamGetPtr(CEParamRef _Nonnull param, uint32_t index, void * _Nullable * _Nonnull item);
-_Bool CEParamGetRef(CEParamRef _Nonnull param, uint32_t index, CERef _Nullable * _Nonnull item);
+//_Bool CEParamGetRef(CEParamRef _Nonnull param, uint32_t index, CERef _Nullable * _Nonnull item);
 _Bool CEParamGetBuffer(CEParamRef _Nonnull param, uint32_t index, void * _Nonnull buffer, size_t size);
 
 _Bool CEParamGetItem(CEParamRef _Nonnull param, uint32_t index, CEParamType_e * _Nullable typePtr, size_t * _Nullable sizePtr, void * _Nonnull ptr, size_t maxSize);
@@ -101,7 +101,7 @@ _Bool CEParamAppendDouble(CEParamRef _Nonnull param, double item);
 
 _Bool CEParamAppendPtr(CEParamRef _Nonnull param, void * _Nullable item);
 
-_Bool CEParamAppendRef(CEParamRef _Nonnull param, CERef _Nullable item);
+//_Bool CEParamAppendRef(CEParamRef _Nonnull param, CERef _Nullable item);
 
 _Bool CEParamAppendBuffer(CEParamRef _Nonnull param, void * _Nonnull buffer, size_t size);
 

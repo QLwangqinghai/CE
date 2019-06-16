@@ -85,6 +85,7 @@ void CEQueueMain(void) {
     CETaskPtr task = CESourceMainQueueRemove(scheduler->source);
     while (1) {
         CETaskSchedulerExecuteTask(scheduler, task);
+        CETaskDestroy(task);
         task = CESourceMainQueueFinishOneTaskAndRemove(scheduler->source);
     }
 }

@@ -14,6 +14,7 @@
 		64BEEE42217F011E00204CB0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 64BEEE41217F011E00204CB0 /* main.m */; };
 		77D3FDB42180DE2300E01B5C /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
 		77D3FDB52180DE2300E01B5C /* CoreEvent.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D603936822B62685009B5DC8 /* CETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D603936722B62685009B5DC8 /* CETest.swift */; };
 		D603ECA82276C8A5005F22BF /* CERunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECA62276C8A5005F22BF /* CERunLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D603ECBC2276C8C4005F22BF /* CFRunLoop.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB12276C8C4005F22BF /* CFRunLoop.c */; };
 		D603ECBD2276C8C4005F22BF /* CFSocket.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB22276C8C4005F22BF /* CFSocket.c */; };
@@ -38,7 +39,7 @@
 		D60B006E22AFF0A100B1BEA8 /* CEQueueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D60B006D22AFF0A100B1BEA8 /* CEQueueInternal.h */; };
 		D615B98F22B368F00095837D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D615B98E22B368F00095837D /* main.m */; };
 		D615B99322B368FE0095837D /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
-		D615B9A522B4B5410095837D /* CETaskParam.h in Headers */ = {isa = PBXBuildFile; fileRef = D615B9A322B4B5410095837D /* CETaskParam.h */; };
+		D615B9A522B4B5410095837D /* CETaskParam.h in Headers */ = {isa = PBXBuildFile; fileRef = D615B9A322B4B5410095837D /* CETaskParam.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D615B9A622B4B5410095837D /* CETaskParam.c in Sources */ = {isa = PBXBuildFile; fileRef = D615B9A422B4B5410095837D /* CETaskParam.c */; };
 		D61B299C229FC45F002A85BA /* Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61B299B229FC45F002A85BA /* Swift.swift */; };
 		D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6378D93228177CD006A46E6 /* CEThreadBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -103,8 +104,6 @@
 		D644ABDB227D58E200F6B333 /* CEQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = D644ABD9227D58E200F6B333 /* CEQueue.c */; };
 		D647C851227DDE7F004AAA19 /* CETask.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C84F227DDE7F004AAA19 /* CETask.h */; };
 		D647C852227DDE7F004AAA19 /* CETask.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C850227DDE7F004AAA19 /* CETask.c */; };
-		D647C855227DFE3A004AAA19 /* CEParam.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C853227DFE3A004AAA19 /* CEParam.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D647C856227DFE3A004AAA19 /* CEParam.c in Sources */ = {isa = PBXBuildFile; fileRef = D647C854227DFE3A004AAA19 /* CEParam.c */; };
 		D647C860227F50EB004AAA19 /* CERunLoopBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C85F227F50EB004AAA19 /* CERunLoopBase.h */; };
 		D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C88F2283296D004AAA19 /* CEThreadBaseInternal.h */; };
 		D647C89322866D0F004AAA19 /* CERuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = D647C89122866D0F004AAA19 /* CERuntime.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -113,7 +112,7 @@
 		D67248F5227CABFF00FC8B7A /* CESource.c in Sources */ = {isa = PBXBuildFile; fileRef = D67248F3227CABFF00FC8B7A /* CESource.c */; };
 		D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F6227CAE7300FC8B7A /* CEConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D67248FF227CB0FB00FC8B7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D67248FE227CB0FB00FC8B7A /* main.m */; };
-		D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */ = {isa = PBXBuildFile; fileRef = D672490B227E9EFA00FC8B7A /* CEParamType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D672490C227E9EFA00FC8B7A /* CECType.h in Headers */ = {isa = PBXBuildFile; fileRef = D672490B227E9EFA00FC8B7A /* CECType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6802B31227D717A0083EDBF /* CESem.c in Sources */ = {isa = PBXBuildFile; fileRef = D6802B2F227D717A0083EDBF /* CESem.c */; };
 		D688137822A5283B00436E1E /* CEConditionLock.h in Headers */ = {isa = PBXBuildFile; fileRef = D688137622A5283B00436E1E /* CEConditionLock.h */; };
 		D688137922A5283B00436E1E /* CEConditionLock.c in Sources */ = {isa = PBXBuildFile; fileRef = D688137722A5283B00436E1E /* CEConditionLock.c */; };
@@ -204,6 +203,8 @@
 		64BEEE40217F011E00204CB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		64BEEE41217F011E00204CB0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		64BEEE43217F011E00204CB0 /* Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demo.entitlements; sourceTree = "<group>"; };
+		D603936622B62685009B5DC8 /* TestCE-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestCE-Bridging-Header.h"; sourceTree = "<group>"; };
+		D603936722B62685009B5DC8 /* CETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CETest.swift; sourceTree = "<group>"; };
 		D603ECA42276C8A5005F22BF /* CERunLoop.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CERunLoop.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D603ECA62276C8A5005F22BF /* CERunLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERunLoop.h; sourceTree = "<group>"; };
 		D603ECA72276C8A5005F22BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -354,7 +355,7 @@
 		D67248F6227CAE7300FC8B7A /* CEConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEConfig.h; sourceTree = "<group>"; };
 		D67248FC227CB0FB00FC8B7A /* TGCD */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TGCD; sourceTree = BUILT_PRODUCTS_DIR; };
 		D67248FE227CB0FB00FC8B7A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D672490B227E9EFA00FC8B7A /* CEParamType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEParamType.h; sourceTree = "<group>"; };
+		D672490B227E9EFA00FC8B7A /* CECType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CECType.h; sourceTree = "<group>"; };
 		D6802B2F227D717A0083EDBF /* CESem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CESem.c; sourceTree = "<group>"; };
 		D688137622A5283B00436E1E /* CEConditionLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEConditionLock.h; sourceTree = "<group>"; };
 		D688137722A5283B00436E1E /* CEConditionLock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEConditionLock.c; sourceTree = "<group>"; };
@@ -534,6 +535,8 @@
 			isa = PBXGroup;
 			children = (
 				D615B98E22B368F00095837D /* main.m */,
+				D603936722B62685009B5DC8 /* CETest.swift */,
+				D603936622B62685009B5DC8 /* TestCE-Bridging-Header.h */,
 			);
 			path = TestCE;
 			sourceTree = "<group>";
@@ -744,6 +747,7 @@
 		D644ABD6227C952D00F6B333 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				D672490B227E9EFA00FC8B7A /* CECType.h */,
 				D67248F6227CAE7300FC8B7A /* CEConfig.h */,
 				D644ABC4227C7DE900F6B333 /* CEBase.h */,
 				D644ABC5227C7DE900F6B333 /* CEBase.c */,
@@ -757,7 +761,6 @@
 				D644ABD2227C952100F6B333 /* CELog.c */,
 				D647C853227DFE3A004AAA19 /* CEParam.h */,
 				D647C854227DFE3A004AAA19 /* CEParam.c */,
-				D672490B227E9EFA00FC8B7A /* CEParamType.h */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -809,7 +812,6 @@
 			files = (
 				D60B006E22AFF0A100B1BEA8 /* CEQueueInternal.h in Headers */,
 				D647C860227F50EB004AAA19 /* CERunLoopBase.h in Headers */,
-				D615B9A522B4B5410095837D /* CETaskParam.h in Headers */,
 				D644ABC6227C7DEA00F6B333 /* CEBase.h in Headers */,
 				D644ABB6227C7C3F00F6B333 /* CETime.h in Headers */,
 				D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */,
@@ -818,10 +820,10 @@
 				D644ABCE227C80E500F6B333 /* CEMemory.h in Headers */,
 				D644ABCB227C806300F6B333 /* CEThread.h in Headers */,
 				D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */,
-				D647C855227DFE3A004AAA19 /* CEParam.h in Headers */,
+				D615B9A522B4B5410095837D /* CETaskParam.h in Headers */,
 				D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */,
 				D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */,
-				D672490C227E9EFA00FC8B7A /* CEParamType.h in Headers */,
+				D672490C227E9EFA00FC8B7A /* CECType.h in Headers */,
 				D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */,
 				D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */,
 				D67248F4227CABFF00FC8B7A /* CESource.h in Headers */,
@@ -1080,6 +1082,7 @@
 					};
 					D615B98B22B368F00095837D = {
 						CreatedOnToolsVersion = 10.2;
+						LastSwiftMigration = 1020;
 					};
 					D644A9EA227C248400F6B333 = {
 						CreatedOnToolsVersion = 10.2.1;
@@ -1208,7 +1211,6 @@
 				D688137D22A5383400436E1E /* CECondition.c in Sources */,
 				D647C852227DDE7F004AAA19 /* CETask.c in Sources */,
 				D615B9A622B4B5410095837D /* CETaskParam.c in Sources */,
-				D647C856227DFE3A004AAA19 /* CEParam.c in Sources */,
 				D644ABCA227C806300F6B333 /* CEThread.c in Sources */,
 				D608C1E522A2800B001FE51D /* CETaskScheduler.c in Sources */,
 				D60B006822AE9E0500B1BEA8 /* CEConcurrentQueue.c in Sources */,
@@ -1256,6 +1258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D615B98F22B368F00095837D /* main.m in Sources */,
+				D603936822B62685009B5DC8 /* CETest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1639,16 +1642,33 @@
 		D615B99122B368F00095837D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "TestCE/TestCE-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		D615B99222B368F00095837D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "TestCE/TestCE-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

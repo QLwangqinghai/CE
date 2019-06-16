@@ -15,7 +15,7 @@
 
 #include <CoreEvent/CEBase.h>
 #include <CoreEvent/CERuntime.h>
-#include <CoreEvent/CEParam.h>
+#include <CoreEvent/CETaskParam.h>
 
 
 #if __APPLE__
@@ -97,7 +97,7 @@ struct _CETaskResult {
 
 //struct _CETaskContext {
 //    CEParamRef _Nullable * _Nullable resultReceiver;
-//    CEParamType_e * _Nullable paramTypes;
+//    CECType_e * _Nullable paramTypes;
 //    CEParamItemValue_u * _Nullable paramItems;
 //    uint32_t paramCount;
 //};

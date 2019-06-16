@@ -20,7 +20,7 @@ static inline CEQueue_s * _Nonnull CEQueueCheck(CEQueueRef _Nonnull queuePtr) {
     return (CEQueue_s *)queuePtr;
 }
 
-static inline void _CEQueueJoin(CEQueue_s * _Nonnull queue, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param, CEParamRef _Nullable result, CEThreadSyncWaiter_s * _Nullable syncTaskWaiter, _Bool isBarrier) {
+static inline void _CEQueueJoin(CEQueue_s * _Nonnull queue, CEFunction_f _Nonnull execute, CETaskParamRef _Nonnull param, CETaskParamRef _Nullable result, CEThreadSyncWaiter_s * _Nullable syncTaskWaiter, _Bool isBarrier) {
     
     CETaskPtr task = CETaskCreate(execute, param, result, syncTaskWaiter, isBarrier);
     CESourceAppend(queue->source, task);

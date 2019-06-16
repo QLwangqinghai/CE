@@ -10,7 +10,6 @@
 #define CERunLoopBase_h
 
 #include "CEThreadBaseInternal.h"
-#include "CEParam.h"
 
 
 

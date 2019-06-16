@@ -98,8 +98,8 @@ struct _CETask {
     CETaskPtr _Nullable next;
     
     CEFunction_f _Nonnull execute;
-    CEParamRef _Nullable param;
-    CEParamRef _Nullable resultReceiver;
+    CETaskParamRef _Nullable param;
+    CETaskParamRef _Nullable resultReceiver;
     CEThreadSyncWaiter_s * _Nullable syncTaskWaiter;
 
     uint32_t isBarrier: 1;

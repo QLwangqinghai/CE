@@ -14,7 +14,6 @@
 #include <stdatomic.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <unistd.h>
 #include <time.h>
 #include <limits.h>
 #include <math.h>
@@ -36,11 +35,9 @@
 #include <CoreEvent/CETime.h>
 #include <CoreEvent/CELog.h>
 #include <CoreEvent/CEMemory.h>
+#include <CoreEvent/CECType.h>
 
-typedef int64_t sint64_t;
-typedef int32_t sint32_t;
-typedef int16_t sint16_t;
-typedef int8_t sint8_t;
+
 
 typedef void * CEPtr;
 

@@ -11,7 +11,7 @@
 #include "CEThreadBaseInternal.h"
 
 
-CETaskPtr _Nonnull CETaskCreate(CEFunction_f _Nonnull execute, CEParamRef _Nullable param, CEParamRef _Nullable resultReceiver, CEThreadSyncWaiter_s * _Nullable syncTaskWaiter, _Bool isBarrier) {
+CETaskPtr _Nonnull CETaskCreate(CEFunction_f _Nonnull execute, CETaskParamRef _Nullable param, CETaskParamRef _Nullable resultReceiver, CEThreadSyncWaiter_s * _Nullable syncTaskWaiter, _Bool isBarrier) {
     assert(execute);
     
     if (param) {

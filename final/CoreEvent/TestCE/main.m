@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import "TestCE-Swift.h"
 #import <CoreEvent/CoreEvent.h>
 
 
@@ -16,8 +17,7 @@ int main(int argc, const char * argv[]) {
         // insert code here...
         NSLog(@"Hello, World!");
         
-        
-        CEQueueMain();
+        [S main];
     }
     return 0;
 }

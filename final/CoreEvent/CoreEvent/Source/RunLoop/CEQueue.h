@@ -13,11 +13,11 @@
 
 extern CETypeRef _Nonnull CETypeQueue;;
 
-void CEQueueSync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param, CEParamRef _Nullable result);
-void CEQueueAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param);
+void CEQueueSync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CETaskParamRef _Nonnull param, CETaskParamRef _Nullable result);
+void CEQueueAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CETaskParamRef _Nonnull param);
 
-void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param, CEParamRef _Nullable result);
-void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CEParamRef _Nonnull param);
+void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CETaskParamRef _Nonnull param, CETaskParamRef _Nullable result);
+void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CETaskParamRef _Nonnull param);
 
 CEQueueRef _Nonnull CEQueueSharedMainQueue(void);
 void CEQueueMain(void);

@@ -91,8 +91,7 @@ void CERuntimeDefaultDeinit(CERef _Nonnull object);
 #endif
 
 
-#pragma pack(push)
-#pragma pack(1)
+#pragma pack(push, 1)
 
 struct __CERuntimeBase {
     CETypeRef const _Nonnull type;
@@ -139,6 +138,7 @@ struct __CETypeSpecific {
 
 #pragma pack(pop)
 
+
 extern CEType_s __CETypeMate;
 #define CETypeMate &__CETypeMate
 
@@ -179,6 +179,8 @@ CERef _Nullable CERuntimeDefaultTryRetain(CERef _Nonnull object);
 
 void CERuntimeDefaultRelease(CERef _Nonnull object);
 
+
+void CERuntimeInitializeType(CERef _Nonnull object, CETypeRef _Nonnull typeRef);
 
 
 #endif /* CERuntime_h */

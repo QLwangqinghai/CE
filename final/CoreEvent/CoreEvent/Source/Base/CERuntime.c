@@ -86,13 +86,12 @@ void CERelease(const CERef _Nonnull object) {
     return type->alloctor->release(object);
 }
 
-
-void * _Nonnull CERuntimeDefaultAllocate(CETypeRef _Nonnull typeRef, size_t size) {
+void CERuntimeInitializeType(CERef _Nonnull object, CETypeRef _Nonnull typeRef) {
+    assert(object);
+    assert(typeRef);
+    
     CERetain((void *)typeRef);
-
-    void * object = CEAllocateClear(size);
     memcpy(object, &typeRef, sizeof(void *));
-    CEType_s * ptr = object;
     
     if (__builtin_expect(((typeRef->masks & CETypeBitHasRc) == CETypeBitHasRc), true)) {
         CERuntimeAtomicRcBase_s * header = object;
@@ -116,8 +115,17 @@ void * _Nonnull CERuntimeDefaultAllocate(CETypeRef _Nonnull typeRef, size_t size
             atomic_store(rcInfoPtr, rcInfo);
         }
     }
-    
-    return ptr;
+}
+
+
+void * _Nonnull CERuntimeDefaultAllocate(CETypeRef _Nonnull typeRef, size_t size) {
+    size_t s = size;
+    if (s < typeRef->objectSize) {
+        s = typeRef->objectSize;
+    }
+    void * object = CEAllocateClear(s);
+    CERuntimeInitializeType(object, typeRef);
+    return object;
 }
 void CERuntimeDefaultDeallocate(CETypeRef _Nonnull type, void * _Nonnull ptr) {
     CEDeallocate(ptr);

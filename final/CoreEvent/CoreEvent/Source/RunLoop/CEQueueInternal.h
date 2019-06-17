@@ -21,14 +21,15 @@ static inline CEQueue_s * _Nonnull CEQueueCheck(CEQueueRef _Nonnull queuePtr) {
 }
 
 static inline void _CEQueueJoin(CEQueue_s * _Nonnull queue,
-                                CERef _Nonnull object,
+                                CEPtr _Nonnull object,
+                                CEObjectRelease_f _Nullable release,
                                 CEFunction_f _Nonnull execute,
                                 CETaskParamRef _Nonnull param,
                                 CETaskParamRef _Nullable result,
                                 CEThreadSyncWaiter_s * _Nullable syncTaskWaiter,
                                 _Bool isBarrier) {
     
-    CETaskPtr task = CETaskCreate(object, execute, param, result, syncTaskWaiter, isBarrier);
+    CETaskPtr task = CETaskCreate(object, release, execute, param, result, syncTaskWaiter, isBarrier);
     CESourceAppend(queue->source, task);
 
     if (syncTaskWaiter) {

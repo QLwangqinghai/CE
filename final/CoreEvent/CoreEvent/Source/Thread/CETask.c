@@ -11,14 +11,14 @@
 #include "CEThreadBaseInternal.h"
 
 
-CETaskPtr _Nonnull CETaskCreate(CERef _Nonnull obj,
+CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
+                                CEObjectRelease_f _Nullable release,
                                 CEFunction_f _Nonnull execute,
                                 CETaskParamRef _Nullable param,
                                 CETaskParamRef _Nullable resultReceiver,
                                 CEThreadSyncWaiter_s * _Nullable syncTaskWaiter,
                                 _Bool isBarrier) {
     assert(execute);
-    obj = CERetain(obj);
     assert(obj);
 
     if (param) {
@@ -32,6 +32,7 @@ CETaskPtr _Nonnull CETaskCreate(CERef _Nonnull obj,
     
     CETaskPtr result = CEAllocateClear(sizeof(CETask_s));
     result->obj = obj;
+    result->release = release;
     result->execute = execute;
     result->param = param;
     result->resultReceiver = resultReceiver;
@@ -42,7 +43,6 @@ CETaskPtr _Nonnull CETaskCreate(CERef _Nonnull obj,
 }
 void CETaskDestroy(CETaskPtr _Nonnull task) {
     assert(task);
-    CERelease(task->obj);
     if (task->param) {
         CERelease(task->param);
     }

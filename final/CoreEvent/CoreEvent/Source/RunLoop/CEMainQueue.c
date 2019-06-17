@@ -38,6 +38,8 @@ CETaskPtr _Nonnull CESourceMainQueueRemove(CESourceRef _Nonnull source) {
     CESourceSerialContext_s * context = source->context;
     CETaskPtr result = NULL;
     
+    CESemWait(context->scheduler->waiter);
+
     while (NULL == result) {
         CESpinLockLock(source->lock);
         result = CESourceTaskStoreRemove(&(context->highLevelTasks));

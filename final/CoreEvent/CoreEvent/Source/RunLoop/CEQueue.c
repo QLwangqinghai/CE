@@ -31,7 +31,7 @@ void CEQueueSync(CEQueueRef _Nonnull queuePtr,
                  CEPtr _Nonnull object,
                  CETaskFinish_f _Nullable finish,
                  CEFunction_f _Nonnull execute,
-                 CETaskParamRef _Nonnull param,
+                 CETaskParamRef _Nullable param,
                  CETaskParamRef _Nullable result) {
     CEQueue_s * queue = CEQueueCheck(queuePtr);
     CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
@@ -42,7 +42,7 @@ void CEQueueAsync(CEQueueRef _Nonnull queuePtr,
                   CEPtr _Nonnull object,
                   CETaskFinish_f _Nullable finish,
                   CEFunction_f _Nonnull execute,
-                  CETaskParamRef _Nonnull param) {
+                  CETaskParamRef _Nullable param) {
     CEQueue_s * queue = CEQueueCheck(queuePtr);
     _CEQueueJoin(queue, object, finish, execute, param, NULL, NULL, false);
 }

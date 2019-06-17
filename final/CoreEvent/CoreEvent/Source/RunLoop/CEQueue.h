@@ -18,28 +18,28 @@ void CEQueueSync(CEQueueRef _Nonnull queuePtr,
                  CEPtr _Nonnull object,
                  CETaskFinish_f _Nullable finish,
                  CEFunction_f _Nonnull execute,
-                 CETaskParamRef _Nonnull param,
+                 CETaskParamRef _Nullable param,
                  CETaskParamRef _Nullable result);
 
 void CEQueueAsync(CEQueueRef _Nonnull queuePtr,
                   CEPtr _Nonnull object,
                   CETaskFinish_f _Nullable finish,
                   CEFunction_f _Nonnull execute,
-                  CETaskParamRef _Nonnull param);
+                  CETaskParamRef _Nullable param);
 
 
 void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr,
                                   CEPtr _Nonnull object,
                                   CETaskFinish_f _Nullable finish,
                                   CEFunction_f _Nonnull execute,
-                                  CETaskParamRef _Nonnull param,
+                                  CETaskParamRef _Nullable param,
                                   CETaskParamRef _Nullable result);
 
 void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr,
                                    CEPtr _Nonnull object,
                                    CETaskFinish_f _Nullable finish,
                                    CEFunction_f _Nonnull execute,
-                                   CETaskParamRef _Nonnull param);
+                                   CETaskParamRef _Nullable param);
 
 
 CEQueueRef _Nonnull CEQueueSharedMainQueue(void);

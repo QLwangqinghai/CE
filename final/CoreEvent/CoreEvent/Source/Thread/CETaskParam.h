@@ -37,7 +37,7 @@ extern CETypeRef _Nonnull CETypeTaskParamHeap;
 typedef void (*CETaskParamDestroyItems_f)(CETaskParamRef _Nullable param);
 
 
-CETaskParamRef _Nullable CETaskParamStackInit(void * _Nonnull ptr, size_t bufferSize);
+CETaskParamRef _Nullable CETaskParamStackInit(void * _Nonnull ptr, size_t bufferSize, CETaskParamDestroyItems_f _Nullable destroy);
 
 CETaskParamRef _Nullable CETaskParamHeapCreate(size_t loadSize);
 

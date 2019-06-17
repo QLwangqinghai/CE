@@ -42,6 +42,8 @@ void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr,
                                    CETaskParamRef _Nullable param);
 
 
+CEQueueRef _Nonnull CESerialQueueCreate(const char * _Nullable label, CEQueuePriority_t priority);
+
 CEQueueRef _Nonnull CEQueueSharedMainQueue(void);
 void CEQueueMain(void);
 

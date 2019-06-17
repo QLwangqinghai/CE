@@ -52,7 +52,7 @@ void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr,
                                   CEPtr _Nonnull object,
                                   CETaskFinish_f _Nullable finish,
                                   CEFunction_f _Nonnull execute,
-                                  CETaskParamRef _Nonnull param,
+                                  CETaskParamRef _Nullable param,
                                   CETaskParamRef _Nullable result) {
     CEQueue_s * queue = CEQueueCheck(queuePtr);
     assert(CEQueueTypeConcurrent == queue->type);
@@ -74,7 +74,7 @@ void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr,
 
 
 
-CEQueue_s * _Nonnull CEQueueCreate(char * _Nullable label, uint32_t concurrencyCount, CEQueuePriority_t priority, CEQueueType_t type) {
+CEQueue_s * _Nonnull CEQueueCreate(const char * _Nullable label, uint32_t concurrencyCount, CEQueuePriority_t priority, CEQueueType_t type) {
     CEQueue_s * queue = CETypeQueue->alloctor->allocate(CETypeQueue, sizeof(CEQueue_s));;
     if (label) {
         snprintf(queue->label, 64, "%s", label);
@@ -86,7 +86,8 @@ CEQueue_s * _Nonnull CEQueueCreate(char * _Nullable label, uint32_t concurrencyC
     return queue;
 }
 
-
-
+CEQueueRef _Nonnull CESerialQueueCreate(const char * _Nullable label, CEQueuePriority_t priority) {
+    return _CESerialQueueCreate(label, priority);
+}
 
 

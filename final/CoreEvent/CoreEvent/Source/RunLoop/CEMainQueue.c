@@ -38,8 +38,6 @@ CETaskPtr _Nonnull CESourceMainQueueRemove(CESourceRef _Nonnull source) {
     CESourceSerialContext_s * context = source->context;
     CETaskPtr result = NULL;
     
-    CESemWait(context->scheduler->waiter);
-
     while (NULL == result) {
         CESpinLockLock(source->lock);
         result = CESourceTaskStoreRemove(&(context->highLevelTasks));
@@ -83,10 +81,14 @@ void CEQueueMain(void) {
     CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
-    
+    CESemWait(scheduler->waiter);
+
     CETaskPtr task = CESourceMainQueueRemove(scheduler->source);
     while (1) {
         CETaskSchedulerExecuteTask(scheduler, task);
+        if (task->finish) {
+            task->finish(task->obj);
+        }
         CETaskDestroy(task);
         task = CESourceMainQueueFinishOneTaskAndRemove(scheduler->source);
     }

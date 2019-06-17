@@ -18,8 +18,6 @@ typedef struct _CESourceSerialContext {
     CETaskSchedulerPtr _Nonnull scheduler;
 } CESourceSerialContext_s;
 
-CEQueue_s * _Nonnull CESerialQueueCreate(char * _Nullable label, CEQueuePriority_t priority);
-
 static inline CETaskPtr _Nullable _CESourceSerialContextRemove(CESourceSerialContext_s * _Nonnull context) {
     CETaskPtr result = CESourceTaskStoreRemove(&(context->highLevelTasks));
     if (NULL == result) {
@@ -27,5 +25,7 @@ static inline CETaskPtr _Nullable _CESourceSerialContextRemove(CESourceSerialCon
     }
     return result;
 }
+
+CEQueue_s * _Nonnull _CESerialQueueCreate(const char * _Nullable label, CEQueuePriority_t priority);
 
 #endif /* CESerialQueue_h */

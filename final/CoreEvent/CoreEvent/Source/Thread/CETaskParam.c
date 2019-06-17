@@ -385,7 +385,7 @@ void __CETaskParamInit(CETaskParam_s * _Nonnull param, uint32_t totalSize) {
 
 #pragma mark - CETaskParam public api
 
-CETaskParamRef _Nullable CETaskParamStackInit(void * _Nonnull ptr, size_t bufferSize) {
+CETaskParamRef _Nullable CETaskParamStackInit(void * _Nonnull ptr, size_t bufferSize, CETaskParamDestroyItems_f _Nullable destroy) {
     if (NULL == ptr) {
         return NULL;
     }
@@ -401,6 +401,7 @@ CETaskParamRef _Nullable CETaskParamStackInit(void * _Nonnull ptr, size_t buffer
     }
     CETaskParam_s * param = ptr;
     __CETaskParamInit(param, (uint32_t)loadSize);
+    param->destroy = destroy;
     return ptr;
 }
 CETaskParamRef _Nullable CETaskParamHeapCreate(size_t loadSize) {

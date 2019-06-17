@@ -96,7 +96,7 @@ typedef CETask_s * CETaskPtr;
 
 struct _CETask {
     CETaskPtr _Nullable next;
-    
+    CERef _Nonnull obj;
     CEFunction_f _Nonnull execute;
     CETaskParamRef _Nullable param;
     CETaskParamRef _Nullable resultReceiver;

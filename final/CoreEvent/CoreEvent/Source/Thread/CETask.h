@@ -15,7 +15,13 @@
 #include "CETaskParam.h"
 
 
-CETaskPtr _Nonnull CETaskCreate(CEFunction_f _Nonnull execute, CETaskParamRef _Nullable param, CETaskParamRef _Nullable resultReceiver, CEThreadSyncWaiter_s * _Nullable syncTaskWaiter, _Bool isBarrier);
+
+CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
+                                CEFunction_f _Nonnull execute,
+                                CETaskParamRef _Nullable param,
+                                CETaskParamRef _Nullable resultReceiver,
+                                CEThreadSyncWaiter_s * _Nullable syncTaskWaiter,
+                                _Bool isBarrier);
 
 void CETaskDestroy(CETaskPtr _Nonnull task);
 

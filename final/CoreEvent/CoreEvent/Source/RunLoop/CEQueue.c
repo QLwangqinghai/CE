@@ -27,29 +27,43 @@ const CEType_s __CETypeQueue = CEType(CETypeBitHasRc | CETypeBitStatic, 0, (uint
 CETypeRef _Nonnull CETypeQueue = &__CETypeQueue;
 
 
-void CEQueueSync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CETaskParamRef _Nonnull param, CETaskParamRef _Nullable result) {
+void CEQueueSync(CEQueueRef _Nonnull queuePtr,
+                 CERef _Nonnull object,
+                 CEFunction_f _Nonnull execute,
+                 CETaskParamRef _Nonnull param,
+                 CETaskParamRef _Nullable result) {
     CEQueue_s * queue = CEQueueCheck(queuePtr);
     CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
-    _CEQueueJoin(queue, execute, param, result, specific->syncWaiter, false);
+    _CEQueueJoin(queue, object, execute, param, result, specific->syncWaiter, false);
 }
 
-void CEQueueAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CETaskParamRef _Nonnull param) {
+void CEQueueAsync(CEQueueRef _Nonnull queuePtr,
+                  CERef _Nonnull object,
+                  CEFunction_f _Nonnull execute,
+                  CETaskParamRef _Nonnull param) {
     CEQueue_s * queue = CEQueueCheck(queuePtr);
-    _CEQueueJoin(queue, execute, param, NULL, NULL, false);
+    _CEQueueJoin(queue, object, execute, param, NULL, NULL, false);
 }
 
 
-void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CETaskParamRef _Nonnull param, CETaskParamRef _Nullable result) {
+void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr,
+                                  CERef _Nonnull object,
+                                  CEFunction_f _Nonnull execute,
+                                  CETaskParamRef _Nonnull param,
+                                  CETaskParamRef _Nullable result) {
     CEQueue_s * queue = CEQueueCheck(queuePtr);
     assert(CEQueueTypeConcurrent == queue->type);
     
     CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
-    _CEQueueJoin(queue, execute, param, result, specific->syncWaiter, true);
+    _CEQueueJoin(queue, object, execute, param, result, specific->syncWaiter, true);
 }
-void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr, CEFunction_f _Nonnull execute, CETaskParamRef _Nonnull param) {
+void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr,
+                                   CERef _Nonnull object,
+                                   CEFunction_f _Nonnull execute,
+                                   CETaskParamRef _Nonnull param) {
     CEQueue_s * queue = CEQueueCheck(queuePtr);
     assert(CEQueueTypeConcurrent == queue->type);
-    _CEQueueJoin(queue, execute, param, NULL, NULL, true);
+    _CEQueueJoin(queue, object, execute, param, NULL, NULL, true);
 }
 
 

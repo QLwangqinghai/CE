@@ -30,7 +30,7 @@ void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr
     
     CEFunction_f execute = task->execute;
     assert(execute);
-    execute(task->param, task->resultReceiver);
+    execute(task->obj, task->param, task->resultReceiver);
     
     if (NULL != task->syncTaskWaiter) {
         CEThreadSyncWaiterSignal(task->syncTaskWaiter);

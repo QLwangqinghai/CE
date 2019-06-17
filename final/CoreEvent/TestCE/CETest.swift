@@ -10,6 +10,11 @@ import Foundation
 import CoreEvent
 
 
+public struct CEQueue {
+    
+    
+    
+}
 
 
 open class S : NSObject {

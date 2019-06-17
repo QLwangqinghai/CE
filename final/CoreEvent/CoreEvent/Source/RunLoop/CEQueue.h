@@ -16,28 +16,28 @@ extern CETypeRef _Nonnull CETypeQueue;;
 
 void CEQueueSync(CEQueueRef _Nonnull queuePtr,
                  CEPtr _Nonnull object,
-                 CEObjectRelease_f _Nullable release,
+                 CETaskFinish_f _Nullable finish,
                  CEFunction_f _Nonnull execute,
                  CETaskParamRef _Nonnull param,
                  CETaskParamRef _Nullable result);
 
 void CEQueueAsync(CEQueueRef _Nonnull queuePtr,
                   CEPtr _Nonnull object,
-                  CEObjectRelease_f _Nullable release,
+                  CETaskFinish_f _Nullable finish,
                   CEFunction_f _Nonnull execute,
                   CETaskParamRef _Nonnull param);
 
 
 void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr,
                                   CEPtr _Nonnull object,
-                                  CEObjectRelease_f _Nullable release,
+                                  CETaskFinish_f _Nullable finish,
                                   CEFunction_f _Nonnull execute,
                                   CETaskParamRef _Nonnull param,
                                   CETaskParamRef _Nullable result);
 
 void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr,
                                    CEPtr _Nonnull object,
-                                   CEObjectRelease_f _Nullable release,
+                                   CETaskFinish_f _Nullable finish,
                                    CEFunction_f _Nonnull execute,
                                    CETaskParamRef _Nonnull param);
 

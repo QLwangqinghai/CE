@@ -12,7 +12,7 @@
 
 
 CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
-                                CEObjectRelease_f _Nullable release,
+                                CETaskFinish_f _Nullable finish,
                                 CEFunction_f _Nonnull execute,
                                 CETaskParamRef _Nullable param,
                                 CETaskParamRef _Nullable resultReceiver,
@@ -32,7 +32,7 @@ CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
     
     CETaskPtr result = CEAllocateClear(sizeof(CETask_s));
     result->obj = obj;
-    result->release = release;
+    result->finish = finish;
     result->execute = execute;
     result->param = param;
     result->resultReceiver = resultReceiver;

@@ -17,7 +17,7 @@
 
 
 CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
-                                CEObjectRelease_f _Nullable release,
+                                CETaskFinish_f _Nullable finish,
                                 CEFunction_f _Nonnull execute,
                                 CETaskParamRef _Nullable param,
                                 CETaskParamRef _Nullable resultReceiver,

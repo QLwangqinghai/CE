@@ -28,6 +28,7 @@ typedef CEPtr CETaskParamRef;
 typedef void (*CEFunction_f)(CEPtr _Nonnull object, CETaskParamRef _Nullable param, CETaskParamRef _Nullable result);
 
 typedef void (*CEObjectRelease_f)(CEPtr _Nonnull object);
+typedef void (*CETaskFinish_f)(CEPtr _Nonnull object);
 
 
 extern CETypeRef _Nonnull CETypeTaskParamStack;

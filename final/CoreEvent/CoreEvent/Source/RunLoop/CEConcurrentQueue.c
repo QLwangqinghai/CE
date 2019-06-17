@@ -208,7 +208,6 @@ CETaskPtr _Nonnull CEConcurrentSourceRemove(CESourceRef _Nonnull source, CETaskS
     assert(scheduler);
     
     CESourceConcurrentContext_s * context = source->context;
-    CESemWait(scheduler->waiter);
 
     CETaskPtr result = NULL;
     CESpinLockLock(source->lock);

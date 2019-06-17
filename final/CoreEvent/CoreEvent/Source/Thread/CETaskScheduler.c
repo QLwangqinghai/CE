@@ -38,12 +38,11 @@ void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr
 }
 
 
-CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(CEQueue_s * _Nullable ownerQueue) {
+CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(void) {
     assert(signal);
     CETaskSchedulerPtr scheduler = CEAllocateClear(sizeof(CETaskScheduler_s));
     scheduler->lock = CESpinLockCreate();
     scheduler->waiter = CESemCreate(0);
-    scheduler->ownerQueue = ownerQueue;
     return scheduler;
 }
 

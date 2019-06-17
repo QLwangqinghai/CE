@@ -70,20 +70,14 @@ CETaskPtr _Nonnull CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
     return result;
 }
 
-CETaskSchedulerPtr _Nonnull CESerialTaskSchedulerCreate(CEQueue_s * _Nonnull queue) {
-    assert(queue);
-    CETaskSchedulerPtr scheduler = CETaskSchedulerCreate(queue);
-    return scheduler;
-}
-
-
 void CESerialQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific) {
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
+    CESemWait(scheduler->waiter);
     assert(scheduler->ownerQueue);
     scheduler->thread = specific->thread;
     specific->owner = scheduler->ownerQueue;
-    CESemWait(scheduler->waiter);
+
 }
 
 void CESerialQueueMainFunc(void * _Nullable param) {
@@ -95,19 +89,23 @@ void CESerialQueueMainFunc(void * _Nullable param) {
     CETaskPtr task = CESourceSerialQueueRemove(scheduler->source);
     while (1) {
         CETaskSchedulerExecuteTask(scheduler, task);
+        if (task->finish) {
+            task->finish(task->obj);
+        }
         CETaskDestroy(task);
         task = CESourceSerialQueueFinishOneTaskAndRemove(scheduler->source);
     }
 }
 
-
-//source
 CESource_s * _Nonnull CESerialSourceCreate(CEQueue_s * _Nonnull queue) {
+
+    //source
     assert(queue);
     CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
     CESource_s * source = CESourceCreate(queue, context, CESerialSourceAppend);
-    context->scheduler = CESerialTaskSchedulerCreate(queue);
+    context->scheduler = CETaskSchedulerCreate();
     context->scheduler->source = source;
+    context->scheduler->ownerQueue = queue;
     return source;
 }
 

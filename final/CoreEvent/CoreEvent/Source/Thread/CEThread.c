@@ -177,14 +177,18 @@ void * __CEThreadMain(void * args) {
     struct __CEThreadContext * context = (struct __CEThreadContext *)args;
     CEThreadSpecificPtr specific = __CEThreadCreateSpecific(context);
     context->thread = specific->thread;
+    void (* _Nullable beforeMain)(CEThreadSpecificPtr _Nonnull specific) = context->beforeMain;
+    void (* _Nonnull main)(void * _Nullable) = context->main;
+
+    
     CESemSignal(context->sem);
     
-    if (context->beforeMain) {
-        context->beforeMain(specific);
+    if (beforeMain) {
+        beforeMain(specific);
     }
     void * _Nullable params = context->params;
     specific->thread->status = CEThreadStatusExecuting;
-    context->main(params);
+    main(params);
     specific->thread->status = CEThreadStatusFinished;
     
     void (* _Nullable paramsDealloc)(void * _Nonnull) = context->paramsDealloc;
@@ -338,7 +342,7 @@ void __CEInitialize(void) {
         CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
         __CEThreadMainShared = specific->thread;
         
-        CETaskSchedulerPtr taskScheduler = CETaskSchedulerCreate(NULL);
+        CETaskSchedulerPtr taskScheduler = CETaskSchedulerCreate();
         taskScheduler->thread = __CEThreadMainShared;
         specific->scheduler = taskScheduler;
         

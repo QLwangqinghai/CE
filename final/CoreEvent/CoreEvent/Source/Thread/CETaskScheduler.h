@@ -31,7 +31,7 @@
 
 void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr _Nonnull task);
 
-CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(CEQueue_s * _Nullable ownerQueue);
+CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(void);
 
 void CETaskSchedulerDestroy(CETaskSchedulerPtr _Nonnull scheduler);
 

@@ -70,18 +70,9 @@ CETaskPtr _Nonnull CESourceSerialQueueRemove(CESourceRef _Nonnull source) {
     return result;
 }
 
-
 CETaskSchedulerPtr _Nonnull CESerialTaskSchedulerCreate(CEQueue_s * _Nonnull queue) {
     assert(queue);
     CETaskSchedulerPtr scheduler = CETaskSchedulerCreate(queue);
-    CEThreadConfig_s config = {};
-    float schedPriority = 0;
-    memcpy(config.name, queue->label, 64);
-    schedPriority = CEQueuePriorityToThreadPriority(queue->priority);
-    config.schedPriority = schedPriority;
-    _CEThreadCreate(config, scheduler, CESerialQueueBeforeMainFunc, CESerialQueueMainFunc, NULL, NULL);
-    
-    
     return scheduler;
 }
 
@@ -92,6 +83,7 @@ void CESerialQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific) {
     assert(scheduler->ownerQueue);
     scheduler->thread = specific->thread;
     specific->owner = scheduler->ownerQueue;
+    CESemWait(scheduler->waiter);
 }
 
 void CESerialQueueMainFunc(void * _Nullable param) {
@@ -115,6 +107,7 @@ CESource_s * _Nonnull CESerialSourceCreate(CEQueue_s * _Nonnull queue) {
     CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
     CESource_s * source = CESourceCreate(queue, context, CESerialSourceAppend);
     context->scheduler = CESerialTaskSchedulerCreate(queue);
+    context->scheduler->source = source;
     return source;
 }
 
@@ -122,5 +115,13 @@ CESource_s * _Nonnull CESerialSourceCreate(CEQueue_s * _Nonnull queue) {
 CEQueue_s * _Nonnull _CESerialQueueCreate(const char * _Nullable label, CEQueuePriority_t priority) {
     CEQueue_s * queue = CEQueueCreate(label, 1, priority, CEQueueTypeSerial);
     queue->source = CESerialSourceCreate(queue);
+    CESourceSerialContext_s * context = queue->source->context;
+
+    CEThreadConfig_s config = {};
+    memcpy(config.name, queue->label, 64);
+    float schedPriority = CEQueuePriorityToThreadPriority(queue->priority);
+    config.schedPriority = schedPriority;
+    _CEThreadCreate(config, context->scheduler, CESerialQueueBeforeMainFunc, CESerialQueueMainFunc, NULL, NULL);
+    CESemSignal(context->scheduler->waiter);
     return queue;
 }

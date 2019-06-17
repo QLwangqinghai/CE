@@ -175,9 +175,14 @@ CEThreadSpecificPtr _Nonnull __CEThreadBeforeMain(struct __CEThreadContext * _No
 
 void * __CEThreadMain(void * args) {
     struct __CEThreadContext * context = (struct __CEThreadContext *)args;
-    CEThreadSpecificPtr specific = __CEThreadBeforeMain(context);
-    void * _Nullable params = context->params;
+    CEThreadSpecificPtr specific = __CEThreadCreateSpecific(context);
+    context->thread = specific->thread;
     CESemSignal(context->sem);
+    
+    if (context->beforeMain) {
+        context->beforeMain(specific);
+    }
+    void * _Nullable params = context->params;
     specific->thread->status = CEThreadStatusExecuting;
     context->main(params);
     specific->thread->status = CEThreadStatusFinished;
@@ -305,6 +310,7 @@ CEThread_s * _Nullable _CEThreadCreate(CEThreadConfig_s config,
         return NULL;
     }
     CESemWait(context.sem);
+
     CESemDestroy(context.sem);
     
     return context.thread;

@@ -47,7 +47,7 @@ void CESemWait(CESemPtr _Nonnull sem) {
 void CESemSignal(CESemPtr _Nonnull sem) {
     assert(sem);
     assert(sem->lock);
-    if (0 != dispatch_semaphore_signal(sem->lock)) {
+    if (0 > dispatch_semaphore_signal(sem->lock)) {
         CELogError("CEThreadWaiterWakeUp sem_post error %s; \n", strerror(errno));
         abort();
     }

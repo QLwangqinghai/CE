@@ -12,20 +12,25 @@
 #include <CoreEvent/CEThreadBase.h>
 
 
-extern CETypeRef _Nonnull CETypeQueue;;
+extern CETypeRef _Nonnull CETypeQueue;
+
+
+extern uint32_t CETaskTagNext(void);
 
 void CEQueueSync(CEQueueRef _Nonnull queuePtr,
                  CEPtr _Nonnull object,
                  CETaskFinish_f _Nullable finish,
                  CEFunction_f _Nonnull execute,
                  CETaskParamRef _Nullable param,
-                 CETaskParamRef _Nullable result);
+                 CETaskParamRef _Nullable result,
+                 uint32_t tag);
 
 void CEQueueAsync(CEQueueRef _Nonnull queuePtr,
                   CEPtr _Nonnull object,
                   CETaskFinish_f _Nullable finish,
                   CEFunction_f _Nonnull execute,
-                  CETaskParamRef _Nullable param);
+                  CETaskParamRef _Nullable param,
+                  uint32_t tag);
 
 
 void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr,
@@ -33,13 +38,15 @@ void CEConcurrentQueueBarrierSync(CEQueueRef _Nonnull queuePtr,
                                   CETaskFinish_f _Nullable finish,
                                   CEFunction_f _Nonnull execute,
                                   CETaskParamRef _Nullable param,
-                                  CETaskParamRef _Nullable result);
+                                  CETaskParamRef _Nullable result,
+                                  uint32_t tag);
 
 void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr,
                                    CEPtr _Nonnull object,
                                    CETaskFinish_f _Nullable finish,
                                    CEFunction_f _Nonnull execute,
-                                   CETaskParamRef _Nullable param);
+                                   CETaskParamRef _Nullable param,
+                                   uint32_t tag);
 
 
 CEQueueRef _Nonnull CESerialQueueCreate(const char * _Nullable label, CEQueuePriority_t priority);

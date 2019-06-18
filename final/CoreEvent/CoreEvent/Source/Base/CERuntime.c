@@ -103,7 +103,7 @@ void CERuntimeInitializeType(CERef _Nonnull object, CETypeRef _Nonnull typeRef) 
             uint_fast32_t rcInfo = CERuntimeRcStatic;
             _Atomic(uint_fast32_t) * rcInfoPtr = &(header->rcInfo);
 #endif
-            atomic_store(rcInfoPtr, rcInfo);
+            atomic_init(rcInfoPtr, rcInfo);
         } else {
 #if CEBuild64Bit
             uint_fast64_t rcInfo = 1;
@@ -112,7 +112,7 @@ void CERuntimeInitializeType(CERef _Nonnull object, CETypeRef _Nonnull typeRef) 
             uint_fast32_t rcInfo = 1;
             _Atomic(uint_fast32_t) * rcInfoPtr = &(header->rcInfo);
 #endif
-            atomic_store(rcInfoPtr, rcInfo);
+            atomic_init(rcInfoPtr, rcInfo);
         }
     }
 }

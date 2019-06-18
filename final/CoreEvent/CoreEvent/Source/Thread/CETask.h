@@ -22,8 +22,10 @@ CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
                                 CETaskParamRef _Nullable param,
                                 CETaskParamRef _Nullable resultReceiver,
                                 CEThreadSyncWaiter_s * _Nullable syncTaskWaiter,
+                                uint32_t tag,
                                 _Bool isBarrier);
 
 void CETaskDestroy(CETaskPtr _Nonnull task);
+
 
 #endif /* CETask_h */

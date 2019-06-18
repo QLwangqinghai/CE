@@ -81,7 +81,7 @@ CETaskPtr _Nonnull CEConcurrentSourceFinishOneTaskAndRemove(CESourceRef _Nonnull
     
     //移除任务会改变 isBarrier
     CESpinLockLock(source->lock);
-    CESourceCount_t count = context->tasks.count;
+
     if (isBarrierTask) {//屏障task 执行完成
         assert(context->isBarrier);
         result = CESourceTaskStoreRemove(&(context->tasks));

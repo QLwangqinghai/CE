@@ -36,7 +36,7 @@ public class CEQueue {
         }, { (obj, param, result) in
             let item: DispatchWorkItem = Unmanaged<DispatchWorkItem>.fromOpaque(obj).takeUnretainedValue()
             item.perform()
-        }, nil)
+        }, nil, CETaskTagNext())
     }
     public func sync(_ item: DispatchWorkItem) {
         CEQueueSync(self.queue, Unmanaged<DispatchWorkItem>.passRetained(item).toOpaque(), { (obj) in
@@ -46,7 +46,7 @@ public class CEQueue {
         }, { (obj, param, result) in
             let item: DispatchWorkItem = Unmanaged<DispatchWorkItem>.fromOpaque(obj).takeUnretainedValue()
             item.perform()
-        }, nil, nil)
+        }, nil, nil, CETaskTagNext())
     }
 }
 

@@ -27,7 +27,7 @@
 void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr _Nonnull task) {
     assert(scheduler);
     assert(task);
-    
+    scheduler->executingTaskTag = task->tag;
     CEFunction_f execute = task->execute;
     assert(execute);
     execute(task->obj, task->param, task->resultReceiver);
@@ -35,14 +35,17 @@ void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr
     if (NULL != task->syncTaskWaiter) {
         CEThreadSyncWaiterSignal(task->syncTaskWaiter);
     }
+    scheduler->executingTaskTag = 0;
 }
 
 
-CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(void) {
+CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(uint16_t qid, uint16_t sid) {
     assert(signal);
     CETaskSchedulerPtr scheduler = CEAllocateClear(sizeof(CETaskScheduler_s));
     scheduler->lock = CESpinLockCreate();
     scheduler->waiter = CESemCreate(0);
+    scheduler->qid = qid;
+    scheduler->sid = sid;
     return scheduler;
 }
 

@@ -31,7 +31,7 @@
 
 void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr _Nonnull task);
 
-CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(void);
+CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(uint16_t qid, uint16_t sid);
 
 void CETaskSchedulerDestroy(CETaskSchedulerPtr _Nonnull scheduler);
 

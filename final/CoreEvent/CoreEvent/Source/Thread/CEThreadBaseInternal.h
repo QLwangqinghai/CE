@@ -72,6 +72,10 @@ typedef struct _CETaskScheduler {
     CEThread_s * _Nonnull thread;
     CEQueue_s * _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值
     CESourceRef _Nonnull source;
+    uint16_t qid;
+    uint16_t sid;
+    uint32_t executingTaskTag;
+    
 } CETaskScheduler_s;
 
 
@@ -81,8 +85,7 @@ typedef struct _CEThreadSpecific {
     CEThread_s * _Nonnull thread;
     CEThreadSyncWaiter_s * _Nonnull syncWaiter;
     CETaskSchedulerPtr _Nullable scheduler;
-    CETaskContextPtr _Nullable taskContext;
-    CEQueueRef _Nullable owner;
+    CEQueue_s * _Nullable owner;
 } CEThreadSpecific_s;
 
 typedef CEThreadSpecific_s * CEThreadSpecificPtr;
@@ -105,6 +108,7 @@ struct _CETask {
 
     uint32_t isBarrier: 1;
     uint32_t mask: 31;
+    uint32_t tag;
 };
 
 
@@ -115,10 +119,11 @@ typedef void (*CEQueueAppendTask_f)(CEQueue_s * _Nonnull queue, CETaskPtr _Nonnu
 struct _CEQueue {
     CERuntimeAtomicRcBase_s runtime;
     char label[64];
-    uint32_t concurrencyCount;
+    CESourceRef _Nonnull source;
+    uint16_t id;
+    uint16_t concurrencyCount;
     CEQueuePriority_t priority;
     CEQueueType_t type;
-    CESourceRef _Nonnull source;
 };
 
 static inline float CEQueuePriorityToThreadPriority(CEQueuePriority_t priority) {

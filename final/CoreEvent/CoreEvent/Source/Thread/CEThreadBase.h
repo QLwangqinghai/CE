@@ -30,6 +30,7 @@ typedef uint16_t CEQueuePriority_t;
 static const CEQueuePriority_t CEQueuePriorityHigh = 192;
 static const CEQueuePriority_t CEQueuePriorityDefault = 128;
 static const CEQueuePriority_t CEQueuePriorityLow = 64;
+static const CEQueuePriority_t CEQueuePriorityMain = 255;
 
 
 typedef uint16_t CEQueueType_t;
@@ -106,26 +107,6 @@ struct _CETaskExecuteObserver {
     CETaskExecuteObserverFinish_f _Nonnull finish;
     void * _Nullable context;
 };
-
-
-struct _CETaskContext;
-typedef struct _CETaskContext CETaskContext_s;
-typedef CETaskContext_s * CETaskContextPtr;
-
-
-/*
- CEQueueRef _Nonnull targetQueue;
- CETaskExecuteObserverRef _Nullable observer;
-*/
-struct _CESyncTask {
-    CERuntimeBase_s runtime;
-//    CETaskBase_t base;
-    CETaskContextPtr _Nonnull context;
-    CEQueueRef _Nullable sourceQueue;
-};
-
-
-
 
 typedef struct _CEThreadConfig {
     char name[64];

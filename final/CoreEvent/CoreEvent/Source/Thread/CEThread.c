@@ -177,6 +177,7 @@ void * __CEThreadMain(void * args) {
     struct __CEThreadContext * context = (struct __CEThreadContext *)args;
     CEThreadSpecificPtr specific = __CEThreadCreateSpecific(context);
     context->thread = specific->thread;
+    
     void (* _Nullable beforeMain)(CEThreadSpecificPtr _Nonnull specific) = context->beforeMain;
     void (* _Nonnull main)(void * _Nullable) = context->main;
 
@@ -186,6 +187,7 @@ void * __CEThreadMain(void * args) {
     if (beforeMain) {
         beforeMain(specific);
     }
+    memcpy(specific->thread->name, specific->owner->label, 64);
     void * _Nullable params = context->params;
     specific->thread->status = CEThreadStatusExecuting;
     main(params);
@@ -327,6 +329,10 @@ CEThreadRef _Nullable CEThreadCreate(CEThreadConfig_s config,
     return _CEThreadCreate(config, NULL, NULL, main, params, paramsDealloc);
 }
 
+extern void _CETaskTagInitialize(void);
+extern void _CEQueueSequencerInitialize(void);
+extern uint32_t CEQueueSequenceNext(void);
+
 
 static CEThread_s * __CEThreadMainShared = NULL;
 static CEQueue_s * __CEQueueSharedMainQueue = NULL;
@@ -338,17 +344,22 @@ void __CEInitialize(void) {
     
     if (!__CEInitializing && !__CEInitialized) {
         assert(CEIsMainThread());
-
+        _CETaskTagInitialize();
+        _CEQueueSequencerInitialize();
+        
         CEThreadSpecificPtr specific = CEThreadSpecificGetCurrent();
         __CEThreadMainShared = specific->thread;
         
-        CETaskSchedulerPtr taskScheduler = CETaskSchedulerCreate();
+        CETaskSchedulerPtr taskScheduler = CETaskSchedulerCreate(1, 1);
         taskScheduler->thread = __CEThreadMainShared;
         specific->scheduler = taskScheduler;
         
-        CEQueue_s * queue = CEQueueCreate("main", 1, UINT16_MAX, CEQueueTypeSerial);
+        CEQueue_s * queue = CEQueueCreate("main", 1, CEQueuePriorityMain, CEQueueTypeSerial, 1);
         taskScheduler->ownerQueue = queue;
         
+        specific->owner = queue;
+        specific->syncWaiter->queue = queue;
+
         CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
         context->scheduler = taskScheduler;
         CESource_s * source = _CESourceMainCreate(queue, context);

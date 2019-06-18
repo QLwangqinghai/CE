@@ -27,9 +27,12 @@ static inline void _CEQueueJoin(CEQueue_s * _Nonnull queue,
                                 CETaskParamRef _Nonnull param,
                                 CETaskParamRef _Nullable result,
                                 CEThreadSyncWaiter_s * _Nullable syncTaskWaiter,
+                                uint32_t tag,
                                 _Bool isBarrier) {
-    
-    CETaskPtr task = CETaskCreate(object, finish, execute, param, result, syncTaskWaiter, isBarrier);
+    if (0 == tag) {
+        tag = CETaskTagNext();
+    }
+    CETaskPtr task = CETaskCreate(object, finish, execute, param, result, syncTaskWaiter, tag, isBarrier);
     CESourceAppend(queue->source, task);
 
     if (syncTaskWaiter) {
@@ -38,9 +41,10 @@ static inline void _CEQueueJoin(CEQueue_s * _Nonnull queue,
 }
 
 
-extern CEQueue_s * _Nonnull CEQueueCreate(const char * _Nullable label, uint32_t concurrencyCount, CEQueuePriority_t priority, CEQueueType_t type);
+extern CEQueue_s * _Nonnull CEQueueCreate(const char * _Nullable label, uint16_t concurrencyCount, CEQueuePriority_t priority, CEQueueType_t type, uint16_t id);
 
 
+uint32_t CEQueueSequenceNext(void);
 
 
 #endif /* CEQueueInternal_h */

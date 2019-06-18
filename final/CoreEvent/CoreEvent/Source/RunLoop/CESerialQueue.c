@@ -77,7 +77,7 @@ void CESerialQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific) {
     assert(scheduler->ownerQueue);
     scheduler->thread = specific->thread;
     specific->owner = scheduler->ownerQueue;
-
+    specific->syncWaiter->queue = scheduler->ownerQueue;
 }
 
 void CESerialQueueMainFunc(void * _Nullable param) {
@@ -103,7 +103,7 @@ CESource_s * _Nonnull CESerialSourceCreate(CEQueue_s * _Nonnull queue) {
     assert(queue);
     CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));
     CESource_s * source = CESourceCreate(queue, context, CESerialSourceAppend);
-    context->scheduler = CETaskSchedulerCreate();
+    context->scheduler = CETaskSchedulerCreate(queue->id, 1);
     context->scheduler->source = source;
     context->scheduler->ownerQueue = queue;
     return source;
@@ -111,7 +111,7 @@ CESource_s * _Nonnull CESerialSourceCreate(CEQueue_s * _Nonnull queue) {
 
 //queue
 CEQueue_s * _Nonnull _CESerialQueueCreate(const char * _Nullable label, CEQueuePriority_t priority) {
-    CEQueue_s * queue = CEQueueCreate(label, 1, priority, CEQueueTypeSerial);
+    CEQueue_s * queue = CEQueueCreate(label, 1, priority, CEQueueTypeSerial, CEQueueSequenceNext());
     queue->source = CESerialSourceCreate(queue);
     CESourceSerialContext_s * context = queue->source->context;
 

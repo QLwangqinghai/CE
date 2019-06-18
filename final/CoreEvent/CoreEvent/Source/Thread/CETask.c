@@ -10,6 +10,19 @@
 #include "CEMemory.h"
 #include "CEThreadBaseInternal.h"
 
+static _Atomic(uint_fast32_t) _CETaskTag;
+void _CETaskTagInitialize(void) {
+    uint_fast32_t v = 0;
+    atomic_init(&_CETaskTag, v);
+}
+
+uint32_t CETaskTagNext(void) {
+    uint_fast32_t a = 0;
+    while (0 == a) {
+        a = atomic_fetch_add(&_CETaskTag, 1);
+    }
+    return (uint32_t)a;
+}
 
 CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
                                 CETaskFinish_f _Nullable finish,
@@ -17,6 +30,7 @@ CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
                                 CETaskParamRef _Nullable param,
                                 CETaskParamRef _Nullable resultReceiver,
                                 CEThreadSyncWaiter_s * _Nullable syncTaskWaiter,
+                                uint32_t tag,
                                 _Bool isBarrier) {
     assert(execute);
     assert(obj);
@@ -38,7 +52,7 @@ CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
     result->resultReceiver = resultReceiver;
     result->syncTaskWaiter = syncTaskWaiter;
     result->isBarrier = isBarrier ? 1 : 0;
-    
+    result->tag = tag;
     return result;
 }
 void CETaskDestroy(CETaskPtr _Nonnull task) {

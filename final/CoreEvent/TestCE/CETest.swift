@@ -84,7 +84,7 @@ public class P {
         self.t = t
     }
     deinit {
-        print("--- \(self.t)")
+        print("deinit \(self.t)")
     }
 }
 

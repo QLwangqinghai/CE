@@ -98,7 +98,6 @@ void CESerialQueueMainFunc(void * _Nullable param) {
 }
 
 CESource_s * _Nonnull CESerialSourceCreate(CEQueue_s * _Nonnull queue) {
-
     //source
     assert(queue);
     CESourceSerialContext_s * context = CEAllocateClear(sizeof(CESourceSerialContext_s));

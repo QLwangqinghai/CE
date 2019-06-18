@@ -9,6 +9,7 @@
 #include "CETask.h"
 #include "CEMemory.h"
 #include "CEThreadBaseInternal.h"
+#include "CEQueueLog.h"
 
 static _Atomic(uint_fast32_t) _CETaskTag;
 void _CETaskTagInitialize(void) {
@@ -53,6 +54,7 @@ CETaskPtr _Nonnull CETaskCreate(CEPtr _Nonnull obj,
     result->syncTaskWaiter = syncTaskWaiter;
     result->isBarrier = isBarrier ? 1 : 0;
     result->tag = tag;
+    CEQueueLog("ce.task.create(%x)", tag);
     return result;
 }
 void CETaskDestroy(CETaskPtr _Nonnull task) {
@@ -63,12 +65,7 @@ void CETaskDestroy(CETaskPtr _Nonnull task) {
     if (task->resultReceiver) {
         CERelease(task->resultReceiver);
     }
+    CEQueueLog("ce.task.destroy(%x)", task->tag);
     CEDeallocate(task);
 }
 
-void CETaskWaitFinish(CETaskPtr _Nonnull task) {
-    
-}
-void CETaskFinish(CETaskPtr _Nonnull task) {
-    
-}

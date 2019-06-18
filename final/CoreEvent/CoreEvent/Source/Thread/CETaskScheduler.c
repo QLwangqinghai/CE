@@ -9,6 +9,7 @@
 #include "CETaskScheduler.h"
 #include "CEMemory.h"
 #include "CEQueue.h"
+#include "CEQueueLog.h"
 
 /*
  struct _CETask {
@@ -28,13 +29,17 @@ void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr
     assert(scheduler);
     assert(task);
     scheduler->executingTaskTag = task->tag;
+    CEQueueLog("ce.task.execute.start(%x)", task->tag);
+    
     CEFunction_f execute = task->execute;
     assert(execute);
     execute(task->obj, task->param, task->resultReceiver);
     
     if (NULL != task->syncTaskWaiter) {
         CEThreadSyncWaiterSignal(task->syncTaskWaiter);
+        CEQueueLog("ce.task.execute.signal(%x)", task->tag);
     }
+    CEQueueLog("ce.task.execute.finish(%x)", task->tag);
     scheduler->executingTaskTag = 0;
 }
 
@@ -46,10 +51,13 @@ CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(uint16_t qid, uint16_t sid) {
     scheduler->waiter = CESemCreate(0);
     scheduler->qid = qid;
     scheduler->sid = sid;
+    CEQueueLog("ce.task.scheduler.create(qid:%x, sid:%x)", qid, sid);
     return scheduler;
 }
 
-void CETaskSchedulerDestroy(CETaskSchedulerPtr _Nonnull scheduler) {
-    CESemDestroy(scheduler->waiter);
-    CESpinLockDestroy(scheduler->lock);
-}
+//void CETaskSchedulerDestroy(CETaskSchedulerPtr _Nonnull scheduler) {
+//    CESemDestroy(scheduler->waiter);
+//    CESpinLockDestroy(scheduler->lock);
+//}
+
+

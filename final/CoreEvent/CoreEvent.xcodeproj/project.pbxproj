@@ -15,6 +15,7 @@
 		77D3FDB42180DE2300E01B5C /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; };
 		77D3FDB52180DE2300E01B5C /* CoreEvent.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 64BEEE12217F00AD00204CB0 /* CoreEvent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D603936822B62685009B5DC8 /* CETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D603936722B62685009B5DC8 /* CETest.swift */; };
+		D603936A22B92ED4009B5DC8 /* CEQueueLog.h in Headers */ = {isa = PBXBuildFile; fileRef = D603936922B92ED4009B5DC8 /* CEQueueLog.h */; };
 		D603ECA82276C8A5005F22BF /* CERunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D603ECA62276C8A5005F22BF /* CERunLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D603ECBC2276C8C4005F22BF /* CFRunLoop.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB12276C8C4005F22BF /* CFRunLoop.c */; };
 		D603ECBD2276C8C4005F22BF /* CFSocket.c in Sources */ = {isa = PBXBuildFile; fileRef = D603ECB22276C8C4005F22BF /* CFSocket.c */; };
@@ -205,6 +206,7 @@
 		64BEEE43217F011E00204CB0 /* Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demo.entitlements; sourceTree = "<group>"; };
 		D603936622B62685009B5DC8 /* TestCE-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestCE-Bridging-Header.h"; sourceTree = "<group>"; };
 		D603936722B62685009B5DC8 /* CETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CETest.swift; sourceTree = "<group>"; };
+		D603936922B92ED4009B5DC8 /* CEQueueLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEQueueLog.h; sourceTree = "<group>"; };
 		D603ECA42276C8A5005F22BF /* CERunLoop.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CERunLoop.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D603ECA62276C8A5005F22BF /* CERunLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CERunLoop.h; sourceTree = "<group>"; };
 		D603ECA72276C8A5005F22BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -784,6 +786,7 @@
 				D60B006222AE9DD000B1BEA8 /* CESerialQueue.c */,
 				D60B006922AFF01B00B1BEA8 /* CEMainQueue.h */,
 				D60B006A22AFF01B00B1BEA8 /* CEMainQueue.c */,
+				D603936922B92ED4009B5DC8 /* CEQueueLog.h */,
 			);
 			path = RunLoop;
 			sourceTree = "<group>";
@@ -829,6 +832,7 @@
 				D67248F4227CABFF00FC8B7A /* CESource.h in Headers */,
 				64BEEE17217F00AD00204CB0 /* CoreEvent.h in Headers */,
 				D60B006722AE9E0500B1BEA8 /* CEConcurrentQueue.h in Headers */,
+				D603936A22B92ED4009B5DC8 /* CEQueueLog.h in Headers */,
 				D647C851227DDE7F004AAA19 /* CETask.h in Headers */,
 				D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */,
 				D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */,

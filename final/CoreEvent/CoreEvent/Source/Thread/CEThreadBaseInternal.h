@@ -69,7 +69,7 @@ typedef struct _CETaskScheduler * CETaskSchedulerPtr;
 typedef struct _CETaskScheduler {
     CESpinLockPtr _Nonnull lock;
     CESemPtr _Nonnull waiter;
-    CEThread_s * _Nonnull thread;
+    _Atomic(uintptr_t) thread;
     CEQueue_s * _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值
     CESourceRef _Nonnull source;
     uint16_t qid;
@@ -77,6 +77,18 @@ typedef struct _CETaskScheduler {
     uint32_t executingTaskTag;
     
 } CETaskScheduler_s;
+
+static inline void CETaskSchedulerSetThread(CETaskScheduler_s * _Nonnull scheduler, CEThread_s * _Nullable thread) {
+    assert(scheduler);
+    uintptr_t t = (uintptr_t)thread;
+    atomic_init(&(scheduler->thread), t);
+}
+
+static inline CEThread_s * _Nullable CETaskSchedulerGetThread(CETaskScheduler_s * _Nonnull scheduler) {
+    assert(scheduler);
+    uintptr_t t = atomic_load(&(scheduler->thread));
+    return (CEThread_s *)t;
+}
 
 
 #pragma mark - CEThreadSpecific

@@ -71,11 +71,21 @@ final public class CESerialQueue : CEQueue {
 }
 
 final public class CEConcurrentQueue : CEQueue {
+    public let label: String
+    public let priority: CEQueuePriority
     
-//    CEQueue_s * _Nonnull CESerialQueueCreate(char * _Nullable label, CEQueuePriority_t priority);
-
-
+    private init(queue: CEQueueRef, label: String, concurrencyCount: UInt16, priority: CEQueuePriority = .default) {
+        self.label = label
+        self.priority = priority
+        super.init(queue)
+    }
     
+    public convenience init(label: String, concurrencyCount: UInt16, priority: CEQueuePriority = .default) {
+        let q = label.withCString { (l) -> CEQueueRef in
+            return CEConcurrentQueueCreate(l, priority.rawValue, 64)
+        }
+        self.init(queue: q, label: label, concurrencyCount:concurrencyCount, priority: priority)
+    }
 }
 
 public class P {
@@ -93,7 +103,8 @@ public class P {
 open class S : NSObject {
     
     public static let queue: CESerialQueue = CESerialQueue.init(label: "my0")
-    
+    public static let cQueue: CEConcurrentQueue = CEConcurrentQueue.init(label: "my2", concurrencyCount: 64)
+
     public class func t0() {
         let p1 = P("0")
         CESerialQueue.main.async(DispatchWorkItem(block: {
@@ -117,10 +128,18 @@ open class S : NSObject {
     }
     public class func t3() {
         let p = P("3")
-        
         S.queue.async(DispatchWorkItem(block: {
             print("3=\(p)")
         }))
+    }
+    public class func t4() {
+        for i in 100...3000 {
+            let p = P("\(i)")
+
+            S.cQueue.async(DispatchWorkItem(block: {
+                print("g\(i) is \(p)")
+            }))
+        }
     }
     
     @objc public class func main() {
@@ -129,7 +148,7 @@ open class S : NSObject {
         t1()
         t2()
         t3()
-
+        t4()
         
 
 

@@ -351,7 +351,7 @@ void __CEInitialize(void) {
         __CEThreadMainShared = specific->thread;
         
         CETaskSchedulerPtr taskScheduler = CETaskSchedulerCreate(1, 1);
-        taskScheduler->thread = __CEThreadMainShared;
+        CETaskSchedulerSetThread(taskScheduler, __CEThreadMainShared);
         specific->scheduler = taskScheduler;
         
         CEQueue_s * queue = CEQueueCreate("main", 1, CEQueuePriorityMain, CEQueueTypeSerial, 1);

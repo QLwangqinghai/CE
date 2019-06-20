@@ -75,7 +75,7 @@ void CESerialQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific) {
     assert(scheduler);
     CESemWait(scheduler->waiter);
     assert(scheduler->ownerQueue);
-    scheduler->thread = specific->thread;
+    CETaskSchedulerSetThread(scheduler, specific->thread);
     specific->owner = scheduler->ownerQueue;
     specific->syncWaiter->queue = scheduler->ownerQueue;
 }

@@ -50,6 +50,7 @@ void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr,
 
 
 CEQueueRef _Nonnull CESerialQueueCreate(const char * _Nullable label, CEQueuePriority_t priority);
+CEQueueRef _Nonnull CEConcurrentQueueCreate(const char * _Nullable label, CEQueuePriority_t priority, uint16_t concurrencyCount);
 
 CEQueueRef _Nonnull CEQueueSharedMainQueue(void);
 void CEQueueMain(void);

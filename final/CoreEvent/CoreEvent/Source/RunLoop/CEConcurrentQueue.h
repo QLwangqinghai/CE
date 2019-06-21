@@ -17,12 +17,13 @@ typedef struct _CESourceConcurrentContext {
     CETaskSchedulerPtr _Nonnull schedulers[256];
     CETaskSchedulerPtr _Nonnull schedulersBuffer[256];
     
-    uint32_t privateSchedulerCount: 16;
     uint32_t maxConcurrencyCount: 16;
-    uint32_t currentConcurrencyCount: 16;
     uint32_t bufferCount: 16;
-    uint32_t executingCount: 15;
+    uint32_t executingCount: 16;
     uint32_t isBarrier: 1;
+    uint32_t xxx: 15;
+    uint32_t barrierTaskTag;
 } CESourceConcurrentContext_s;
+
 
 #endif /* CEConcurrentQueue_h */

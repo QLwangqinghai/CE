@@ -28,8 +28,9 @@
 void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr _Nonnull task) {
     assert(scheduler);
     assert(task);
+    
     scheduler->executingTaskTag = task->tag;
-    CEQueueLog("ce.task.execute.start(%x)", task->tag);
+    CEQueueLog("ce.task.execute.start(qid:%x, sid:%x, tag:%x)", scheduler->qid, scheduler->sid, task->tag);
     
     CEFunction_f execute = task->execute;
     assert(execute);
@@ -37,9 +38,9 @@ void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr
     
     if (NULL != task->syncTaskWaiter) {
         CEThreadSyncWaiterSignal(task->syncTaskWaiter);
-        CEQueueLog("ce.task.execute.signal(%x)", task->tag);
+        CEQueueLog("ce.task.execute.signal(qid:%x, sid:%x, tag:%x)", scheduler->qid, scheduler->sid, task->tag);
     }
-    CEQueueLog("ce.task.execute.finish(%x)", task->tag);
+    CEQueueLog("ce.task.execute.finish(qid:%x, sid:%x, tag:%x)", scheduler->qid, scheduler->sid, task->tag);
     scheduler->executingTaskTag = 0;
 }
 

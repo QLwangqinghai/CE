@@ -12,7 +12,7 @@
 
 #include <CoreEvent/CELog.h>
 
-#define CEQueueLogAble 1
+#define CEQueueLogAble 0
 
 #if CEQueueLogAble
 

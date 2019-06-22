@@ -12,43 +12,49 @@
 #include "CEQueueInternal.h"
 #include "CEQueueLog.h"
 
+static inline void CEConcurrentSourceTaskStoreAppend(CESourceConcurrentContext_s * _Nonnull context, CETaskPtr _Nonnull task) {
+    CESourceTaskStoreAppend(&(context->tasks), task);
+    CESourceCount_t count = context->tasks.count;
+    if (count == 1) {//列表数据从空到有
+        if (0 == context->isBarrier) {//当前不在屏障状态下
+            context->isBarrier = task->isBarrier;
+            if (0 != task->isBarrier) {
+                context->barrierTaskTag = task->tag;
+            } else {
+                context->barrierTaskTag = 0;
+            }
+        }
+    }
+}
 
+static inline CETaskPtr _Nonnull CEConcurrentSourceTaskStoreRemove(CESourceConcurrentContext_s * _Nonnull context) {
+    CETaskPtr result = CESourceTaskStoreRemove(&(context->tasks));
+    assert(result);
+    
+    if (9 == result->tag) {
+        
+    }
+    
+    if (0 != result->isBarrier) {
+        context->isBarrier = 1;
+        context->barrierTaskTag = result->tag;
+    } else {
+        _Bool beNoBarrier = true;
+        if (NULL != context->tasks.head) {
+            if (1 == context->tasks.head->isBarrier) {
+                beNoBarrier = false;
+                context->isBarrier = 1;
+                context->barrierTaskTag = context->tasks.head->tag;
+            }
+        }
+        if (!beNoBarrier) {
+            context->isBarrier = 0;
+            context->barrierTaskTag = 0;
+        }
+    }
 
-//typedef struct _CESourceConcurrentContext {
-//    CESourceListStore_s tasks;
-//
-//    CETaskSchedulerPtr _Nonnull schedulers[256];
-//    CETaskSchedulerPtr _Nonnull schedulersBuffer[256];
-//
-//    uint32_t maxConcurrencyCount: 16;
-//    uint32_t bufferCount: 16;
-//    uint32_t executingCount: 16;
-//    uint32_t running: 1;
-//    uint32_t isBarrier: 1;
-//    uint32_t xxx: 14;
-//    uint32_t barrierTaskTag;
-//} CESourceConcurrentContext_s;
-
-
-
-////running == 0 时调用
-//static inline void _CESourceConcurrentContextRunning(CESourceConcurrentContext_s * _Nonnull context, CETaskPtr _Nonnull task) {
-//    assert(0 == context->isBarrier);
-//    assert(context->bufferCount + 1 == context->maxConcurrencyCount);
-//
-//    context->isBarrier = task->isBarrier;
-//    context->barrierTaskTag = task->tag;
-//}
-//
-////running == 1 && context->bufferCount == context->maxConcurrencyCount 时调用
-//static inline void _CESourceConcurrentContextStop(CESourceConcurrentContext_s * _Nonnull context) {
-//    assert(1 == context->running);
-//    assert(context->bufferCount == context->maxConcurrencyCount);
-//
-//    context->running = 0;
-//    context->isBarrier = 0;
-//    context->barrierTaskTag = 0;
-//}
+    return result;
+}
 
 void CEConcurrentQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific);
 
@@ -91,45 +97,18 @@ void CEConcurrentSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull ta
     
     //添加任务最多只能唤醒一个线程
     CETaskSchedulerPtr scheduler = NULL;
-    CESourceCount_t count = 0;
     CESpinLockLock(source->lock);
-    CESourceTaskStoreAppend(&(context->tasks), task);
-    count = context->tasks.count;
     
-    if (count == 1) {//列表数据从空到有
-        if (0 == context->isBarrier) {//当前不在屏障状态下
-            uint32_t headTaskIsBarrier = context->tasks.head->isBarrier;
-            if (1 == headTaskIsBarrier) { //开始屏障
-                context->isBarrier = 1;
-                
-                if (context->bufferCount == context->maxConcurrencyCount) {//没有正在执行中的任务， 唤醒线程以执行屏障任务
-                    scheduler = _CEConcurrentSourcePopScheduler(source, context);
-                }
-            } else {
-                if (context->bufferCount != 0) {
-                    //链表中存储的task+正在执行的 task个数
-                    CESourceCount_t totalCount = count + context->executingCount;
-                    if (context->maxConcurrencyCount - context->bufferCount < totalCount) {//当前并发数小于task总个数
-                        //do weak up a taskScheduler
-                        scheduler = _CEConcurrentSourcePopScheduler(source, context);
-                    }
-                }
-            }
+    CEConcurrentSourceTaskStoreAppend(context, task);
+    if (context->isBarrier) {
+        if (context->bufferCount >= context->maxConcurrencyCount) {
+            scheduler = _CEConcurrentSourcePopScheduler(source, context);
         }
-        //else 当前在屏障状态下 不再唤醒新线程
-    } else {//列表数据增加
-        if (0 == context->isBarrier) {//当前不在屏障状态下
-            if (context->bufferCount != 0) {
-                //链表中存储的task+正在执行的 task个数
-                CESourceCount_t totalCount = count + context->executingCount;
-                if (context->maxConcurrencyCount - context->bufferCount < totalCount) {//当前并发数小于task总个数
-                    //do weak up a taskScheduler
-                    scheduler = _CEConcurrentSourcePopScheduler(source, context);
-                }
-            }
+    } else {
+        if (context->bufferCount > 0) {
+            scheduler = _CEConcurrentSourcePopScheduler(source, context);
         }
     }
-    
     CESpinLockUnlock(source->lock);
     
     if (NULL != scheduler) {
@@ -150,28 +129,21 @@ static inline CETaskPtr _Nonnull CEConcurrentSourceFinishBarrierTaskAndRemove(CE
     
     //移除任务会改变 isBarrier
     CESpinLockLock(source->lock);
-    assert(context->executingCount == 1);
     assert(context->isBarrier == 1);
     assert(context->barrierTaskTag == barrierTaskTag);
     
     if (0 == context->tasks.count) {
         _CEConcurrentSourcePushScheduler(source, context, scheduler);
-        context->executingCount -= 1;
         context->isBarrier = 0;
+        context->barrierTaskTag = 0;
         CESpinLockUnlock(source->lock);
         CESemWait(scheduler->waiter);
     } else {
         _Bool keepBarrier = false;
-        result = CESourceTaskStoreRemove(&(context->tasks));
+        result = CEConcurrentSourceTaskStoreRemove(context);
         assert(result);
-        if (1 == result->isBarrier) {
+        if (1 == context->isBarrier) {
             keepBarrier = true;
-        } else {
-            if (NULL != context->tasks.head) {
-                if (1 == context->tasks.head->isBarrier) {
-                    keepBarrier = true;
-                }
-            }
         }
         if (!keepBarrier) {
             weakUpCount = context->bufferCount;
@@ -213,43 +185,20 @@ static inline CETaskPtr _Nonnull CEConcurrentSourceFinishNormalTaskAndRemove(CES
     
     if (0 == context->tasks.count) {
         _CEConcurrentSourcePushScheduler(source, context, scheduler);
-        context->executingCount -= 1;
         CESpinLockUnlock(source->lock);
         CESemWait(scheduler->waiter);
     } else {
         if (0 == context->isBarrier) {//当前不在屏障状态下
-            result = CESourceTaskStoreRemove(&(context->tasks));
-            
-            assert(0 == result->isBarrier);
-            if (NULL != context->tasks.head) {
-                if (1 == context->tasks.head->isBarrier) {
-                    context->isBarrier = 1;
-                }
-            }
+            result = CEConcurrentSourceTaskStoreRemove(context);
             CESpinLockUnlock(source->lock);
             return result;
         } else {//当前在屏障状态下
             if (context->bufferCount + 1 == context->maxConcurrencyCount) {
-                result = CESourceTaskStoreRemove(&(context->tasks));
-                
-                if (0 != result->isBarrier) {
-                    context->isBarrier = 1;
-                } else {
-                    if (NULL != context->tasks.head) {
-                        if (1 == context->tasks.head->isBarrier) {
-                            context->isBarrier = 1;
-                        } else {
-                            context->isBarrier = 0;
-                        }
-                    } else {
-                        context->isBarrier = 0;
-                    }
-                }
+                result = CEConcurrentSourceTaskStoreRemove(context);
                 CESpinLockUnlock(source->lock);
                 return result;
             } else {
                 _CEConcurrentSourcePushScheduler(source, context, scheduler);
-                context->executingCount -= 1;
                 CESpinLockUnlock(source->lock);
                 CESemWait(scheduler->waiter);
             }
@@ -268,174 +217,6 @@ CETaskPtr _Nonnull CEConcurrentSourceFinishOneTaskAndRemove(CESourceRef _Nonnull
     }
 }
 
-
-//CETaskPtr _Nonnull CEConcurrentSourceFinishOneTaskAndRemove(CESourceRef _Nonnull source, CETaskSchedulerPtr _Nonnull scheduler, uint32_t isBarrierTask) {
-//    if (0 != isBarrierTask) {
-//        isBarrierTask = 1;
-//    }
-//
-//    CETaskSchedulerPtr _Nonnull schedulersBuffer[256] = {};
-//    uint32_t weakUpCount = 0;
-//
-//    int action = 0;
-//    CETaskPtr result = NULL;
-//    CESourceConcurrentContext_s * context = source->context;
-//
-//    //移除任务会改变 isBarrier
-//    CESpinLockLock(source->lock);
-//
-//    uint32_t step = 0;
-//
-//    CEBarrierChange_e barrierChange = 0;
-//
-//    if (isBarrierTask) {//屏障task 执行完成
-//        assert(context->isBarrier);
-//        result = CESourceTaskStoreRemove(&(context->tasks));
-//
-//        if (NULL == result) {
-//            barrierChange = CEBarrierChangeLeave;
-//
-//
-//            context->isBarrier = 0;
-//            context->executingCount -= 1;
-//
-//            //挂起
-//            action = -1;
-//
-//        } else {
-//
-//
-//        }
-//
-//    }
-//    //进入屏障、持续屏障、取消屏障
-//
-//    if (isBarrierTask) {//屏障task 执行完成
-//        assert(context->isBarrier);
-//        result = CESourceTaskStoreRemove(&(context->tasks));
-//        if (NULL == result) {
-//            context->isBarrier = 0;
-//            context->executingCount -= 1;
-//
-//            //挂起
-//            action = -1;
-//
-//        } else {
-//            uint32_t headTaskIsBarrier = context->tasks.head->isBarrier;
-//            if (0 == headTaskIsBarrier) { //解除屏障
-//                context->isBarrier = 0;
-//
-//                //唤醒更多线程
-//                action = 1;
-//
-//                uint32_t loopCount = context->maxConcurrencyCount - context->executingCount;
-//                if (loopCount > context->tasks.count) {
-//                    loopCount = (uint32_t)(context->tasks.count);
-//                }
-//
-//                CETaskPtr tmp = context->tasks.head;
-//                weakUpCount = loopCount;
-//
-//                for (uint32_t index=0; index<loopCount; index++) {
-//                    assert(tmp);
-//                    if (0 != tmp->isBarrier) {
-//                        weakUpCount = index;
-//                        break;
-//                    }
-//                    tmp = tmp->next;
-//                }
-//
-//                assert(weakUpCount <= context->bufferCount);
-//
-//                memcpy(schedulersBuffer, &(context->schedulersBuffer[context->bufferCount - weakUpCount]), sizeof(CETaskSchedulerPtr) * weakUpCount);
-//
-//                context->bufferCount -= weakUpCount;
-//            }
-//        }
-//    } else {
-//        //非屏障task 执行完成
-//        if (0 == context->isBarrier) {//当前不在屏障状态下
-//            result = CESourceTaskStoreRemove(&(context->tasks));
-//            if (NULL == result) {
-//                context->executingCount -= 1;
-//
-//                //挂起
-//                action = -1;
-//            } else {
-//                uint32_t headTaskIsBarrier = result->isBarrier;
-//                if (0 != headTaskIsBarrier) { //开始屏障
-//                    context->isBarrier = 1;
-//                }
-//            }
-//        } else {
-//            context->executingCount -= 1;
-//
-//            //挂起
-//
-//            action = -1;
-//        }
-//    }
-//
-//    if (action < 0) {
-//        context->currentConcurrencyCount -= 1;
-//        context->schedulersBuffer[context->bufferCount] = scheduler;
-//        context->bufferCount += 1;
-//    }
-//
-//    CESpinLockUnlock(source->lock);
-//
-//
-//    if (NULL != result) {
-//        if (action > 1) {
-//            for (uint32_t index=0; index<weakUpCount; index++) {
-//                CETaskSchedulerPtr s = schedulersBuffer[index];
-//                assert(s);
-//                CESemSignal(s->waiter);
-//            }
-//        }
-//        return result;
-//    } else {
-//        if (action < 0) {
-//            CESemWait(scheduler->waiter);
-//        }
-//        while (NULL == result) {
-//            CESpinLockLock(source->lock);
-//            _Bool wait = false;
-//            if (0 == context->isBarrier) {//当前不在屏障状态下
-//                result = CESourceTaskStoreRemove(&(context->tasks));
-//                if (NULL == result) {
-//                    context->executingCount -= 1;
-//
-//                    //挂起
-//                    wait = true;
-//                } else {
-//                    uint32_t headTaskIsBarrier = context->tasks.head->isBarrier;
-//                    if (0 != headTaskIsBarrier) { //开始屏障
-//                        context->isBarrier = 1;
-//                    }
-//                }
-//            } else {
-//                context->executingCount -= 1;
-//
-//                //挂起
-//                wait = true;
-//            }
-//            if (wait) {
-//                context->currentConcurrencyCount -= 1;
-//                context->schedulersBuffer[context->bufferCount] = scheduler;
-//                context->bufferCount += 1;
-//            }
-//            CESpinLockUnlock(source->lock);
-//            if (wait) {
-//                CESemWait(scheduler->waiter);
-//            }
-//        }
-//        return result;
-//    }
-//}
-
-
-
 CETaskPtr _Nonnull CEConcurrentSourceRemove(CESourceRef _Nonnull source, CETaskSchedulerPtr _Nonnull scheduler) {
     assert(source);
     assert(scheduler);
@@ -448,49 +229,24 @@ CETaskPtr _Nonnull CEConcurrentSourceRemove(CESourceRef _Nonnull source, CETaskS
         
         if (context->tasks.count >= 1) {
             if (0 == context->isBarrier) {//当前不在屏障状态下
-                result = CESourceTaskStoreRemove(&(context->tasks));
-                
-                assert(0 == result->isBarrier);
-                if (NULL != context->tasks.head) {
-                    if (1 == context->tasks.head->isBarrier) {
-                        context->isBarrier = 1;
-                    }
-                }
-                context->executingCount += 1;
+                result = CEConcurrentSourceTaskStoreRemove(context);
                 CESpinLockUnlock(source->lock);
                 return result;
             } else {//当前在屏障状态下
                 if (context->bufferCount + 1 == context->maxConcurrencyCount) {
                     //当前是屏障线程
-                    result = CESourceTaskStoreRemove(&(context->tasks));
-                    
-                    if (0 != result->isBarrier) {
-                        context->isBarrier = 1;
-                    } else {
-                        if (NULL != context->tasks.head) {
-                            if (1 == context->tasks.head->isBarrier) {
-                                context->isBarrier = 1;
-                            } else {
-                                context->isBarrier = 0;
-                            }
-                        } else {
-                            context->isBarrier = 0;
-                        }
-                    }
-                    context->executingCount += 1;
+                    result = CEConcurrentSourceTaskStoreRemove(context);
                     CESpinLockUnlock(source->lock);
                     
                     return result;
                 } else {
                     _CEConcurrentSourcePushScheduler(source, context, scheduler);
-                    context->executingCount -= 1;
                     CESpinLockUnlock(source->lock);
                     CESemWait(scheduler->waiter);
                 }
             }
         } else {
             _CEConcurrentSourcePushScheduler(source, context, scheduler);
-            context->executingCount -= 1;
             CESpinLockUnlock(source->lock);
             CESemWait(scheduler->waiter);
         }
@@ -527,7 +283,14 @@ void CEConcurrentQueueMainFunc(void * _Nullable param) {
         if (task->finish) {
             task->finish(task->obj);
         }
+        
+        CESourceConcurrentContext_s * context = scheduler->source->context;
+        
         uint32_t isBarrier = task->isBarrier;
+        if (0 != isBarrier) {
+            
+            
+        }
         uint32_t barrierTaskTag = task->tag;
         CETaskDestroy(task);
         
@@ -558,7 +321,6 @@ CESource_s * _Nonnull CEConcurrentSourceCreate(CEQueue_s * _Nonnull queue) {
     context->maxConcurrencyCount = concurrencyCount;
     context->bufferCount = concurrencyCount;
     context->isBarrier = 0;
-    context->executingCount = 0;
     context->xxx = 0;
     context->barrierTaskTag = 0;
     return source;

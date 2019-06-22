@@ -19,9 +19,8 @@ typedef struct _CESourceConcurrentContext {
     
     uint32_t maxConcurrencyCount: 16;
     uint32_t bufferCount: 16;
-    uint32_t executingCount: 16;
     uint32_t isBarrier: 1;
-    uint32_t xxx: 15;
+    uint32_t xxx: 31;
     uint32_t barrierTaskTag;
 } CESourceConcurrentContext_s;
 

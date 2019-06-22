@@ -83,7 +83,7 @@ final public class CEConcurrentQueue : CEQueue {
     
     public convenience init(label: String, concurrencyCount: UInt16, priority: CEQueuePriority = .default) {
         let q = label.withCString { (l) -> CEQueueRef in
-            return CEConcurrentQueueCreate(l, priority.rawValue, 64)
+            return CEConcurrentQueueCreate(l, priority.rawValue, concurrencyCount)
         }
         self.init(queue: q, label: label, concurrencyCount:concurrencyCount, priority: priority)
     }
@@ -101,17 +101,14 @@ public class P {
     init(_ t: String) {
         self.t = t
     }
-    deinit {
-        print("deinit \(self.t)")
-    }
 }
 
 
 
 open class S : NSObject {
     
-    public static let queue: CESerialQueue = CESerialQueue.init(label: "my0")
-    public static let cQueue: CEConcurrentQueue = CEConcurrentQueue.init(label: "my2", concurrencyCount: 64)
+//    public static let queue: CESerialQueue = CESerialQueue.init(label: "my0")
+    public static let cQueue: CEConcurrentQueue = CEConcurrentQueue.init(label: "my2", concurrencyCount: 2)
 
     public class func t0() {
         let p1 = P("0")
@@ -128,33 +125,31 @@ open class S : NSObject {
     }
     
     
-    public class func t2() {
-        let p = P("2")
-        S.queue.async(DispatchWorkItem(block: {
-            print("2=\(p)")
-        }))
-    }
-    public class func t3() {
-        let p = P("3")
-        S.queue.async(DispatchWorkItem(block: {
-            print("3=\(p)")
-        }))
-    }
+//    public class func t2() {
+//        let p = P("2")
+//        S.queue.async(DispatchWorkItem(block: {
+//            print("2=\(p)")
+//        }))
+//    }
+//    public class func t3() {
+//        let p = P("3")
+//        S.queue.async(DispatchWorkItem(block: {
+//            print("3=\(p)")
+//        }))
+//    }
     public class func t4() {
         for i in 1...640 {
             let p = P("\(i)")
-
-
             
-            if i % 128 == 0 {
+            if i % 8 == 0 {
                 S.cQueue.barrierAsync(DispatchWorkItem(block: {
-                    sleep(1)
-                    print("item finish: \(p)")
+                    sleep(5)
+                    print("item finish: \(p.t)")
                 }))
             } else {
                 S.cQueue.async(DispatchWorkItem(block: {
                     sleep(1)
-                    print("item finish: \(p)")
+                    print("item finish: \(p.t)")
                 }))
             }
         }

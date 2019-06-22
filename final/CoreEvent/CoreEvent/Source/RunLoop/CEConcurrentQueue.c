@@ -14,45 +14,17 @@
 
 static inline void CEConcurrentSourceTaskStoreAppend(CESourceConcurrentContext_s * _Nonnull context, CETaskPtr _Nonnull task) {
     CESourceTaskStoreAppend(&(context->tasks), task);
-    CESourceCount_t count = context->tasks.count;
-    if (count == 1) {//列表数据从空到有
-        if (0 == context->isBarrier) {//当前不在屏障状态下
-            context->isBarrier = task->isBarrier;
-            if (0 != task->isBarrier) {
-                context->barrierTaskTag = task->tag;
-            } else {
-                context->barrierTaskTag = 0;
-            }
-        }
-    }
+    context->headIsBarrier = task->isBarrier;
 }
 
 static inline CETaskPtr _Nonnull CEConcurrentSourceTaskStoreRemove(CESourceConcurrentContext_s * _Nonnull context) {
     CETaskPtr result = CESourceTaskStoreRemove(&(context->tasks));
     assert(result);
-    
-    if (9 == result->tag) {
-        
-    }
-    
-    if (0 != result->isBarrier) {
-        context->isBarrier = 1;
-        context->barrierTaskTag = result->tag;
+    if (NULL != context->tasks.head) {
+        context->headIsBarrier = context->tasks.head->isBarrier;
     } else {
-        _Bool beNoBarrier = true;
-        if (NULL != context->tasks.head) {
-            if (1 == context->tasks.head->isBarrier) {
-                beNoBarrier = false;
-                context->isBarrier = 1;
-                context->barrierTaskTag = context->tasks.head->tag;
-            }
-        }
-        if (!beNoBarrier) {
-            context->isBarrier = 0;
-            context->barrierTaskTag = 0;
-        }
+        context->headIsBarrier = 0;
     }
-
     return result;
 }
 

@@ -19,10 +19,17 @@ typedef struct _CESourceConcurrentContext {
     
     uint32_t maxConcurrencyCount: 16;
     uint32_t bufferCount: 16;
-    uint32_t isBarrier: 1;
-    uint32_t xxx: 31;
+    uint32_t executingBarrier: 1;
+    uint32_t headIsBarrier: 1;
+
+    uint32_t xxx: 30;
     uint32_t barrierTaskTag;
 } CESourceConcurrentContext_s;
+
+static inline _Bool CESourceConcurrentContextIsBarrier(CESourceConcurrentContext_s * _Nonnull context) {
+    return (0 == context->executingBarrier) && (0 == context->headIsBarrier);
+}
+
 
 
 #endif /* CEConcurrentQueue_h */

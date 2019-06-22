@@ -12,21 +12,36 @@
 #include "CEQueueInternal.h"
 #include "CEQueueLog.h"
 
-static inline void CEConcurrentSourceTaskStoreAppend(CESourceConcurrentContext_s * _Nonnull context, CETaskPtr _Nonnull task) {
+static inline void _CEConcurrentSourceTaskStoreAppend(CESourceConcurrentContext_s * _Nonnull context, CETaskPtr _Nonnull task) {
     CESourceTaskStoreAppend(&(context->tasks), task);
     context->headIsBarrier = task->isBarrier;
 }
 
-static inline CETaskPtr _Nonnull CEConcurrentSourceTaskStoreRemove(CESourceConcurrentContext_s * _Nonnull context) {
+static inline CETaskPtr _Nonnull __CEConcurrentSourceTaskStoreRemove(CESourceConcurrentContext_s * _Nonnull context) {
     CETaskPtr result = CESourceTaskStoreRemove(&(context->tasks));
     assert(result);
+    assert(0 == context->executingBarrier);
     if (NULL != context->tasks.head) {
         context->headIsBarrier = context->tasks.head->isBarrier;
     } else {
         context->headIsBarrier = 0;
     }
+    
+    context->executingBarrier = result->isBarrier;
+    if (result->isBarrier) {
+        context->barrierTaskTag = result->tag;
+    }
     return result;
 }
+
+static inline void __CEConcurrentSourceTaskStoreFinishBarrierTask(CESourceConcurrentContext_s * _Nonnull context, uint32_t tag) {
+    assert(0 != context->executingBarrier);
+    assert(tag == context->barrierTaskTag);
+    context->executingBarrier = 0;
+    context->barrierTaskTag = 0;
+}
+
+
 
 void CEConcurrentQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific);
 
@@ -71,11 +86,16 @@ void CEConcurrentSourceAppend(CESourceRef _Nonnull source, CETaskPtr _Nonnull ta
     CETaskSchedulerPtr scheduler = NULL;
     CESpinLockLock(source->lock);
     
-    CEConcurrentSourceTaskStoreAppend(context, task);
-    if (context->isBarrier) {
+    _CEConcurrentSourceTaskStoreAppend(context, task);
+    
+    if (CESourceConcurrentContextIsBarrier(context)) {
         if (context->bufferCount >= context->maxConcurrencyCount) {
             scheduler = _CEConcurrentSourcePopScheduler(source, context);
         }
+    } else {
+        
+    }
+    if (context->isBarrier) {
     } else {
         if (context->bufferCount > 0) {
             scheduler = _CEConcurrentSourcePopScheduler(source, context);
@@ -112,7 +132,7 @@ static inline CETaskPtr _Nonnull CEConcurrentSourceFinishBarrierTaskAndRemove(CE
         CESemWait(scheduler->waiter);
     } else {
         _Bool keepBarrier = false;
-        result = CEConcurrentSourceTaskStoreRemove(context);
+        result = __CEConcurrentSourceTaskStoreRemove(context);
         assert(result);
         if (1 == context->isBarrier) {
             keepBarrier = true;
@@ -161,12 +181,12 @@ static inline CETaskPtr _Nonnull CEConcurrentSourceFinishNormalTaskAndRemove(CES
         CESemWait(scheduler->waiter);
     } else {
         if (0 == context->isBarrier) {//当前不在屏障状态下
-            result = CEConcurrentSourceTaskStoreRemove(context);
+            result = __CEConcurrentSourceTaskStoreRemove(context);
             CESpinLockUnlock(source->lock);
             return result;
         } else {//当前在屏障状态下
             if (context->bufferCount + 1 == context->maxConcurrencyCount) {
-                result = CEConcurrentSourceTaskStoreRemove(context);
+                result = __CEConcurrentSourceTaskStoreRemove(context);
                 CESpinLockUnlock(source->lock);
                 return result;
             } else {
@@ -201,13 +221,13 @@ CETaskPtr _Nonnull CEConcurrentSourceRemove(CESourceRef _Nonnull source, CETaskS
         
         if (context->tasks.count >= 1) {
             if (0 == context->isBarrier) {//当前不在屏障状态下
-                result = CEConcurrentSourceTaskStoreRemove(context);
+                result = __CEConcurrentSourceTaskStoreRemove(context);
                 CESpinLockUnlock(source->lock);
                 return result;
             } else {//当前在屏障状态下
                 if (context->bufferCount + 1 == context->maxConcurrencyCount) {
                     //当前是屏障线程
-                    result = CEConcurrentSourceTaskStoreRemove(context);
+                    result = __CEConcurrentSourceTaskStoreRemove(context);
                     CESpinLockUnlock(source->lock);
                     
                     return result;

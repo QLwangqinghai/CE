@@ -72,11 +72,14 @@ typedef struct _CETaskScheduler {
     _Atomic(uintptr_t) thread;
     CEQueue_s * _Nullable ownerQueue;//当前queue， 如果是个串行队列的线程，ownerQueue 一直有值
     CESourceRef _Nonnull source;
+    _Atomic(uintptr_t) _t;
     uint16_t qid;
     uint16_t sid;
     uint32_t executingTaskTag;
     
 } CETaskScheduler_s;
+
+
 
 static inline void CETaskSchedulerSetThread(CETaskScheduler_s * _Nonnull scheduler, CEThread_s * _Nullable thread) {
     assert(scheduler);

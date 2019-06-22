@@ -29,6 +29,27 @@
 
  */
 
+
+
+static inline void CETaskSchedulerStoreTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr _Nonnull task) {
+    uintptr_t t = atomic_load(&(scheduler->_t));
+    assert((uintptr_t)NULL == t);
+    uintptr_t newValue = (uintptr_t)task;
+    assert(atomic_compare_exchange_strong(&(scheduler->_t), &t, newValue));
+}
+
+static inline CETaskPtr _Nonnull CETaskSchedulerRemoveTask(CETaskSchedulerPtr _Nonnull scheduler) {
+    uintptr_t t = atomic_load(&(scheduler->_t));
+    uintptr_t newValue = (uintptr_t)NULL;
+    assert(newValue != t);
+    assert(atomic_compare_exchange_strong(&(scheduler->_t), &t, newValue));
+    return (CETaskPtr)t;
+}
+
+
+
+
+
 void CETaskSchedulerExecuteTask(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr _Nonnull task);
 
 CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(uint16_t qid, uint16_t sid);

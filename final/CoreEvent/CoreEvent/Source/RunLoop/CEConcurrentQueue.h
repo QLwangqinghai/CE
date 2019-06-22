@@ -27,7 +27,7 @@ typedef struct _CESourceConcurrentContext {
 } CESourceConcurrentContext_s;
 
 static inline _Bool CESourceConcurrentContextIsBarrier(CESourceConcurrentContext_s * _Nonnull context) {
-    return (0 == context->executingBarrier) && (0 == context->headIsBarrier);
+    return (0 != context->executingBarrier) || (0 != context->headIsBarrier);
 }
 
 

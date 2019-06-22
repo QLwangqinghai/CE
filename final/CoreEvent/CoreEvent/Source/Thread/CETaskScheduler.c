@@ -52,8 +52,10 @@ CETaskSchedulerPtr _Nonnull CETaskSchedulerCreate(uint16_t qid, uint16_t sid) {
     scheduler->waiter = CESemCreate(0);
     scheduler->qid = qid;
     scheduler->sid = sid;
-    uintptr_t t = 0;
-    atomic_init(&(scheduler->thread), t);
+    uintptr_t thread = 0;
+    atomic_init(&(scheduler->thread), thread);
+    uintptr_t _t = 0;
+    atomic_init(&(scheduler->_t), _t);
     CEQueueLog("ce.task.scheduler.create(qid:%x, sid:%x)", qid, sid);
     return scheduler;
 }

@@ -108,7 +108,7 @@ public class P {
 open class S : NSObject {
     
 //    public static let queue: CESerialQueue = CESerialQueue.init(label: "my0")
-    public static let cQueue: CEConcurrentQueue = CEConcurrentQueue.init(label: "my2", concurrencyCount: 2)
+    public static let cQueue: CEConcurrentQueue = CEConcurrentQueue.init(label: "my2", concurrencyCount: 4)
 
     public class func t0() {
         let p1 = P("0")
@@ -143,11 +143,13 @@ open class S : NSObject {
             
             if i % 8 == 0 {
                 S.cQueue.barrierAsync(DispatchWorkItem(block: {
+                    print("barrierAsync begin: \(p.t)")
                     sleep(5)
                     print("item finish: \(p.t)")
                 }))
             } else {
                 S.cQueue.async(DispatchWorkItem(block: {
+
                     sleep(1)
                     print("item finish: \(p.t)")
                 }))

@@ -13,6 +13,13 @@
 #include <sys/sysctl.h>
 #include <fcntl.h>
 
+
+
+const CEFileEventMask_es CEFileEventMaskNone = 0;
+const CEFileEventMask_es CEFileEventMaskRead = 1;
+const CEFileEventMask_es CEFileEventMaskWrite = 2;
+const CEFileEventMask_es CEFileEventMaskAll = 3;
+
 struct _CERunLoop;
 typedef struct _CERunLoop CERunLoop_s;
 

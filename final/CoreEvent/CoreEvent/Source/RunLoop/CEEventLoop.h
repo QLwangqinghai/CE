@@ -12,7 +12,7 @@
 #include <CoreEvent/CEThreadBase.h>
 
 
-typedef uint64_t CEEventIdentfier_t;
+typedef uint64_t CEIdentfier_t;
 
 
 typedef uint32_t CEFileEventMask_es;
@@ -21,6 +21,7 @@ extern const CEFileEventMask_es CEFileEventMaskNone;
 extern const CEFileEventMask_es CEFileEventMaskRead;
 extern const CEFileEventMask_es CEFileEventMaskWrite;
 extern const CEFileEventMask_es CEFileEventMaskAll;
+
 
 
 /* File event structure */

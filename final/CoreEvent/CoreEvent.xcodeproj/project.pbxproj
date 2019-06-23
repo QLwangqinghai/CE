@@ -120,6 +120,8 @@
 		D688137C22A5383400436E1E /* CECondition.h in Headers */ = {isa = PBXBuildFile; fileRef = D688137A22A5383400436E1E /* CECondition.h */; };
 		D688137D22A5383400436E1E /* CECondition.c in Sources */ = {isa = PBXBuildFile; fileRef = D688137B22A5383400436E1E /* CECondition.c */; };
 		D6A24A1F2268CEB000C8E4B8 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24A1E2268CEB000C8E4B8 /* Test.swift */; };
+		D6E4FAE822BF49590071748E /* CEEventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D6E4FAE622BF49590071748E /* CEEventLoop.h */; };
+		D6E4FAE922BF49590071748E /* CEEventLoop.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FAE722BF49590071748E /* CEEventLoop.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -365,6 +367,8 @@
 		D688137B22A5383400436E1E /* CECondition.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CECondition.c; sourceTree = "<group>"; };
 		D6A24A1D2268CEB000C8E4B8 /* Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6A24A1E2268CEB000C8E4B8 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		D6E4FAE622BF49590071748E /* CEEventLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEEventLoop.h; sourceTree = "<group>"; };
+		D6E4FAE722BF49590071748E /* CEEventLoop.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEEventLoop.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -697,9 +701,12 @@
 		D644AB1A227C7B5C00F6B333 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				D644AB2E227C7B5C00F6B333 /* CEBaseType.h */,
 				D644AB1B227C7B5C00F6B333 /* CEBaseApi.c */,
+				D644AB2A227C7B5C00F6B333 /* CERunLoopSource.h */,
 				D644AB1C227C7B5C00F6B333 /* CERunLoopSource.c */,
 				D644AB1D227C7B5C00F6B333 /* CERunLoop.h */,
+				D644AB29227C7B5C00F6B333 /* CERunLoop.c */,
 				D644AB1E227C7B5C00F6B333 /* CEThread.c */,
 				D644AB1F227C7B5C00F6B333 /* CEConfig.h */,
 				D644AB20227C7B5C00F6B333 /* CEBaseType.c */,
@@ -711,12 +718,9 @@
 				D644AB26227C7B5C00F6B333 /* CEClosure.c */,
 				D644AB27227C7B5C00F6B333 /* CETime.h */,
 				D644AB28227C7B5C00F6B333 /* CEThread.h */,
-				D644AB29227C7B5C00F6B333 /* CERunLoop.c */,
-				D644AB2A227C7B5C00F6B333 /* CERunLoopSource.h */,
 				D644AB2B227C7B5C00F6B333 /* CEBaseApi.h */,
 				D644AB2C227C7B5C00F6B333 /* CEMemory.h */,
 				D644AB2D227C7B5C00F6B333 /* CETimeEvent.c */,
-				D644AB2E227C7B5C00F6B333 /* CEBaseType.h */,
 				D644AB2F227C7B5C00F6B333 /* CELog.c */,
 				D644AB30227C7B5C00F6B333 /* CEDispatcher.c */,
 				D644AB31227C7B5C00F6B333 /* CETime.c */,
@@ -787,6 +791,8 @@
 				D60B006922AFF01B00B1BEA8 /* CEMainQueue.h */,
 				D60B006A22AFF01B00B1BEA8 /* CEMainQueue.c */,
 				D603936922B92ED4009B5DC8 /* CEQueueLog.h */,
+				D6E4FAE622BF49590071748E /* CEEventLoop.h */,
+				D6E4FAE722BF49590071748E /* CEEventLoop.c */,
 			);
 			path = RunLoop;
 			sourceTree = "<group>";
@@ -832,6 +838,7 @@
 				D67248F4227CABFF00FC8B7A /* CESource.h in Headers */,
 				64BEEE17217F00AD00204CB0 /* CoreEvent.h in Headers */,
 				D60B006722AE9E0500B1BEA8 /* CEConcurrentQueue.h in Headers */,
+				D6E4FAE822BF49590071748E /* CEEventLoop.h in Headers */,
 				D603936A22B92ED4009B5DC8 /* CEQueueLog.h in Headers */,
 				D647C851227DDE7F004AAA19 /* CETask.h in Headers */,
 				D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */,
@@ -1216,6 +1223,7 @@
 				D647C852227DDE7F004AAA19 /* CETask.c in Sources */,
 				D615B9A622B4B5410095837D /* CETaskParam.c in Sources */,
 				D644ABCA227C806300F6B333 /* CEThread.c in Sources */,
+				D6E4FAE922BF49590071748E /* CEEventLoop.c in Sources */,
 				D608C1E522A2800B001FE51D /* CETaskScheduler.c in Sources */,
 				D60B006822AE9E0500B1BEA8 /* CEConcurrentQueue.c in Sources */,
 				D647C89422866D0F004AAA19 /* CERuntime.c in Sources */,

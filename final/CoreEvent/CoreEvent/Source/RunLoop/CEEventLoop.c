@@ -1,32 +1,41 @@
 //
-//  AppDelegate.m
-//  Demo2
+//  CEEventLoop.c
+//  CoreEvent
 //
-//  Created by vector on 2019/5/3.
+//  Created by vector on 2019/6/23.
 //  Copyright © 2019 com.wangqinghai. All rights reserved.
 //
 
-#import "AppDelegate.h"
+#include "CEEventLoop.h"
 #include <poll.h>
 #include <sys/types.h>
 #include <sys/resource.h>
 #include <sys/sysctl.h>
 #include <fcntl.h>
 
+struct _CERunLoop;
+typedef struct _CERunLoop CERunLoop_s;
+
+/* State of an event based program */
+struct _CERunLoop {
+    int fdLimit;
+    int maxfd;   /* highest file descriptor currently registered */
+    int setsize; /* max number of file descriptors tracked */
+    long long timeEventNextId;
+    time_t lastTime;     /* Used to detect system clock skew */
+//    CEFileEvent_s * _Nonnull events; /* Registered events */
+//    CEFiredEvent_s * _Nonnull fired; /* Fired events */
+//    CETimeEvent_s * _Nullable timeEventHead;
+//    int stop;
+//    void * _Nullable api; /* This is used for polling API specific data */
+//    CEStateChangeHandler_f _Nullable beforesleep;
+//    CEStateChangeHandler_f _Nullable aftersleep;
+};
 
 
 
-
-@interface AppDelegate ()
-
-@end
-
-@implementation AppDelegate
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
-    
-    
+static CERunLoop_s * _Nonnull __CERunLoopShared = NULL;
+void CEEventLoopSharedCreate(void) {
     struct rlimit limit;
     if (getrlimit(RLIMIT_NOFILE, &limit) != 0) {
         printf("getrlimit RLIMIT_NOFILE error %s; \n", strerror(errno));
@@ -63,12 +72,7 @@
     }
     
     int value = (int)(limit.rlim_cur);
+    
+    __CERunLoopShared = CERunLoopCreate(value);
+    __CERunLoopShared->fdLimit = value;
 }
-
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
-}
-
-
-@end

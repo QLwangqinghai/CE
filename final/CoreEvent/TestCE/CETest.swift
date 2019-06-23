@@ -15,6 +15,12 @@ public enum CEQueuePriority: UInt16 {
     case low = 64
 }
 
+public class CETask {
+
+}
+
+
+
 
 public class CEQueue {
     public static let perform: CEFunction_f = { (obj, param, result) in

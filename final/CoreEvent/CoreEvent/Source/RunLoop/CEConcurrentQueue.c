@@ -44,7 +44,6 @@ static inline void __CEConcurrentSourceTaskStoreFinishBarrierTask(CESourceConcur
 
 
 void CEConcurrentQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific);
-
 void CEConcurrentQueueMainFunc(void * _Nullable param);
 
 static inline void _CEConcurrentTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull scheduler, CETaskPtr _Nonnull task) {
@@ -60,13 +59,11 @@ static inline void _CEConcurrentTaskSchedulerSignal(CETaskSchedulerPtr _Nonnull 
         _CEThreadCreate(config, scheduler, CEConcurrentQueueBeforeMainFunc, CEConcurrentQueueMainFunc, NULL, NULL);
         CESemSignal(scheduler->waiter);
     }
-    
     CESemSignal(scheduler->waiter);
 }
 
 static inline CETaskPtr _Nonnull _CEConcurrentTaskSchedulerWait(CETaskSchedulerPtr _Nonnull scheduler) {
     CEQueueLog("ce.task.scheduler.wait(qid:%x, sid:%x)", scheduler->qid, scheduler->sid);
-
     CESemWait(scheduler->waiter);
     return CETaskSchedulerRemoveTask(scheduler);
 }
@@ -78,12 +75,12 @@ static inline CETaskSchedulerPtr _Nonnull _CEConcurrentSourcePopScheduler(CESour
     return result;
 }
 
-static inline void _CEConcurrentSourcePopSchedulers(CESourceRef _Nonnull source, CESourceConcurrentContext_s * _Nonnull context, uint32_t count, CETaskSchedulerPtr _Nullable * _Nonnull schedulers) {
-    assert(context->bufferCount >= count);
-    
-    memcpy(schedulers, &(context->schedulersBuffer[context->bufferCount - count]), sizeof(CETaskSchedulerPtr) * count);
-    context->bufferCount -= count;
-}
+//static inline void _CEConcurrentSourcePopSchedulers(CESourceRef _Nonnull source, CESourceConcurrentContext_s * _Nonnull context, uint32_t count, CETaskSchedulerPtr _Nullable * _Nonnull schedulers) {
+//    assert(context->bufferCount >= count);
+//
+//    memcpy(schedulers, &(context->schedulersBuffer[context->bufferCount - count]), sizeof(CETaskSchedulerPtr) * count);
+//    context->bufferCount -= count;
+//}
 
 static inline void _CEConcurrentSourcePushScheduler(CESourceRef _Nonnull source, CESourceConcurrentContext_s * _Nonnull context, CETaskSchedulerPtr _Nonnull scheduler) {
     assert(context->bufferCount < context->maxConcurrencyCount);
@@ -180,7 +177,6 @@ static inline CETaskPtr _Nonnull CEConcurrentSourceFinishBarrierTaskAndRemove(CE
 }
 
 static inline CETaskPtr _Nonnull CEConcurrentSourceFinishNormalTaskAndRemove(CESourceRef _Nonnull source, CETaskSchedulerPtr _Nonnull scheduler) {
-    
     CETaskPtr result = NULL;
     CESourceConcurrentContext_s * context = source->context;
     
@@ -218,14 +214,13 @@ CETaskPtr _Nonnull CEConcurrentSourceFinishOneTaskAndRemove(CESourceRef _Nonnull
     }
 }
 
-void CEConcurrentQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific) {
 
+void CEConcurrentQueueBeforeMainFunc(CEThreadSpecificPtr _Nonnull specific) {
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
     CEQueueLog("ce.task.scheduler.bm.wait(qid:%x, sid:%x)", scheduler->qid, scheduler->sid);
     CESemWait(scheduler->waiter);
     CEQueueLog("ce.task.scheduler.bm.wake(qid:%x, sid:%x)", scheduler->qid, scheduler->sid);
-
     assert(scheduler->ownerQueue);
     CETaskSchedulerSetThread(scheduler, specific->thread);
     specific->owner = scheduler->ownerQueue;
@@ -238,9 +233,7 @@ void CEConcurrentQueueMainFunc(void * _Nullable param) {
     CETaskSchedulerPtr scheduler = specific->scheduler;
     assert(scheduler);
     CEQueueLog("ce.task.scheduler.m.start(qid:%x, sid:%x)", scheduler->qid, scheduler->sid);
-
     CETaskPtr task = _CEConcurrentTaskSchedulerWait(scheduler);
-
     CEQueueLog("ce.task.scheduler.m.first.finish(qid:%x, sid:%x)", scheduler->qid, scheduler->sid);
 
     while (1) {
@@ -249,13 +242,7 @@ void CEConcurrentQueueMainFunc(void * _Nullable param) {
             task->finish(task->obj);
         }
         
-        CESourceConcurrentContext_s * context = scheduler->source->context;
-        
         uint32_t isBarrier = task->isBarrier;
-        if (0 != isBarrier) {
-            
-            
-        }
         uint32_t barrierTaskTag = task->tag;
         CETaskDestroy(task);
         

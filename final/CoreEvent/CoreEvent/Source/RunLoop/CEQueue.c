@@ -94,8 +94,6 @@ void CEConcurrentQueueBarrierAsync(CEQueueRef _Nonnull queuePtr,
 
 
 
-
-
 CEQueue_s * _Nonnull CEQueueCreate(const char * _Nullable label, uint16_t concurrencyCount, CEQueuePriority_t priority, CEQueueType_t type, uint16_t id) {
     CEQueue_s * queue = CETypeQueue->alloctor->allocate(CETypeQueue, sizeof(CEQueue_s));;
     if (label) {

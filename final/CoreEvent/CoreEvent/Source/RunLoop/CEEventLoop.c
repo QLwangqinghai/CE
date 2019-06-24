@@ -15,10 +15,6 @@
 
 
 
-const CEFileEventMask_es CEFileEventMaskNone = 0;
-const CEFileEventMask_es CEFileEventMaskRead = 1;
-const CEFileEventMask_es CEFileEventMaskWrite = 2;
-const CEFileEventMask_es CEFileEventMaskAll = 3;
 
 struct _CERunLoop;
 typedef struct _CERunLoop CERunLoop_s;
@@ -80,6 +76,6 @@ void CEEventLoopSharedCreate(void) {
     
     int value = (int)(limit.rlim_cur);
     
-    __CERunLoopShared = CERunLoopCreate(value);
+//    __CERunLoopShared = CERunLoopCreate(value);
     __CERunLoopShared->fdLimit = value;
 }

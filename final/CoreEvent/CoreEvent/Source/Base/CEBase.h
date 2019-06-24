@@ -49,9 +49,9 @@ typedef int CEResult_t;
 
 typedef uint32_t CEFileEventMask_es;
 static const CEFileEventMask_es CEFileEventMaskNone = 0;
-static const CEFileEventMask_es CEFileEventMaskReadable = 1;
-static const CEFileEventMask_es CEFileEventMaskWritable = 2;
-static const CEFileEventMask_es CEFileEventMaskReadWritable = 3;
+static const CEFileEventMask_es CEFileEventMaskRead = 1;
+static const CEFileEventMask_es CEFileEventMaskWrite = 2;
+static const CEFileEventMask_es CEFileEventMaskReadWrite = 3;
 
 //单位: 微妙
 typedef uint64_t CETimeInterval;

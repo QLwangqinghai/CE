@@ -120,6 +120,10 @@
 		D688137C22A5383400436E1E /* CECondition.h in Headers */ = {isa = PBXBuildFile; fileRef = D688137A22A5383400436E1E /* CECondition.h */; };
 		D688137D22A5383400436E1E /* CECondition.c in Sources */ = {isa = PBXBuildFile; fileRef = D688137B22A5383400436E1E /* CECondition.c */; };
 		D6A24A1F2268CEB000C8E4B8 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24A1E2268CEB000C8E4B8 /* Test.swift */; };
+		D6D18D9722C0973200E17C23 /* CEEventCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D6D18D9522C0973200E17C23 /* CEEventCenter.h */; };
+		D6D18D9822C0973200E17C23 /* CEEventCenter.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18D9622C0973200E17C23 /* CEEventCenter.c */; };
+		D6D18D9B22C09F7500E17C23 /* CETimeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D6D18D9922C09F7500E17C23 /* CETimeEvent.h */; };
+		D6D18D9C22C09F7500E17C23 /* CETimeEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18D9A22C09F7500E17C23 /* CETimeEvent.c */; };
 		D6E4FAE822BF49590071748E /* CEEventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = D6E4FAE622BF49590071748E /* CEEventLoop.h */; };
 		D6E4FAE922BF49590071748E /* CEEventLoop.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FAE722BF49590071748E /* CEEventLoop.c */; };
 /* End PBXBuildFile section */
@@ -367,6 +371,10 @@
 		D688137B22A5383400436E1E /* CECondition.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CECondition.c; sourceTree = "<group>"; };
 		D6A24A1D2268CEB000C8E4B8 /* Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6A24A1E2268CEB000C8E4B8 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		D6D18D9522C0973200E17C23 /* CEEventCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEEventCenter.h; sourceTree = "<group>"; };
+		D6D18D9622C0973200E17C23 /* CEEventCenter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEEventCenter.c; sourceTree = "<group>"; };
+		D6D18D9922C09F7500E17C23 /* CETimeEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETimeEvent.h; sourceTree = "<group>"; };
+		D6D18D9A22C09F7500E17C23 /* CETimeEvent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CETimeEvent.c; sourceTree = "<group>"; };
 		D6E4FAE622BF49590071748E /* CEEventLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEEventLoop.h; sourceTree = "<group>"; };
 		D6E4FAE722BF49590071748E /* CEEventLoop.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEEventLoop.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -793,6 +801,10 @@
 				D603936922B92ED4009B5DC8 /* CEQueueLog.h */,
 				D6E4FAE622BF49590071748E /* CEEventLoop.h */,
 				D6E4FAE722BF49590071748E /* CEEventLoop.c */,
+				D6D18D9522C0973200E17C23 /* CEEventCenter.h */,
+				D6D18D9622C0973200E17C23 /* CEEventCenter.c */,
+				D6D18D9922C09F7500E17C23 /* CETimeEvent.h */,
+				D6D18D9A22C09F7500E17C23 /* CETimeEvent.c */,
 			);
 			path = RunLoop;
 			sourceTree = "<group>";
@@ -843,9 +855,11 @@
 				D647C851227DDE7F004AAA19 /* CETask.h in Headers */,
 				D608C1E422A2800B001FE51D /* CETaskScheduler.h in Headers */,
 				D644ABC3227C7CF500F6B333 /* CEDispatcher.h in Headers */,
+				D6D18D9722C0973200E17C23 /* CEEventCenter.h in Headers */,
 				D644ABD1227C824300F6B333 /* CEInternal.h in Headers */,
 				D688137C22A5383400436E1E /* CECondition.h in Headers */,
 				D60B006322AE9DD000B1BEA8 /* CESerialQueue.h in Headers */,
+				D6D18D9B22C09F7500E17C23 /* CETimeEvent.h in Headers */,
 				D688137822A5283B00436E1E /* CEConditionLock.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1232,7 +1246,9 @@
 				D688137922A5283B00436E1E /* CEConditionLock.c in Sources */,
 				D60B006C22AFF01B00B1BEA8 /* CEMainQueue.c in Sources */,
 				D67248F5227CABFF00FC8B7A /* CESource.c in Sources */,
+				D6D18D9822C0973200E17C23 /* CEEventCenter.c in Sources */,
 				D60B006422AE9DD000B1BEA8 /* CESerialQueue.c in Sources */,
+				D6D18D9C22C09F7500E17C23 /* CETimeEvent.c in Sources */,
 				D644ABCF227C80E500F6B333 /* CEMemory.c in Sources */,
 				D644ABC2227C7CF500F6B333 /* CEDispatcher.c in Sources */,
 				D6802B31227D717A0083EDBF /* CESem.c in Sources */,

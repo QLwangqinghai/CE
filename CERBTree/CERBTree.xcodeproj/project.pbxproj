@@ -13,7 +13,21 @@
 		D6D18DB922C0CE6B00E17C23 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DB822C0CE6B00E17C23 /* main.m */; };
 		D6D18DC822C0E17900E17C23 /* rbtree.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DC522C0E17900E17C23 /* rbtree.c */; };
 		D6D18DC922C0E17900E17C23 /* rbtree_test.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DC622C0E17900E17C23 /* rbtree_test.c */; };
+		D6D18DD122C0FCB300E17C23 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DD022C0FCB300E17C23 /* main.m */; };
+		D6D18DD822C0FCCF00E17C23 /* CTreeNode.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DD722C0FCCF00E17C23 /* CTreeNode.c */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D6D18DCC22C0FCB300E17C23 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		D6D18DAC22C0CE6A00E17C23 /* CERBTree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CERBTree.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -29,10 +43,21 @@
 		D6D18DC522C0E17900E17C23 /* rbtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rbtree.c; sourceTree = "<group>"; };
 		D6D18DC622C0E17900E17C23 /* rbtree_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rbtree_test.c; sourceTree = "<group>"; };
 		D6D18DC722C0E17900E17C23 /* rbtree_latch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rbtree_latch.h; sourceTree = "<group>"; };
+		D6D18DCE22C0FCB300E17C23 /* CTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CTree; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6D18DD022C0FCB300E17C23 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D6D18DD622C0FCCF00E17C23 /* CTreeNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTreeNode.h; sourceTree = "<group>"; };
+		D6D18DD722C0FCCF00E17C23 /* CTreeNode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CTreeNode.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D6D18DA922C0CE6A00E17C23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6D18DCB22C0FCB300E17C23 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,6 +71,7 @@
 			isa = PBXGroup;
 			children = (
 				D6D18DAE22C0CE6A00E17C23 /* CERBTree */,
+				D6D18DCF22C0FCB300E17C23 /* CTree */,
 				D6D18DAD22C0CE6A00E17C23 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +80,7 @@
 			isa = PBXGroup;
 			children = (
 				D6D18DAC22C0CE6A00E17C23 /* CERBTree.app */,
+				D6D18DCE22C0FCB300E17C23 /* CTree */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -85,6 +112,24 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		D6D18DCF22C0FCB300E17C23 /* CTree */ = {
+			isa = PBXGroup;
+			children = (
+				D6D18DD522C0FCBA00E17C23 /* Source */,
+				D6D18DD022C0FCB300E17C23 /* main.m */,
+			);
+			path = CTree;
+			sourceTree = "<group>";
+		};
+		D6D18DD522C0FCBA00E17C23 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				D6D18DD622C0FCCF00E17C23 /* CTreeNode.h */,
+				D6D18DD722C0FCCF00E17C23 /* CTreeNode.c */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -105,6 +150,23 @@
 			productReference = D6D18DAC22C0CE6A00E17C23 /* CERBTree.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D6D18DCD22C0FCB300E17C23 /* CTree */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6D18DD222C0FCB300E17C23 /* Build configuration list for PBXNativeTarget "CTree" */;
+			buildPhases = (
+				D6D18DCA22C0FCB300E17C23 /* Sources */,
+				D6D18DCB22C0FCB300E17C23 /* Frameworks */,
+				D6D18DCC22C0FCB300E17C23 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CTree;
+			productName = CTree;
+			productReference = D6D18DCE22C0FCB300E17C23 /* CTree */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -115,6 +177,9 @@
 				ORGANIZATIONNAME = angfung;
 				TargetAttributes = {
 					D6D18DAB22C0CE6A00E17C23 = {
+						CreatedOnToolsVersion = 10.2;
+					};
+					D6D18DCD22C0FCB300E17C23 = {
 						CreatedOnToolsVersion = 10.2;
 					};
 				};
@@ -133,6 +198,7 @@
 			projectRoot = "";
 			targets = (
 				D6D18DAB22C0CE6A00E17C23 /* CERBTree */,
+				D6D18DCD22C0FCB300E17C23 /* CTree */,
 			);
 		};
 /* End PBXProject section */
@@ -158,6 +224,15 @@
 				D6D18DC922C0E17900E17C23 /* rbtree_test.c in Sources */,
 				D6D18DB122C0CE6A00E17C23 /* AppDelegate.m in Sources */,
 				D6D18DC822C0E17900E17C23 /* rbtree.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6D18DCA22C0FCB300E17C23 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6D18DD122C0FCB300E17C23 /* main.m in Sources */,
+				D6D18DD822C0FCCF00E17C23 /* CTreeNode.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,6 +395,22 @@
 			};
 			name = Release;
 		};
+		D6D18DD322C0FCB300E17C23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D6D18DD422C0FCB300E17C23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -337,6 +428,15 @@
 			buildConfigurations = (
 				D6D18DBE22C0CE6B00E17C23 /* Debug */,
 				D6D18DBF22C0CE6B00E17C23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D6D18DD222C0FCB300E17C23 /* Build configuration list for PBXNativeTarget "CTree" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6D18DD322C0FCB300E17C23 /* Debug */,
+				D6D18DD422C0FCB300E17C23 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -15,10 +15,22 @@
 		D6D18DC922C0E17900E17C23 /* rbtree_test.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DC622C0E17900E17C23 /* rbtree_test.c */; };
 		D6D18DD122C0FCB300E17C23 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DD022C0FCB300E17C23 /* main.m */; };
 		D6D18DD822C0FCCF00E17C23 /* CTreeNode.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DD722C0FCCF00E17C23 /* CTreeNode.c */; };
+		D6D18DE022C1C00C00E17C23 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DDF22C1C00C00E17C23 /* main.m */; };
+		D6D18DE722C1C03300E17C23 /* CCArray.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DE622C1C03300E17C23 /* CCArray.c */; };
+		D6D18DEA22C1E28E00E17C23 /* CInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DE922C1E28E00E17C23 /* CInteger.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		D6D18DCC22C0FCB300E17C23 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D6D18DDB22C1C00C00E17C23 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -47,6 +59,12 @@
 		D6D18DD022C0FCB300E17C23 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D6D18DD622C0FCCF00E17C23 /* CTreeNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTreeNode.h; sourceTree = "<group>"; };
 		D6D18DD722C0FCCF00E17C23 /* CTreeNode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CTreeNode.c; sourceTree = "<group>"; };
+		D6D18DDD22C1C00C00E17C23 /* CCollection */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CCollection; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6D18DDF22C1C00C00E17C23 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D6D18DE522C1C03300E17C23 /* CCArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCArray.h; sourceTree = "<group>"; };
+		D6D18DE622C1C03300E17C23 /* CCArray.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCArray.c; sourceTree = "<group>"; };
+		D6D18DE822C1E28E00E17C23 /* CInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CInteger.h; sourceTree = "<group>"; };
+		D6D18DE922C1E28E00E17C23 /* CInteger.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CInteger.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +82,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D6D18DDA22C1C00C00E17C23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -72,6 +97,7 @@
 			children = (
 				D6D18DAE22C0CE6A00E17C23 /* CERBTree */,
 				D6D18DCF22C0FCB300E17C23 /* CTree */,
+				D6D18DDE22C1C00C00E17C23 /* CCollection */,
 				D6D18DAD22C0CE6A00E17C23 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -81,6 +107,7 @@
 			children = (
 				D6D18DAC22C0CE6A00E17C23 /* CERBTree.app */,
 				D6D18DCE22C0FCB300E17C23 /* CTree */,
+				D6D18DDD22C1C00C00E17C23 /* CCollection */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -130,6 +157,26 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		D6D18DDE22C1C00C00E17C23 /* CCollection */ = {
+			isa = PBXGroup;
+			children = (
+				D6D18DE422C1C01400E17C23 /* Source */,
+				D6D18DDF22C1C00C00E17C23 /* main.m */,
+			);
+			path = CCollection;
+			sourceTree = "<group>";
+		};
+		D6D18DE422C1C01400E17C23 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				D6D18DE522C1C03300E17C23 /* CCArray.h */,
+				D6D18DE622C1C03300E17C23 /* CCArray.c */,
+				D6D18DE822C1E28E00E17C23 /* CInteger.h */,
+				D6D18DE922C1E28E00E17C23 /* CInteger.c */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -167,6 +214,23 @@
 			productReference = D6D18DCE22C0FCB300E17C23 /* CTree */;
 			productType = "com.apple.product-type.tool";
 		};
+		D6D18DDC22C1C00C00E17C23 /* CCollection */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6D18DE122C1C00C00E17C23 /* Build configuration list for PBXNativeTarget "CCollection" */;
+			buildPhases = (
+				D6D18DD922C1C00C00E17C23 /* Sources */,
+				D6D18DDA22C1C00C00E17C23 /* Frameworks */,
+				D6D18DDB22C1C00C00E17C23 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CCollection;
+			productName = CCollection;
+			productReference = D6D18DDD22C1C00C00E17C23 /* CCollection */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -180,6 +244,9 @@
 						CreatedOnToolsVersion = 10.2;
 					};
 					D6D18DCD22C0FCB300E17C23 = {
+						CreatedOnToolsVersion = 10.2;
+					};
+					D6D18DDC22C1C00C00E17C23 = {
 						CreatedOnToolsVersion = 10.2;
 					};
 				};
@@ -199,6 +266,7 @@
 			targets = (
 				D6D18DAB22C0CE6A00E17C23 /* CERBTree */,
 				D6D18DCD22C0FCB300E17C23 /* CTree */,
+				D6D18DDC22C1C00C00E17C23 /* CCollection */,
 			);
 		};
 /* End PBXProject section */
@@ -233,6 +301,16 @@
 			files = (
 				D6D18DD122C0FCB300E17C23 /* main.m in Sources */,
 				D6D18DD822C0FCCF00E17C23 /* CTreeNode.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6D18DD922C1C00C00E17C23 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6D18DE022C1C00C00E17C23 /* main.m in Sources */,
+				D6D18DE722C1C03300E17C23 /* CCArray.c in Sources */,
+				D6D18DEA22C1E28E00E17C23 /* CInteger.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,6 +489,22 @@
 			};
 			name = Release;
 		};
+		D6D18DE222C1C00C00E17C23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D6D18DE322C1C00C00E17C23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -437,6 +531,15 @@
 			buildConfigurations = (
 				D6D18DD322C0FCB300E17C23 /* Debug */,
 				D6D18DD422C0FCB300E17C23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D6D18DE122C1C00C00E17C23 /* Build configuration list for PBXNativeTarget "CCollection" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6D18DE222C1C00C00E17C23 /* Debug */,
+				D6D18DE322C1C00C00E17C23 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

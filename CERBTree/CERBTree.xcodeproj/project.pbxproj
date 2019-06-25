@@ -14,10 +14,10 @@
 		D6D18DC822C0E17900E17C23 /* rbtree.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DC522C0E17900E17C23 /* rbtree.c */; };
 		D6D18DC922C0E17900E17C23 /* rbtree_test.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DC622C0E17900E17C23 /* rbtree_test.c */; };
 		D6D18DD122C0FCB300E17C23 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DD022C0FCB300E17C23 /* main.m */; };
-		D6D18DD822C0FCCF00E17C23 /* CTreeNode.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DD722C0FCCF00E17C23 /* CTreeNode.c */; };
 		D6D18DE022C1C00C00E17C23 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DDF22C1C00C00E17C23 /* main.m */; };
 		D6D18DE722C1C03300E17C23 /* CCArray.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DE622C1C03300E17C23 /* CCArray.c */; };
-		D6D18DEA22C1E28E00E17C23 /* CInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DE922C1E28E00E17C23 /* CInteger.c */; };
+		D6E4FAEA22C27BAC0071748E /* CInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DE922C1E28E00E17C23 /* CInteger.c */; };
+		D6E4FAED22C27BF40071748E /* CCNode.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FAEC22C27BF40071748E /* CCNode.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,14 +57,14 @@
 		D6D18DC722C0E17900E17C23 /* rbtree_latch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rbtree_latch.h; sourceTree = "<group>"; };
 		D6D18DCE22C0FCB300E17C23 /* CTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6D18DD022C0FCB300E17C23 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D6D18DD622C0FCCF00E17C23 /* CTreeNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTreeNode.h; sourceTree = "<group>"; };
-		D6D18DD722C0FCCF00E17C23 /* CTreeNode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CTreeNode.c; sourceTree = "<group>"; };
 		D6D18DDD22C1C00C00E17C23 /* CCollection */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CCollection; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6D18DDF22C1C00C00E17C23 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D6D18DE522C1C03300E17C23 /* CCArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCArray.h; sourceTree = "<group>"; };
 		D6D18DE622C1C03300E17C23 /* CCArray.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCArray.c; sourceTree = "<group>"; };
 		D6D18DE822C1E28E00E17C23 /* CInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CInteger.h; sourceTree = "<group>"; };
 		D6D18DE922C1E28E00E17C23 /* CInteger.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CInteger.c; sourceTree = "<group>"; };
+		D6E4FAEB22C27BF40071748E /* CCNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCNode.h; sourceTree = "<group>"; };
+		D6E4FAEC22C27BF40071748E /* CCNode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCNode.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,8 +151,10 @@
 		D6D18DD522C0FCBA00E17C23 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				D6D18DD622C0FCCF00E17C23 /* CTreeNode.h */,
-				D6D18DD722C0FCCF00E17C23 /* CTreeNode.c */,
+				D6D18DE822C1E28E00E17C23 /* CInteger.h */,
+				D6D18DE922C1E28E00E17C23 /* CInteger.c */,
+				D6E4FAEB22C27BF40071748E /* CCNode.h */,
+				D6E4FAEC22C27BF40071748E /* CCNode.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -171,8 +173,6 @@
 			children = (
 				D6D18DE522C1C03300E17C23 /* CCArray.h */,
 				D6D18DE622C1C03300E17C23 /* CCArray.c */,
-				D6D18DE822C1E28E00E17C23 /* CInteger.h */,
-				D6D18DE922C1E28E00E17C23 /* CInteger.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -300,7 +300,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6D18DD122C0FCB300E17C23 /* main.m in Sources */,
-				D6D18DD822C0FCCF00E17C23 /* CTreeNode.c in Sources */,
+				D6E4FAED22C27BF40071748E /* CCNode.c in Sources */,
+				D6E4FAEA22C27BAC0071748E /* CInteger.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,7 +311,6 @@
 			files = (
 				D6D18DE022C1C00C00E17C23 /* main.m in Sources */,
 				D6D18DE722C1C03300E17C23 /* CCArray.c in Sources */,
-				D6D18DEA22C1E28E00E17C23 /* CInteger.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

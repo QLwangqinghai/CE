@@ -128,30 +128,15 @@ int highest_bit_unrolled(uint64_t n)
 }
 
 
+
+
 static const int8_t CByteMostSignificant[256] = {-1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7};
 
 static const int8_t CByteLeastSignificant[256] = {-1, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0};
 
 
-int highest_bit_unrolled1(uint64_t n) {
-    if (0 == n) {
-        return -1;
-    }
-    int result = 63;
-    
-    for (uint64_t i=56; i>=0; i-=8) {
-        uint64_t v = (n >> i) & 0xFF;
-        int f = CByteMostSignificant[v];
-        if (f >= 0) {
-            result -= (7-f);
-            return result;
-        } else {
-            result -= 8;
-        }
-    }
-    
-    return result;
-}
+static const uint8_t CByteSignificantCount[256] = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8};
+
 
 int CUInt64MostSignificant(uint64_t n) {
     if (0 == n) {
@@ -217,6 +202,94 @@ int CUInt32MostSignificant(uint32_t n) {
     }
 }
 
+int CUInt64LeastSignificant(uint64_t n) {
+    if (0 == n) {
+        return -1;
+    }
+    if (n & 0xFFFFFFFFull) {
+        if (n & 0xFFFFull) {
+            if (n & 0xFFull) {
+                uint64_t v = n & 0xFF;
+                return CByteLeastSignificant[v];
+            } else {
+                uint64_t v = (n >> 8) & 0xFF;
+                return 8 + CByteLeastSignificant[v];
+            }
+        } else {
+            if (n & 0xFF0000ull) {
+                uint64_t v = (n >> 16) & 0xFF;
+                return 16 + CByteLeastSignificant[v];
+            } else {
+                uint64_t v = (n >> 24) & 0xFF;
+                return 24 + CByteLeastSignificant[v];
+            }
+        }
+    } else {
+        if (n & 0xFFFF00000000ull) {
+            if (n & 0xFF00000000ull) {
+                uint64_t v = (n >> 32) & 0xFF;
+                return 32 + CByteLeastSignificant[v];
+            } else {
+                uint64_t v = (n >> 40) & 0xFF;
+                return 40 + CByteLeastSignificant[v];
+            }
+        } else {
+            if (n & 0xFF000000000000ull) {
+                uint64_t v = (n >> 48) & 0xFF;
+                return 48 + CByteLeastSignificant[v];
+            } else {
+                uint64_t v = (n >> 56) & 0xFF;
+                return 56 + CByteLeastSignificant[v];
+            }
+        }
+    }
+}
+int CUInt32LeastSignificant(uint32_t n) {
+    if (0 == n) {
+        return -1;
+    }
+    
+    if (n & 0xFFFF00000000ull) {
+        if (n & 0xFF00000000ull) {
+            uint32_t v = n & 0xFF;
+            return CByteLeastSignificant[v];
+        } else {
+            uint64_t v = (n >> 8) & 0xFF;
+            return 8 + CByteLeastSignificant[v];
+        }
+    } else {
+        if (n & 0xFF000000000000ull) {
+            uint32_t v = (n >> 16) & 0xFF;
+            return 16 + CByteLeastSignificant[v];
+        } else {
+            uint32_t v = (n >> 24) & 0xFF;
+            return 24 + CByteLeastSignificant[v];
+        }
+    }
+}
+
+
+
+int highest_bit_unrolled1(uint64_t n) {
+    if (0 == n) {
+        return -1;
+    }
+    int result = 63;
+    
+    for (uint64_t i=56; i>=0; i-=8) {
+        uint64_t v = (n >> i) & 0xFF;
+        int f = CByteMostSignificant[v];
+        if (f >= 0) {
+            result -= (7-f);
+            return result;
+        } else {
+            result -= 8;
+        }
+    }
+    
+    return result;
+}
+
 
 
 int main(int argc, const char * argv[]) {
@@ -237,6 +310,17 @@ int main(int argc, const char * argv[]) {
 //        }
 //        return 0;
 
+//        for (uint i=0; i<256; i++) {
+//            int idx = 0;
+//            for (int offset=0; offset<8; offset++) {
+//                if ((i >> offset) & 1) {
+//                    idx ++;
+//                }
+//            }
+//            printf("%d, ", idx);
+//        }
+//        return 0;
+//
         
         uint64_t items[128] = {};
         
@@ -248,7 +332,6 @@ int main(int argc, const char * argv[]) {
             items[i] = v;
         }
         
-        uint64_t start = mach_absolute_time();
         for (int i=0; i<128; i++) {
             int r0 = highest_bit_unrolled(items[i]);
             int r1 = highest_bit_unrolled1(items[i]);
@@ -256,28 +339,38 @@ int main(int argc, const char * argv[]) {
             assert(r0 == r1 && r1 == r2);
         }
 
+        for (int j=0; j<128; j++) {
+
+            uint64_t start = mach_absolute_time();
+            for (int i=0; i<128; i++) {
+                int r = highest_bit_unrolled(items[i]);
+            }
+            uint64_t end = mach_absolute_time();
+            uint64_t elapsed = end - start;
+            
+            uint64_t start1 = mach_absolute_time();
+            for (int i=0; i<128; i++) {
+                int r = highest_bit_unrolled1(items[i]);
+            }
+            uint64_t end1 = mach_absolute_time();
+            uint64_t elapsed1 = end1 - start1;
+            
+            uint64_t start2 = mach_absolute_time();
+            for (int i=0; i<128; i++) {
+                int r = CUInt64MostSignificant(items[i]);
+            }
+            uint64_t end2 = mach_absolute_time();
+            uint64_t elapsed2 = end2 - start2;
+            
+            printf("%llu, %llu, %llu\n", elapsed, elapsed1, elapsed2);
+            
+            
+            
+            
+        }
+
         
-//        uint64_t start = mach_absolute_time();
-//        for (int i=0; i<128; i++) {
-//            int r = highest_bit_unrolled(items[i]);
-//        }
-//        uint64_t end = mach_absolute_time();
-//        uint64_t elapsed = end - start;
-//
-//        uint64_t start1 = mach_absolute_time();
-//        for (int i=0; i<128; i++) {
-//            int r = highest_bit_unrolled1(items[i]);
-//        }
-//        uint64_t end1 = mach_absolute_time();
-//        uint64_t elapsed1 = end1 - start1;
-//
-//        uint64_t start2 = mach_absolute_time();
-//        for (int i=0; i<128; i++) {
-//            int r = CUInt64MostSignificant(items[i]);
-//        }
-//        uint64_t end2 = mach_absolute_time();
-//        uint64_t elapsed2 = end2 - start2;
-        
+
         
     }
     return 0;

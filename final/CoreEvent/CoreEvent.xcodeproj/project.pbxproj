@@ -113,7 +113,7 @@
 		D67248F5227CABFF00FC8B7A /* CESource.c in Sources */ = {isa = PBXBuildFile; fileRef = D67248F3227CABFF00FC8B7A /* CESource.c */; };
 		D67248F7227CAE7400FC8B7A /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D67248F6227CAE7300FC8B7A /* CEConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D67248FF227CB0FB00FC8B7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D67248FE227CB0FB00FC8B7A /* main.m */; };
-		D672490C227E9EFA00FC8B7A /* CECType.h in Headers */ = {isa = PBXBuildFile; fileRef = D672490B227E9EFA00FC8B7A /* CECType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D672490C227E9EFA00FC8B7A /* CType.h in Headers */ = {isa = PBXBuildFile; fileRef = D672490B227E9EFA00FC8B7A /* CType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6802B31227D717A0083EDBF /* CESem.c in Sources */ = {isa = PBXBuildFile; fileRef = D6802B2F227D717A0083EDBF /* CESem.c */; };
 		D688137822A5283B00436E1E /* CEConditionLock.h in Headers */ = {isa = PBXBuildFile; fileRef = D688137622A5283B00436E1E /* CEConditionLock.h */; };
 		D688137922A5283B00436E1E /* CEConditionLock.c in Sources */ = {isa = PBXBuildFile; fileRef = D688137722A5283B00436E1E /* CEConditionLock.c */; };
@@ -363,7 +363,7 @@
 		D67248F6227CAE7300FC8B7A /* CEConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEConfig.h; sourceTree = "<group>"; };
 		D67248FC227CB0FB00FC8B7A /* TGCD */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TGCD; sourceTree = BUILT_PRODUCTS_DIR; };
 		D67248FE227CB0FB00FC8B7A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D672490B227E9EFA00FC8B7A /* CECType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CECType.h; sourceTree = "<group>"; };
+		D672490B227E9EFA00FC8B7A /* CType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CType.h; sourceTree = "<group>"; };
 		D6802B2F227D717A0083EDBF /* CESem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CESem.c; sourceTree = "<group>"; };
 		D688137622A5283B00436E1E /* CEConditionLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEConditionLock.h; sourceTree = "<group>"; };
 		D688137722A5283B00436E1E /* CEConditionLock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEConditionLock.c; sourceTree = "<group>"; };
@@ -761,7 +761,7 @@
 		D644ABD6227C952D00F6B333 /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				D672490B227E9EFA00FC8B7A /* CECType.h */,
+				D672490B227E9EFA00FC8B7A /* CType.h */,
 				D67248F6227CAE7300FC8B7A /* CEConfig.h */,
 				D644ABC4227C7DE900F6B333 /* CEBase.h */,
 				D644ABC5227C7DE900F6B333 /* CEBase.c */,
@@ -844,7 +844,7 @@
 				D615B9A522B4B5410095837D /* CETaskParam.h in Headers */,
 				D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */,
 				D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */,
-				D672490C227E9EFA00FC8B7A /* CECType.h in Headers */,
+				D672490C227E9EFA00FC8B7A /* CType.h in Headers */,
 				D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */,
 				D644ABBA227C7C8200F6B333 /* CEPoolBaseApi.h in Headers */,
 				D67248F4227CABFF00FC8B7A /* CESource.h in Headers */,

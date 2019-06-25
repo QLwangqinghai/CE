@@ -98,7 +98,7 @@ struct _CETaskResult {
 
 //struct _CETaskContext {
 //    CEParamRef _Nullable * _Nullable resultReceiver;
-//    CECType_e * _Nullable paramTypes;
+//    CType_e * _Nullable paramTypes;
 //    CEParamItemValue_u * _Nullable paramItems;
 //    uint32_t paramCount;
 //};

@@ -9,7 +9,7 @@
 #ifndef CETaskParam_h
 #define CETaskParam_h
 
-#include <CoreEvent/CECType.h>
+#include <CoreEvent/CType.h>
 #include <CoreEvent/CERuntime.h>
 
 #define CETaskParamErrorNone 0
@@ -44,11 +44,11 @@ CETaskParamRef _Nullable CETaskParamHeapCreate(size_t loadSize);
 
 uint32_t CETaskParamGetCount(CETaskParamRef _Nonnull paramRef);
 
-_Bool CETaskParamGetItemType(CETaskParamRef _Nonnull paramRef, uint32_t index, CECType_e * _Nonnull itemType);
+_Bool CETaskParamGetItemType(CETaskParamRef _Nonnull paramRef, uint32_t index, CType_e * _Nonnull itemType);
 
-int32_t CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, CECType_e * _Nullable typePtr, void * _Nonnull valuePtr, size_t valueMaxSize);
+int32_t CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, CType_e * _Nullable typePtr, void * _Nonnull valuePtr, size_t valueMaxSize);
 
-int32_t CETaskParamAppendItem(CETaskParamRef _Nonnull paramRef, CECType_e t, void * _Nonnull valuePtr, size_t valueSize);
+int32_t CETaskParamAppendItem(CETaskParamRef _Nonnull paramRef, CType_e t, void * _Nonnull valuePtr, size_t valueSize);
 
 
 #pragma mark - get

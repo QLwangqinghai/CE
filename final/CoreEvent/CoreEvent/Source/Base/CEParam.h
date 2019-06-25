@@ -55,7 +55,7 @@ CEHeapParamRef _Nonnull CEHeapParamCreate(uint32_t capacity, size_t bufferItemsT
 
 
 uint32_t CEParamGetCount(CEParamRef _Nonnull param);
-_Bool CEParamGetItemType(CEParamRef _Nonnull param, uint32_t index, CECType_e * _Nonnull itemType);
+_Bool CEParamGetItemType(CEParamRef _Nonnull param, uint32_t index, CType_e * _Nonnull itemType);
 
 
 _Bool CEParamGetBool(CEParamRef _Nonnull param, uint32_t index, _Bool * _Nonnull item);
@@ -77,7 +77,7 @@ _Bool CEParamGetPtr(CEParamRef _Nonnull param, uint32_t index, void * _Nullable 
 //_Bool CEParamGetRef(CEParamRef _Nonnull param, uint32_t index, CERef _Nullable * _Nonnull item);
 _Bool CEParamGetBuffer(CEParamRef _Nonnull param, uint32_t index, void * _Nonnull buffer, size_t size);
 
-_Bool CEParamGetItem(CEParamRef _Nonnull param, uint32_t index, CECType_e * _Nullable typePtr, size_t * _Nullable sizePtr, void * _Nonnull ptr, size_t maxSize);
+_Bool CEParamGetItem(CEParamRef _Nonnull param, uint32_t index, CType_e * _Nullable typePtr, size_t * _Nullable sizePtr, void * _Nonnull ptr, size_t maxSize);
 
 
 _Bool CEParamAppendBool(CEParamRef _Nonnull param, _Bool item);
@@ -101,7 +101,7 @@ _Bool CEParamAppendPtr(CEParamRef _Nonnull param, void * _Nullable item);
 
 _Bool CEParamAppendBuffer(CEParamRef _Nonnull param, void * _Nonnull buffer, size_t size);
 
-_Bool CEParamAppendItem(CEParamRef _Nonnull param, CECType_e type, void * _Nonnull itemPtr);
+_Bool CEParamAppendItem(CEParamRef _Nonnull param, CType_e type, void * _Nonnull itemPtr);
 
 
 #endif /* CETaskParam_h */

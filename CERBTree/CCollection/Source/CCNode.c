@@ -1,9 +1,11 @@
 //
 //  CCNode.c
-//  CTree
+//  CCollection
 //
 //  Created by vector on 2019/6/25.
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
 #include "CCNode.h"
+
+#include "CInteger.h"

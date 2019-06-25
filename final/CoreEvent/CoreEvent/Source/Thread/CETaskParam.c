@@ -20,18 +20,18 @@ static const size_t CETaskParamTypeValueSize[13] = {
     0, sizeof(bool_t), sizeof(sint8_t), sizeof(uint8_t), sizeof(sint16_t), sizeof(uint16_t), sizeof(sint32_t), sizeof(uint32_t), sizeof(float_t), sizeof(CEPtr), sizeof(sint64_t), sizeof(uint64_t), sizeof(double_t),
 };
 
-static inline size_t CETaskParamTypeGetValueSize(CECType_e type) {
-    if (type <= CECTypeDouble) {
+static inline size_t CETaskParamTypeGetValueSize(CType_e type) {
+    if (type <= CTypeDouble) {
         return CETaskParamTypeValueSize[type];
     } else {
         return 0;
     }
 }
 
-static inline size_t CETaskParamTypeGetLoadSize(CECType_e type, size_t length) {
-    if (type <= CECTypeDouble) {
+static inline size_t CETaskParamTypeGetLoadSize(CType_e type, size_t length) {
+    if (type <= CTypeDouble) {
         return CETaskParamTypeLoadSize[type];
-    } else if (CECTypeBuffer == type) {
+    } else if (CTypeBuffer == type) {
         return length;
     } else {
         return 0;
@@ -125,12 +125,12 @@ static inline CETaskParamItem_t * _Nullable _CETaskParamGetItem(CETaskParam_s * 
     return item;
 }
 
-int32_t __CETaskParamAppendContentValue(CETaskParamRef _Nonnull paramRef, CECType_e t, void * _Nonnull value, size_t length) {
+int32_t __CETaskParamAppendContentValue(CETaskParamRef _Nonnull paramRef, CType_e t, void * _Nonnull value, size_t length) {
     CETaskParam_s * param = CETaskParamCheckBridge(paramRef);
     if (NULL == param || NULL == value) {
         return CETaskParamErrorInput;
     }
-    if (!CECTypeIsValid(t)) {
+    if (!CTypeIsValid(t)) {
         return CETaskParamErrorType;
     }
     int32_t totalSize = param->totalSize;
@@ -156,37 +156,37 @@ int32_t __CETaskParamAppendContentValue(CETaskParamRef _Nonnull paramRef, CECTyp
     }
     CETaskParamItem_t * item = (CETaskParamItem_t *)(param->load) + param->count;
     switch (t) {
-        case CECTypeBool: {
+        case CTypeBool: {
             bool_t v = *((bool_t *)value);
             item->ext = v ? 1 : 0;
             goto onExtValueSuccess;
         }
             break;
-        case CECTypeSInt8: {
+        case CTypeSInt8: {
             sint8_t v = *((sint8_t *)value);
             item->ext = (uint32_t)((uint8_t)v);
             goto onExtValueSuccess;
         }
             break;
-        case CECTypeUInt8: {
+        case CTypeUInt8: {
             uint8_t v = *((uint8_t *)value);
             item->ext = (uint32_t)v;
             goto onExtValueSuccess;
         }
             break;
-        case CECTypeSInt16: {
+        case CTypeSInt16: {
             sint16_t v = *((sint16_t *)value);
             item->ext = (uint32_t)((uint16_t)v);
             goto onExtValueSuccess;
         }
             break;
-        case CECTypeUInt16: {
+        case CTypeUInt16: {
             uint16_t v = *((uint16_t *)value);
             item->ext = (uint32_t)v;
             goto onExtValueSuccess;
         }
             break;
-        case CECTypeSInt32: case CECTypeUInt32: case CECTypeFloat: case CECTypePtr: case CECTypeSInt64: case CECTypeUInt64: case CECTypeDouble: case CECTypeBuffer: {
+        case CTypeSInt32: case CTypeUInt32: case CTypeFloat: case CTypePtr: case CTypeSInt64: case CTypeUInt64: case CTypeDouble: case CTypeBuffer: {
             void * valueToStore = &(param->load[contentSize]);
             memcpy(valueToStore, value, size);
             
@@ -216,7 +216,7 @@ onExtValueSuccess:
     return usedSize;
 }
 
-int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, CECType_e * _Nonnull typePtr, CECType_e expectedType, void * _Nonnull valuePtr, size_t valueMaxSize) {
+int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, CType_e * _Nonnull typePtr, CType_e expectedType, void * _Nonnull valuePtr, size_t valueMaxSize) {
     CETaskParam_s * param = CETaskParamCheckBridge(paramRef);
     if (NULL == param || NULL == valuePtr || NULL == typePtr) {
         return CETaskParamErrorInput;
@@ -226,11 +226,11 @@ int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, C
     if (NULL == item) {
         return CETaskParamErrorIndexOutOfRange;
     }
-    CECType_e t = item->type;
-    if (!CECTypeIsValid(t)) {
+    CType_e t = item->type;
+    if (!CTypeIsValid(t)) {
         return CETaskParamErrorUnknown;
     }
-    if (CECTypeNone != expectedType) {
+    if (CTypeNone != expectedType) {
         if (t != expectedType) {
             return CETaskParamErrorType;
         }
@@ -242,7 +242,7 @@ int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, C
     }
     size_t size = valueMaxSize;
     switch (t) {
-        case CECTypeBool: {
+        case CTypeBool: {
             if (item->location != CETaskParamItemLocationNone) {
                 return CETaskParamErrorUnknown;
             }
@@ -253,7 +253,7 @@ int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, C
             return (int32_t)vSize;
         }
             break;
-        case CECTypeSInt8: {
+        case CTypeSInt8: {
             if (item->location != CETaskParamItemLocationNone) {
                 return CETaskParamErrorUnknown;
             }
@@ -264,7 +264,7 @@ int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, C
             return (int32_t)vSize;
         }
             break;
-        case CECTypeUInt8: {
+        case CTypeUInt8: {
             if (item->location != CETaskParamItemLocationNone) {
                 return CETaskParamErrorUnknown;
             }
@@ -275,7 +275,7 @@ int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, C
             return (int32_t)vSize;
         }
             break;
-        case CECTypeSInt16: {
+        case CTypeSInt16: {
             if (item->location != CETaskParamItemLocationNone) {
                 return CETaskParamErrorUnknown;
             }
@@ -286,7 +286,7 @@ int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, C
             return (int32_t)vSize;
         }
             break;
-        case CECTypeUInt16: {
+        case CTypeUInt16: {
             if (item->location != CETaskParamItemLocationNone) {
                 return CETaskParamErrorUnknown;
             }
@@ -297,7 +297,7 @@ int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, C
             return (int32_t)vSize;
         }
             break;
-        case CECTypeSInt32: case CECTypeUInt32: case CECTypeFloat: case CECTypePtr: case CECTypeSInt64: case CECTypeUInt64: case CECTypeDouble: {
+        case CTypeSInt32: case CTypeUInt32: case CTypeFloat: case CTypePtr: case CTypeSInt64: case CTypeUInt64: case CTypeDouble: {
             assert(item->location != CETaskParamItemLocationNone);
             void * p = &(param->load[item->location]);
             size_t s = CETaskParamTypeGetLoadSize(t, 0);
@@ -309,7 +309,7 @@ int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, C
             return (int32_t)vSize;
         }
             break;
-        case CECTypeBuffer: {
+        case CTypeBuffer: {
             if (item->location == CETaskParamItemLocationNone) {
                 return CETaskParamErrorUnknown;
             }
@@ -333,16 +333,16 @@ int32_t __CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, C
     return CETaskParamErrorUnknown;
 }
 
-int32_t __CETaskParamGetContentValue(CETaskParamRef _Nonnull paramRef, uint32_t index, CECType_e t, size_t size, void * _Nonnull valuePtr) {
-    if (!CECTypeIsValid(t)) {
+int32_t __CETaskParamGetContentValue(CETaskParamRef _Nonnull paramRef, uint32_t index, CType_e t, size_t size, void * _Nonnull valuePtr) {
+    if (!CTypeIsValid(t)) {
         return CETaskParamErrorType;
     }
-    CECType_e type = CECTypeNone;
+    CType_e type = CTypeNone;
     return __CETaskParamGetItem(paramRef, index, &type, t, valuePtr, size);
 }
 
 
-_Bool CETaskParamAppendContentValue(CETaskParamRef _Nonnull paramRef, CECType_e t, void * _Nonnull value, size_t length) {
+_Bool CETaskParamAppendContentValue(CETaskParamRef _Nonnull paramRef, CType_e t, void * _Nonnull value, size_t length) {
     int32_t result = __CETaskParamAppendContentValue(paramRef, t, value, length);
     if (result >= 0) {
         return true;
@@ -356,12 +356,12 @@ _Bool CETaskParamAppendContentValue(CETaskParamRef _Nonnull paramRef, CECType_e 
     }
 }
 
-int32_t CETaskParamGetContentValue(CETaskParamRef _Nonnull paramRef, uint32_t index, CECType_e t, size_t size, void * _Nonnull valuePtr) {
+int32_t CETaskParamGetContentValue(CETaskParamRef _Nonnull paramRef, uint32_t index, CType_e t, size_t size, void * _Nonnull valuePtr) {
     return __CETaskParamGetContentValue(paramRef, index, t, size, valuePtr);
 }
 
 
-static inline _Bool CETaskParamGetContentValueWithEnoughSize(CETaskParamRef _Nonnull paramRef, uint32_t index, CECType_e t, size_t size, void * _Nonnull valuePtr) {
+static inline _Bool CETaskParamGetContentValueWithEnoughSize(CETaskParamRef _Nonnull paramRef, uint32_t index, CType_e t, size_t size, void * _Nonnull valuePtr) {
     int32_t result = __CETaskParamGetContentValue(paramRef, index, t, size, valuePtr);
     if (result >= 0) {
         return true;
@@ -426,7 +426,7 @@ uint32_t CETaskParamGetCount(CETaskParamRef _Nonnull paramRef) {
     return param->count;
 }
 
-_Bool CETaskParamGetItemType(CETaskParamRef _Nonnull paramRef, uint32_t index, CECType_e * _Nonnull itemType) {
+_Bool CETaskParamGetItemType(CETaskParamRef _Nonnull paramRef, uint32_t index, CType_e * _Nonnull itemType) {
     CETaskParam_s * param = CETaskParamCheckBridge(paramRef);
     if (NULL == param || NULL == itemType) {
         abort();
@@ -435,79 +435,79 @@ _Bool CETaskParamGetItemType(CETaskParamRef _Nonnull paramRef, uint32_t index, C
     if (NULL == item) {
         return false;
     }
-    CECType_e t = item->type;
+    CType_e t = item->type;
     *itemType = t;
     return true;
 }
 
 //get
 _Bool CETaskParamGetBool(CETaskParamRef _Nonnull paramRef, uint32_t index, _Bool * _Nonnull item) {
-    CECType_e itemType = CECTypeBool;
+    CType_e itemType = CTypeBool;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 
 _Bool CETaskParamGetSInt8(CETaskParamRef _Nonnull paramRef, uint32_t index, sint8_t * _Nonnull item) {
-    CECType_e itemType = CECTypeSInt8;
+    CType_e itemType = CTypeSInt8;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 _Bool CETaskParamGetSInt16(CETaskParamRef _Nonnull paramRef, uint32_t index, sint16_t * _Nonnull item) {
-    CECType_e itemType = CECTypeSInt16;
+    CType_e itemType = CTypeSInt16;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 _Bool CETaskParamGetSInt32(CETaskParamRef _Nonnull paramRef, uint32_t index, sint32_t * _Nonnull item) {
-    CECType_e itemType = CECTypeSInt32;
+    CType_e itemType = CTypeSInt32;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 _Bool CETaskParamGetSInt64(CETaskParamRef _Nonnull paramRef, uint32_t index, sint64_t * _Nonnull item) {
-    CECType_e itemType = CECTypeSInt64;
+    CType_e itemType = CTypeSInt64;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 
 _Bool CETaskParamGetUInt8(CETaskParamRef _Nonnull paramRef, uint32_t index, uint8_t * _Nonnull item) {
-    CECType_e itemType = CECTypeUInt8;
+    CType_e itemType = CTypeUInt8;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 _Bool CETaskParamGetUInt16(CETaskParamRef _Nonnull paramRef, uint32_t index, uint16_t * _Nonnull item) {
-    CECType_e itemType = CECTypeUInt16;
+    CType_e itemType = CTypeUInt16;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 _Bool CETaskParamGetUInt32(CETaskParamRef _Nonnull paramRef, uint32_t index, uint32_t * _Nonnull item) {
-    CECType_e itemType = CECTypeUInt32;
+    CType_e itemType = CTypeUInt32;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 _Bool CETaskParamGetUInt64(CETaskParamRef _Nonnull paramRef, uint32_t index, uint64_t * _Nonnull item) {
-    CECType_e itemType = CECTypeUInt64;
+    CType_e itemType = CTypeUInt64;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 
 _Bool CETaskParamGetFloat(CETaskParamRef _Nonnull paramRef, uint32_t index, float * _Nonnull item) {
-    CECType_e itemType = CECTypeFloat;
+    CType_e itemType = CTypeFloat;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 _Bool CETaskParamGetDouble(CETaskParamRef _Nonnull paramRef, uint32_t index, double * _Nonnull item) {
-    CECType_e itemType = CECTypeDouble;
+    CType_e itemType = CTypeDouble;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 
 _Bool CETaskParamGetPtr(CETaskParamRef _Nonnull paramRef, uint32_t index, CEPtr _Nullable * _Nonnull item) {
-    CECType_e itemType = CECTypePtr;
+    CType_e itemType = CTypePtr;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamGetContentValueWithEnoughSize(paramRef, index, itemType, size, item);
 }
 
 _Bool CETaskParamGetBuffer(CETaskParamRef _Nonnull paramRef, uint32_t index, void * _Nonnull buffer, size_t size) {
-    CECType_e itemType = CECTypeBuffer;
+    CType_e itemType = CTypeBuffer;
     int32_t result = __CETaskParamGetContentValue(paramRef, index, itemType, size, buffer);
     if (result >= 0) {
         return true;
@@ -526,84 +526,84 @@ _Bool CETaskParamGetBuffer(CETaskParamRef _Nonnull paramRef, uint32_t index, voi
 
 
 _Bool CETaskParamAppendBool(CETaskParamRef _Nonnull paramRef, _Bool item) {
-    CECType_e itemType = CECTypeBool;
+    CType_e itemType = CTypeBool;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 
 
 _Bool CETaskParamAppendSInt8(CETaskParamRef _Nonnull paramRef, sint8_t item) {
-    CECType_e itemType = CECTypeSInt8;
+    CType_e itemType = CTypeSInt8;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 _Bool CETaskParamAppendSInt16(CETaskParamRef _Nonnull paramRef, sint16_t item) {
-    CECType_e itemType = CECTypeSInt16;
+    CType_e itemType = CTypeSInt16;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 _Bool CETaskParamAppendSInt32(CETaskParamRef _Nonnull paramRef, sint32_t item) {
-    CECType_e itemType = CECTypeSInt32;
+    CType_e itemType = CTypeSInt32;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 _Bool CETaskParamAppendSInt64(CETaskParamRef _Nonnull paramRef, sint64_t item) {
-    CECType_e itemType = CECTypeSInt64;
+    CType_e itemType = CTypeSInt64;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 
 _Bool CETaskParamAppendUInt8(CETaskParamRef _Nonnull paramRef, uint8_t item) {
-    CECType_e itemType = CECTypeUInt8;
+    CType_e itemType = CTypeUInt8;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 _Bool CETaskParamAppendUInt16(CETaskParamRef _Nonnull paramRef, uint16_t item) {
-    CECType_e itemType = CECTypeUInt16;
+    CType_e itemType = CTypeUInt16;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 _Bool CETaskParamAppendUInt32(CETaskParamRef _Nonnull paramRef, uint32_t item) {
-    CECType_e itemType = CECTypeUInt32;
+    CType_e itemType = CTypeUInt32;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 _Bool CETaskParamAppendUInt64(CETaskParamRef _Nonnull paramRef, uint64_t item) {
-    CECType_e itemType = CECTypeUInt64;
+    CType_e itemType = CTypeUInt64;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 
 _Bool CETaskParamAppendFloat(CETaskParamRef _Nonnull paramRef, float item) {
-    CECType_e itemType = CECTypeFloat;
+    CType_e itemType = CTypeFloat;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 _Bool CETaskParamAppendDouble(CETaskParamRef _Nonnull paramRef, double item) {
-    CECType_e itemType = CECTypeDouble;
+    CType_e itemType = CTypeDouble;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 
 _Bool CETaskParamAppendPtr(CETaskParamRef _Nonnull paramRef, CEPtr _Nullable item) {
-    CECType_e itemType = CECTypePtr;
+    CType_e itemType = CTypePtr;
     size_t size = CETaskParamTypeGetValueSize(itemType);
     return CETaskParamAppendContentValue(paramRef, itemType, &item, size);
 }
 
 _Bool CETaskParamAppendBuffer(CETaskParamRef _Nonnull paramRef, void * _Nonnull buffer, size_t size) {
-    CECType_e itemType = CECTypeBuffer;
+    CType_e itemType = CTypeBuffer;
     return CETaskParamAppendContentValue(paramRef, itemType, buffer, size);
 }
 
 
 
 
-int32_t CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, CECType_e * _Nullable typePtr, void * _Nonnull valuePtr, size_t valueMaxSize) {
-    return __CETaskParamGetItem(paramRef, index, typePtr, CECTypeNone, valuePtr, valueMaxSize);
+int32_t CETaskParamGetItem(CETaskParamRef _Nonnull paramRef, uint32_t index, CType_e * _Nullable typePtr, void * _Nonnull valuePtr, size_t valueMaxSize) {
+    return __CETaskParamGetItem(paramRef, index, typePtr, CTypeNone, valuePtr, valueMaxSize);
 }
 
 
-int32_t CETaskParamAppendItem(CETaskParamRef _Nonnull paramRef, CECType_e t, void * _Nonnull valuePtr, size_t valueSize) {
+int32_t CETaskParamAppendItem(CETaskParamRef _Nonnull paramRef, CType_e t, void * _Nonnull valuePtr, size_t valueSize) {
     return __CETaskParamAppendContentValue(paramRef, t, valuePtr, valueSize);
 }

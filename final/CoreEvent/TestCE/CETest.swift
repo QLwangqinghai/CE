@@ -128,6 +128,7 @@ open class S : NSObject {
         CESerialQueue.main.async(DispatchWorkItem(block: {
             print("1=\(p2)")
         }))
+        let a : Array<UInt> = []
     }
     
     

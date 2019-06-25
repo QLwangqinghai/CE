@@ -35,7 +35,7 @@
 #include <CoreEvent/CETime.h>
 #include <CoreEvent/CELog.h>
 #include <CoreEvent/CEMemory.h>
-#include <CoreEvent/CECType.h>
+#include <CoreEvent/CType.h>
 
 
 

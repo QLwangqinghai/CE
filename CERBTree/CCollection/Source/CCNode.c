@@ -8,4 +8,3 @@
 
 #include "CCNode.h"
 
-#include "CInteger.h"

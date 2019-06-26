@@ -9,18 +9,15 @@
 #ifndef CCNode_h
 #define CCNode_h
 
-#include <stdio.h>
-#include <stdatomic.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <time.h>
-#include <limits.h>
-#include <math.h>
-#include <string.h>
-#include <errno.h>
+
+#include "CCBase.h"
 
 
-
+typedef struct __CCNodeBase {
+    _Atomic(uint32_t) ref;
+    uint32_t type: 5;
+    uint32_t size;
+} CCNodeBase_s;
 
 
 struct __CCNode;
@@ -28,15 +25,25 @@ typedef struct __CCNode CCNode_s;
 typedef CCNode_s * CCNodeRef;
 
 
+#if CBuild64Bit
+#pragma pack(push, 8)
+#else
+#pragma pack(push, 4)
+#endif
 
 struct __CCNode {
-    
-    //    CFRuntimeBase _base;
-    CCNodeRef _Nullable parent;    /* Not retained */
-    CCNodeRef _Nullable sibling;    /* Not retained */
-    CCNodeRef _Nullable leftmostChild;    /* All children get a retain from the parent */
-    CCNodeRef _Nullable rightmostChild;    /* Not retained */
+    CCNodeBase_s _base;
+//    CCNodeRef _Nullable parent;    /* Not retained */
+//    CCNodeRef _Nullable sibling;    /* Not retained */
+//    CCNodeRef _Nullable leftmostChild;    /* All children get a retain from the parent */
+//    CCNodeRef _Nullable rightmostChild;    /* Not retained */
 };
+
+#pragma pack(pop)
+
+
+
+
 
 
 #endif /* CCNode_h */

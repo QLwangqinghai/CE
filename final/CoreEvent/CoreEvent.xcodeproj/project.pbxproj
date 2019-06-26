@@ -120,6 +120,7 @@
 		D688137C22A5383400436E1E /* CECondition.h in Headers */ = {isa = PBXBuildFile; fileRef = D688137A22A5383400436E1E /* CECondition.h */; };
 		D688137D22A5383400436E1E /* CECondition.c in Sources */ = {isa = PBXBuildFile; fileRef = D688137B22A5383400436E1E /* CECondition.c */; };
 		D6A24A1F2268CEB000C8E4B8 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A24A1E2268CEB000C8E4B8 /* Test.swift */; };
+		D6A9BE8B22C35F76001EB138 /* CConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D6A9BE8A22C35F76001EB138 /* CConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6D18D9722C0973200E17C23 /* CEEventCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D6D18D9522C0973200E17C23 /* CEEventCenter.h */; };
 		D6D18D9822C0973200E17C23 /* CEEventCenter.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18D9622C0973200E17C23 /* CEEventCenter.c */; };
 		D6D18D9B22C09F7500E17C23 /* CETimeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D6D18D9922C09F7500E17C23 /* CETimeEvent.h */; };
@@ -371,6 +372,7 @@
 		D688137B22A5383400436E1E /* CECondition.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CECondition.c; sourceTree = "<group>"; };
 		D6A24A1D2268CEB000C8E4B8 /* Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6A24A1E2268CEB000C8E4B8 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		D6A9BE8A22C35F76001EB138 /* CConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CConfig.h; sourceTree = "<group>"; };
 		D6D18D9522C0973200E17C23 /* CEEventCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEEventCenter.h; sourceTree = "<group>"; };
 		D6D18D9622C0973200E17C23 /* CEEventCenter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEEventCenter.c; sourceTree = "<group>"; };
 		D6D18D9922C09F7500E17C23 /* CETimeEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETimeEvent.h; sourceTree = "<group>"; };
@@ -761,8 +763,9 @@
 		D644ABD6227C952D00F6B333 /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				D672490B227E9EFA00FC8B7A /* CType.h */,
+				D6A9BE8A22C35F76001EB138 /* CConfig.h */,
 				D67248F6227CAE7300FC8B7A /* CEConfig.h */,
+				D672490B227E9EFA00FC8B7A /* CType.h */,
 				D644ABC4227C7DE900F6B333 /* CEBase.h */,
 				D644ABC5227C7DE900F6B333 /* CEBase.c */,
 				D647C89122866D0F004AAA19 /* CERuntime.h */,
@@ -843,6 +846,7 @@
 				D6378D94228177CD006A46E6 /* CEThreadBase.h in Headers */,
 				D615B9A522B4B5410095837D /* CETaskParam.h in Headers */,
 				D60B006B22AFF01B00B1BEA8 /* CEMainQueue.h in Headers */,
+				D6A9BE8B22C35F76001EB138 /* CConfig.h in Headers */,
 				D644ABDA227D58E200F6B333 /* CEQueue.h in Headers */,
 				D672490C227E9EFA00FC8B7A /* CType.h in Headers */,
 				D647C8902283296D004AAA19 /* CEThreadBaseInternal.h in Headers */,

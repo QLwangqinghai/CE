@@ -155,9 +155,9 @@ typedef NS_OPTIONS(NSUInteger, NSBinarySearchingOptions) {
 - (void)insertObject:(ObjectType)anObject atIndex:(NSUInteger)index;
 - (void)insertObjects:(NSArray *)objects atIndex:(NSUInteger)index;
 
-- (void)removeFirst;
-- (void)removeLast;
-- (void)removeObjectAtIndex:(NSUInteger)index;
+- (ObjectType)removeFirst;
+- (ObjectType)removeLast;
+- (ObjectType)removeObjectAtIndex:(NSUInteger)index;
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(ObjectType)anObject;
 
 @end
@@ -167,7 +167,7 @@ typedef NS_OPTIONS(NSUInteger, NSBinarySearchingOptions) {
 - (void)addObjectsFromArray:(NSArray<ObjectType> *)otherArray;
 - (void)exchangeObjectAtIndex:(NSUInteger)idx1 withObjectAtIndex:(NSUInteger)idx2;
 - (void)removeAllObjects;
-- (void)removeObject:(ObjectType)anObject inRange:(NSRange)range;
+- (ObjectType)removeObject:(ObjectType)anObject inRange:(NSRange)range;
 - (void)removeObject:(ObjectType)anObject;
 - (void)removeObjectsInArray:(NSArray<ObjectType> *)otherArray;
 - (void)removeObjectsInRange:(NSRange)range;

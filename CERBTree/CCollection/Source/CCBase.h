@@ -25,8 +25,21 @@
 #include "CConfig.h"
 
 typedef struct __CCRange {
-    uint64_t location;
-    uint64_t length;
+    uint32_t location;
+    uint32_t length;
 } CCRange_t;
+
+
+typedef void (*CCRetainCallBack_f)(const void * _Nonnull value, uint32_t valueSize);
+typedef void (*CCReleaseCallBack_f)(const void * _Nonnull value, uint32_t valueSize);
+typedef _Bool (*CCEqualCallBack_f)(const void * _Nonnull value1, uint32_t value1Size, const void * _Nonnull value2, uint32_t value2Size);
+
+
+typedef struct {
+    CCRetainCallBack_f _Nullable retain;
+    CCReleaseCallBack_f _Nullable release;
+    CCEqualCallBack_f _Nonnull equal;
+} CCBaseCallBacks;
+
 
 #endif /* CCBase_h */

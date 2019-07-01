@@ -16,10 +16,9 @@
 		D6D18DD122C0FCB300E17C23 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DD022C0FCB300E17C23 /* main.m */; };
 		D6D18DE022C1C00C00E17C23 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DDF22C1C00C00E17C23 /* main.m */; };
 		D6D18DE722C1C03300E17C23 /* CCArray.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DE622C1C03300E17C23 /* CCArray.c */; };
-		D6D18DF322C33B5A00E17C23 /* Array.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DF222C33B5A00E17C23 /* Array.m */; };
 		D6E4FAF522C280ED0071748E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FAF422C280ED0071748E /* main.m */; };
 		D6E4FAF922C2816C0071748E /* CInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DE922C1E28E00E17C23 /* CInteger.c */; };
-		D6E4FAFA22C2816C0071748E /* CCNode.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FAEC22C27BF40071748E /* CCNode.c */; };
+		D6E4FAFA22C2816C0071748E /* CCTreeNode.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FAEC22C27BF40071748E /* CCTreeNode.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -79,8 +78,8 @@
 		D6D18DF022C3369E00E17C23 /* CCBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCBase.h; sourceTree = "<group>"; };
 		D6D18DF122C33B5A00E17C23 /* Array.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Array.h; sourceTree = "<group>"; };
 		D6D18DF222C33B5A00E17C23 /* Array.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Array.m; sourceTree = "<group>"; };
-		D6E4FAEB22C27BF40071748E /* CCNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCNode.h; sourceTree = "<group>"; };
-		D6E4FAEC22C27BF40071748E /* CCNode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCNode.c; sourceTree = "<group>"; };
+		D6E4FAEB22C27BF40071748E /* CCTreeNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCTreeNode.h; sourceTree = "<group>"; };
+		D6E4FAEC22C27BF40071748E /* CCTreeNode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCTreeNode.c; sourceTree = "<group>"; };
 		D6E4FAF222C280ED0071748E /* Significant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Significant; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6E4FAF422C280ED0071748E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D6E4FAFB22C284030071748E /* CType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CType.h; path = ../../../final/CoreEvent/CoreEvent/Source/Base/CType.h; sourceTree = "<group>"; };
@@ -201,8 +200,8 @@
 				D6E4FAFB22C284030071748E /* CType.h */,
 				D6D18DE822C1E28E00E17C23 /* CInteger.h */,
 				D6D18DE922C1E28E00E17C23 /* CInteger.c */,
-				D6E4FAEB22C27BF40071748E /* CCNode.h */,
-				D6E4FAEC22C27BF40071748E /* CCNode.c */,
+				D6E4FAEB22C27BF40071748E /* CCTreeNode.h */,
+				D6E4FAEC22C27BF40071748E /* CCTreeNode.c */,
 				D6D18DE522C1C03300E17C23 /* CCArray.h */,
 				D6D18DE622C1C03300E17C23 /* CCArray.c */,
 				D6D18DEF22C3361600E17C23 /* CCArrayInternal.h */,
@@ -371,8 +370,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6D18DE022C1C00C00E17C23 /* main.m in Sources */,
-				D6E4FAFA22C2816C0071748E /* CCNode.c in Sources */,
-				D6D18DF322C33B5A00E17C23 /* Array.m in Sources */,
+				D6E4FAFA22C2816C0071748E /* CCTreeNode.c in Sources */,
 				D6D18DE722C1C03300E17C23 /* CCArray.c in Sources */,
 				D6E4FAF922C2816C0071748E /* CInteger.c in Sources */,
 			);

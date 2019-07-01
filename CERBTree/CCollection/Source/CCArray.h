@@ -9,15 +9,8 @@
 #ifndef CCArray_h
 #define CCArray_h
 
-#include <stdio.h>
-#include <stdatomic.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <time.h>
-#include <limits.h>
-#include <math.h>
-#include <string.h>
-#include <errno.h>
+#include "CCBase.h"
+
 
 
 

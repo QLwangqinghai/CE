@@ -1,13 +1,13 @@
 //
-//  CCNode.h
+//  CCTreeNode.h
 //  CCollection
 //
 //  Created by vector on 2019/6/25.
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
-#ifndef CCNode_h
-#define CCNode_h
+#ifndef CCTreeNode_h
+#define CCTreeNode_h
 
 
 #include "CCBase.h"

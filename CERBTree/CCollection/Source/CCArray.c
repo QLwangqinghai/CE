@@ -27,8 +27,8 @@ static inline uint32_t __CCArrayDequeRoundUpCapacity(uint32_t capacity) {
     if (capacity < 4) return 4;
     uint64_t c = capacity;
     uint64_t s = 1ull << (CUInt64MostSignificant(c) + 1);
-    if (s > 0x40000000L) {
-        s = 0x40000000L;
+    if (s > 0x20000000L) {
+        s = 0x20000000L;
     }
     return (uint32_t)s;
 }
@@ -102,9 +102,9 @@ static inline CCEqualCallBack_f _Nonnull __CCArrayGetEqualCallBack(CCArrayNonnul
     return array->_callBacks.equal;
 }
 
-
-static void __CCArrayReleaseValues(CCArrayNonnullPtr array, CFRange range, bool releaseStorageIfPossible) {
-    const CCBaseCallBacks *cb = __CCArrayGetCallBacks(array);
+static CCArrayNonnullPtr __CCArrayPopSubarrayInRange(CCArrayNonnullPtr array, CCRange_s range, bool releaseStorageIfPossible) {
+    CCReleaseCallBack_f releaseFunc = __CCArrayGetReleaseCallBack(array);
+    
     CFAllocatorRef allocator;
     uint32_t idx;
     switch (__CCArrayGetType(array)) {
@@ -141,15 +141,57 @@ static void __CCArrayReleaseValues(CCArrayNonnullPtr array, CFRange range, bool 
     }
 }
 
-#if defined(DEBUG)
-static inline void __CCArrayValidateRange(CCArrayNonnullPtr array, CFRange range, const char *func) {
-    CFAssert3(0 <= range.location && range.location <= CCArrayGetCount(array), __kCFLogAssertion, "%s(): range.location index (%ld) out of bounds (0, %ld)", func, range.location, CCArrayGetCount(array));
+
+static void __CCArrayReleaseValues(CCArrayNonnullPtr array, CCRange_s range, bool releaseStorageIfPossible) {
+    CCReleaseCallBack_f releaseFunc = __CCArrayGetReleaseCallBack(array);
+    
+    CFAllocatorRef allocator;
+    uint32_t idx;
+    switch (__CCArrayGetType(array)) {
+        case __kCCArrayImmutable:
+            if (NULL != cb->release && 0 < range.length) {
+                struct __CCArrayBucket *buckets = __CCArrayGetBucketsPtr(array);
+                allocator = __CFGetAllocator(array);
+                for (idx = 0; idx < range.length; idx++) {
+                    INVOKE_CALLBACK2(cb->release, allocator, buckets[idx + range.location]._item);
+                }
+                memset(buckets + range.location, 0, sizeof(struct __CCArrayBucket) * range.length);
+            }
+            break;
+        case __kCCArrayDeque: {
+            struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
+            if (0 < range.length && NULL != deque) {
+                struct __CCArrayBucket *buckets = __CCArrayGetBucketsPtr(array);
+                if (NULL != cb->release) {
+                    allocator = __CFGetAllocator(array);
+                    for (idx = 0; idx < range.length; idx++) {
+                        INVOKE_CALLBACK2(cb->release, allocator, buckets[idx + range.location]._item);
+                    }
+                }
+                memset(buckets + range.location, 0, sizeof(struct __CCArrayBucket) * range.length);
+            }
+            if (releaseStorageIfPossible && 0 == range.location && __CCArrayGetCount(array) == range.length) {
+                allocator = __CFGetAllocator(array);
+                if (NULL != deque) CFAllocatorDeallocate(allocator, deque);
+                __CCArraySetCount(array, 0);
+                ((struct __CCArray *)array)->_store = NULL;
+            }
+            break;
+        }
+    }
+}
+
+static inline _Bool __CCArrayValidateRange(CCArrayNonnullPtr array, CCRange_s range, const char *func) {
+    uint32_t count = __CCArrayGetCount(array);
+    if (range.location <= count) {
+        
+        return true;
+    } else {
+        return false;
+    }
     CFAssert2(0 <= range.length, __kCFLogAssertion, "%s(): range.length (%ld) cannot be less than zero", func, range.length);
     CFAssert3(range.location + range.length <= CCArrayGetCount(array), __kCFLogAssertion, "%s(): ending index (%ld) out of bounds (0, %ld)", func, range.location + range.length, CCArrayGetCount(array));
 }
-#else
-#define __CCArrayValidateRange(a,r,f)
-#endif
 
 static Boolean __CCArrayEqual(CFTypeRef cf1, CFTypeRef cf2) {
     CCArrayNonnullPtr array1 = (CCArrayNonnullPtr)cf1;
@@ -220,22 +262,6 @@ static void __CCArrayDeallocate(CFTypeRef cf) {
     BEGIN_MUTATION(array);
     __CCArrayReleaseValues(array, CFRangeMake(0, __CCArrayGetCount(array)), true);
     END_MUTATION(array);
-}
-
-const CFRuntimeClass __CCArrayClass = {
-    _kCFRuntimeScannedObject,
-    "CCArray",
-    NULL,    // init
-    NULL,    // copy
-    __CCArrayDeallocate,
-    __CCArrayEqual,
-    __CCArrayHash,
-    NULL,    //
-    __CCArrayCopyDescription
-};
-
-CFTypeID CCArrayGetTypeID(void) {
-    return _kCFRuntimeIDCCArray;
 }
 
 static CCArrayNonnullPtr __CCArrayInit(CFAllocatorRef allocator, UInt32 flags, uint32_t capacity, const CCBaseCallBacks *callBacks) {
@@ -383,9 +409,6 @@ CF_PRIVATE CFMutableArrayRef __CCArrayCreateMutableCopy0(CFAllocatorRef allocato
     return result;
 }
 
-#define DEFINE_CREATION_METHODS 1
-
-#if DEFINE_CREATION_METHODS
 
 CCArrayNonnullPtr CCArrayCreate(CFAllocatorRef allocator, const void **values, uint32_t numValues, const CCBaseCallBacks *callBacks) {
     return __CCArrayCreate0(allocator, values, numValues, callBacks);

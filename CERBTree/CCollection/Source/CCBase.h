@@ -27,7 +27,7 @@
 typedef struct __CCRange {
     uint32_t location;
     uint32_t length;
-} CCRange_t;
+} CCRange_s;
 
 
 typedef void (*CCRetainCallBack_f)(const void * _Nonnull value, uint32_t valueSize);

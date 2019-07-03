@@ -33,33 +33,69 @@ static inline uint32_t __CCArrayDequeRoundUpCapacity(uint32_t capacity) {
     return (uint32_t)s;
 }
 
-struct __CCArrayDeque {
-    uintptr_t _leftIdx;
-    uintptr_t _capacity;
-    /* struct __CCArrayBucket buckets follow here */
-};
+typedef struct __CCArrayRingBuffer {
+    uint32_t _elementStoreSize;
+    uint32_t _capacity;
+    
+    uint32_t _indexOffset;
+    uint32_t _indexMask;
+    size_t _displacement;
+    
+    uint8_t items[];
+} CCArrayRingBuffer_s;
+
+typedef struct __CCArrayImmutableBuffer {
+    uint32_t _elementStoreSize;
+    uint32_t _capacity;
+
+    uint8_t items[];
+} CCArrayImmutableBuffer_s;
+
+uint32_t counts[16] = {0x10L, 0x20L, 0x40L, 0x80L, 0x100L, 0x200L, 0x400L, 0x800L, 0x1000L, 0x2000L, 0x4000L, 0x8000L, };
+
+static const uint32_t __CCArrayImmutable = 0;
+static const uint32_t __CCArrayMutable = 1;
+
 
 
 typedef struct {
 //    CFRuntimeBase _base;
     CCBaseCallBacks _callBacks;
-    uint32_t _capacity;
-    uint32_t _indexOffset;
-    uint32_t _indexMask;
     uint32_t _count;        /* number of objects */
-    uint32_t _mutations;
     uint32_t _mutable;
     uint32_t _elementSize;//
-    uint32_t _elementStoreSize;//
 
-    size_t _storeSize;
-    size_t _displacement;
-
-    uint8_t * _store;           /* can be NULL when MutableDeque */
+    void * _store;           /* can be NULL when CCArrayMutable */
 } CCArray_s;
 typedef CCArray_s * _Nonnull CCArrayNonnullPtr;
 
+static inline CCArrayNonnullPtr __CCArrayImmutableAllocate(CCBaseCallBacks * _Nullable callBacks, uint32_t elementSize, CCArrayImmutableBuffer_s * _Nonnull buffer) {
+    CCArrayNonnullPtr array = CCAllocate(sizeof(CCArray_s));
+    array->_mutable = __CCArrayImmutable;
+    array->_store = buffer;
+    array->_elementSize = elementSize;
+    array->_count = buffer->_capacity;
+    return array;
+}
 
+static inline CCArrayImmutableBuffer_s * _Nonnull __CCArrayImmutableBufferAllocate(uint32_t capacity, uint32_t elementStoreSize) {
+    size_t s = capacity;
+    s = s * elementStoreSize;
+    CCArrayImmutableBuffer_s * buffer = CCAllocate(sizeof(CCArrayImmutableBuffer_s) + s);
+    buffer->_elementStoreSize = elementStoreSize;
+    buffer->_capacity = capacity;
+    return buffer;
+}
+
+
+
+static inline uint32_t __CCArrayGetType(CCArrayNonnullPtr _Nonnull array) {
+    return array->_mutable;
+}
+
+static inline void __CCArraySetType(CCArrayNonnullPtr array, uint32_t v) {
+    array->_mutable = v;
+}
 
 static inline uint32_t __CCArrayGetCount(CCArrayNonnullPtr _Nonnull array) {
     return array->_count;
@@ -69,20 +105,33 @@ static inline void __CCArraySetCount(CCArrayNonnullPtr array, uint32_t v) {
     array->_count = v;
 }
 
-static inline size_t __CCArrayGetMemoryOffset(CCArrayNonnullPtr array, uint32_t index) {
-    size_t size = index;
-    size = size * array->_elementStoreSize;
-    return size;
-}
+//static inline size_t __CCArrayGetMemoryOffset(CCArrayNonnullPtr array, uint32_t index) {
+//    size_t size = index;
+//    size = size * array->_elementStoreSize;
+//    return size;
+//}
 
 /* This shouldn't be called if the array count is 0. */
 static inline void * _Nonnull __CCArrayGetItemAtIndex(CCArrayNonnullPtr array, uint32_t idx) {
-    uint32_t index = idx + array->_indexOffset;
-    index = index & array->_indexMask;
-    
-    size_t memoryOffset = index;
-    memoryOffset = memoryOffset * array->_elementStoreSize;
-    return array->_store + memoryOffset;
+    switch (__CCArrayGetType(array)) {
+        case __CCArrayImmutable: {
+            CCArrayImmutableBuffer_s * buffer = (CCArrayImmutableBuffer_s *)(array->_store);
+            return &(buffer->items[idx * buffer->_elementStoreSize]);
+        }
+            break;
+        case __CCArrayMutable: {
+            CCArrayRingBuffer_s * buffer = (CCArrayRingBuffer_s *)(array->_store);
+            uint32_t index = idx + buffer->_indexOffset;
+            index = index & buffer->_indexMask;
+            size_t memoryOffset = index;
+            memoryOffset = memoryOffset * buffer->_elementStoreSize;
+            return &(buffer->items[memoryOffset]);
+        }
+            break;
+        default:
+            abort();
+            break;
+    }
 }
 
 
@@ -102,43 +151,56 @@ static inline CCEqualCallBack_f _Nonnull __CCArrayGetEqualCallBack(CCArrayNonnul
     return array->_callBacks.equal;
 }
 
-static CCArrayNonnullPtr __CCArrayPopSubarrayInRange(CCArrayNonnullPtr array, CCRange_s range, bool releaseStorageIfPossible) {
-    CCReleaseCallBack_f releaseFunc = __CCArrayGetReleaseCallBack(array);
-    
-    CFAllocatorRef allocator;
+
+
+static inline CCArrayNonnullPtr __CCArraySubarrayInRange(CCArrayNonnullPtr array, CCRange_s range, _Bool retainStorageIfPossible) {
+    CCRetainCallBack_f retainFunc = __CCArrayGetRetainCallBack(array);
+
+    CCArrayImmutableBuffer_s * buffer = __CCArrayImmutableBufferAllocate(range.length, array->_elementSize);
+
     uint32_t idx;
     switch (__CCArrayGetType(array)) {
-        case __kCCArrayImmutable:
-            if (NULL != cb->release && 0 < range.length) {
-                struct __CCArrayBucket *buckets = __CCArrayGetBucketsPtr(array);
-                allocator = __CFGetAllocator(array);
+        case __CCArrayImmutable: {
+            memcpy(buffer->items, __CCArrayGetItemAtIndex(array, range.location), array->_elementSize * range.length);
+            if (NULL != retainFunc && retainStorageIfPossible) {
+                uint8_t * ptr = buffer->items;
                 for (idx = 0; idx < range.length; idx++) {
-                    INVOKE_CALLBACK2(cb->release, allocator, buckets[idx + range.location]._item);
+                    retainFunc(ptr, array->_elementSize);
+                    ptr += array->_elementSize;
                 }
-                memset(buckets + range.location, 0, sizeof(struct __CCArrayBucket) * range.length);
             }
-            break;
-        case __kCCArrayDeque: {
-            struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
-            if (0 < range.length && NULL != deque) {
-                struct __CCArrayBucket *buckets = __CCArrayGetBucketsPtr(array);
-                if (NULL != cb->release) {
-                    allocator = __CFGetAllocator(array);
-                    for (idx = 0; idx < range.length; idx++) {
-                        INVOKE_CALLBACK2(cb->release, allocator, buckets[idx + range.location]._item);
-                    }
-                }
-                memset(buckets + range.location, 0, sizeof(struct __CCArrayBucket) * range.length);
-            }
-            if (releaseStorageIfPossible && 0 == range.location && __CCArrayGetCount(array) == range.length) {
-                allocator = __CFGetAllocator(array);
-                if (NULL != deque) CFAllocatorDeallocate(allocator, deque);
-                __CCArraySetCount(array, 0);
-                ((struct __CCArray *)array)->_store = NULL;
-            }
-            break;
         }
+            break;
+        case __CCArrayMutable: {
+            CCArrayRingBuffer_s * ringBuffer = (CCArrayRingBuffer_s *)array->_store;
+            uint32_t index = range.location + ringBuffer->_indexOffset;
+            index = index & ringBuffer->_indexMask;
+            if (index + range.length > ringBuffer->_capacity + 1) {//2部分
+                uint32_t length = ringBuffer->_capacity + 1 - index;
+                size_t memoryOffset = index;
+                memoryOffset = memoryOffset * buffer->_elementStoreSize;
+                memcpy(buffer->items, &(buffer->items[memoryOffset]), array->_elementSize * length);
+                memcpy(buffer->items, buffer->items, array->_elementSize * (range.length - length));
+            } else {
+                size_t memoryOffset = index;
+                memoryOffset = memoryOffset * buffer->_elementStoreSize;
+                memcpy(buffer->items, &(buffer->items[memoryOffset]), array->_elementSize * range.length);
+            }
+
+            if (NULL != retainFunc && retainStorageIfPossible) {
+                uint8_t * ptr = buffer->items;
+                for (idx = 0; idx < range.length; idx++) {
+                    retainFunc(ptr, array->_elementSize);
+                    ptr += array->_elementSize;
+                }
+            }
+        }
+            break;
+        default:
+            abort();
+            break;
     }
+    return __CCArrayImmutableAllocate(&(array->_callBacks), array->_elementSize, buffer);
 }
 
 

@@ -29,6 +29,13 @@ typedef struct __CCRange {
     uint32_t length;
 } CCRange_s;
 
+static inline CCRange_s CCRangeMake(uint32_t location, uint32_t length) {
+    CCRange_s range = {
+        .location = location,
+        .length = length,
+    };
+    return range;
+}
 
 typedef void (*CCRetainCallBack_f)(const void * _Nonnull value, uint32_t valueSize);
 typedef void (*CCReleaseCallBack_f)(const void * _Nonnull value, uint32_t valueSize);
@@ -41,5 +48,30 @@ typedef struct {
     CCEqualCallBack_f _Nonnull equal;
 } CCBaseCallBacks;
 
+
+static inline void * _Nonnull CCAllocate(size_t size) {
+    if (size <= 0) {
+        size = 4;
+    }
+    void * ptr = malloc(size);
+    if (NULL == ptr) {
+        fprintf(stderr, "CCAllocate ptr is NULL\n");
+        fflush(stderr);
+        abort();
+    }
+    if (ptr) {
+        memset(ptr, 0, size);
+    }
+    return ptr;
+}
+
+static inline void CCDeallocate(void * _Nonnull ptr) {
+    if (NULL == ptr) {
+        fprintf(stderr, "CCDeallocate ptr is NULL\n");
+        fflush(stderr);
+        abort();
+    }
+    free(ptr);
+}
 
 #endif /* CCBase_h */

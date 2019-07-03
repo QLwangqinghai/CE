@@ -45,11 +45,10 @@ typedef struct __CCArrayRingBuffer {
 
 typedef struct __CCArrayImmutableBufferBase {
 #if CBuild64Bit
-#pragma pack(push, 8)
+    _Atomic(uint_fast64_t) ref;
 #else
-#pragma pack(push, 4)
+    _Atomic(uint_fast32_t) ref;
 #endif
-    _Atomic(uint32_t) ref;
     uint32_t _capacity;
     uint32_t _elementSize;//
 } CCArrayImmutableBufferBase_s;

@@ -43,12 +43,30 @@ typedef struct __CCArrayRingBuffer {
     uint8_t items[];
 } CCArrayRingBuffer_s;
 
-typedef struct __CCArrayImmutableBuffer {
+typedef struct __CCArrayImmutableBufferBase {
+#if CBuild64Bit
+#pragma pack(push, 8)
+#else
+#pragma pack(push, 4)
+#endif
+    _Atomic(uint32_t) ref;
     uint32_t _capacity;
     uint32_t _elementSize;//
+} CCArrayImmutableBufferBase_s;
 
-    uint8_t items[];
+
+#if CBuild64Bit
+#pragma pack(push, 8)
+#else
+#pragma pack(push, 4)
+#endif
+
+typedef struct __CCArrayImmutableBuffer {
+    CCArrayImmutableBufferBase_s base;
 } CCArrayImmutableBuffer_s;
+
+#pragma pack(pop)
+
 
 uint32_t counts[16] = {0x10L, 0x20L, 0x40L, 0x80L, 0x100L, 0x200L, 0x400L, 0x800L, 0x1000L, 0x2000L, 0x4000L, 0x8000L, };
 
@@ -60,9 +78,9 @@ static const uint32_t __CCArrayMutable = 1;
 typedef struct {
 //    CFRuntimeBase _base;
     CCBaseCallBacks _callBacks;
-    uint32_t _elementSize;//
+    uint32_t _elementSize2: 24;//
+    uint32_t _mutable: 8;
     uint32_t _count;        /* number of objects */
-    uint32_t _mutable;
 
     void * _store;           /* can be NULL when CCArrayMutable */
 } CCArray_s;
@@ -72,7 +90,7 @@ static inline CCArrayNonnullPtr __CCArrayImmutableAllocate(CCBaseCallBacks * _Nu
     CCArrayNonnullPtr array = CCAllocate(sizeof(CCArray_s));
     array->_mutable = __CCArrayImmutable;
     array->_store = buffer;
-    array->_elementSize = elementSize;
+    array->_elementSize = buffer->_elementSize;
     array->_count = buffer->_capacity;
     return array;
 }

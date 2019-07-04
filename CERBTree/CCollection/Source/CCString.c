@@ -9,27 +9,26 @@
 #include "CCString.h"
 
 int CUInt32LeastSignificant1111(uint8_t c) {
-    if (c >= 0xC0) {
-        if (c >= 0xE0) {
-            if (c >= 0xF0) {
-                if (c >= 0xF8) {
-                    return -1;
-                } else {
-                    return 4;
-                }
+    if (c >= 0xE0) {
+        if (c >= 0xF0) {
+            if (c == 0xFF) {
+                return -1;
             } else {
-                return 3;
+                return 4;
             }
         } else {
-            return 1;
+            return 3;
         }
-        
     } else {
-        return 1;
+        if (c < 0x80) {
+            return 1;
+        } else {
+            if (c >= 0xC0) {
+                return 2;
+            } else {
+                return -1;
+            }
+        }
     }
-    
-    
-    
-
 }
 

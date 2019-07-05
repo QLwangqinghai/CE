@@ -47,5 +47,24 @@ static inline _Bool CTypeIsValid(CType_e t) {
     return (t >= CTypeBool && t <= CTypeBuffer);
 }
 
+typedef struct __CDate {
+    uint64_t second;
+    uint64_t direction: 1;
+    uint64_t precision: 3;
+    uint64_t s: 60;
+} CDate_s;
+
+
+/*
+ [8B] length
+ [8B] (direction, precision, secondSize)
+ [secondSize] (second)
+ [s] (length - 1 - secondSize)
+ */
+
+/*
+ *
+ * string data date array map bigNumber number
+ */
 
 #endif /* CEParamType_h */

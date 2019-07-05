@@ -8,7 +8,7 @@
 
 #include "CCString.h"
 
-int CUInt32LeastSignificant1111(uint8_t c) {
+static int CUInt32LeastSignificant1111(uint8_t c) {
     if (c >= 0xE0) {
         if (c >= 0xF0) {
             if (c == 0xFF) {

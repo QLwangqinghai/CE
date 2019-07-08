@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)play:(NSString *)urlString;
 
+
+- (void)dis;
+
 @end
 
 NS_ASSUME_NONNULL_END

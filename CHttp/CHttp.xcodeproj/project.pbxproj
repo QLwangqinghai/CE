@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D6C17A8F22D43C9B00B080BA /* HTTPParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C17A8E22D43C9B00B080BA /* HTTPParser.swift */; };
+		D6C17A9922D43CC400B080BA /* CNIOHTTPParser.h in Headers */ = {isa = PBXBuildFile; fileRef = D6C17A9722D43CC400B080BA /* CNIOHTTPParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6C17A9C22D43CC400B080BA /* CNIOHTTPParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C17A9522D43CC400B080BA /* CNIOHTTPParser.framework */; };
+		D6C17A9D22D43CC400B080BA /* CNIOHTTPParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C17A9522D43CC400B080BA /* CNIOHTTPParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D6C17AA622D43D1F00B080BA /* c_nio_http_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = D6C17AA322D43D1F00B080BA /* c_nio_http_parser.c */; };
+		D6C17AA722D43D1F00B080BA /* c_nio_http_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = D6C17AA422D43D1F00B080BA /* c_nio_http_parser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6E4FB3322D3A3F90071748E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FB3222D3A3F90071748E /* AppDelegate.m */; };
 		D6E4FB3622D3A3F90071748E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FB3522D3A3F90071748E /* ViewController.m */; };
 		D6E4FB3822D3A3FA0071748E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6E4FB3722D3A3FA0071748E /* Assets.xcassets */; };
@@ -14,7 +20,38 @@
 		D6E4FB3E22D3A3FA0071748E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FB3D22D3A3FA0071748E /* main.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D6C17A9A22D43CC400B080BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D6E4FB2622D3A3F90071748E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D6C17A9422D43CC400B080BA;
+			remoteInfo = CNIOHTTPParser;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D6C17AA122D43CC400B080BA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D6C17A9D22D43CC400B080BA /* CNIOHTTPParser.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		D6C17A8D22D43C9B00B080BA /* CHttp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CHttp-Bridging-Header.h"; sourceTree = "<group>"; };
+		D6C17A8E22D43C9B00B080BA /* HTTPParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPParser.swift; sourceTree = "<group>"; };
+		D6C17A9522D43CC400B080BA /* CNIOHTTPParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CNIOHTTPParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6C17A9722D43CC400B080BA /* CNIOHTTPParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CNIOHTTPParser.h; sourceTree = "<group>"; };
+		D6C17A9822D43CC400B080BA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D6C17AA322D43D1F00B080BA /* c_nio_http_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = c_nio_http_parser.c; sourceTree = "<group>"; };
+		D6C17AA422D43D1F00B080BA /* c_nio_http_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c_nio_http_parser.h; sourceTree = "<group>"; };
 		D6E4FB2E22D3A3F90071748E /* CHttp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CHttp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6E4FB3122D3A3F90071748E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D6E4FB3222D3A3F90071748E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -28,20 +65,58 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		D6E4FB2B22D3A3F90071748E /* Frameworks */ = {
+		D6C17A9222D43CC400B080BA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D6E4FB2B22D3A3F90071748E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6C17A9C22D43CC400B080BA /* CNIOHTTPParser.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D6C179FB22D4396900B080BA /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				D6C17A8E22D43C9B00B080BA /* HTTPParser.swift */,
+				D6C17A8D22D43C9B00B080BA /* CHttp-Bridging-Header.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		D6C17A9622D43CC400B080BA /* CNIOHTTPParser */ = {
+			isa = PBXGroup;
+			children = (
+				D6C17AA222D43D1F00B080BA /* Source */,
+				D6C17A9722D43CC400B080BA /* CNIOHTTPParser.h */,
+				D6C17A9822D43CC400B080BA /* Info.plist */,
+			);
+			path = CNIOHTTPParser;
+			sourceTree = "<group>";
+		};
+		D6C17AA222D43D1F00B080BA /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				D6C17AA322D43D1F00B080BA /* c_nio_http_parser.c */,
+				D6C17AA422D43D1F00B080BA /* c_nio_http_parser.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
 		D6E4FB2522D3A3F90071748E = {
 			isa = PBXGroup;
 			children = (
+				D6C179FB22D4396900B080BA /* Source */,
 				D6E4FB3022D3A3F90071748E /* CHttp */,
+				D6C17A9622D43CC400B080BA /* CNIOHTTPParser */,
 				D6E4FB2F22D3A3F90071748E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				D6E4FB2E22D3A3F90071748E /* CHttp.app */,
+				D6C17A9522D43CC400B080BA /* CNIOHTTPParser.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,7 +148,37 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		D6C17A9022D43CC400B080BA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6C17AA722D43D1F00B080BA /* c_nio_http_parser.h in Headers */,
+				D6C17A9922D43CC400B080BA /* CNIOHTTPParser.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		D6C17A9422D43CC400B080BA /* CNIOHTTPParser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6C17A9E22D43CC400B080BA /* Build configuration list for PBXNativeTarget "CNIOHTTPParser" */;
+			buildPhases = (
+				D6C17A9022D43CC400B080BA /* Headers */,
+				D6C17A9122D43CC400B080BA /* Sources */,
+				D6C17A9222D43CC400B080BA /* Frameworks */,
+				D6C17A9322D43CC400B080BA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CNIOHTTPParser;
+			productName = CNIOHTTPParser;
+			productReference = D6C17A9522D43CC400B080BA /* CNIOHTTPParser.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		D6E4FB2D22D3A3F90071748E /* CHttp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D6E4FB4222D3A3FA0071748E /* Build configuration list for PBXNativeTarget "CHttp" */;
@@ -80,10 +186,12 @@
 				D6E4FB2A22D3A3F90071748E /* Sources */,
 				D6E4FB2B22D3A3F90071748E /* Frameworks */,
 				D6E4FB2C22D3A3F90071748E /* Resources */,
+				D6C17AA122D43CC400B080BA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D6C17A9B22D43CC400B080BA /* PBXTargetDependency */,
 			);
 			name = CHttp;
 			productName = CHttp;
@@ -99,8 +207,12 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = vector;
 				TargetAttributes = {
+					D6C17A9422D43CC400B080BA = {
+						CreatedOnToolsVersion = 10.2;
+					};
 					D6E4FB2D22D3A3F90071748E = {
 						CreatedOnToolsVersion = 10.2.1;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -118,11 +230,19 @@
 			projectRoot = "";
 			targets = (
 				D6E4FB2D22D3A3F90071748E /* CHttp */,
+				D6C17A9422D43CC400B080BA /* CNIOHTTPParser */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D6C17A9322D43CC400B080BA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D6E4FB2C22D3A3F90071748E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -135,6 +255,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D6C17A9122D43CC400B080BA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6C17AA622D43D1F00B080BA /* c_nio_http_parser.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D6E4FB2A22D3A3F90071748E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -142,10 +270,19 @@
 				D6E4FB3622D3A3F90071748E /* ViewController.m in Sources */,
 				D6E4FB3E22D3A3FA0071748E /* main.m in Sources */,
 				D6E4FB3322D3A3F90071748E /* AppDelegate.m in Sources */,
+				D6C17A8F22D43C9B00B080BA /* HTTPParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D6C17A9B22D43CC400B080BA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D6C17A9422D43CC400B080BA /* CNIOHTTPParser */;
+			targetProxy = D6C17A9A22D43CC400B080BA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		D6E4FB3922D3A3FA0071748E /* Main.storyboard */ = {
@@ -159,6 +296,66 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D6C17A9F22D43CC400B080BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = CNIOHTTPParser/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CNIOHTTPParser;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		D6C17AA022D43CC400B080BA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = CNIOHTTPParser/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CNIOHTTPParser;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		D6E4FB4022D3A3FA0071748E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -274,6 +471,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CHttp/CHttp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -284,6 +482,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CHttp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Source/CHttp-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -291,6 +492,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CHttp/CHttp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -301,12 +503,23 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CHttp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Source/CHttp-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D6C17A9E22D43CC400B080BA /* Build configuration list for PBXNativeTarget "CNIOHTTPParser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6C17A9F22D43CC400B080BA /* Debug */,
+				D6C17AA022D43CC400B080BA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D6E4FB2922D3A3F90071748E /* Build configuration list for PBXProject "CHttp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

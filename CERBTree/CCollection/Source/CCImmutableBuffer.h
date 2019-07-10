@@ -14,6 +14,9 @@
 #include "CCBase.h"
 #include "CCAtomic.h"
 
+static int32_t const CCImmutableBufferStatusActive = 1;
+static int32_t const CCImmutableBufferStatusWaitDeallocate = 2;
+
 typedef struct __CCImmutableBuffer {
 #if CBuild64Bit
     _Atomic(uint_fast64_t) ref;
@@ -46,20 +49,29 @@ static inline CCImmutableBuffer_s * _Nonnull __CCImmutableBufferAllocate(uint32_
     
 #if CBuild64Bit
     _Atomic(uint_fast64_t) * refPtr = CCImmutableBufferGetRefPtr(buffer);
-    CCAtomicUInt64Init(refPtr, 1);
+    CCAtomicUInt64Init(refPtr, 2);
 #else
     _Atomic(uint_fast32_t) * refPtr = CCImmutableBufferGetRefPtr(buffer);
-    CCAtomicUInt32Init(refPtr, 1);
+    CCAtomicUInt32Init(refPtr, 2);
 #endif
     
     return buffer;
 }
 
 static inline void __CCImmutableBufferDeallocate(CCImmutableBuffer_s * _Nonnull buffer) {
+#if CBuild64Bit
+    _Atomic(uint_fast64_t) * refPtr = CCImmutableBufferGetRefPtr(buffer);
+    uint_fast64_t refCount = CCAtomicUInt64Load(refPtr);
+    assert(refCount == 1);
+#else
+    _Atomic(uint_fast32_t) * refPtr = CCImmutableBufferGetRefPtr(buffer);
+    uint_fast32_t refCount = CCAtomicUInt32Load(refPtr);
+    assert(refCount == 1);
+#endif
+    
     CCDeallocate(buffer);
 }
 
-//如果返回空 就是有异常
 static inline CCImmutableBuffer_s * _Nonnull __CCImmutableBufferRetain(CCImmutableBuffer_s * _Nonnull buffer) {
     if (NULL == buffer) {
         return buffer;
@@ -75,33 +87,42 @@ static inline CCImmutableBuffer_s * _Nonnull __CCImmutableBufferRetain(CCImmutab
 #endif
         do {
             rcInfo = atomic_load(rcInfoPtr);
-            CERcType_t rc = rcInfo & CERuntimeRcMask;
-            
-            if (__builtin_expect((rc < CERuntimeRcStatic), true)) {
-                rc += 1;
-            } else if (rc == CERuntimeRcStatic) {
-                return object;
-            } else {
-                if (!tryR) {
-                    CELogError("retain a dealloced object");
-                    abort();
-                }
-                return NULL;
-            }
-            CERcType_t weakBit = rcInfo & CERuntimeRcWeakBit;
-            newRcInfo = weakBit | rc;
+            assert(rcInfo >= 2);
+            newRcInfo = rcInfo + 1;
         } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
     }
         
     return buffer;
 }
 
-static inline CCImmutableBuffer_s * _Nonnull __CCImmutableBufferRelease(CCImmutableBuffer_s * _Nonnull buffer) {
-
-    return buffer;
+//返回true 时 需要deallocate
+static inline _Bool __CCImmutableBufferRelease(CCImmutableBuffer_s * _Nonnull buffer) {
+#if CBuild64Bit
+    uint_fast64_t rcInfo = 0;
+    uint_fast64_t newRcInfo = 0;
+    _Atomic(uint_fast64_t) * rcInfoPtr = CCImmutableBufferGetRefPtr(buffer);
+#else
+    uint_fast32_t rcInfo = 0;
+    uint_fast32_t newRcInfo = 0;
+    _Atomic(uint_fast32_t) * rcInfoPtr = CCImmutableBufferGetRefPtr(buffer);
+#endif
+    do {
+        rcInfo = atomic_load(rcInfoPtr);
+        assert(rcInfo >= 2);
+        newRcInfo = rcInfo - 1;
+    } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+    
+    return (newRcInfo == 1);
 }
 
+static inline void * _Nonnull __CCImmutableBufferGetItemAtIndex(CCImmutableBuffer_s * _Nonnull buffer, uint32_t idx) {
+    return &(buffer->items[idx * buffer->_elementSize]);
+}
 
-
+//range 必须是有效的，方法没有校验range的有效性
+static inline void __CCImmutableBufferGetItemsInRange(CCImmutableBuffer_s * _Nonnull buffer, CCRange_s range, CCVector_s * _Nonnull vectorPtr) {
+    vectorPtr->base = __CCImmutableBufferGetItemAtIndex(buffer, range.location);
+    vectorPtr->itemCount = range.length;
+}
 
 #endif /* CCImmutableBuffer_h */

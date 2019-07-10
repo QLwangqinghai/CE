@@ -29,6 +29,12 @@ typedef struct __CCRange {
     uint32_t length;
 } CCRange_s;
 
+typedef struct __CCVector {
+    void * _Nullable base;
+    size_t itemCount;
+} CCVector_s;
+
+
 static inline CCRange_s CCRangeMake(uint32_t location, uint32_t length) {
     CCRange_s range = {
         .location = location,

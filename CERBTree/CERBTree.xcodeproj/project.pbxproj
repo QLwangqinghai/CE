@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D68DDFB222CDAC5D00DBF644 /* CCImmutableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = D68DDFB122CDAC5D00DBF644 /* CCImmutableBuffer.c */; };
 		D68DDFB622CDCE5B00DBF644 /* CCString.c in Sources */ = {isa = PBXBuildFile; fileRef = D68DDFB522CDCE5B00DBF644 /* CCString.c */; };
+		D6C17AED22D5E8FC00B080BA /* CCRingBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = D6C17AEC22D5E8FC00B080BA /* CCRingBuffer.c */; };
 		D6D18DB122C0CE6A00E17C23 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D18DB022C0CE6A00E17C23 /* AppDelegate.m */; };
 		D6D18DB322C0CE6B00E17C23 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D18DB222C0CE6B00E17C23 /* Assets.xcassets */; };
 		D6D18DB622C0CE6B00E17C23 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6D18DB422C0CE6B00E17C23 /* MainMenu.xib */; };
@@ -60,6 +61,8 @@
 		D68DDFB422CDCE5B00DBF644 /* CCString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCString.h; sourceTree = "<group>"; };
 		D68DDFB522CDCE5B00DBF644 /* CCString.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCString.c; sourceTree = "<group>"; };
 		D6A9BE8C22C36265001EB138 /* CConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CConfig.h; sourceTree = "<group>"; };
+		D6C17AEB22D5E8FC00B080BA /* CCRingBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCRingBuffer.h; sourceTree = "<group>"; };
+		D6C17AEC22D5E8FC00B080BA /* CCRingBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCRingBuffer.c; sourceTree = "<group>"; };
 		D6D18DAC22C0CE6A00E17C23 /* CERBTree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CERBTree.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6D18DAF22C0CE6A00E17C23 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D6D18DB022C0CE6A00E17C23 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -215,6 +218,8 @@
 				D6D18DF022C3369E00E17C23 /* CCBase.h */,
 				D68DDFB022CDAC5D00DBF644 /* CCImmutableBuffer.h */,
 				D68DDFB122CDAC5D00DBF644 /* CCImmutableBuffer.c */,
+				D6C17AEB22D5E8FC00B080BA /* CCRingBuffer.h */,
+				D6C17AEC22D5E8FC00B080BA /* CCRingBuffer.c */,
 				D68DDFB322CDAE8300DBF644 /* CCAtomic.h */,
 				D68DDFB422CDCE5B00DBF644 /* CCString.h */,
 				D68DDFB522CDCE5B00DBF644 /* CCString.c */,
@@ -387,6 +392,7 @@
 				D6E4FAF922C2816C0071748E /* CInteger.c in Sources */,
 				D68DDFB622CDCE5B00DBF644 /* CCString.c in Sources */,
 				D68DDFB222CDAC5D00DBF644 /* CCImmutableBuffer.c in Sources */,
+				D6C17AED22D5E8FC00B080BA /* CCRingBuffer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

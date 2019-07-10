@@ -46,7 +46,7 @@ static inline CCImmutableBuffer_s * _Nonnull __CCImmutableBufferAllocate(uint32_
     CCImmutableBuffer_s * buffer = CCAllocate(sizeof(CCImmutableBuffer_s) + s);
     buffer->_elementSize = elementStoreSize;
     buffer->_capacity = capacity;
-    
+
 #if CBuild64Bit
     _Atomic(uint_fast64_t) * refPtr = CCImmutableBufferGetRefPtr(buffer);
     CCAtomicUInt64Init(refPtr, 2);
@@ -123,6 +123,37 @@ static inline void * _Nonnull __CCImmutableBufferGetItemAtIndex(CCImmutableBuffe
 static inline void __CCImmutableBufferGetItemsInRange(CCImmutableBuffer_s * _Nonnull buffer, CCRange_s range, CCVector_s * _Nonnull vectorPtr) {
     vectorPtr->base = __CCImmutableBufferGetItemAtIndex(buffer, range.location);
     vectorPtr->itemCount = range.length;
+}
+
+
+static inline CCImmutableBuffer_s * _Nonnull __CCImmutableBufferCreate(uint32_t elementSize, const CCVector_s * _Nullable vec, uint32_t vecCount) {
+    if (vecCount > 0) {
+        assert(vec);
+    }
+    
+    assert(elementSize <= CCElementSizeLimit);
+    assert(elementSize > 0);
+    
+    uint64_t count = 0;
+    for (int vi=0; vi<vecCount; vi++) {
+        CCVector_s v = vec[vi];
+        count += v.itemCount;
+    }
+    
+    assert(count <= CCCountLimit);
+    uint32_t realCapacity = (uint32_t)count;
+    assert(realCapacity <= CCCountLimit);
+
+    CCImmutableBuffer_s * result = __CCImmutableBufferAllocate(realCapacity, elementSize);
+    uint8_t * dst = result->items;
+    for (int vi=0; vi<vecCount; vi++) {
+        CCVector_s v = vec[vi];
+        size_t s = elementSize * v.itemCount;
+        memcpy(dst, v.base, s);
+        dst += s;
+    }
+    
+    return result;
 }
 
 #endif /* CCImmutableBuffer_h */

@@ -39,7 +39,7 @@ internal enum KeepAliveState {
 }
 
 
-public enum HTTPParserKind {
+public enum HTTPDecoderKind {
     case request
     case response
 }
@@ -55,7 +55,7 @@ private class BetterHTTPParser {
     private var httpParserOffset = 0
     private var rawBytesView: UnsafeRawBufferPointer = .init(start: UnsafeRawPointer(bitPattern: 0xcafbabe), count: 0)
     private var httpErrno: http_errno? = nil
-    private let kind: HTTPParserKind
+    private let kind: HTTPDecoderKind
     var requestHeads = CircularBuffer<HTTPRequestHead>(initialCapacity: 1)
     
     enum MessageContinuation {

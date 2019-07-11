@@ -27,6 +27,8 @@
 		D6C17AE422D5C3B400B080BA /* 1562663973911.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D6C17AE322D5C3B400B080BA /* 1562663973911.mp4 */; };
 		D6C17AE722D5E5E900B080BA /* SCAVMixManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C17AE622D5E5E900B080BA /* SCAVMixManager.m */; };
 		D6C17AF322D615E600B080BA /* SCAVMixHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C17AF222D615E600B080BA /* SCAVMixHandler.m */; };
+		D6CA9AC622D6D8300099C3B4 /* SCAVMixWorkItem.m in Sources */ = {isa = PBXBuildFile; fileRef = D6CA9AC522D6D8300099C3B4 /* SCAVMixWorkItem.m */; };
+		D6CA9AC922D723490099C3B4 /* SCSchedulePlaybackInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D6CA9AC822D723490099C3B4 /* SCSchedulePlaybackInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +58,10 @@
 		D6C17AE622D5E5E900B080BA /* SCAVMixManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCAVMixManager.m; sourceTree = "<group>"; };
 		D6C17AF122D615E600B080BA /* SCAVMixHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCAVMixHandler.h; sourceTree = "<group>"; };
 		D6C17AF222D615E600B080BA /* SCAVMixHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCAVMixHandler.m; sourceTree = "<group>"; };
+		D6CA9AC422D6D8300099C3B4 /* SCAVMixWorkItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCAVMixWorkItem.h; sourceTree = "<group>"; };
+		D6CA9AC522D6D8300099C3B4 /* SCAVMixWorkItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCAVMixWorkItem.m; sourceTree = "<group>"; };
+		D6CA9AC722D723490099C3B4 /* SCSchedulePlaybackInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCSchedulePlaybackInfo.h; sourceTree = "<group>"; };
+		D6CA9AC822D723490099C3B4 /* SCSchedulePlaybackInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCSchedulePlaybackInfo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +119,10 @@
 				D6C17AE622D5E5E900B080BA /* SCAVMixManager.m */,
 				D6C17AF122D615E600B080BA /* SCAVMixHandler.h */,
 				D6C17AF222D615E600B080BA /* SCAVMixHandler.m */,
+				D6CA9AC422D6D8300099C3B4 /* SCAVMixWorkItem.h */,
+				D6CA9AC522D6D8300099C3B4 /* SCAVMixWorkItem.m */,
+				D6CA9AC722D723490099C3B4 /* SCSchedulePlaybackInfo.h */,
+				D6CA9AC822D723490099C3B4 /* SCSchedulePlaybackInfo.m */,
 			);
 			path = AV;
 			sourceTree = "<group>";
@@ -200,10 +210,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6C17ABA22D4498400B080BA /* ViewController.m in Sources */,
+				D6CA9AC622D6D8300099C3B4 /* SCAVMixWorkItem.m in Sources */,
 				D6C17AF322D615E600B080BA /* SCAVMixHandler.m in Sources */,
 				D6C17AE722D5E5E900B080BA /* SCAVMixManager.m in Sources */,
 				D6C17AC522D4498500B080BA /* main.m in Sources */,
 				D6C17AB722D4498400B080BA /* AppDelegate.m in Sources */,
+				D6CA9AC922D723490099C3B4 /* SCSchedulePlaybackInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

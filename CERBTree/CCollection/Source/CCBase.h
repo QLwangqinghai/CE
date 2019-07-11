@@ -25,6 +25,12 @@
 #include "CConfig.h"
 
 
+
+#define CCLogError(format, ...) do {\
+fprintf(stderr, format, ##__VA_ARGS__);                                               \
+fflush(stderr);\
+} while(0)
+
 //count 的最大值
 static const uint32_t CCCountLimit = 0x20000000uL;
 static const uint32_t CCElementSizeLimit = 0x20000000uL;
@@ -67,8 +73,7 @@ static inline void * _Nonnull CCAllocate(size_t size) {
     }
     void * ptr = malloc(size);
     if (NULL == ptr) {
-        fprintf(stderr, "CCAllocate ptr is NULL\n");
-        fflush(stderr);
+        CCLogError("CCAllocate ptr is NULL\n");
         abort();
     }
     if (ptr) {
@@ -79,11 +84,13 @@ static inline void * _Nonnull CCAllocate(size_t size) {
 
 static inline void CCDeallocate(void * _Nonnull ptr) {
     if (NULL == ptr) {
-        fprintf(stderr, "CCDeallocate ptr is NULL\n");
-        fflush(stderr);
+        CCLogError("CCDeallocate ptr is NULL\n");
         abort();
     }
     free(ptr);
 }
+
+
+
 
 #endif /* CCBase_h */

@@ -8,37 +8,51 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import "SCAVMixWorkItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+
+
+@interface SCAVMixConfig : NSObject
+
+/*
+ user_course_schedule_time
+ */
+@property (nonatomic, readonly) NSString * identifier;
+@property (nonatomic, copy) NSString * outputPath;
+@property (nonatomic, copy) NSString * audioInputPath;
+@property (nonatomic, copy) NSString * videoInputPath;
+
+
+- (instancetype)initWithIdentifier:(NSString *)identifier;
+
+@end
+
+
 typedef NS_ENUM(NSUInteger, SCAVMixHandlerStatus) {
-    SCAVMixHandlerStatusNone,
+    SCAVMixHandlerStatusNone = 0,
     SCAVMixHandlerStatusRunning,
     SCAVMixHandlerStatusFinished,
     SCAVMixHandlerStatusFailure,
     SCAVMixHandlerStatusCanceled,
 };
 
-@interface SCAVMixConfig : NSObject
-
-@property (nonatomic, copy) NSString * outputPath;
-@property (nonatomic, copy) NSString * audioInputPath;
-@property (nonatomic, copy) NSString * videoInputPath;
-
-@end
-@implementation SCAVMixConfig
-
-@end
-
+@class SCAVMixHandler;
+typedef void(^SCAVMixHandlerBlock)(SCAVMixHandler * handler);
 
 @interface SCAVMixHandler : NSObject
 
-@property (nonatomic, copy) NSString * name;
+@property (nonatomic, assign, readonly) SCAVMixHandlerStatus status;
 @property (nonatomic, strong) SCAVMixConfig * config;
 
+- (instancetype)initWithConfig:(SCAVMixConfig *)config queue:(dispatch_queue_t)queue;
 
-
+- (BOOL)startWithCompletion:(SCAVMixHandlerBlock)completion;
+- (void)cancel;
 
 @end
+
+
 
 NS_ASSUME_NONNULL_END

@@ -10,8 +10,6 @@
 #import <UIKit/UIKit.h>
 
 
-
-
 typedef NS_ENUM(NSUInteger, SCAVWriterInputHandlerStatus) {
     SCAVWriterInputHandlerStatusNone,
     SCAVWriterInputHandlerStatusRunning,
@@ -28,9 +26,6 @@ typedef NS_ENUM(NSUInteger, SCAVWriterInputHandlerKind) {
 @class SCAVWriterInputHandler;
 typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 @interface SCAVWriterInputHandler : NSObject
-{
-    CMSampleBufferRef _Nullable __buffer;
-}
 
 @property (atomic, assign) SCAVWriterInputHandlerKind kind;
 @property (atomic, assign) SCAVWriterInputHandlerStatus status;
@@ -56,7 +51,7 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
                               queue:(dispatch_queue_t)queue;
 
 - (BOOL)startWithCompletion:(SCAVWriterInputHandlerBlock)completion;
-- (BOOL)finish;
+- (BOOL)finish:(BOOL)isSuccess;
 - (void)cancel;
 
 @end
@@ -68,8 +63,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
                               queue:(dispatch_queue_t)queue {
     self = [super init];
     if (self) {
-        __buffer = NULL;
-        
         self.writerInput = writerInput;
         self.readerTrackOutput = readerTrackOutput;
         self.queue = queue;
@@ -78,36 +71,8 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 }
 
 - (void)dealloc {
-    if (__buffer) {
-        CFRelease(__buffer);
-        __buffer = NULL;
-    }
     NSLog(@"SCAVWriterInputHandler dealloc");
 }
-
-- (void)nextBuffer:(BOOL(^)(CMSampleBufferRef _Nullable buffer))handler {
-    if (NULL == handler) {
-        return;
-    }
-    CMSampleBufferRef buffer = __buffer;
-    if (NULL == buffer) {
-        buffer = [self.readerTrackOutput copyNextSampleBuffer];
-    } else {
-        __buffer = NULL;
-    }
-    
-    BOOL handleResult = handler(buffer);
-    if (handleResult) {
-        if (buffer) {
-            CFRelease(buffer);
-        } else {
-            NSLog(@"[buffer nil]");
-        }
-    } else {
-        __buffer = buffer;
-    }
-}
-
 
 - (BOOL)startWithCompletion:(SCAVWriterInputHandlerBlock)completion {
     if (SCAVWriterInputHandlerStatusNone == self.status) {
@@ -120,10 +85,14 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     }
 }
 
-- (BOOL)finish {
+- (BOOL)finish:(BOOL)isSuccess {
     if (SCAVWriterInputHandlerStatusRunning == self.status) {
         [self.writerInput markAsFinished];
-        self.status = SCAVWriterInputHandlerStatusFinished;
+        if (isSuccess) {
+            self.status = SCAVWriterInputHandlerStatusFinished;
+        } else {
+            self.status = SCAVWriterInputHandlerStatusFailure;
+        }
         
         if (self.completion) {
             self.completion(self);
@@ -163,30 +132,49 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     dispatch_queue_t queue = self.queue;
     NSString * tag = self.tag ?: @"";
     
+    __block NSInteger sequence = 0;
+    NSInteger logStepLength = 120;
+    
+    AVAssetWriterInput * writerInput = self.writerInput;
+    AVAssetReaderTrackOutput * readerTrackOutput = self.readerTrackOutput;
+    
+    AVAssetReader * assetReader = self.assetReader;
+    AVAssetWriter * assetWriter = self.assetWriter;
+
     [self.writerInput requestMediaDataWhenReadyOnQueue:queue usingBlock:^{
         NSInteger breakFlag = self.breakFlag;
-        while (self.writerInput.readyForMoreMediaData) {
-            __block BOOL needBreak = false;
-            [self nextBuffer:^BOOL(CMSampleBufferRef  _Nullable buffer) {
-                if (buffer) {
-                    BOOL appendResult = [self.writerInput appendSampleBuffer:buffer];
-                    if (appendResult) {
-                        printf("-");
-                        return true;
-                    } else {
-                        printf("[e0:%ld %ld]", self.assetReader.status, self.assetWriter.status);
-                        needBreak = true;
-                        usleep(30);
-                        return false;
-                    }
-                } else {
-                    NSLog(@"[%@: input finish]", tag);
-                    [self finish];
-                    return true;
-                }
-            }];
+        while (writerInput.readyForMoreMediaData) {
+            if (SCAVWriterInputHandlerStatusRunning != self.status) {
+                return;
+            }
+            CMSampleBufferRef buffer = [readerTrackOutput copyNextSampleBuffer];
+            if (buffer) {
+                BOOL appendResult = [writerInput appendSampleBuffer:buffer];
+                CFRelease(buffer);
 
-            if (self.breakFlag != breakFlag || needBreak) {
+                if (appendResult) {
+                    sequence += 1;
+#if DEBUG
+                    //状态log
+                    if (sequence % logStepLength == 0) {
+                        printf("[%s a %ld]", tag.UTF8String, sequence);
+                    }
+#endif
+                } else {
+                    AVAssetReaderStatus readStatus = assetReader.status;
+                    AVAssetWriterStatus writeStatus = assetWriter.status;
+                    
+                    if (AVAssetReaderStatusCompleted == readStatus || AVAssetWriterStatusCompleted == writeStatus) {
+                        [self finish:true];
+                    } else {
+                        [self finish:false];
+                    }
+                }
+            } else {
+                printf("[%s: input finish %ld]", tag.UTF8String, sequence);
+                [self finish:true];
+            }
+            if (self.breakFlag != breakFlag) {
                 break;
             }
         }
@@ -262,8 +250,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     return self;
 }
 
-
-
 - (BOOL)prepare {
     BOOL result = [self configAssetReader];
     if (result) {
@@ -277,7 +263,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     }
     if (!result) {
         NSLog(@"prepare failure");
-        
     }
     return result;
 }
@@ -285,11 +270,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 - (BOOL)startWithCompletion:(SCAVMixHandlerBlock)completion {
     BOOL result = false;
     if (SCAVMixHandlerStatusNone == self.status) {
-        
-        
-        
-        
-        
         
         
         self.status = SCAVMixHandlerStatusRunning;
@@ -303,7 +283,9 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 }
 
 - (void)complete {
-    
+    if (self.completion) {
+        self.completion(self);
+    }
 }
 
 - (void)cancel {
@@ -337,30 +319,42 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     // 视频采集通道
     AVAssetTrack *videoAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] firstObject];
     //  把采集轨道数据加入到可变轨道之中
+    if (nil == videoAssetTrack) {
+        return false;
+    }
     [videoTrack insertTimeRange:videoTimeRange ofTrack:videoAssetTrack atTime:nextClistartTime error:nil];
     
     comosition.naturalSize = videoAssetTrack.naturalSize;
     self.videoSize = videoAssetTrack.naturalSize;
+    
+    
     // 声音采集
     AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:audioUrl options:nil];
     // 因为视频短这里就直接用视频长度了,如果自动化需要自己写判断
     CMTimeRange audioTimeRange = videoTimeRange;
-    // 音频通道
-    AVMutableCompositionTrack *audioTrack = [comosition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
     // 音频采集通道
-    AVAssetTrack *audioAssetTrack = [[audioAsset tracksWithMediaType:AVMediaTypeAudio] firstObject];
-    // 加入合成轨道之中
-    [audioTrack insertTimeRange:audioTimeRange ofTrack:audioAssetTrack atTime:nextClistartTime error:nil];
-    
-    
+    AVAssetTrack * audioAssetTrack = [[audioAsset tracksWithMediaType:AVMediaTypeAudio] firstObject];
+    if (nil != audioAssetTrack) {
+        // 音频通道
+        AVMutableCompositionTrack *audioTrack = [comosition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+
+        // 加入合成轨道之中
+        [audioTrack insertTimeRange:audioTimeRange ofTrack:audioAssetTrack atTime:nextClistartTime error:nil];
+    }
     
     //获取资源的一个视频轨道
     AVAssetTrack * track = [[comosition tracksWithMediaType:AVMediaTypeVideo] firstObject];
+    if (nil == track) {
+        return false;
+    }
     
-    
-    NSError * error;
-    _assetReader = [[AVAssetReader alloc] initWithAsset:comosition error:&error];
-    
+    NSError * error = nil;
+    AVAssetReader * assetReader = [[AVAssetReader alloc] initWithAsset:comosition error:&error];
+    if (nil == assetReader && nil != error) {
+        NSLog(@"AVAssetReader initWithAsset error:%@", error);
+        return false;
+    }
+    _assetReader = assetReader;
     //指定将读取的样本数据压缩为BGRA格式
     
     NSDictionary *setting =   @{(id)kCVPixelBufferPixelFormatTypeKey:@(kCVPixelFormatType_32BGRA)};
@@ -368,21 +362,8 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     //初始化输出，指定从track轨道中读取样本数据
     
     AVAssetReaderTrackOutput * videoOutPut = [[AVAssetReaderTrackOutput alloc] initWithTrack:track outputSettings:setting];
-    
-    CMTime duration = audioAsset.duration;
-    
-    //    audioAsset.duration.timescale
-    NSDictionary * audioSetting = @{ AVFormatIDKey : @(kAudioFormatLinearPCM),
-                                     AVNumberOfChannelsKey : @(1),
-                                     //                                     AVSampleRateKey : @(audioDurationSeconds)
-                                     
-                                     };
-    
-    AVAssetReaderTrackOutput * audioOutPut = [[AVAssetReaderTrackOutput alloc] initWithTrack:[[comosition tracksWithMediaType:AVMediaTypeAudio] firstObject] outputSettings:audioSetting];
     self.videoOutPut = videoOutPut;
-    self.audioOutPut = audioOutPut;
-    
-    
+
     //添加输出
     if ([_assetReader canAddOutput:videoOutPut]) {
         [_assetReader addOutput:videoOutPut];
@@ -390,13 +371,30 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         NSLog(@"addOutput videoOutPut error");
         return false;
     }
-    if ([_assetReader canAddOutput:audioOutPut]) {
-        [_assetReader addOutput:audioOutPut];
-    } else {
-        NSLog(@"addOutput audioOutPut error");
-        return false;
-    }
     
+    CMTime duration = audioAsset.duration;
+    
+    //获取资源的一个音频轨道
+    AVAssetTrack * atrack = [[comosition tracksWithMediaType:AVMediaTypeAudio] firstObject];
+    if (nil != atrack) {
+        //    audioAsset.duration.timescale
+        NSDictionary * audioSetting = @{ AVFormatIDKey : @(kAudioFormatLinearPCM),
+                                         AVNumberOfChannelsKey : @(1),
+                                         //                                     AVSampleRateKey : @(audioDurationSeconds)
+                                         
+                                         };
+        
+        
+        AVAssetReaderTrackOutput * audioOutPut = [[AVAssetReaderTrackOutput alloc] initWithTrack:atrack outputSettings:audioSetting];
+        self.audioOutPut = audioOutPut;
+        
+        if ([_assetReader canAddOutput:audioOutPut]) {
+            [_assetReader addOutput:audioOutPut];
+        } else {
+            NSLog(@"addOutput audioOutPut error");
+            return false;
+        }
+    }
     return true;
 }
 - (BOOL)configWriteInput {
@@ -425,7 +423,7 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     self.videoWriterInputHandler = [[SCAVWriterInputHandler alloc] initWithWriterInput:videoWriterInput readerTrackOutput:self.videoOutPut queue:self.queue];
     
     self.videoWriterInputHandler.kind = SCAVWriterInputHandlerKindVideo;
-    self.videoWriterInputHandler.tag = @"video";
+    self.videoWriterInputHandler.tag = @"v";
     //添加写入器
     if ([_assetWriter canAddInput:videoWriterInput]) {
         [_assetWriter addInput:videoWriterInput];
@@ -434,40 +432,42 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         return false;
     }
     
-    //    @{AVNumberOfChannelsKey:@2,
-    //      AVSampleRateKey:@44100,
-    //      AVLinearPCMBitDepthKey:@32,
-    //      AVEncoderAudioQualityKey:@(AVAudioQualityMax),
-    //      AVEncoderBitRateKey:@128000};
-    
-    
-    NSDictionary * audioSetting = @{
-                                    //                                    AVEncoderBitRatePerChannelKey : @(28000),
-                                    AVFormatIDKey : @(kAudioFormatMPEG4AAC),
-                                    AVNumberOfChannelsKey : @(1),
-                                    AVEncoderAudioQualityKey : @(AVAudioQualityMedium),
-                                    AVSampleRateKey : @(22050),//32000
-                                    //                                     AVEncoderBitRateKey : @(1),
-                                    };
-    
-    AVAssetWriterInput * audioWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeAudio outputSettings:audioSetting];
-    self.audioWriterInputHandler = [[SCAVWriterInputHandler alloc] initWithWriterInput:audioWriterInput readerTrackOutput:self.audioOutPut queue:self.queue];
-    self.videoWriterInputHandler.kind = SCAVWriterInputHandlerKindAudio;
-    self.audioWriterInputHandler.tag = @"audio";
-    
-    //添加写入器
-    if ([_assetWriter canAddInput:audioWriterInput]) {
-        [_assetWriter addInput:audioWriterInput];
-    } else {
-        NSLog(@"canAddInput:audioWriterInputHandler");
-        return false;
+    if (self.audioOutPut) {
+        //    @{AVNumberOfChannelsKey:@2,
+        //      AVSampleRateKey:@44100,
+        //      AVLinearPCMBitDepthKey:@32,
+        //      AVEncoderAudioQualityKey:@(AVAudioQualityMax),
+        //      AVEncoderBitRateKey:@128000};
+        
+        NSDictionary * audioSetting = @{
+                                        //                                    AVEncoderBitRatePerChannelKey : @(28000),
+                                        AVFormatIDKey : @(kAudioFormatMPEG4AAC),
+                                        AVNumberOfChannelsKey : @(1),
+                                        AVEncoderAudioQualityKey : @(AVAudioQualityMedium),
+                                        AVSampleRateKey : @(22050),//32000
+                                        //                                     AVEncoderBitRateKey : @(1),
+                                        };
+        
+        AVAssetWriterInput * audioWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeAudio outputSettings:audioSetting];
+        self.audioWriterInputHandler = [[SCAVWriterInputHandler alloc] initWithWriterInput:audioWriterInput readerTrackOutput:self.audioOutPut queue:self.queue];
+        self.videoWriterInputHandler.kind = SCAVWriterInputHandlerKindAudio;
+        self.audioWriterInputHandler.tag = @"a";
+        
+        //添加写入器
+        if ([_assetWriter canAddInput:audioWriterInput]) {
+            [_assetWriter addInput:audioWriterInput];
+        } else {
+            NSLog(@"canAddInput:audioWriterInputHandler");
+            return false;
+        }
     }
+    
     _assetWriter.shouldOptimizeForNetworkUse = true;
     
     self.videoWriterInputHandler.assetReader = self.assetReader;
-    self.audioWriterInputHandler.assetReader = self.assetReader;
-
     self.videoWriterInputHandler.assetWriter = self.assetWriter;
+    
+    self.audioWriterInputHandler.assetReader = self.assetReader;
     self.audioWriterInputHandler.assetWriter = self.assetWriter;
 
     return true;
@@ -483,6 +483,7 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     dispatch_group_t group = dispatch_group_create();
     dispatch_group_enter(group);
     dispatch_group_enter(group);
+
     dispatch_group_notify(group, queue, ^{
         [self.assetWriter finishWritingWithCompletionHandler:^{
             CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
@@ -516,8 +517,15 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
                 NSLog(@"===>assertReadToAssetInput.failure: %@, error:%@", self.name, self.assetWriter.error);
             }
             
-            
-            BOOL result = (AVAssetWriterStatusCompleted == status && SCAVWriterInputHandlerStatusFinished == self.audioWriterInputHandler.status && SCAVWriterInputHandlerStatusFinished == self.videoWriterInputHandler.status);
+            BOOL audioBeOk = true;
+            if (self.audioWriterInputHandler) {
+                audioBeOk = (SCAVWriterInputHandlerStatusFinished == self.audioWriterInputHandler.status);
+            }
+            BOOL videoBeOk = true;
+            if (self.videoWriterInputHandler) {
+                audioBeOk = (SCAVWriterInputHandlerStatusFinished == self.videoWriterInputHandler.status);
+            }
+            BOOL result = (AVAssetWriterStatusCompleted == status && audioBeOk && videoBeOk);
             if (result) {
                 NSError * error = nil;
                 [[NSFileManager defaultManager] moveItemAtPath:self.tmpOutputPath toPath:self.config.outputPath error:&error];
@@ -539,12 +547,17 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
             }
         }];
     });
+    
     [self.videoWriterInputHandler startWithCompletion:^(SCAVWriterInputHandler *handler) {
         dispatch_group_leave(group);
     }];
-    [self.audioWriterInputHandler startWithCompletion:^(SCAVWriterInputHandler *handler) {
+    if (self.audioWriterInputHandler) {
+        [self.audioWriterInputHandler startWithCompletion:^(SCAVWriterInputHandler *handler) {
+            dispatch_group_leave(group);
+        }];
+    } else {
         dispatch_group_leave(group);
-    }];
+    }
 }
 
 

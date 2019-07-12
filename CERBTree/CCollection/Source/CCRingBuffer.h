@@ -62,17 +62,17 @@ static inline int32_t __CCRingBufferGetItemsInRange(CCRingBuffer_s * _Nonnull bu
         
         CCVector_s * v0 = vectorsPtr;
         v0->base = &(buffer->items[memoryOffset]);
-        v0->itemCount = length;
+        v0->count = length;
         
         CCVector_s * v1 = vectorsPtr + 1;
         v1->base = buffer->items;
-        v1->itemCount = range.length - length;
+        v1->count = range.length - length;
         return 2;
     } else {
         size_t memoryOffset = index;
         memoryOffset = memoryOffset * buffer->_elementSize;
         vectorsPtr[0].base = &(buffer->items[memoryOffset]);
-        vectorsPtr[0].itemCount = range.length;
+        vectorsPtr[0].count = range.length;
         return 1;
     }
 }
@@ -120,7 +120,7 @@ static inline CCRingBuffer_s * _Nonnull __CCRingBufferResize(CCRingBuffer_s * _N
             uint8_t * dst = result->items;
             for (int vi=0; vi<vecCount; vi++) {
                 CCVector_s v = vec[vi];
-                size_t s = elementSize * v.itemCount;
+                size_t s = elementSize * v.count;
                 memcpy(dst, v.base, s);
                 dst += s;
             }
@@ -157,7 +157,7 @@ static inline CCRingBuffer_s * _Nonnull __CCRingBufferCopy(CCRingBuffer_s * _Non
     uint8_t * dst = result->items;
     for (int vi=0; vi<vecCount; vi++) {
         CCVector_s v = vec[vi];
-        size_t s = elementSize * v.itemCount;
+        size_t s = elementSize * v.count;
         memcpy(dst, v.base, s);
         dst += s;
     }
@@ -176,7 +176,7 @@ static inline CCRingBuffer_s * _Nonnull __CCRingBufferCreate(uint32_t elementSiz
     uint64_t count = 0;
     for (int vi=0; vi<vecCount; vi++) {
         CCVector_s v = vec[vi];
-        count += v.itemCount;
+        count += v.count;
     }
     
     assert(count <= CCCountLimit);
@@ -196,7 +196,7 @@ static inline CCRingBuffer_s * _Nonnull __CCRingBufferCreate(uint32_t elementSiz
     uint8_t * dst = result->items;
     for (int vi=0; vi<vecCount; vi++) {
         CCVector_s v = vec[vi];
-        size_t s = elementSize * v.itemCount;
+        size_t s = elementSize * v.count;
         memcpy(dst, v.base, s);
         dst += s;
     }
@@ -204,6 +204,32 @@ static inline CCRingBuffer_s * _Nonnull __CCRingBufferCreate(uint32_t elementSiz
     return result;
 }
 
+// This function does no ObjC dispatch or argument checking;
+// It should only be called from places where that dispatch and check has already been done, or NSCCArray
+static inline CCRingBuffer_s * _Nonnull __CCRingBufferReplaceValues(CCRingBuffer_s * _Nonnull buffer, CCRange_s range, const CCVector_s * _Nullable vec, uint32_t vecCount) {
+    if (vecCount > 0) {
+        assert(vec);
+    }
+    
+    uint32_t elementSize = buffer->_elementSize;
+    uint64_t count = 0;
+    for (int vi=0; vi<vecCount; vi++) {
+        CCVector_s v = vec[vi];
+        count += v.count;
+    }
+    
+    assert(count <= CCCountLimit);
+    uint32_t newCount = (uint32_t)count;
+    CCRingBuffer_s * result = buffer;
+
+    if (range.length > 0) {
+        
+        
+    }
+
+    
+    return result;
+}
 
 
 

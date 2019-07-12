@@ -33,7 +33,6 @@ typedef NS_ENUM(NSUInteger, SCSchedulePlaybackElementStatus) {
 
 @property (nonatomic, assign) SCSchedulePlaybackElementStatus status;
 
-
 - (BOOL)healthCheck;
 
 @end
@@ -47,6 +46,21 @@ typedef NS_ENUM(NSUInteger, SCSchedulePlaybackElementStatus) {
 
 @interface SCSchedulePlaybackInfo : NSObject
 
+@property (nonatomic, copy) NSString * userId;
+@property (nonatomic, copy) NSString * courseId;
+@property (nonatomic, copy) NSString * scheduleId;
+
+// 上次上传成功的时间
+@property (nonatomic, assign) int64_t uploadProgressTime;
+
+
+
+
 @end
+
+
+
+
+
 
 NS_ASSUME_NONNULL_END

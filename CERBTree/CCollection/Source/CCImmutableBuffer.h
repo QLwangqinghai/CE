@@ -122,7 +122,7 @@ static inline void * _Nonnull __CCImmutableBufferGetItemAtIndex(CCImmutableBuffe
 //range 必须是有效的，方法没有校验range的有效性
 static inline void __CCImmutableBufferGetItemsInRange(CCImmutableBuffer_s * _Nonnull buffer, CCRange_s range, CCVector_s * _Nonnull vectorPtr) {
     vectorPtr->base = __CCImmutableBufferGetItemAtIndex(buffer, range.location);
-    vectorPtr->itemCount = range.length;
+    vectorPtr->count = range.length;
 }
 
 
@@ -137,7 +137,7 @@ static inline CCImmutableBuffer_s * _Nonnull __CCImmutableBufferCreate(uint32_t 
     uint64_t count = 0;
     for (int vi=0; vi<vecCount; vi++) {
         CCVector_s v = vec[vi];
-        count += v.itemCount;
+        count += v.count;
     }
     
     assert(count <= CCCountLimit);
@@ -148,7 +148,7 @@ static inline CCImmutableBuffer_s * _Nonnull __CCImmutableBufferCreate(uint32_t 
     uint8_t * dst = result->items;
     for (int vi=0; vi<vecCount; vi++) {
         CCVector_s v = vec[vi];
-        size_t s = elementSize * v.itemCount;
+        size_t s = elementSize * v.count;
         memcpy(dst, v.base, s);
         dst += s;
     }

@@ -12,22 +12,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSNotificationName const SCAVMixManagerItemUpdateNotification;
+
 
 /*
- 
- 
- 
  tmp/UUID 临时工作区间 => 结束后， 移动文件到目标地方， 移动输入的音频视频文件到回收站
- 
- 
- 
- 
  */
-
-
-extern NSNotificationName const SCSCAVMixManagerItemUpdateNotification;
-
-
 @interface SCAVMixManager : NSObject
 
 + (void)resume;
@@ -37,6 +27,10 @@ extern NSNotificationName const SCSCAVMixManagerItemUpdateNotification;
 + (void)appendWorkItem:(id<SCAVMixWorkItemProtocol>)item;
 
 
+
+
+
+
 + (NSString *)identifierWithUid:(NSString *)uid courseId:(NSString *)courseId scheduleId:(NSString *)scheduleId item:(NSString *)item;
 
 //+ (NSString *)cachePathForIdentifier:(NSString *)identifier;
@@ -44,9 +38,6 @@ extern NSNotificationName const SCSCAVMixManagerItemUpdateNotification;
 
 + (NSString *)tmpDirectoryPathForUuid:(NSUUID *)uuid;
 + (NSString *)tmpPathForIdentifier:(NSString *)identifier uuid:(NSUUID *)uuid;
-
-    
-//+ (instancetype)shared;
 
 @end
 

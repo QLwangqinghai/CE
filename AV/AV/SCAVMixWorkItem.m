@@ -11,15 +11,9 @@
 
 
 @interface SCAVMixWorkItem ()
-{
-    NSString * _identifier;
-}
 
 @property (nonatomic, copy) SCAVMixWorkItemBlock completion;
 @property (nonatomic, strong) dispatch_queue_t queue;
-
-
-
 
 @property (nonatomic, copy) SCAVMixWorkItemResultBlock onResult;
 
@@ -49,7 +43,6 @@
     if (SCAVMixWorkItemStatusNone == self.status) {
         self.queue = queue;
         self.completion = completion;
-        
         
         //查看是否真的需要转码， 判断目标文件存在不存在、文件大小
         NSString * filePath = self.config.outputPath;
@@ -93,15 +86,23 @@
     return false;
 }
 - (void)resume {
-    [self run];
+    if (SCAVMixWorkItemStatusSuspend == self.status) {
+        self.status = SCAVMixWorkItemStatusResume;
+        [self run];
+    }
 }
 - (void)suspend {
-    [self stop];
-    
+    if (SCAVMixWorkItemStatusResume == self.status) {
+        self.status = SCAVMixWorkItemStatusSuspend;
+        [self stop];
+    }
 }
 - (void)cancel {
-    [self stop];
-    [self complete];
+    if (SCAVMixWorkItemStatusCanceled != self.status && SCAVMixWorkItemStatusFinished != self.status) {
+        self.status = SCAVMixWorkItemStatusCanceled;
+        [self stop];
+        [self complete];
+    }
 }
 
 - (void)complete {
@@ -142,7 +143,12 @@
     } else {
         if (times > 5) {//重试次数超过5次
             NSLog(@"重试次数超过5次, 任务失败：%@", self.config.identifier);
-            
+            if (SCAVMixWorkItemStatusCanceled != self.status) {
+                //成功执行完成
+                self.status = SCAVMixWorkItemStatusFinished;
+            }
+            self.result = SCAVMixWorkItemResultFailure;
+            [self complete];
         } else {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), self.queue, ^{
                 __strong SCAVMixWorkItem * strongSelf = weakSelf;

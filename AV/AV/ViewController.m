@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "SCAVMixHandler.h"
 #import "SCAVMixManager.h"
+#import "SCRecoverManager.h"
 
 
 @interface ViewController ()
@@ -24,6 +25,13 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    [SCRecoverManager shared];
+    
+    [[NSNotificationCenter defaultCenter] addObserverForName:SCAVMixManagerItemUpdateNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+        NSLog(@"\nupdate\n");
+    }];
+    
+    
     UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
     [self.view addSubview:imageView];
     
@@ -33,18 +41,26 @@
     
     self.status = 0;
     
-//    NSArray<NSString *> * items = @[@"1562663973911", @"1562662353087", @"1562662173010", @"1562661992940", @"1562663793812", @"1562641927402"];
+    NSArray<NSString *> * items = @[@"1562930748136", @"1562928616807", @"1562663973911", @"1562662353087", @"1562662173010", @"1562661992940", @"1562663793812", @"1562641927402"];
     
-    NSArray<NSString *> * items = @[@"1562663973911", @"1562662353087", @"1562662173010", @"1562661992940"];
+//    NSArray<NSString *> * items = @[@"1562663973911", @"1562662353087", @"1562662173010", @"1562661992940"];
 
     
     NSMutableArray<SCAVMixWorkItem *> * mixs = [NSMutableArray array];
 
     [items enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        SCAVMixWorkItem * item = [[SCAVMixWorkItem alloc] initWithConfig:[self makeConfig:obj] onResult:^(id<SCAVMixWorkItemProtocol>  _Nonnull item, SCAVMixWorkItemResult result) {
+        SCAVMixWorkItem * item = [[SCAVMixWorkItem alloc] initWithConfig:[self makeConfig:obj] onResult:^(id<SCAVMixWorkItemProtocol>  _Nonnull citem, SCAVMixWorkItemResult result) {
             NSLog(@"onresult: %@, result: %ld", item, result);
+            if (SCAVMixWorkItemResultSuccess == result) {
+                SCAVMixWorkItem * obj = (SCAVMixWorkItem *)citem;
+                [[SCRecoverManager shared] recoverPlaybackGeneratedVideoAtPath:obj.config.outputPath];
+                
+                
+                
+            }
+            
+            
         }];
-        
         [mixs addObject:item];
     }];
 
@@ -68,10 +84,13 @@
     // 路径
     NSString *documents = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
     
-    // 声音来源
-    config.audioInputPath = [[NSBundle mainBundle] pathForResource:itemName ofType:@"wav"];
     // 视频来源
     config.videoInputPath = [[NSBundle mainBundle] pathForResource:itemName ofType:@"mp4"];
+    
+    // 声音来源
+//    config.audioInputPath = [[NSBundle mainBundle] pathForResource:itemName ofType:@"wav"];
+    config.audioInputPath = [config.videoInputPath stringByReplacingOccurrencesOfString:@"mp4" withString:@"wav"];
+    
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"HHmm";
@@ -102,10 +121,11 @@
 }
 
 - (void)goMixAtIndex:(NSInteger)index {
-    SCAVMixHandler * mix = self.mixs[index];
-    [mix startWithCompletion:^(SCAVMixHandler * _Nonnull handler) {
-        NSLog(@"handler: %@", handler);
-    }];
+//    SCAVMixHandler * mix = self.mixs[index];
+//    [mix startWithCompletion:^(SCAVMixHandler * _Nonnull handler) {
+//        NSLog(@"handler: %@", handler);
+//    }];
+    
 }
 
 

@@ -18,13 +18,14 @@
 #include <time.h>
 #include <limits.h>
 #include <math.h>
+#include <memory.h>
 #include <string.h>
 #include <errno.h>
 #include "CInteger.h"
 #include "CType.h"
 #include "CConfig.h"
 
-
+static const uint32_t CCIndexNotFound = UINT32_MAX;
 
 #define CCLogError(format, ...) do {\
 fprintf(stderr, format, ##__VA_ARGS__);                                               \
@@ -43,7 +44,7 @@ typedef struct __CCRange {
 
 typedef struct __CCVector {
     void * _Nullable base;
-    size_t itemCount;
+    size_t count;//item count， not memory lenth
 } CCVector_s;
 
 
@@ -55,9 +56,9 @@ static inline CCRange_s CCRangeMake(uint32_t location, uint32_t length) {
     return range;
 }
 
-typedef void (*CCRetainCallBack_f)(const void * _Nonnull value, uint32_t valueSize);
-typedef void (*CCReleaseCallBack_f)(const void * _Nonnull value, uint32_t valueSize);
-typedef _Bool (*CCEqualCallBack_f)(const void * _Nonnull value1, uint32_t value1Size, const void * _Nonnull value2, uint32_t value2Size);
+typedef void (*CCRetainCallBack_f)(const void * _Nonnull value, uint32_t elementSize);
+typedef void (*CCReleaseCallBack_f)(const void * _Nonnull value, uint32_t elementSize);
+typedef _Bool (*CCEqualCallBack_f)(const void * _Nonnull value1, const void * _Nonnull value2, uint32_t elementSize);
 
 
 typedef struct {

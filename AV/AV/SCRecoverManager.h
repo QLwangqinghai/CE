@@ -10,6 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * 回收站
+ */
 @interface SCRecoverManager : NSObject
 
 //回收 课程回放的原始音视频文件

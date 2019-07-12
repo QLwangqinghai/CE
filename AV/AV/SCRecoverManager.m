@@ -32,15 +32,8 @@ NSString * const SCFileExtendedAttributeRecoverTimestampKey = @"recoverTimestamp
 - (instancetype)init {
     self = [super init];
     if (self) {
-//        NSString * libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask,YES) firstObject];
-//
-//        _directoryPath = [libraryPath stringByAppendingPathComponent:@"recover"];
-        
-        
-        NSString * libraryPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) firstObject];
-        
-        _directoryPath = [libraryPath stringByAppendingPathComponent:@"SCFileCache"];
-
+        NSString * libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask,YES) firstObject];
+        _directoryPath = [libraryPath stringByAppendingPathComponent:@"recover"];
         
         [[NSFileManager defaultManager] createDirectoryAtPath:_directoryPath withIntermediateDirectories:true attributes:NULL error:NULL];
 
@@ -72,7 +65,7 @@ NSString * const SCFileExtendedAttributeRecoverTimestampKey = @"recoverTimestamp
     return __shared;
 }
 
-- (void)clear {
+- (void)clearUnprotectedItems {
     NSFileManager * fileManager = [NSFileManager defaultManager];
     NSError * error;
     NSArray<NSString *> * itemList = [fileManager contentsOfDirectoryAtPath:self.directoryPath error:&error];
@@ -90,6 +83,69 @@ NSString * const SCFileExtendedAttributeRecoverTimestampKey = @"recoverTimestamp
             }
         }
     }];
+
+}
+
+- (void)clearPlaybackOriginalItems {
+    //暂时设定超时时间为7天
+    NSString * directoryPath = self.playbackOriginalDirectoryPath;
+    NSFileManager * fileManager = [NSFileManager defaultManager];
+    NSError * error;
+    NSArray<NSString *> * itemList = [fileManager contentsOfDirectoryAtPath:directoryPath error:&error];
+    if (error) {
+        NSLog(@"[fileManager contentsOfDirectoryAtPath:%@] error:%@", directoryPath, error);
+    }
+    NSTimeInterval nowTime = [NSDate date].timeIntervalSince1970;
+    NSTimeInterval referenceTime = nowTime - 7 * 24 * 60 * 60;
+    
+    [itemList enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString * path = [directoryPath stringByAppendingPathComponent:obj];
+        NSDate * date = [SCRecoverManager getRecoverTimestampWithPath:path];
+        if (nil == date || date.timeIntervalSince1970 < referenceTime) {
+            NSError * e = nil;
+            [fileManager removeItemAtPath:path error:&e];
+            if (e) {
+                NSLog(@"recover removeItemAtPath:%@, error%@", path, e);
+            } else {
+                NSLog(@"recover removeItemAtPath:%@, success", path);
+            }
+        }
+    }];
+    
+}
+- (void)clearPlaybackGeneratedItems {
+    //暂时设定超时时间为7天
+    NSString * directoryPath = self.playbackGeneratedVideoDirectoryPath;
+    NSFileManager * fileManager = [NSFileManager defaultManager];
+    NSError * error;
+    NSArray<NSString *> * itemList = [fileManager contentsOfDirectoryAtPath:directoryPath error:&error];
+    if (error) {
+        NSLog(@"[fileManager contentsOfDirectoryAtPath:%@] error:%@", directoryPath, error);
+    }
+    NSTimeInterval nowTime = [NSDate date].timeIntervalSince1970;
+    NSTimeInterval referenceTime = nowTime - 7 * 24 * 60 * 60;
+    
+    [itemList enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString * path = [directoryPath stringByAppendingPathComponent:obj];
+        NSDate * date = [SCRecoverManager getRecoverTimestampWithPath:path];
+        if (nil == date || date.timeIntervalSince1970 < referenceTime) {
+            NSError * e = nil;
+            [fileManager removeItemAtPath:path error:&e];
+            if (e) {
+                NSLog(@"recover removeItemAtPath:%@, error%@", path, e);
+            } else {
+                NSLog(@"recover removeItemAtPath:%@, success", path);
+            }
+        }
+    }];
+}
+
+
+- (void)clear {
+    //应用启动清除一些垃圾文件或者超出回收期限的文件
+    [self clearUnprotectedItems];
+    [self clearPlaybackOriginalItems];
+    [self clearPlaybackGeneratedItems];
 }
 
 

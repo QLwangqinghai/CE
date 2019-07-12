@@ -21,7 +21,7 @@ struct __CCArrayBucket {
 };
 
 
-static inline uint32_t __CCRingBufferRoundUpCapacity(uint32_t capacity) {
+static inline uint32_t __CCCircularBufferRoundUpCapacity(uint32_t capacity) {
     if (capacity < 4) return 4;
     uint64_t c = capacity;
     uint64_t s = 1ull << (CUInt64MostSignificant(c) + 1);
@@ -710,7 +710,7 @@ static void __CCArrayRepositionDequeRegions(CFMutableArrayRef array, CFRange ran
     if (wiggle < 4) wiggle = 4;
     if (deque->_capacity < (uint32_t)futureCnt || (cnt < futureCnt && L + R < wiggle)) {
         // must be inserting or space is tight, reallocate and re-center everything
-        uint32_t capacity = __CCRingBufferRoundUpCapacity(futureCnt + wiggle);
+        uint32_t capacity = __CCCircularBufferRoundUpCapacity(futureCnt + wiggle);
         uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
         CFAllocatorRef allocator = __CFGetAllocator(array);
         struct __CCArrayDeque *newDeque = (struct __CCArrayDeque *)CFAllocatorAllocate(allocator, size, 0);
@@ -791,7 +791,7 @@ void _CFArraySetCapacity(CFMutableArrayRef array, uint32_t cap) {
     // resizes at the small capacities 4, 8, 16, etc.
     if (__CCArrayGetType(array) == __kCFArrayDeque) {
         struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
-        uint32_t capacity = __CCRingBufferRoundUpCapacity(cap);
+        uint32_t capacity = __CCCircularBufferRoundUpCapacity(cap);
         uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
         CFAllocatorRef allocator = __CFGetAllocator(array);
         if (NULL == deque) {
@@ -871,7 +871,7 @@ void _CFArrayReplaceValues(CFMutableArrayRef array, CFRange range, const void **
         if (0) {
         } else if (0 <= futureCnt) {
             struct __CCArrayDeque *deque;
-            uint32_t capacity = __CCRingBufferRoundUpCapacity(futureCnt);
+            uint32_t capacity = __CCCircularBufferRoundUpCapacity(futureCnt);
             uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
             deque = (struct __CCArrayDeque *)CFAllocatorAllocate((allocator), size, 0);
             if (__CFOASafe) __CFSetLastAllocationEventName(deque, "CFArray (store-deque)");

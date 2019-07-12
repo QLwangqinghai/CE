@@ -35,7 +35,7 @@ fflush(stderr);\
 //count 的最大值
 static const uint32_t CCCountLimit = 0x20000000uL;
 static const uint32_t CCElementSizeLimit = 0x20000000uL;
-static const uint32_t CCRingBufferElementsSizeLimit = 0x80000000uL;
+static const uint32_t CCCircularBufferElementsSizeLimit = 0x80000000uL;
 
 typedef struct __CCRange {
     uint32_t location;

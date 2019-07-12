@@ -11,7 +11,7 @@
 #include "CType.h"
 
 #include "CCImmutableBuffer.h"
-#include "CCRingBuffer.h"
+#include "CCCircularBuffer.h"
 
 
 static const size_t CCElementLoadSize[13] = {
@@ -56,7 +56,7 @@ static inline CCArrayNonnullPtr __CCArrayImmutableAllocate(const CCBaseCallBacks
 }
 
 static inline CCArrayNonnullPtr __CCArrayMutableAllocate(const CCBaseCallBacks * _Nullable callBacks, uint32_t elementSize, const CCVector_s * _Nullable vec, uint32_t vecCount) {
-    CCRingBuffer_s * ringBuffer = __CCRingBufferCreate(elementSize, vec, vecCount);
+    CCCircularBuffer_s * ringBuffer = __CCCircularBufferCreate(elementSize, vec, vecCount);
 
     CCRetainCallBack_f retainFunc = callBacks->retain;
     
@@ -101,7 +101,7 @@ static inline uint32_t __CCArrayGetCount(CCArrayNonnullPtr _Nonnull array) {
         }
             break;
         case __CCArrayMutable: {
-            CCRingBuffer_s * buffer = (CCRingBuffer_s *)(array->_store);
+            CCCircularBuffer_s * buffer = (CCCircularBuffer_s *)(array->_store);
             return buffer->_count;
         }
             break;
@@ -126,8 +126,8 @@ static inline void * _Nonnull __CCArrayGetItemAtIndex(CCArrayNonnullPtr array, u
         }
             break;
         case __CCArrayMutable: {
-            CCRingBuffer_s * buffer = (CCRingBuffer_s *)(array->_store);
-            return __CCRingBufferGetItemAtIndex(buffer, idx);
+            CCCircularBuffer_s * buffer = (CCCircularBuffer_s *)(array->_store);
+            return __CCCircularBufferGetItemAtIndex(buffer, idx);
         }
             break;
         default:
@@ -163,8 +163,8 @@ static inline int32_t __CCArrayGetVectorsInRange(CCArrayNonnullPtr array, CCRang
         }
             break;
         case __CCArrayMutable: {
-            CCRingBuffer_s * ringBuffer = (CCRingBuffer_s *)array->_store;
-            vecCount = __CCRingBufferGetItemsInRange(ringBuffer, range, vec);
+            CCCircularBuffer_s * ringBuffer = (CCCircularBuffer_s *)array->_store;
+            vecCount = __CCCircularBufferGetItemsInRange(ringBuffer, range, vec);
         }
             break;
         default:
@@ -684,7 +684,7 @@ static void __CCArrayRepositionDequeRegions(CFMutableArrayRef array, CCRange_s r
     if (wiggle < 4) wiggle = 4;
     if (deque->_capacity < (uint32_t)futureCnt || (cnt < futureCnt && L + R < wiggle)) {
         // must be inserting or space is tight, reallocate and re-center everything
-        uint32_t capacity = __CCRingBufferRoundUpCapacity(futureCnt + wiggle);
+        uint32_t capacity = __CCCircularBufferRoundUpCapacity(futureCnt + wiggle);
         uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
         CFAllocatorRef allocator = __CFGetAllocator(array);
         struct __CCArrayDeque *newDeque = (struct __CCArrayDeque *)CFAllocatorAllocate(allocator, size, 0);
@@ -765,7 +765,7 @@ void _CCArraySetCapacity(CFMutableArrayRef array, uint32_t cap) {
     // resizes at the small capacities 4, 8, 16, etc.
     if (__CCArrayGetType(array) == __kCCArrayDeque) {
         struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
-        uint32_t capacity = __CCRingBufferRoundUpCapacity(cap);
+        uint32_t capacity = __CCCircularBufferRoundUpCapacity(cap);
         uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
         CFAllocatorRef allocator = __CFGetAllocator(array);
         if (NULL == deque) {
@@ -845,7 +845,7 @@ void _CCArrayReplaceValues(CFMutableArrayRef array, CCRange_s range, const void 
         if (0) {
         } else if (0 <= futureCnt) {
             struct __CCArrayDeque *deque;
-            uint32_t capacity = __CCRingBufferRoundUpCapacity(futureCnt);
+            uint32_t capacity = __CCCircularBufferRoundUpCapacity(futureCnt);
             uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
             deque = (struct __CCArrayDeque *)CFAllocatorAllocate((allocator), size, 0);
             if (__CFOASafe) __CFSetLastAllocationEventName(deque, "CCArray (store-deque)");

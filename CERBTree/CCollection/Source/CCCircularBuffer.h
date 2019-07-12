@@ -312,6 +312,7 @@ static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferReplaceValues(CCCi
                 int32_t offset = (int32_t)newCount - (int32_t)range.length;
                 ___CCCircularBufferMoveValues(buffer, CCRangeMake(range.location + range.length, rightCount), offset);
             }
+            buffer->_count = capacity;
             uint32_t index = range.location;
             for (int32_t vi=0; vi<vecCount; vi++) {
                 CCVector_s v = vec[vi];

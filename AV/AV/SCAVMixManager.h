@@ -27,14 +27,7 @@ extern NSNotificationName const SCAVMixManagerItemUpdateNotification;
 + (void)appendWorkItem:(id<SCAVMixWorkItemProtocol>)item;
 
 
-
-
-
-
 + (NSString *)identifierWithUid:(NSString *)uid courseId:(NSString *)courseId scheduleId:(NSString *)scheduleId item:(NSString *)item;
-
-//+ (NSString *)cachePathForIdentifier:(NSString *)identifier;
-
 
 + (NSString *)tmpDirectoryPathForUuid:(NSUUID *)uuid;
 + (NSString *)tmpPathForIdentifier:(NSString *)identifier uuid:(NSUUID *)uuid;

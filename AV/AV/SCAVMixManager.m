@@ -47,38 +47,6 @@ NSNotificationName const SCAVMixManagerItemUpdateNotification = @"SCAVMixManager
     }
 }
 
-//- (void)next {
-//    if (nil != self.runningItem) {
-//        NSLog(@"next error, one is running");
-//    }
-//    if (!self.enable) {
-//        return;
-//    }
-//    NSLog(@"go next");
-//
-//    [self.items enumerateObjectsUsingBlock:^(id<SCAVMixWorkItemProtocol>  _Nonnull item, NSUInteger idx, BOOL * _Nonnull stop) {
-//        BOOL startResult = [item startWithQueue:[SCAVMixManager queue] completion:^(id<SCAVMixWorkItemProtocol> _Nonnull citem) {
-//            if (self.runningItem == citem) {
-//                self.runningItem = nil;
-//
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [[NSNotificationCenter defaultCenter] postNotificationName:SCAVMixManagerItemUpdateNotification object:self];
-//                });
-//                [self next];
-//            } else {
-//            }
-//        }];
-//        self.runningItem = item;
-//        if (startResult) {
-//            NSLog(@"start item success");
-//        } else {
-//            NSLog(@"start failure");
-//        }
-//    }];
-//    [self.runningItems addObjectsFromArray:self.items];
-//    [self.items removeAllObjects];
-//}
-
 - (void)next {
     if (self.runningItems.count >= self.maxConcurrentOperationCount) {
         NSLog(@"next error, count limit");
@@ -132,7 +100,6 @@ NSNotificationName const SCAVMixManagerItemUpdateNotification = @"SCAVMixManager
     }
 }
 
-
 + (void)resume {
     [self async:^(SCAVMixManager *manager) {
         [manager resume];
@@ -155,10 +122,8 @@ NSNotificationName const SCAVMixManagerItemUpdateNotification = @"SCAVMixManager
         _maxConcurrentOperationCount = 1;
         _items = [NSMutableArray array];
         _runningItems = [NSMutableArray array];
-//        _cacheDirectoryPath = [cachePath stringByAppendingPathComponent:@"course_av_mix"];
         _tmpDirectoryPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"course_av_mix"];
 
-//        [[NSFileManager defaultManager] createDirectoryAtPath:_cacheDirectoryPath withIntermediateDirectories:true attributes:NULL error:NULL];
         [[NSFileManager defaultManager] createDirectoryAtPath:_tmpDirectoryPath withIntermediateDirectories:true attributes:NULL error:NULL];
     }
     return self;
@@ -187,10 +152,6 @@ NSNotificationName const SCAVMixManagerItemUpdateNotification = @"SCAVMixManager
     return [NSString stringWithFormat:@"%@_%@_%@_%@", uid ?: @"", courseId ?: @"", scheduleId ?: @"", item ?: @""];
 }
 
-//+ (NSString *)cachePathForIdentifier:(NSString *)identifier {
-//    return [[SCAVMixManager shared].cacheDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mp4", identifier]];
-//}
-
 + (NSString *)tmpPathForIdentifier:(NSString *)identifier uuid:(NSUUID *)uuid {
     return [[SCAVMixManager shared].tmpDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@/%@.mp4", uuid.UUIDString, identifier]];
 }
@@ -198,6 +159,5 @@ NSNotificationName const SCAVMixManagerItemUpdateNotification = @"SCAVMixManager
 + (NSString *)tmpDirectoryPathForUuid:(NSUUID *)uuid {
     return [[SCAVMixManager shared].tmpDirectoryPath stringByAppendingPathComponent:uuid.UUIDString];
 }
-
 
 @end

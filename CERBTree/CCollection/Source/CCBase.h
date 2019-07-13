@@ -34,7 +34,7 @@ fflush(stderr);\
 
 //count 的最大值
 static const uint32_t CCCountLimit = 0x20000000uL;
-static const uint32_t CCElementSizeLimit = 0x20000000uL;
+static const uint32_t CCElementSizeLimit = 0x800uL;//2KB
 static const uint32_t CCCircularBufferElementsSizeLimit = 0x80000000uL;
 
 typedef struct __CCRange {
@@ -46,7 +46,13 @@ typedef struct __CCVector {
     void * _Nullable base;
     size_t count;//item count， not memory lenth
 } CCVector_s;
-
+static inline CCVector_s CCVectorMake(void * _Nullable base, size_t count) {
+    CCVector_s vec = {
+        .base = base,
+        .count = count,
+    };
+    return vec;
+}
 
 static inline CCRange_s CCRangeMake(uint32_t location, uint32_t length) {
     CCRange_s range = {

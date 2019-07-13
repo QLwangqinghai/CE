@@ -53,10 +53,10 @@
             NSLog(@"onresult: %@, result: %ld", item, result);
             if (SCAVMixWorkItemResultSuccess == result) {
                 SCAVMixWorkItem * obj = (SCAVMixWorkItem *)citem;
-                [[SCRecoverManager shared] recoverPlaybackGeneratedVideoAtPath:obj.config.outputPath];
+//                [[SCRecoverManager shared] recoverPlaybackGeneratedVideoAtPath:obj.config.outputPath];
                 
-                
-                
+                [[SCRecoverManager shared] recoverPlaybackOriginalFileAtPath:obj.config.audioInputPath rename:[NSString stringWithFormat:@"%@.wav", obj.config.identifier]];
+                [[SCRecoverManager shared] recoverPlaybackOriginalFileAtPath:obj.config.videoInputPath rename:[NSString stringWithFormat:@"%@.mp4", obj.config.identifier]];
             }
             
             

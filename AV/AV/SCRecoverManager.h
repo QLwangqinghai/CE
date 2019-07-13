@@ -16,10 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SCRecoverManager : NSObject
 
 //回收 课程回放的原始音视频文件
-- (void)recoverPlaybackOriginalFileAtPath:(NSString *)path;
+- (void)recoverPlaybackOriginalFileAtPath:(NSString *)path rename:(nullable NSString *)fileName;
 
 //回收 课程回放的转码后的
-- (void)recoverPlaybackGeneratedVideoAtPath:(NSString *)path;
+- (void)recoverPlaybackGeneratedVideoAtPath:(NSString *)path rename:(nullable NSString *)fileName;
 
 
 + (instancetype)shared;

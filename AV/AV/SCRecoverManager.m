@@ -34,7 +34,6 @@ NSString * const SCFileExtendedAttributeRecoverTimestampKey = @"recoverTimestamp
     if (self) {
         NSString * libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask,YES) firstObject];
         _directoryPath = [libraryPath stringByAppendingPathComponent:@"recover"];
-        
         [[NSFileManager defaultManager] createDirectoryAtPath:_directoryPath withIntermediateDirectories:true attributes:NULL error:NULL];
 
         _playbackDirectoryPath = [_directoryPath stringByAppendingPathComponent:@"playback"];
@@ -50,7 +49,7 @@ NSString * const SCFileExtendedAttributeRecoverTimestampKey = @"recoverTimestamp
         });
         
         NSMutableSet * protectedDirectoryNames = [NSMutableSet set];
-        [protectedDirectoryNames addObject:@"recover"];
+        [protectedDirectoryNames addObject:@"playback"];
         _protectedDirectoryNames = [protectedDirectoryNames copy];
     }
     return self;
@@ -150,10 +149,12 @@ NSString * const SCFileExtendedAttributeRecoverTimestampKey = @"recoverTimestamp
 
 
 //回收 课程回放的原始音视频文件
-- (void)recoverPlaybackOriginalFileAtPath:(NSString *)path {
-    NSString * fileName = [path lastPathComponent];
-    if (fileName.length <= 0) {
+- (void)recoverPlaybackOriginalFileAtPath:(NSString *)path rename:(NSString *)fileName {
+    if (path.length <= 0) {
         return;
+    }
+    if (fileName.length <= 0) {
+        fileName = [path lastPathComponent];
     }
     NSString * toPath = [self.playbackOriginalDirectoryPath stringByAppendingPathComponent:fileName];
     NSError * error = nil;
@@ -164,10 +165,12 @@ NSString * const SCFileExtendedAttributeRecoverTimestampKey = @"recoverTimestamp
 }
 
 //回收 课程回放的原始音视频文件
-- (void)recoverPlaybackGeneratedVideoAtPath:(NSString *)path {
-    NSString * fileName = [path lastPathComponent];
-    if (fileName.length <= 0) {
+- (void)recoverPlaybackGeneratedVideoAtPath:(NSString *)path rename:(NSString *)fileName {
+    if (path.length <= 0) {
         return;
+    }
+    if (fileName.length <= 0) {
+        fileName = [path lastPathComponent];
     }
     NSString * toPath = [self.playbackGeneratedVideoDirectoryPath stringByAppendingPathComponent:fileName];
     NSError * error = nil;

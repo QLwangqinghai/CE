@@ -81,6 +81,19 @@ static inline int32_t __CCCircularBufferGetItemsInRange(CCCircularBuffer_s * _No
     }
 }
 
+static inline void __CCCircularBufferCopyItemsInRange(CCCircularBuffer_s * _Nonnull buffer, CCRange_s range, void * _Nonnull ptr) {
+    CCVector_s vec[2] = {};
+    int32_t vecCount =__CCCircularBufferGetItemsInRange(buffer, range, vec);
+    
+    uint8_t * dst = ptr;
+    for (int vi=0; vi<vecCount; vi++) {
+        CCVector_s v = vec[vi];
+        size_t s = buffer->_elementSize * v.count;
+        memcpy(dst, v.base, s);
+        dst += s;
+    }
+}
+
 static inline void * _Nonnull __CCCircularBufferGetItemAtIndex(CCCircularBuffer_s * _Nonnull buffer, uint32_t idx) {
     uint32_t index = idx + buffer->_indexOffset;
     size_t memoryOffset = index;
@@ -196,40 +209,97 @@ static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferCreate(uint32_t el
     return result;
 }
 
-
 static inline void ___CCCircularBufferSetValues(CCCircularBuffer_s * _Nonnull buffer, uint32_t beginIndex, CCVector_s vector) {
     CCVector_s vec[2] = {};
     int32_t vecCount = __CCCircularBufferGetItemsInRange(buffer, CCRangeMake(beginIndex, (uint32_t)vector.count), vec);
-
+    
     size_t elementSize = buffer->_elementSize;
-    uint8_t * dst = vector.base;
+    uint8_t * src = vector.base;
     for (int32_t vi=0; vi<vecCount; vi++) {
         CCVector_s v = vec[vi];
         size_t s = elementSize * v.count;
-        memcpy(v.base, dst, s);
-        dst += s;
+        memcpy(v.base, src, s);
+        src += s;
+    }
+}
+
+static inline void ___CCCircularBufferSetValuesInRange(CCCircularBuffer_s * _Nonnull buffer, CCRange_s range, void * _Nonnull ptr) {
+    CCVector_s vec[2] = {};
+    int32_t vecCount = __CCCircularBufferGetItemsInRange(buffer, range, vec);
+
+    size_t elementSize = buffer->_elementSize;
+    uint8_t * src = ptr;
+    for (int32_t vi=0; vi<vecCount; vi++) {
+        CCVector_s v = vec[vi];
+        size_t s = elementSize * v.count;
+        memcpy(v.base, src, s);
+        src += s;
     }
 }
 
 static inline void ___CCCircularBufferMoveIndexOffset(CCCircularBuffer_s * _Nonnull buffer, int32_t offset) {
-
+    if (0 == offset) {
+        return;
+    }
+    assert(offset <= CCCountLimit);
+    assert(offset >= -CCCountLimit);
+    
+    int32_t indexOffset = buffer->_indexOffset;
+    indexOffset = indexOffset + offset;
+    
+    while (indexOffset < 0) {
+        indexOffset += buffer->_capacity;
+    }
+    while (indexOffset > buffer->_capacity) {
+        indexOffset -= buffer->_capacity;
+    }
+    buffer->_indexOffset = indexOffset;
 }
 
+//range 必须是 有效的区间，
 static inline void ___CCCircularBufferMoveValues(CCCircularBuffer_s * _Nonnull buffer, CCRange_s range, int32_t offset) {
     if (0 == offset) {
         return;
     }
-//    CCVector_s vec[2] = {};
-//    int32_t vecCount = __CCCircularBufferGetItemsInRange(buffer, CCRangeMake(beginIndex, (uint32_t)vector.count), vec);
-//
-//    size_t elementSize = buffer->_elementSize;
-//    uint8_t * dst = vector.base;
-//    for (int32_t vi=0; vi<vecCount; vi++) {
-//        CCVector_s v = vec[vi];
-//        size_t s = elementSize * v.count;
-//        memcpy(v.base, dst, s);
-//        dst += s;
-//    }
+
+    int32_t offsetMin = - range.location;
+    int32_t offsetMax = (buffer->_count - range.location - range.length);
+
+    assert(offset >= offsetMin);
+    assert(offset <= offsetMax);
+    uint8_t tmp[CCElementSizeLimit] = {};
+    uint32_t stepSize = CCElementSizeLimit / buffer->_elementSize;
+
+    
+    if (offset > 0) {//后移
+        uint32_t oldEndIndex = range.location + range.length;
+        uint32_t newEndIndex = oldEndIndex + offset;
+        uint32_t completedLength = 0;
+        while (completedLength < range.length) {
+            uint32_t len = stepSize;
+            uint32_t remain = range.length - completedLength;
+            if (len > remain) {
+                len = remain;
+            }
+            __CCCircularBufferCopyItemsInRange(buffer, CCRangeMake(oldEndIndex - completedLength, len), tmp);
+            ___CCCircularBufferSetValuesInRange(buffer, CCRangeMake(newEndIndex - completedLength, len), tmp);
+            completedLength += len;
+        }
+    } else {//前移
+        uint32_t oldBeginIndex = range.location;
+        uint32_t newBeginIndex = oldBeginIndex + offset;
+        uint32_t completedLength = 0;
+        while (completedLength < range.length) {
+            uint32_t len = stepSize;
+            uint32_t remain = range.length - completedLength;
+            if (len > remain) {
+                len = remain;
+            }
+            __CCCircularBufferCopyItemsInRange(buffer, CCRangeMake(oldBeginIndex + completedLength, len), tmp);
+            ___CCCircularBufferSetValuesInRange(buffer, CCRangeMake(newBeginIndex + completedLength, len), tmp);
+            completedLength += len;
+        }
+    }
 }
 
 
@@ -304,15 +374,28 @@ static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferReplaceValues(CCCi
             }
         } else {
             uint32_t rightCount = buffer->_count - range.location - range.length;
+            int32_t countChanged = (int32_t)newCount - (int32_t)range.length;
             if (range.location < rightCount) {//移动首部
-                int32_t offset = (int32_t)range.length - (int32_t)newCount;
-                ___CCCircularBufferMoveValues(buffer, CCRangeMake(0, range.location), offset);
-                ___CCCircularBufferMoveIndexOffset(buffer, -offset);
+                int32_t offset = - countChanged;
+                if (offset < 0) {//前移
+                    ___CCCircularBufferMoveIndexOffset(buffer, offset);
+                    buffer->_count = capacity;
+                    ___CCCircularBufferMoveValues(buffer, CCRangeMake(countChanged, range.location), offset);
+                } else {//后移
+                    ___CCCircularBufferMoveValues(buffer, CCRangeMake(0, range.location), offset);
+                    ___CCCircularBufferMoveIndexOffset(buffer, offset);
+                    buffer->_count = capacity;
+                }
             } else {//移动尾部
-                int32_t offset = (int32_t)newCount - (int32_t)range.length;
-                ___CCCircularBufferMoveValues(buffer, CCRangeMake(range.location + range.length, rightCount), offset);
+                int32_t offset = countChanged;
+                if (offset < 0) {//前移
+                    ___CCCircularBufferMoveValues(buffer, CCRangeMake(range.location + range.length, rightCount), offset);
+                    buffer->_count = capacity;
+                } else {//后移
+                    buffer->_count = capacity;
+                    ___CCCircularBufferMoveValues(buffer, CCRangeMake(range.location + range.length, rightCount), offset);
+                }
             }
-            buffer->_count = capacity;
             uint32_t index = range.location;
             for (int32_t vi=0; vi<vecCount; vi++) {
                 CCVector_s v = vec[vi];

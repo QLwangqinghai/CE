@@ -38,6 +38,7 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 @property (nonatomic, strong) AVAssetWriterInput * writerInput;
 @property (nonatomic, strong) AVAssetReaderTrackOutput * readerTrackOutput;
 
+@property (nonatomic, strong) AVAssetWriterInputPixelBufferAdaptor * adaptor;
 
 @property (nonatomic, copy) SCAVWriterInputHandlerBlock completion;
 @property (nonatomic, copy) NSString * tag;
@@ -66,6 +67,14 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         self.writerInput = writerInput;
         self.readerTrackOutput = readerTrackOutput;
         self.queue = queue;
+        
+        if (AVMediaTypeVideo == writerInput.mediaType) {
+            NSDictionary * attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey, nil];
+            AVAssetWriterInputPixelBufferAdaptor * adaptor = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:writerInput sourcePixelBufferAttributes:attributes];
+            self.adaptor = adaptor;
+        }
+
+        
     }
     return self;
 }
@@ -119,6 +128,82 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     });
 }
 
+//- (CGContextRef)creatBitmapContextWithPixelBuffer:(CVPixelBufferRef)pixelBuffer {
+//    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+//    CGContextRef bitmapContext = NULL;
+//    CGSize _viewSize = [self videoSize];
+//    bitmapContext = CGBitmapContextCreate(CVPixelBufferGetBaseAddress(*pixelBuffer),
+//                                          CVPixelBufferGetWidth(*pixelBuffer),
+//                                          CVPixelBufferGetHeight(*pixelBuffer),
+//                                          8, CVPixelBufferGetBytesPerRow(*pixelBuffer), _colorSpace,
+//                                          kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst
+//                                          );
+//    CGAffineTransform flipVertical = CGAffineTransformMake(1, 0, 0, -1, 0, _viewSize.height);
+//    CGContextConcatCTM(bitmapContext, flipVertical);
+//
+//    return bitmapContext;
+//}
+
++ (CGColorSpaceRef)colorSpace {
+    static CGColorSpaceRef __colorSpace;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __colorSpace = CGColorSpaceCreateDeviceRGB();
+    });
+    return __colorSpace;
+}
+
+- (BOOL)addImageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer {
+    // 为媒体数据设置一个CMSampleBuffer的Core Video图像缓存对象
+
+    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    // 锁定pixel buffer的基地址
+    CVReturn r = CVPixelBufferLockBaseAddress(imageBuffer, 0);
+    
+    // 得到pixel buffer的基地址
+    void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
+    
+    size_t size = CVPixelBufferGetDataSize(imageBuffer);
+    
+    NSData * data = [NSData dataWithBytes:baseAddress length:size];
+    
+    // 得到pixel buffer的行字节数
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
+    // 得到pixel buffer的宽和高
+    size_t width = CVPixelBufferGetWidth(imageBuffer);
+    size_t height = CVPixelBufferGetHeight(imageBuffer);
+    
+    // 创建一个依赖于设备的RGB颜色空间
+    CGColorSpaceRef colorSpace = [[self class] colorSpace];
+//    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    // 用抽样缓存的数据创建一个位图格式的图形上下文（graphics context）对象
+    CGContextRef bitmapContext = CGBitmapContextCreate(baseAddress, width, height, 8,
+                                                 bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+//    CGColorSpaceRelease(colorSpace);
+    if (NULL == bitmapContext) {
+        NSLog(@"bitmap is nil");
+    }
+    UIGraphicsPushContext(bitmapContext);
+
+    CGContextDrawImage(bitmapContext, CGRectMake(-38, -38, 76, 76), [UIImage imageNamed:@"ipad app-76.png"].CGImage);
+    UIGraphicsPopContext();
+    CGContextRelease(bitmapContext);
+
+    NSData * data2 = [NSData dataWithBytes:baseAddress length:size];
+    if (data == data2) {
+        NSLog(@"data: %@", data);
+    }
+    
+//    CGAffineTransform flipVertical = CGAffineTransformMake(1, 0, 0, -1, 0, _viewSize.height);
+//    CGContextConcatCTM(bitmapContext, flipVertical);
+    BOOL result = [self.adaptor appendPixelBuffer:imageBuffer withPresentationTime:CMSampleBufferGetPresentationTimeStamp(sampleBuffer)];
+
+    CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+    
+    // 释放context和颜色空间
+    return result;
+}
+
 -(void)assertReadToAssetInput {
     if (SCAVWriterInputHandlerStatusRunning != self.status) {
         return;
@@ -141,6 +226,7 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     AVAssetReader * assetReader = self.assetReader;
     AVAssetWriter * assetWriter = self.assetWriter;
 
+    BOOL isVideo = (SCAVWriterInputHandlerKindVideo == self.kind);
     [self.writerInput requestMediaDataWhenReadyOnQueue:queue usingBlock:^{
         NSInteger breakFlag = self.breakFlag;
         while (writerInput.readyForMoreMediaData) {
@@ -149,7 +235,12 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
             }
             CMSampleBufferRef buffer = [readerTrackOutput copyNextSampleBuffer];
             if (buffer) {
-                BOOL appendResult = [writerInput appendSampleBuffer:buffer];
+                BOOL appendResult = true;
+                if (isVideo) {
+                    appendResult = [self addImageFromSampleBuffer:buffer];
+                } else {
+                    appendResult = [writerInput appendSampleBuffer:buffer];
+                }
                 CFRelease(buffer);
 
                 if (appendResult) {
@@ -307,7 +398,11 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     
     CMTime nextClistartTime = kCMTimeZero;
     // 创建可变的音视频组合
+    
     AVMutableComposition *comosition = [AVMutableComposition composition];
+
+    //    AVMutableVideoComposition *comosition = [AVMutableVideoComposition composition];
+    
     
     // 视频采集
     AVURLAsset * videoAsset = [[AVURLAsset alloc] initWithURL:videoUrl options:nil];
@@ -420,6 +515,7 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
                                     };
     
     AVAssetWriterInput * videoWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:videoSetting];
+    
     self.videoWriterInputHandler = [[SCAVWriterInputHandler alloc] initWithWriterInput:videoWriterInput readerTrackOutput:self.videoOutPut queue:self.queue];
     
     self.videoWriterInputHandler.kind = SCAVWriterInputHandlerKindVideo;
@@ -450,7 +546,7 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         
         AVAssetWriterInput * audioWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeAudio outputSettings:audioSetting];
         self.audioWriterInputHandler = [[SCAVWriterInputHandler alloc] initWithWriterInput:audioWriterInput readerTrackOutput:self.audioOutPut queue:self.queue];
-        self.videoWriterInputHandler.kind = SCAVWriterInputHandlerKindAudio;
+        self.audioWriterInputHandler.kind = SCAVWriterInputHandlerKindAudio;
         self.audioWriterInputHandler.tag = @"a";
         
         //添加写入器
@@ -692,6 +788,83 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
                                  videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:videoLayer inLayer:parentLayer];
 }
 
+
+//+ (void)applyVideoEffectsToComposition2:(AVVideoComposition *)composition size:(CGSize)size
+//{
+//    // 文字
+//    //    CATextLayer *subtitle1Text = [[CATextLayer alloc] init];
+//    //    //    [subtitle1Text setFont:@"Helvetica-Bold"];
+//    //    [subtitle1Text setFontSize:36];
+//    //    [subtitle1Text setFrame:CGRectMake(10, size.height-10-100, size.width, 100)];
+//    //    [subtitle1Text setString:@"ZHIMABAOBAO"];
+//    //    //    [subtitle1Text setAlignmentMode:kCAAlignmentCenter];
+//    //    [subtitle1Text setForegroundColor:[[UIColor whiteColor] CGColor]];
+//
+//    //图片
+//    CALayer*picLayer = [CALayer layer];
+//    picLayer.contents = (id)[UIImage imageNamed:@"ipad app-76.png"].CGImage;
+//    picLayer.frame = CGRectMake(size.width-15-76, 15, 76, 76);
+//
+//    // 2 - The usual overlay
+//    CALayer *overlayLayer = [CALayer layer];
+//    [overlayLayer addSublayer:picLayer];
+//    overlayLayer.frame = CGRectMake(0, 0, size.width, size.height);
+//    [overlayLayer setMasksToBounds:YES];
+//
+//    CALayer *parentLayer = [CALayer layer];
+//    CALayer *videoLayer = [CALayer layer];
+//    parentLayer.frame = CGRectMake(0, 0, size.width, size.height);
+//    videoLayer.frame = CGRectMake(0, 0, size.width, size.height);
+//    [parentLayer addSublayer:videoLayer];
+//    [parentLayer addSublayer:overlayLayer];
+//
+////    AVVideoCompositionCoreAnimationTool
+//
+//    composition.animationTool = [AVVideoCompositionCoreAnimationTool
+//                                 videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:videoLayer inLayer:parentLayer];
+//
+//}
+
+
+/**
+ 设置水印及其对应视频的位置
+ 
+ @param composition 视频的结构
+ @param size 视频的尺寸
+ */
++ (void)applyVideoEffectsToComposition:(AVMutableVideoComposition *)composition size:(CGSize)size
+{
+    // 文字
+    //    CATextLayer *subtitle1Text = [[CATextLayer alloc] init];
+    //    //    [subtitle1Text setFont:@"Helvetica-Bold"];
+    //    [subtitle1Text setFontSize:36];
+    //    [subtitle1Text setFrame:CGRectMake(10, size.height-10-100, size.width, 100)];
+    //    [subtitle1Text setString:@"ZHIMABAOBAO"];
+    //    //    [subtitle1Text setAlignmentMode:kCAAlignmentCenter];
+    //    [subtitle1Text setForegroundColor:[[UIColor whiteColor] CGColor]];
+    
+    //图片
+    CALayer*picLayer = [CALayer layer];
+    picLayer.contents = (id)[UIImage imageNamed:@"ipad app-76.png"].CGImage;
+    picLayer.frame = CGRectMake(size.width-15-76, 15, 76, 76);
+    
+    // 2 - The usual overlay
+    CALayer *overlayLayer = [CALayer layer];
+    [overlayLayer addSublayer:picLayer];
+    overlayLayer.frame = CGRectMake(0, 0, size.width, size.height);
+    [overlayLayer setMasksToBounds:YES];
+    
+    CALayer *parentLayer = [CALayer layer];
+    CALayer *videoLayer = [CALayer layer];
+    parentLayer.frame = CGRectMake(0, 0, size.width, size.height);
+    videoLayer.frame = CGRectMake(0, 0, size.width, size.height);
+    [parentLayer addSublayer:videoLayer];
+    [parentLayer addSublayer:overlayLayer];
+    
+    composition.animationTool = [AVVideoCompositionCoreAnimationTool
+                                 videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:videoLayer inLayer:parentLayer];
+    
+}
 
 
 - (NSString *)description {

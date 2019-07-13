@@ -660,149 +660,144 @@ void CCArrayRemoveAllValues(CCArrayNonnullPtr array) {
 //    array->_mutations++;
 //    END_MUTATION(array);
 }
+//
+//// may move deque storage, as it may need to grow deque
+//static void __CCArrayRepositionDequeRegions(CFMutableArrayRef array, CCRange_s range, uint32_t newCount) {
+//    // newCount elements are going to replace the range, and the result will fit in the deque
+//    struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
+//    struct __CCArrayBucket *buckets;
+//    uint32_t cnt, futureCnt, numNewElems;
+//    uint32_t L, A, B, C, R;
+//
+//    buckets = (struct __CCArrayBucket *)((uint8_t *)deque + sizeof(struct __CCArrayDeque));
+//    cnt = __CCArrayGetCount(array);
+//    futureCnt = cnt - range.length + newCount;
+//
+//    L = deque->_leftIdx;        // length of region to left of deque
+//    A = range.location;            // length of region in deque to left of replaced range
+//    B = range.length;            // length of replaced range
+//    C = cnt - B - A;            // length of region in deque to right of replaced range
+//    R = deque->_capacity - cnt - L;    // length of region to right of deque
+//    numNewElems = newCount - B;
+//
+//    uint32_t wiggle = deque->_capacity >> 17;
+//    if (wiggle < 4) wiggle = 4;
+//    if (deque->_capacity < (uint32_t)futureCnt || (cnt < futureCnt && L + R < wiggle)) {
+//        // must be inserting or space is tight, reallocate and re-center everything
+//        uint32_t capacity = __CCCircularBufferRoundUpCapacity(futureCnt + wiggle);
+//        uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
+//        CFAllocatorRef allocator = __CFGetAllocator(array);
+//        struct __CCArrayDeque *newDeque = (struct __CCArrayDeque *)CFAllocatorAllocate(allocator, size, 0);
+//        if (__CFOASafe) __CFSetLastAllocationEventName(newDeque, "CCArray (store-deque)");
+//        struct __CCArrayBucket *newBuckets = (struct __CCArrayBucket *)((uint8_t *)newDeque + sizeof(struct __CCArrayDeque));
+//        uint32_t oldL = L;
+//        uint32_t newL = (capacity - futureCnt) / 2;
+//        uint32_t oldC0 = oldL + A + B;
+//        uint32_t newC0 = newL + A + newCount;
+//        newDeque->_leftIdx = newL;
+//        newDeque->_capacity = capacity;
+//        if (0 < A) memmove(newBuckets + newL, buckets + oldL, A * sizeof(struct __CCArrayBucket));
+//        if (0 < C) memmove(newBuckets + newC0, buckets + oldC0, C * sizeof(struct __CCArrayBucket));
+//        array->_store = newDeque;
+//        if (deque) CFAllocatorDeallocate(allocator, deque);
+//        //printf("3:  array %p store is now %p (%lx)\n", array, array->_store, *(unsigned long *)(array->_store));
+//        return;
+//    }
+//
+//    if ((numNewElems < 0 && C < A) || (numNewElems <= R && C < A)) {    // move C
+//        // deleting: C is smaller
+//        // inserting: C is smaller and R has room
+//        uint32_t oldC0 = L + A + B;
+//        uint32_t newC0 = L + A + newCount;
+//        if (0 < C) memmove(buckets + newC0, buckets + oldC0, C * sizeof(struct __CCArrayBucket));
+//        if (oldC0 > newC0) memset(buckets + newC0 + C, 0, (oldC0 - newC0) * sizeof(struct __CCArrayBucket));
+//    } else if ((numNewElems < 0) || (numNewElems <= L && A <= C)) {    // move A
+//        // deleting: A is smaller or equal (covers remaining delete cases)
+//        // inserting: A is smaller and L has room
+//        uint32_t oldL = L;
+//        uint32_t newL = L - numNewElems;
+//        deque->_leftIdx = newL;
+//        if (0 < A) memmove(buckets + newL, buckets + oldL, A * sizeof(struct __CCArrayBucket));
+//        if (newL > oldL) memset(buckets + oldL, 0, (newL - oldL) * sizeof(struct __CCArrayBucket));
+//    } else {
+//        // now, must be inserting, and either:
+//        //    A<=C, but L doesn't have room (R might have, but don't care)
+//        //    C<A, but R doesn't have room (L might have, but don't care)
+//        // re-center everything
+//        uint32_t oldL = L;
+//        uint32_t newL = (L + R - numNewElems) / 2;
+//        newL = newL - newL / 2;
+//        uint32_t oldC0 = oldL + A + B;
+//        uint32_t newC0 = newL + A + newCount;
+//        deque->_leftIdx = newL;
+//        if (newL < oldL) {
+//            if (0 < A) memmove(buckets + newL, buckets + oldL, A * sizeof(struct __CCArrayBucket));
+//            if (0 < C) memmove(buckets + newC0, buckets + oldC0, C * sizeof(struct __CCArrayBucket));
+//            if (oldC0 > newC0) memset(buckets + newC0 + C, 0, (oldC0 - newC0) * sizeof(struct __CCArrayBucket));
+//        } else {
+//            if (0 < C) memmove(buckets + newC0, buckets + oldC0, C * sizeof(struct __CCArrayBucket));
+//            if (0 < A) memmove(buckets + newL, buckets + oldL, A * sizeof(struct __CCArrayBucket));
+//            if (newL > oldL) memset(buckets + oldL, 0, (newL - oldL) * sizeof(struct __CCArrayBucket));
+//        }
+//    }
+//}
 
-// may move deque storage, as it may need to grow deque
-static void __CCArrayRepositionDequeRegions(CFMutableArrayRef array, CCRange_s range, uint32_t newCount) {
-    // newCount elements are going to replace the range, and the result will fit in the deque
-    struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
-    struct __CCArrayBucket *buckets;
-    uint32_t cnt, futureCnt, numNewElems;
-    uint32_t L, A, B, C, R;
-    
-    buckets = (struct __CCArrayBucket *)((uint8_t *)deque + sizeof(struct __CCArrayDeque));
-    cnt = __CCArrayGetCount(array);
-    futureCnt = cnt - range.length + newCount;
-    
-    L = deque->_leftIdx;        // length of region to left of deque
-    A = range.location;            // length of region in deque to left of replaced range
-    B = range.length;            // length of replaced range
-    C = cnt - B - A;            // length of region in deque to right of replaced range
-    R = deque->_capacity - cnt - L;    // length of region to right of deque
-    numNewElems = newCount - B;
-    
-    uint32_t wiggle = deque->_capacity >> 17;
-    if (wiggle < 4) wiggle = 4;
-    if (deque->_capacity < (uint32_t)futureCnt || (cnt < futureCnt && L + R < wiggle)) {
-        // must be inserting or space is tight, reallocate and re-center everything
-        uint32_t capacity = __CCCircularBufferRoundUpCapacity(futureCnt + wiggle);
-        uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
-        CFAllocatorRef allocator = __CFGetAllocator(array);
-        struct __CCArrayDeque *newDeque = (struct __CCArrayDeque *)CFAllocatorAllocate(allocator, size, 0);
-        if (__CFOASafe) __CFSetLastAllocationEventName(newDeque, "CCArray (store-deque)");
-        struct __CCArrayBucket *newBuckets = (struct __CCArrayBucket *)((uint8_t *)newDeque + sizeof(struct __CCArrayDeque));
-        uint32_t oldL = L;
-        uint32_t newL = (capacity - futureCnt) / 2;
-        uint32_t oldC0 = oldL + A + B;
-        uint32_t newC0 = newL + A + newCount;
-        newDeque->_leftIdx = newL;
-        newDeque->_capacity = capacity;
-        if (0 < A) memmove(newBuckets + newL, buckets + oldL, A * sizeof(struct __CCArrayBucket));
-        if (0 < C) memmove(newBuckets + newC0, buckets + oldC0, C * sizeof(struct __CCArrayBucket));
-        array->_store = newDeque;
-        if (deque) CFAllocatorDeallocate(allocator, deque);
-        //printf("3:  array %p store is now %p (%lx)\n", array, array->_store, *(unsigned long *)(array->_store));
-        return;
-    }
-    
-    if ((numNewElems < 0 && C < A) || (numNewElems <= R && C < A)) {    // move C
-        // deleting: C is smaller
-        // inserting: C is smaller and R has room
-        uint32_t oldC0 = L + A + B;
-        uint32_t newC0 = L + A + newCount;
-        if (0 < C) memmove(buckets + newC0, buckets + oldC0, C * sizeof(struct __CCArrayBucket));
-        if (oldC0 > newC0) memset(buckets + newC0 + C, 0, (oldC0 - newC0) * sizeof(struct __CCArrayBucket));
-    } else if ((numNewElems < 0) || (numNewElems <= L && A <= C)) {    // move A
-        // deleting: A is smaller or equal (covers remaining delete cases)
-        // inserting: A is smaller and L has room
-        uint32_t oldL = L;
-        uint32_t newL = L - numNewElems;
-        deque->_leftIdx = newL;
-        if (0 < A) memmove(buckets + newL, buckets + oldL, A * sizeof(struct __CCArrayBucket));
-        if (newL > oldL) memset(buckets + oldL, 0, (newL - oldL) * sizeof(struct __CCArrayBucket));
-    } else {
-        // now, must be inserting, and either:
-        //    A<=C, but L doesn't have room (R might have, but don't care)
-        //    C<A, but R doesn't have room (L might have, but don't care)
-        // re-center everything
-        uint32_t oldL = L;
-        uint32_t newL = (L + R - numNewElems) / 2;
-        newL = newL - newL / 2;
-        uint32_t oldC0 = oldL + A + B;
-        uint32_t newC0 = newL + A + newCount;
-        deque->_leftIdx = newL;
-        if (newL < oldL) {
-            if (0 < A) memmove(buckets + newL, buckets + oldL, A * sizeof(struct __CCArrayBucket));
-            if (0 < C) memmove(buckets + newC0, buckets + oldC0, C * sizeof(struct __CCArrayBucket));
-            if (oldC0 > newC0) memset(buckets + newC0 + C, 0, (oldC0 - newC0) * sizeof(struct __CCArrayBucket));
-        } else {
-            if (0 < C) memmove(buckets + newC0, buckets + oldC0, C * sizeof(struct __CCArrayBucket));
-            if (0 < A) memmove(buckets + newL, buckets + oldL, A * sizeof(struct __CCArrayBucket));
-            if (newL > oldL) memset(buckets + oldL, 0, (newL - oldL) * sizeof(struct __CCArrayBucket));
-        }
-    }
-}
+//static void __CCArrayHandleOutOfMemory(CFTypeRef obj, uint32_t numBytes) {
+//    CFStringRef msg = CFStringCreateWithFormat(kCFAllocatorSystemDefault, NULL, CFSTR("Attempt to allocate %ld bytes for CCArray failed"), numBytes);
+//    {
+//        CFLog(kCFLogLevelCritical, CFSTR("%@"), msg);
+//        HALT;
+//    }
+//    CFRelease(msg);
+//}
 
-static void __CCArrayHandleOutOfMemory(CFTypeRef obj, uint32_t numBytes) {
-    CFStringRef msg = CFStringCreateWithFormat(kCFAllocatorSystemDefault, NULL, CFSTR("Attempt to allocate %ld bytes for CCArray failed"), numBytes);
-    {
-        CFLog(kCFLogLevelCritical, CFSTR("%@"), msg);
-        HALT;
-    }
-    CFRelease(msg);
-}
-
-// This function is for Foundation's benefit; no one else should use it.
-void _CCArraySetCapacity(CFMutableArrayRef array, uint32_t cap) {
-    if (CF_IS_OBJC(CCArrayGetTypeID(), array) || CF_IS_SWIFT(CCArrayGetTypeID(), array)) return;
-    __CFGenericValidateType(array, CCArrayGetTypeID());
-    CFAssert1(__CCArrayGetType(array) != __kCCArrayImmutable, __kCFLogAssertion, "%s(): array is immutable", __PRETTY_FUNCTION__);
-    CFAssert3(__CCArrayGetCount(array) <= cap, __kCFLogAssertion, "%s(): desired capacity (%ld) is less than count (%ld)", __PRETTY_FUNCTION__, cap, __CCArrayGetCount(array));
-    CHECK_FOR_MUTATION(array);
-    BEGIN_MUTATION(array);
-    // Currently, attempting to set the capacity of an array which is the CFStorage
-    // variant, or set the capacity larger than __CF_MAX_BUCKETS_PER_DEQUE, has no
-    // effect.  The primary purpose of this API is to help avoid a bunch of the
-    // resizes at the small capacities 4, 8, 16, etc.
-    if (__CCArrayGetType(array) == __kCCArrayDeque) {
-        struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
-        uint32_t capacity = __CCCircularBufferRoundUpCapacity(cap);
-        uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
-        CFAllocatorRef allocator = __CFGetAllocator(array);
-        if (NULL == deque) {
-            deque = (struct __CCArrayDeque *)CFAllocatorAllocate(allocator, size, 0);
-            if (NULL == deque) __CCArrayHandleOutOfMemory(array, size);
-            if (__CFOASafe) __CFSetLastAllocationEventName(deque, "CCArray (store-deque)");
-            deque->_leftIdx = capacity / 2;
-        } else {
-            struct __CCArrayDeque *olddeque = deque;
-            uint32_t oldcap = deque->_capacity;
-            deque = (struct __CCArrayDeque *)CFAllocatorAllocate(allocator, size, 0);
-            if (NULL == deque) __CCArrayHandleOutOfMemory(array, size);
-            memmove(deque, olddeque, sizeof(struct __CCArrayDeque) + oldcap * sizeof(struct __CCArrayBucket));
-            CFAllocatorDeallocate(allocator, olddeque);
-            if (__CFOASafe) __CFSetLastAllocationEventName(deque, "CCArray (store-deque)");
-        }
-        deque->_capacity = capacity;
-        array->_store = deque;
-    }
-    END_MUTATION(array);
-}
+//// This function is for Foundation's benefit; no one else should use it.
+//void _CCArraySetCapacity(CFMutableArrayRef array, uint32_t cap) {
+//    if (CF_IS_OBJC(CCArrayGetTypeID(), array) || CF_IS_SWIFT(CCArrayGetTypeID(), array)) return;
+//    __CFGenericValidateType(array, CCArrayGetTypeID());
+//    CFAssert1(__CCArrayGetType(array) != __kCCArrayImmutable, __kCFLogAssertion, "%s(): array is immutable", __PRETTY_FUNCTION__);
+//    CFAssert3(__CCArrayGetCount(array) <= cap, __kCFLogAssertion, "%s(): desired capacity (%ld) is less than count (%ld)", __PRETTY_FUNCTION__, cap, __CCArrayGetCount(array));
+//    CHECK_FOR_MUTATION(array);
+//    BEGIN_MUTATION(array);
+//    // Currently, attempting to set the capacity of an array which is the CFStorage
+//    // variant, or set the capacity larger than __CF_MAX_BUCKETS_PER_DEQUE, has no
+//    // effect.  The primary purpose of this API is to help avoid a bunch of the
+//    // resizes at the small capacities 4, 8, 16, etc.
+//    if (__CCArrayGetType(array) == __kCCArrayDeque) {
+//        struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
+//        uint32_t capacity = __CCCircularBufferRoundUpCapacity(cap);
+//        uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
+//        CFAllocatorRef allocator = __CFGetAllocator(array);
+//        if (NULL == deque) {
+//            deque = (struct __CCArrayDeque *)CFAllocatorAllocate(allocator, size, 0);
+//            if (NULL == deque) __CCArrayHandleOutOfMemory(array, size);
+//            if (__CFOASafe) __CFSetLastAllocationEventName(deque, "CCArray (store-deque)");
+//            deque->_leftIdx = capacity / 2;
+//        } else {
+//            struct __CCArrayDeque *olddeque = deque;
+//            uint32_t oldcap = deque->_capacity;
+//            deque = (struct __CCArrayDeque *)CFAllocatorAllocate(allocator, size, 0);
+//            if (NULL == deque) __CCArrayHandleOutOfMemory(array, size);
+//            memmove(deque, olddeque, sizeof(struct __CCArrayDeque) + oldcap * sizeof(struct __CCArrayBucket));
+//            CFAllocatorDeallocate(allocator, olddeque);
+//            if (__CFOASafe) __CFSetLastAllocationEventName(deque, "CCArray (store-deque)");
+//        }
+//        deque->_capacity = capacity;
+//        array->_store = deque;
+//    }
+//    END_MUTATION(array);
+//}
 
 
-void CCArrayReplaceValues(CFMutableArrayRef array, CCRange_s range, const void **newValues, uint32_t newCount) {
-    CF_SWIFT_FUNCDISPATCHV(CCArrayGetTypeID(), void, (CFSwiftRef)array, NSMutableArray.replaceObjectsInRange, range, newValues, newCount);
-    CF_OBJC_FUNCDISPATCHV(CCArrayGetTypeID(), void, (NSMutableArray *)array, replaceObjectsInRange:NSMakeRange(range.location, range.length) withObjects:(id *)newValues count:(NSUInteger)newCount);
-    __CFGenericValidateType(array, CCArrayGetTypeID());
+void CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount) {
     __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
-    CFAssert1(__CCArrayGetType(array) != __kCCArrayImmutable, __kCFLogAssertion, "%s(): array is immutable", __PRETTY_FUNCTION__);
-    CFAssert2(0 <= newCount, __kCFLogAssertion, "%s(): newCount (%ld) cannot be less than zero", __PRETTY_FUNCTION__, newCount);
-    CHECK_FOR_MUTATION(array);
+    __CCArrayMutableValidate(array, __func__);
     return _CCArrayReplaceValues(array, range, newValues, newCount);
 }
 
 // This function does no ObjC dispatch or argument checking;
 // It should only be called from places where that dispatch and check has already been done, or NSCCArray
-void _CCArrayReplaceValues(CFMutableArrayRef array, CCRange_s range, const void * _Nonnull newValues, uint32_t newCount) {
+void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount) {
     CHECK_FOR_MUTATION(array);
     BEGIN_MUTATION(array);
     const CCBaseCallBacks *cb;

@@ -41,8 +41,9 @@
     
     self.status = 0;
     
-    NSArray<NSString *> * items = @[@"1562930748136", @"1562928616807", @"1562663973911", @"1562662353087", @"1562662173010", @"1562661992940", @"1562663793812", @"1562641927402"];
-    
+//    NSArray<NSString *> * items = @[@"1562930748136", @"1562928616807", @"1562663973911", @"1562662353087", @"1562662173010", @"1562661992940", @"1562663793812", @"1562641927402"];
+    NSArray<NSString *> * items = @[@"1562930748136"];
+
 //    NSArray<NSString *> * items = @[@"1562663973911", @"1562662353087", @"1562662173010", @"1562661992940"];
 
     
@@ -55,8 +56,8 @@
                 SCAVMixWorkItem * obj = (SCAVMixWorkItem *)citem;
 //                [[SCRecoverManager shared] recoverPlaybackGeneratedVideoAtPath:obj.config.outputPath];
                 
-                [[SCRecoverManager shared] recoverPlaybackOriginalFileAtPath:obj.config.audioInputPath rename:[NSString stringWithFormat:@"%@.wav", obj.config.identifier]];
-                [[SCRecoverManager shared] recoverPlaybackOriginalFileAtPath:obj.config.videoInputPath rename:[NSString stringWithFormat:@"%@.mp4", obj.config.identifier]];
+//                [[SCRecoverManager shared] recoverPlaybackOriginalFileAtPath:obj.config.audioInputPath rename:[NSString stringWithFormat:@"%@.wav", obj.config.identifier]];
+//                [[SCRecoverManager shared] recoverPlaybackOriginalFileAtPath:obj.config.videoInputPath rename:[NSString stringWithFormat:@"%@.mp4", obj.config.identifier]];
             }
             
             
@@ -93,7 +94,7 @@
     
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.dateFormat = @"HHmm";
+    formatter.dateFormat = @"HHmmSS";
     NSString * dateString = [formatter stringFromDate:[NSDate date]];
     NSString * outputFileName = [NSString stringWithFormat:@"%@_%@", itemName, dateString];
     // 最终合成输出路径

@@ -12,6 +12,7 @@
 		D6AC0BB622D8A04B00FDE1C0 /* 1562928616807.wav in Resources */ = {isa = PBXBuildFile; fileRef = D6AC0BB522D8A04B00FDE1C0 /* 1562928616807.wav */; };
 		D6AC0BB822D8A75100FDE1C0 /* 1562930748136.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D6AC0BB722D8A75000FDE1C0 /* 1562930748136.mp4 */; };
 		D6AC0BBA22D8A78B00FDE1C0 /* 1562930748136.wav in Resources */ = {isa = PBXBuildFile; fileRef = D6AC0BB922D8A78B00FDE1C0 /* 1562930748136.wav */; };
+		D6AC0BDD22D9D40000FDE1C0 /* ipad app-76.png in Resources */ = {isa = PBXBuildFile; fileRef = D6AC0BDC22D9D40000FDE1C0 /* ipad app-76.png */; };
 		D6C17AB722D4498400B080BA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C17AB622D4498400B080BA /* AppDelegate.m */; };
 		D6C17ABA22D4498400B080BA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C17AB922D4498400B080BA /* ViewController.m */; };
 		D6C17ABD22D4498400B080BA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6C17ABB22D4498400B080BA /* Main.storyboard */; };
@@ -42,6 +43,7 @@
 		D6AC0BB522D8A04B00FDE1C0 /* 1562928616807.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = 1562928616807.wav; sourceTree = "<group>"; };
 		D6AC0BB722D8A75000FDE1C0 /* 1562930748136.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1562930748136.mp4; sourceTree = "<group>"; };
 		D6AC0BB922D8A78B00FDE1C0 /* 1562930748136.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = 1562930748136.wav; sourceTree = "<group>"; };
+		D6AC0BDC22D9D40000FDE1C0 /* ipad app-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ipad app-76.png"; sourceTree = "<group>"; };
 		D6C17AB222D4498400B080BA /* AV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6C17AB522D4498400B080BA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D6C17AB622D4498400B080BA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				D6C17AB922D4498400B080BA /* ViewController.m */,
 				D6C17ABB22D4498400B080BA /* Main.storyboard */,
 				D6C17ABE22D4498500B080BA /* Assets.xcassets */,
+				D6AC0BDC22D9D40000FDE1C0 /* ipad app-76.png */,
 				D6C17AC022D4498500B080BA /* LaunchScreen.storyboard */,
 				D6C17AC322D4498500B080BA /* Info.plist */,
 				D6C17AC422D4498500B080BA /* main.m */,
@@ -205,6 +208,7 @@
 				D6C17AE422D5C3B400B080BA /* 1562663973911.mp4 in Resources */,
 				D6C17AD622D5C35700B080BA /* 1562661992940.wav in Resources */,
 				D6C17ACC22D44A1100B080BA /* 1562641927402.mp4 in Resources */,
+				D6AC0BDD22D9D40000FDE1C0 /* ipad app-76.png in Resources */,
 				D6C17AD222D4BB0D00B080BA /* 1562663793812.mp4 in Resources */,
 				D6C17ACE22D44A1800B080BA /* 1562641927402.wav in Resources */,
 				D6C17AD422D4BB1B00B080BA /* 1562663793812.wav in Resources */,

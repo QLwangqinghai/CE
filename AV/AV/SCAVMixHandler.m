@@ -38,8 +38,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 @property (nonatomic, strong) AVAssetWriterInput * writerInput;
 @property (nonatomic, strong) AVAssetReaderTrackOutput * readerTrackOutput;
 
-@property (nonatomic, strong) AVAssetWriterInputPixelBufferAdaptor * adaptor;
-
 @property (nonatomic, copy) SCAVWriterInputHandlerBlock completion;
 @property (nonatomic, copy) NSString * tag;
 
@@ -67,14 +65,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         self.writerInput = writerInput;
         self.readerTrackOutput = readerTrackOutput;
         self.queue = queue;
-        
-        if (AVMediaTypeVideo == writerInput.mediaType) {
-            NSDictionary * attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey, nil];
-            AVAssetWriterInputPixelBufferAdaptor * adaptor = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:writerInput sourcePixelBufferAttributes:attributes];
-            self.adaptor = adaptor;
-        }
-
-        
     }
     return self;
 }
@@ -158,14 +148,10 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     // 锁定pixel buffer的基地址
-    CVReturn r = CVPixelBufferLockBaseAddress(imageBuffer, 0);
+    CVPixelBufferLockBaseAddress(imageBuffer, 0);
     
     // 得到pixel buffer的基地址
     void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
-    
-    size_t size = CVPixelBufferGetDataSize(imageBuffer);
-    
-    NSData * data = [NSData dataWithBytes:baseAddress length:size];
     
     // 得到pixel buffer的行字节数
     size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
@@ -182,26 +168,37 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 //    CGColorSpaceRelease(colorSpace);
     if (NULL == bitmapContext) {
         NSLog(@"bitmap is nil");
+        CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+        return false;
     }
-    UIGraphicsPushContext(bitmapContext);
 
-    CGContextDrawImage(bitmapContext, CGRectMake(-38, -38, 76, 76), [UIImage imageNamed:@"ipad app-76.png"].CGImage);
+    UIGraphicsPushContext(bitmapContext);
+    CGRect frame = CGRectMake(10, 10, 76, 76);
+    CGRect rect = frame;
+    rect.origin.y = height - frame.origin.y - frame.size.height;
+    
+    CGContextDrawImage(bitmapContext, rect, [UIImage imageNamed:@"ipad app-76.png"].CGImage);
+    CGImageRef newImage = CGBitmapContextCreateImage(bitmapContext);
+    UIImage * iamge = [UIImage imageWithCGImage:newImage];
+    CFRelease(newImage);
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"onImage" object:iamge];
+    
     UIGraphicsPopContext();
     CGContextRelease(bitmapContext);
-
-    NSData * data2 = [NSData dataWithBytes:baseAddress length:size];
-    if (data == data2) {
-        NSLog(@"data: %@", data);
-    }
-    
-//    CGAffineTransform flipVertical = CGAffineTransformMake(1, 0, 0, -1, 0, _viewSize.height);
-//    CGContextConcatCTM(bitmapContext, flipVertical);
-    BOOL result = [self.adaptor appendPixelBuffer:imageBuffer withPresentationTime:CMSampleBufferGetPresentationTimeStamp(sampleBuffer)];
-
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
     
     // 释放context和颜色空间
-    return result;
+    return true;
+}
+
+- (CMSampleBufferRef _Nullable)nextSampleBuffer {
+    CMSampleBufferRef buffer = [self.readerTrackOutput copyNextSampleBuffer];
+    BOOL isVideo = (SCAVWriterInputHandlerKindVideo == self.kind);
+    if (isVideo) {
+        [self addImageFromSampleBuffer:buffer];
+    }
+    return buffer;
 }
 
 -(void)assertReadToAssetInput {
@@ -221,26 +218,20 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     NSInteger logStepLength = 120;
     
     AVAssetWriterInput * writerInput = self.writerInput;
-    AVAssetReaderTrackOutput * readerTrackOutput = self.readerTrackOutput;
     
     AVAssetReader * assetReader = self.assetReader;
     AVAssetWriter * assetWriter = self.assetWriter;
 
-    BOOL isVideo = (SCAVWriterInputHandlerKindVideo == self.kind);
     [self.writerInput requestMediaDataWhenReadyOnQueue:queue usingBlock:^{
         NSInteger breakFlag = self.breakFlag;
         while (writerInput.readyForMoreMediaData) {
             if (SCAVWriterInputHandlerStatusRunning != self.status) {
                 return;
             }
-            CMSampleBufferRef buffer = [readerTrackOutput copyNextSampleBuffer];
+            CMSampleBufferRef buffer = [self nextSampleBuffer];
             if (buffer) {
-                BOOL appendResult = true;
-                if (isVideo) {
-                    appendResult = [self addImageFromSampleBuffer:buffer];
-                } else {
-                    appendResult = [writerInput appendSampleBuffer:buffer];
-                }
+                BOOL appendResult = [writerInput appendSampleBuffer:buffer];
+
                 CFRelease(buffer);
 
                 if (appendResult) {

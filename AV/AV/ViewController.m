@@ -32,7 +32,7 @@
     }];
     
     
-    UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
+    UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 200)];
     [self.view addSubview:imageView];
     
     [[NSNotificationCenter defaultCenter] addObserverForName:@"onImage" object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {

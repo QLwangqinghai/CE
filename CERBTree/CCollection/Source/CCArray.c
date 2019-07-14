@@ -56,7 +56,7 @@ static inline CCArrayNonnullPtr __CCArrayImmutableAllocate(const CCBaseCallBacks
 }
 
 static inline CCArrayNonnullPtr __CCArrayMutableAllocate(const CCBaseCallBacks * _Nullable callBacks, uint32_t elementSize, const CCVector_s * _Nullable vec, uint32_t vecCount) {
-    CCCircularBuffer_s * ringBuffer = __CCCircularBufferCreate(elementSize, vec, vecCount);
+    CCCircularBuffer_s * circularBuffer = __CCCircularBufferCreate(elementSize, vec, vecCount);
 
     CCRetainCallBack_f retainFunc = callBacks->retain;
     
@@ -74,7 +74,7 @@ static inline CCArrayNonnullPtr __CCArrayMutableAllocate(const CCBaseCallBacks *
     
     CCArrayNonnullPtr array = CCAllocate(sizeof(CCArray_s));
     array->_mutable = __CCArrayMutable;
-    array->_store = ringBuffer;
+    array->_store = circularBuffer;
     array->_elementSize = elementSize;
     if (NULL != callBacks) {
         memcpy(&(array->_callBacks), callBacks, sizeof(CCBaseCallBacks));
@@ -163,8 +163,8 @@ static inline int32_t __CCArrayGetVectorsInRange(CCArrayNonnullPtr array, CCRang
         }
             break;
         case __CCArrayMutable: {
-            CCCircularBuffer_s * ringBuffer = (CCCircularBuffer_s *)array->_store;
-            vecCount = __CCCircularBufferGetItemsInRange(ringBuffer, range, vec);
+            CCCircularBuffer_s * circularBuffer = (CCCircularBuffer_s *)array->_store;
+            vecCount = __CCCircularBufferGetItemsInRange(circularBuffer, range, vec);
         }
             break;
         default:
@@ -620,13 +620,14 @@ void CCArrayReplaceValueAtIndex(CCArrayNonnullPtr array, uint32_t idx, const voi
     uint32_t elementSize = array->_elementSize;
 
     CCRetainCallBack_f retainFunc = __CCArrayGetRetainCallBack(array);
+    if (retainFunc) {
+        retainFunc(value, elementSize);
+    }
+    
     CCReleaseCallBack_f releaseFunc = __CCArrayGetReleaseCallBack(array);
     void * item = __CCArrayGetItemAtIndex(array, idx);
     __CCArrayItemRelease(releaseFunc, item, elementSize);
     memcpy(item, value, elementSize);
-    if (retainFunc) {
-        retainFunc(value, elementSize);
-    }
 }
 
 
@@ -798,28 +799,29 @@ void CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void *
 // This function does no ObjC dispatch or argument checking;
 // It should only be called from places where that dispatch and check has already been done, or NSCCArray
 void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount) {
-    CHECK_FOR_MUTATION(array);
-    BEGIN_MUTATION(array);
+    uint32_t elementSize = array->_elementSize;
+    
+    if (newCount > 0) {
+        assert(newValues);
+        CCRetainCallBack_f retainFunc = __CCArrayGetRetainCallBack(array);
+        if (retainFunc) {
+            uint8_t * tmp = (uint8_t *)newValues;
+            for (uint32_t i=0; i<newCount; i++) {
+                retainFunc(tmp, elementSize);
+                tmp += elementSize;
+            }
+        }
+    }
+
+    
+    CCReleaseCallBack_f releaseFunc = __CCArrayGetReleaseCallBack(array);
     const CCBaseCallBacks *cb;
     uint32_t idx, cnt, futureCnt;
     const void **newv, *buffer[256];
     cnt = __CCArrayGetCount(array);
     futureCnt = cnt - range.length + newCount;
-    CFAssert1(newCount <= futureCnt, __kCFLogAssertion, "%s(): internal error 1", __PRETTY_FUNCTION__);
-    cb = __CCArrayGetCallBacks(array);
-    CFAllocatorRef allocator = __CFGetAllocator(array);
+    assert(newCount <= futureCnt);
     
-    /* Retain new values if needed, possibly allocating a temporary buffer for them */
-    if (NULL != cb->retain) {
-        newv = (newCount <= 256) ? (const void **)buffer : (const void **)CFAllocatorAllocate(kCFAllocatorSystemDefault, newCount * sizeof(void *), 0);
-        if (newv != buffer && __CFOASafe) __CFSetLastAllocationEventName(newv, "CCArray (temp)");
-        for (idx = 0; idx < newCount; idx++) {
-            newv[idx] = (void *)INVOKE_CALLBACK2(cb->retain, allocator, (void *)newValues[idx]);
-        }
-    } else {
-        newv = newValues;
-    }
-    array->_mutations++;
     
     /* Now, there are three regions of interest, each of which may be empty:
      *   A: the region from index 0 to one less than the range.location
@@ -832,41 +834,12 @@ void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void 
      * the length of the range being replaced.
      */
     if (0 < range.length) {
-        __CCArrayReleaseValues(array, range, false);
+        __CCArrayReleaseValues(array, range);
     }
-    // region B elements are now "dead"
-    if (0) {
-    } else if (NULL == array->_store) {
-        if (0) {
-        } else if (0 <= futureCnt) {
-            struct __CCArrayDeque *deque;
-            uint32_t capacity = __CCCircularBufferRoundUpCapacity(futureCnt);
-            uint32_t size = sizeof(struct __CCArrayDeque) + capacity * sizeof(struct __CCArrayBucket);
-            deque = (struct __CCArrayDeque *)CFAllocatorAllocate((allocator), size, 0);
-            if (__CFOASafe) __CFSetLastAllocationEventName(deque, "CCArray (store-deque)");
-            deque->_leftIdx = (capacity - newCount) / 2;
-            deque->_capacity = capacity;
-            array->_store = deque;
-        }
-    } else {        // Deque
-        // reposition regions A and C for new region B elements in gap
-        if (0) {
-        } else if (range.length != newCount) {
-            __CCArrayRepositionDequeRegions(array, range, newCount);
-        }
-    }
-    // copy in new region B elements
-    if (0 < newCount) {
-        if (0) {
-        } else {    // Deque
-            struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
-            struct __CCArrayBucket *raw_buckets = (struct __CCArrayBucket *)((uint8_t *)deque + sizeof(struct __CCArrayDeque));
-            memmove(raw_buckets + deque->_leftIdx + range.location, newv, newCount * sizeof(struct __CCArrayBucket));
-        }
-    }
-    __CCArraySetCount(array, futureCnt);
-    if (newv != buffer && newv != newValues) CFAllocatorDeallocate(kCFAllocatorSystemDefault, newv);
-    END_MUTATION(array);
+    CCCircularBuffer_s * circularBuffer = (CCCircularBuffer_s *)array->_store;
+
+    CCVector_s v = CCVectorMake(newValues, newCount);
+    array->_store = __CCCircularBufferReplaceValues(circularBuffer, range, &v, 1);
 }
 
 struct _acompareContext {

@@ -43,10 +43,10 @@ typedef struct __CCRange {
 } CCRange_s;
 
 typedef struct __CCVector {
-    void * _Nullable base;
+    const void * _Nullable base;
     size_t count;//item count， not memory lenth
 } CCVector_s;
-static inline CCVector_s CCVectorMake(void * _Nullable base, size_t count) {
+static inline CCVector_s CCVectorMake(const void * _Nullable base, size_t count) {
     CCVector_s vec = {
         .base = base,
         .count = count,

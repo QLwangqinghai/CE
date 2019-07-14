@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <mach/mach_time.h>
 
-
+/*
 
 int highest_bit_unrolled(uint64_t n)
 {
@@ -373,5 +373,11 @@ int main(int argc, const char * argv[]) {
         
         
     }
+    return 0;
+}
+*/
+
+
+int main(int argc, const char * argv[]) {
     return 0;
 }

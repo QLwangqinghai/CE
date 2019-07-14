@@ -307,18 +307,18 @@ static inline void ___CCCircularBufferMoveValues(CCCircularBuffer_s * _Nonnull b
 
 // This function does no ObjC dispatch or argument checking;
 // It should only be called from places where that dispatch and check has already been done, or NSCCArray
-static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferReplaceValues(CCCircularBuffer_s * _Nonnull buffer, CCRange_s range, const CCVector_s * _Nullable vec, int32_t vecCount) {
-    assert(vecCount >= 0);
-    if (vecCount > 0) {
-        assert(vec);
+static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferReplaceValues(CCCircularBuffer_s * _Nonnull buffer, CCRange_s range, const CCVector_s * _Nullable newVectors, int32_t newVectorCount) {
+    assert(newVectorCount >= 0);
+    if (newVectorCount > 0) {
+        assert(newVectors);
     }
     
 //    __CCCircularBufferGetItemsInRange(buffer, CCRangeMake(0, range.location), <#CCVector_s * _Nonnull vectorsPtr#>)
     
     uint32_t elementSize = buffer->_elementSize;
     uint64_t count = 0;
-    for (int32_t vi=0; vi<vecCount; vi++) {
-        CCVector_s v = vec[vi];
+    for (int32_t vi=0; vi<newVectorCount; vi++) {
+        CCVector_s v = newVectors[vi];
         count += v.count;
     }
     
@@ -349,8 +349,8 @@ static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferReplaceValues(CCCi
             index += v.count;
         }
         
-        for (int32_t vi=0; vi<vecCount; vi++) {
-            CCVector_s v = vec[vi];
+        for (int32_t vi=0; vi<newVectorCount; vi++) {
+            CCVector_s v = newVectors[vi];
             ___CCCircularBufferSetValues(result, index, v);
             index += v.count;
         }
@@ -367,8 +367,8 @@ static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferReplaceValues(CCCi
     } else {
         if (range.length == newCount) {
             uint32_t index = range.location;
-            for (int32_t vi=0; vi<vecCount; vi++) {
-                CCVector_s v = vec[vi];
+            for (int32_t vi=0; vi<newVectorCount; vi++) {
+                CCVector_s v = newVectors[vi];
                 ___CCCircularBufferSetValues(buffer, index, v);
                 index += v.count;
             }
@@ -397,8 +397,8 @@ static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferReplaceValues(CCCi
                 }
             }
             uint32_t index = range.location;
-            for (int32_t vi=0; vi<vecCount; vi++) {
-                CCVector_s v = vec[vi];
+            for (int32_t vi=0; vi<newVectorCount; vi++) {
+                CCVector_s v = newVectors[vi];
                 ___CCCircularBufferSetValues(buffer, index, v);
                 index += v.count;
             }

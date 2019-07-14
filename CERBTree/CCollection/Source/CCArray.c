@@ -63,7 +63,7 @@ static inline CCArrayNonnullPtr __CCArrayMutableAllocate(const CCBaseCallBacks *
     if (NULL != retainFunc) {
         for (uint32_t vi=0; vi<vecCount; vi++) {
             CCVector_s v = vec[vi];
-            uint8_t * ptr = v.base;
+            uint8_t * ptr = (uint8_t *)v.base;
 
             for (uint32_t i=0; i<v.count; i++) {
                 retainFunc(ptr, elementSize);
@@ -214,7 +214,7 @@ static void __CCArrayReleaseValues(CCArrayNonnullPtr array, CCRange_s range) {
 
     for (int vi=0; vi<vecCount; vi++) {
         CCVector_s v = vec[vi];
-        uint8_t * dst = v.base;
+        uint8_t * dst = (uint8_t *)v.base;
         for (int i=0; i<v.count; i++) {
             releaseFunc(dst, array->_elementSize);
             dst += array->_elementSize;
@@ -222,7 +222,7 @@ static void __CCArrayReleaseValues(CCArrayNonnullPtr array, CCRange_s range) {
     }
 }
 
-static inline void __CCArrayValidateRange(CCArrayNonnullPtr array, CCRange_s range, const char *func) {
+static inline void __CCArrayValidateRange(CCArrayNonnullPtr array, CCRange_s range, const char * _Nullable func) {
     uint32_t count = __CCArrayGetCount(array);
     if (range.location + range.length <= count) {
     } else {
@@ -469,7 +469,7 @@ _Bool CCArrayContainsValue(CCArrayNonnullPtr array, CCRange_s range, const void 
     CCEqualCallBack_f equalFunc = __CCArrayGetEqualCallBack(array);
     for (int vi=0; vi<vecCount; vi++) {
         CCVector_s v = vec[vi];
-        uint8_t * dst = v.base;
+        uint8_t * dst = (uint8_t *)v.base;
         for (int i=0; i<v.count; i++) {
             if (__CCArrayItemIsEqual(equalFunc, dst, value, elementSize)) {
                 return true;
@@ -565,7 +565,7 @@ uint32_t CCArrayGetFirstIndexOfValue(CCArrayNonnullPtr array, CCRange_s range, c
     
     for (int vi=0; vi<vecCount; vi++) {
         CCVector_s v = vec[vi];
-        uint8_t * dst = v.base;
+        uint8_t * dst = (uint8_t *)v.base;
         for (int i=0; i<v.count; i++) {
             if (__CCArrayItemIsEqual(equalFunc, dst, value, elementSize)) {
                 return index + i;
@@ -594,7 +594,7 @@ uint32_t CCArrayGetLastIndexOfValue(CCArrayNonnullPtr array, CCRange_s range, co
     for (int vi=vecCount-1; vi>=0; vi--) {
         CCVector_s v = vec[vi];
         index -= v.count;
-        uint8_t * dst = v.base;
+        uint8_t * dst = (uint8_t *)v.base;
         for (int i=(int)v.count-1; i>=0; i--) {
             if (__CCArrayItemIsEqual(equalFunc, dst, value, elementSize)) {
                 return index + i;
@@ -606,8 +606,83 @@ uint32_t CCArrayGetLastIndexOfValue(CCArrayNonnullPtr array, CCRange_s range, co
     return CCIndexNotFound;
 }
 
-void CCArrayAppendValue(CCArrayNonnullPtr array, const void * _Nonnull value) {
-    _CCArrayReplaceValues(array, CCRangeMake(__CCArrayGetCount(array), 0), value, 1);
+void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount, const char * _Nullable func);
+
+void __CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount, void * _Nullable oldValues, const char * _Nullable func) {
+    assert(array);
+    __CCArrayMutableValidate(array, func);
+    __CCArrayValidateRange(array, range, func);
+    
+    uint32_t elementSize = array->_elementSize;
+    
+    if (newCount > 0) {
+        assert(newValues);
+        CCRetainCallBack_f retainFunc = __CCArrayGetRetainCallBack(array);
+        if (retainFunc) {
+            uint8_t * tmp = (uint8_t *)newValues;
+            for (uint32_t i=0; i<newCount; i++) {
+                retainFunc(tmp, elementSize);
+                tmp += elementSize;
+            }
+        }
+    }
+    
+    if (oldValues) {
+        if (0 < range.length) {
+            CCVector_s vec[2] = {};
+            int32_t vecCount = __CCArrayGetVectorsInRange(array, range, vec);
+            
+            uint8_t * dst = oldValues;
+            for (int vi=0; vi<vecCount; vi++) {
+                CCVector_s v = vec[vi];
+                size_t s = array->_elementSize * v.count;
+                memcpy(dst, v.base, s);
+                dst += s;
+            }
+        }
+    } else {
+        if (0 < range.length) {
+            __CCArrayReleaseValues(array, range);
+        }
+    }
+
+    CCCircularBuffer_s * circularBuffer = (CCCircularBuffer_s *)array->_store;
+    
+    CCVector_s v = CCVectorMake(newValues, newCount);
+    array->_store = __CCCircularBufferReplaceValues(circularBuffer, range, &v, 1);
+}
+
+
+
+
+void CCArrayAppendItem(CCArrayNonnullPtr array, const void * _Nonnull itemPtr) {
+    _CCArrayReplaceValues(array, CCRangeMake(__CCArrayGetCount(array), 0), itemPtr, 1, __func__);
+}
+void CCArrayPrependItem(CCArrayNonnullPtr array, const void * _Nonnull itemPtr) {
+    _CCArrayReplaceValues(array, CCRangeMake(0, 0), itemPtr, 1, __func__);
+}
+
+void CCArrayPopFirst(CCArrayNonnullPtr array, void * _Nonnull itemPtr) {
+    
+}
+void CCArrayPopLast(CCArrayNonnullPtr array, void * _Nonnull itemPtr) {
+    
+}
+void CCArrayPopItemInRange(CCArrayNonnullPtr array, CCRange_s range) {
+    
+}
+
+void CCArrayRemoveFirst(CCArrayNonnullPtr array) {
+    
+}
+void CCArrayRemoveLast(CCArrayNonnullPtr array) {
+    
+}
+void CCArrayRemoveItemAtIndex(CCArrayNonnullPtr array, uint32_t index) {
+    
+}
+void CCArrayRemoveItemsInRange(CCArrayNonnullPtr array, CCRange_s range) {
+    
 }
 
 void CCArrayReplaceValueAtIndex(CCArrayNonnullPtr array, uint32_t idx, const void * _Nonnull value) {
@@ -642,11 +717,15 @@ void CCArrayExchangeValuesAtIndices(CCArrayNonnullPtr array, uint32_t idx1, uint
 
     void * item1 = __CCArrayGetItemAtIndex(array, idx1);
     void * item2 = __CCArrayGetItemAtIndex(array, idx2);
-
+    uint8_t tmp[array->_elementSize];
+    
+    memcpy(tmp, item1, array->_elementSize);//tmp = item1
+    memcpy(item1, item2, array->_elementSize);//item1 = item2
+    memcpy(item2, tmp, array->_elementSize);//item2 = tmp
 }
 
 void CCArrayRemoveValueAtIndex(CCArrayNonnullPtr array, uint32_t idx) {
-    _CCArrayReplaceValues(array, CCRangeMake(idx, 1), NULL, 0);
+    _CCArrayReplaceValues(array, CCRangeMake(idx, 1), NULL, 0, __func__);
 }
 
 void CCArrayRemoveAllValues(CCArrayNonnullPtr array) {
@@ -791,14 +870,16 @@ void CCArrayRemoveAllValues(CCArrayNonnullPtr array) {
 
 
 void CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount) {
-    __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
-    __CCArrayMutableValidate(array, __func__);
-    return _CCArrayReplaceValues(array, range, newValues, newCount);
+    return _CCArrayReplaceValues(array, range, newValues, newCount, __func__);
 }
 
 // This function does no ObjC dispatch or argument checking;
 // It should only be called from places where that dispatch and check has already been done, or NSCCArray
-void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount) {
+void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount, const char * _Nullable func) {
+    assert(array);
+    __CCArrayMutableValidate(array, func);
+    __CCArrayValidateRange(array, range, func);
+    
     uint32_t elementSize = array->_elementSize;
     
     if (newCount > 0) {
@@ -842,119 +923,119 @@ void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void 
     array->_store = __CCCircularBufferReplaceValues(circularBuffer, range, &v, 1);
 }
 
-struct _acompareContext {
-    CFComparatorFunction func;
-    void *context;
-};
+//struct _acompareContext {
+//    CFComparatorFunction func;
+//    void *context;
+//};
+//
+//static CFComparisonResult __CCArrayCompareValues(const void *v1, const void *v2, struct _acompareContext *context) {
+//    const void **val1 = (const void **)v1;
+//    const void **val2 = (const void **)v2;
+//    return (CFComparisonResult)(INVOKE_CALLBACK3(context->func, *val1, *val2, context->context));
+//}
+//
+//static inline void __CFZSort(CFMutableArrayRef array, CCRange_s range, CFComparatorFunction comparator, void *context) {
+//    uint32_t cnt = range.length;
+//    while (1 < cnt) {
+//        for (uint32_t idx = range.location; idx < range.location + cnt - 1; idx++) {
+//            const void *a = CCArrayGetValueAtIndex(array, idx);
+//            const void *b = CCArrayGetValueAtIndex(array, idx + 1);
+//            if ((CFComparisonResult)(INVOKE_CALLBACK3(comparator, b, a, context)) < 0) {
+//                CCArrayExchangeValuesAtIndices(array, idx, idx + 1);
+//            }
+//        }
+//        cnt--;
+//    }
+//}
+//
+//void _CCArraySortValues(CFMutableArrayRef array, CFComparatorFunction comparator, void *context) {
+//    CCRange_s range = {0, CCArrayGetCount(array)};
+//    if (range.length < 2) {
+//        return;
+//    }
+//    // implemented abstractly, careful!
+//    const void **values, *buffer[256];
+//    values = (range.length <= 256) ? (const void **)buffer : (const void **)CFAllocatorAllocate(kCFAllocatorSystemDefault, range.length * sizeof(void *), 0);
+//    CCArrayGetValues(array, range, values);
+//    struct _acompareContext ctx;
+//    ctx.func = comparator;
+//    ctx.context = context;
+//    CFQSortArray(values, range.length, sizeof(void *), (CFComparatorFunction)__CCArrayCompareValues, &ctx);
+//    CCArrayReplaceValues(array, range, values, range.length);
+//    if (values != buffer) CFAllocatorDeallocate(kCFAllocatorSystemDefault, values);
+//}
+//
+//void CCArraySortValues(CFMutableArrayRef array, CCRange_s range, CFComparatorFunction comparator, void *context) {
+//    FAULT_CALLBACK((void **)&(comparator));
+//    __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
+//    CFAssert1(NULL != comparator, __kCFLogAssertion, "%s(): pointer to comparator function may not be NULL", __PRETTY_FUNCTION__);
+//    Boolean immutable = false;
+//    if (CF_IS_OBJC(CCArrayGetTypeID(), array) || CF_IS_SWIFT(CCArrayGetTypeID(), array)) {
+//        BOOL result;
+//        result = CF_OBJC_CALLV((NSMutableArray *)array, isKindOfClass:[NSMutableArray class]); // TODO: Fixme for swift (we need a isKindOfClass replacement: (array as? NSMutableArray) != nil)
+//        immutable = !result;
+//    } else if (__kCCArrayImmutable == __CCArrayGetType(array)) {
+//        immutable = true;
+//    }
+//    const CCBaseCallBacks *cb = NULL;
+//    if (CF_IS_OBJC(CCArrayGetTypeID(), array) || CF_IS_SWIFT(CCArrayGetTypeID(), array)) {
+//        cb = &kCFTypeArrayCallBacks;
+//    } else {
+//        cb = __CCArrayGetCallBacks(array);
+//    }
+//    if (!immutable && ((cb->retain && !cb->release) || (!cb->retain && cb->release))) {
+//        __CFZSort(array, range, comparator, context);
+//        return;
+//    }
+//    if (range.length < 2) {
+//        return;
+//    }
+//    // implemented abstractly, careful!
+//    const void **values, *buffer[256];
+//    values = (range.length <= 256) ? (const void **)buffer : (const void **)CFAllocatorAllocate(kCFAllocatorSystemDefault, range.length * sizeof(void *), 0);
+//    CCArrayGetValues(array, range, values);
+//    struct _acompareContext ctx;
+//    ctx.func = comparator;
+//    ctx.context = context;
+//    CFQSortArray(values, range.length, sizeof(void *), (CFComparatorFunction)__CCArrayCompareValues, &ctx);
+//    if (!immutable) CCArrayReplaceValues(array, range, values, range.length);
+//    if (values != buffer) CFAllocatorDeallocate(kCFAllocatorSystemDefault, values);
+//}
 
-static CFComparisonResult __CCArrayCompareValues(const void *v1, const void *v2, struct _acompareContext *context) {
-    const void **val1 = (const void **)v1;
-    const void **val2 = (const void **)v2;
-    return (CFComparisonResult)(INVOKE_CALLBACK3(context->func, *val1, *val2, context->context));
-}
+//uint32_t CCArrayBSearchValues(CCArrayNonnullPtr array, CCRange_s range, const void *value, CFComparatorFunction comparator, void *context) {
+//    FAULT_CALLBACK((void **)&(comparator));
+//    __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
+//    CFAssert1(NULL != comparator, __kCFLogAssertion, "%s(): pointer to comparator function may not be NULL", __PRETTY_FUNCTION__);
+//    // implemented abstractly, careful!
+//    if (range.length <= 0) return range.location;
+//    const void *item = CCArrayGetValueAtIndex(array, range.location + range.length - 1);
+//    if ((CFComparisonResult)(INVOKE_CALLBACK3(comparator, item, value, context)) < 0) {
+//        return range.location + range.length;
+//    }
+//    item = CCArrayGetValueAtIndex(array, range.location);
+//    if ((CFComparisonResult)(INVOKE_CALLBACK3(comparator, value, item, context)) < 0) {
+//        return range.location;
+//    }
+//    SInt32 lg = flsl(range.length) - 1;    // lg2(range.length)
+//    item = CCArrayGetValueAtIndex(array, range.location + -1 + (1 << lg));
+//    // idx will be the current probe index into the range
+//    uint32_t idx = (comparator(item, value, context) < 0) ? range.length - (1 << lg) : -1;
+//    while (lg--) {
+//        item = CCArrayGetValueAtIndex(array, range.location + idx + (1 << lg));
+//        if (comparator(item, value, context) < 0) {
+//            idx += (1 << lg);
+//        }
+//    }
+//    idx++;
+//    return idx + range.location;
+//}
 
-static inline void __CFZSort(CFMutableArrayRef array, CCRange_s range, CFComparatorFunction comparator, void *context) {
-    uint32_t cnt = range.length;
-    while (1 < cnt) {
-        for (uint32_t idx = range.location; idx < range.location + cnt - 1; idx++) {
-            const void *a = CCArrayGetValueAtIndex(array, idx);
-            const void *b = CCArrayGetValueAtIndex(array, idx + 1);
-            if ((CFComparisonResult)(INVOKE_CALLBACK3(comparator, b, a, context)) < 0) {
-                CCArrayExchangeValuesAtIndices(array, idx, idx + 1);
-            }
-        }
-        cnt--;
-    }
-}
-
-CF_PRIVATE void _CCArraySortValues(CFMutableArrayRef array, CFComparatorFunction comparator, void *context) {
-    CCRange_s range = {0, CCArrayGetCount(array)};
-    if (range.length < 2) {
-        return;
-    }
-    // implemented abstractly, careful!
-    const void **values, *buffer[256];
-    values = (range.length <= 256) ? (const void **)buffer : (const void **)CFAllocatorAllocate(kCFAllocatorSystemDefault, range.length * sizeof(void *), 0);
-    CCArrayGetValues(array, range, values);
-    struct _acompareContext ctx;
-    ctx.func = comparator;
-    ctx.context = context;
-    CFQSortArray(values, range.length, sizeof(void *), (CFComparatorFunction)__CCArrayCompareValues, &ctx);
-    CCArrayReplaceValues(array, range, values, range.length);
-    if (values != buffer) CFAllocatorDeallocate(kCFAllocatorSystemDefault, values);
-}
-
-void CCArraySortValues(CFMutableArrayRef array, CCRange_s range, CFComparatorFunction comparator, void *context) {
-    FAULT_CALLBACK((void **)&(comparator));
-    __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
-    CFAssert1(NULL != comparator, __kCFLogAssertion, "%s(): pointer to comparator function may not be NULL", __PRETTY_FUNCTION__);
-    Boolean immutable = false;
-    if (CF_IS_OBJC(CCArrayGetTypeID(), array) || CF_IS_SWIFT(CCArrayGetTypeID(), array)) {
-        BOOL result;
-        result = CF_OBJC_CALLV((NSMutableArray *)array, isKindOfClass:[NSMutableArray class]); // TODO: Fixme for swift (we need a isKindOfClass replacement: (array as? NSMutableArray) != nil)
-        immutable = !result;
-    } else if (__kCCArrayImmutable == __CCArrayGetType(array)) {
-        immutable = true;
-    }
-    const CCBaseCallBacks *cb = NULL;
-    if (CF_IS_OBJC(CCArrayGetTypeID(), array) || CF_IS_SWIFT(CCArrayGetTypeID(), array)) {
-        cb = &kCFTypeArrayCallBacks;
-    } else {
-        cb = __CCArrayGetCallBacks(array);
-    }
-    if (!immutable && ((cb->retain && !cb->release) || (!cb->retain && cb->release))) {
-        __CFZSort(array, range, comparator, context);
-        return;
-    }
-    if (range.length < 2) {
-        return;
-    }
-    // implemented abstractly, careful!
-    const void **values, *buffer[256];
-    values = (range.length <= 256) ? (const void **)buffer : (const void **)CFAllocatorAllocate(kCFAllocatorSystemDefault, range.length * sizeof(void *), 0);
-    CCArrayGetValues(array, range, values);
-    struct _acompareContext ctx;
-    ctx.func = comparator;
-    ctx.context = context;
-    CFQSortArray(values, range.length, sizeof(void *), (CFComparatorFunction)__CCArrayCompareValues, &ctx);
-    if (!immutable) CCArrayReplaceValues(array, range, values, range.length);
-    if (values != buffer) CFAllocatorDeallocate(kCFAllocatorSystemDefault, values);
-}
-
-uint32_t CCArrayBSearchValues(CCArrayNonnullPtr array, CCRange_s range, const void *value, CFComparatorFunction comparator, void *context) {
-    FAULT_CALLBACK((void **)&(comparator));
-    __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
-    CFAssert1(NULL != comparator, __kCFLogAssertion, "%s(): pointer to comparator function may not be NULL", __PRETTY_FUNCTION__);
-    // implemented abstractly, careful!
-    if (range.length <= 0) return range.location;
-    const void *item = CCArrayGetValueAtIndex(array, range.location + range.length - 1);
-    if ((CFComparisonResult)(INVOKE_CALLBACK3(comparator, item, value, context)) < 0) {
-        return range.location + range.length;
-    }
-    item = CCArrayGetValueAtIndex(array, range.location);
-    if ((CFComparisonResult)(INVOKE_CALLBACK3(comparator, value, item, context)) < 0) {
-        return range.location;
-    }
-    SInt32 lg = flsl(range.length) - 1;    // lg2(range.length)
-    item = CCArrayGetValueAtIndex(array, range.location + -1 + (1 << lg));
-    // idx will be the current probe index into the range
-    uint32_t idx = (comparator(item, value, context) < 0) ? range.length - (1 << lg) : -1;
-    while (lg--) {
-        item = CCArrayGetValueAtIndex(array, range.location + idx + (1 << lg));
-        if (comparator(item, value, context) < 0) {
-            idx += (1 << lg);
-        }
-    }
-    idx++;
-    return idx + range.location;
-}
-
-void CCArrayAppendArray(CFMutableArrayRef array, CCArrayNonnullPtr otherArray, CCRange_s otherRange) {
-    __CCArrayValidateRange(otherArray, otherRange, __PRETTY_FUNCTION__);
-    // implemented abstractly, careful!
-    for (uint32_t idx = otherRange.location; idx < otherRange.location + otherRange.length; idx++) {
-        CCArrayAppendValue(array, CCArrayGetValueAtIndex(otherArray, idx));
-    }
-}
+//void CCArrayAppendArray(CFMutableArrayRef array, CCArrayNonnullPtr otherArray, CCRange_s otherRange) {
+//    __CCArrayValidateRange(otherArray, otherRange, __PRETTY_FUNCTION__);
+//    // implemented abstractly, careful!
+//    for (uint32_t idx = otherRange.location; idx < otherRange.location + otherRange.length; idx++) {
+//        CCArrayAppendValue(array, CCArrayGetValueAtIndex(otherArray, idx));
+//    }
+//}
 
 

@@ -12,14 +12,16 @@
 @implementation W
 
 + (void)go {
-    UIImage * image = [UIImage imageNamed:@"p.png"];
+//    UIImage * image = [UIImage imageNamed:@"p.png"];
     UIImage * image1 = [UIImage imageNamed:@"png1.png"];
     
-    NSData * d = [[SDImageHEIFCoder sharedCoder] encodedDataWithImage:image format:SDImageFormatHEIF options:NULL];
+//    NSData * d = [[SDImageHEIFCoder sharedCoder] encodedDataWithImage:image format:SDImageFormatHEIF options:NULL];
+    //    NSLog(@" %ld", d.length);
+
     NSData * d1 = [[SDImageHEIFCoder sharedCoder] encodedDataWithImage:image1 format:SDImageFormatHEIF options:NULL];
-    NSLog(@"%ld, %ld", d.length, d1.length);
     
-    
+    NSLog(@" %ld", d1.length);
+
     
 }
 

@@ -14,20 +14,6 @@
 #include "CCCircularBuffer.h"
 
 
-static const size_t CCElementLoadSize[13] = {
-    0, 1, 1, 1, sizeof(sint16_t), sizeof(uint16_t), sizeof(sint32_t), sizeof(uint32_t), sizeof(float_t), sizeof(CPointer), sizeof(sint64_t), sizeof(uint64_t), sizeof(double_t),
-};
-
-#define CF_ARRAY_ALWAYS_BRIDGE 0
-
-
-struct __CCArrayBucket {
-    const void *_item;
-};
-
-
-uint32_t counts[16] = {0x10L, 0x20L, 0x40L, 0x80L, 0x100L, 0x200L, 0x400L, 0x800L, 0x1000L, 0x2000L, 0x4000L, 0x8000L, };
-
 static const uint32_t __CCArrayImmutable = 0;
 static const uint32_t __CCArrayMutable = 1;
 
@@ -663,27 +649,39 @@ void CCArrayPrependItem(CCArrayNonnullPtr array, const void * _Nonnull itemPtr) 
 }
 
 void CCArrayPopFirst(CCArrayNonnullPtr array, void * _Nonnull itemPtr) {
-    
+    __CCArrayReplaceValues(array, CCRangeMake(0, 1), NULL, 0, itemPtr, __func__);
 }
 void CCArrayPopLast(CCArrayNonnullPtr array, void * _Nonnull itemPtr) {
-    
+    uint32_t count = __CCArrayGetCount(array);
+    assert(count > 0);
+    __CCArrayReplaceValues(array, CCRangeMake(__CCArrayGetCount(array) - 1, 1), NULL, 0, itemPtr, __func__);
 }
-void CCArrayPopItemInRange(CCArrayNonnullPtr array, CCRange_s range) {
-    
+void CCArrayPopItemsInRange(CCArrayNonnullPtr array, CCRange_s range, void * _Nonnull itemPtr) {
+    assert(range.length > 0);
+    assert(itemPtr);
+    __CCArrayReplaceValues(array, range, NULL, 0, itemPtr, __func__);
 }
 
 void CCArrayRemoveFirst(CCArrayNonnullPtr array) {
-    
+    _CCArrayReplaceValues(array, CCRangeMake(0, 1), NULL, 0, __func__);
 }
 void CCArrayRemoveLast(CCArrayNonnullPtr array) {
-    
+    uint32_t count = __CCArrayGetCount(array);
+    assert(count > 0);
+    _CCArrayReplaceValues(array, CCRangeMake(__CCArrayGetCount(array) - 1, 1), NULL, 0, __func__);
 }
 void CCArrayRemoveItemAtIndex(CCArrayNonnullPtr array, uint32_t index) {
-    
+    uint32_t count = __CCArrayGetCount(array);
+    assert(index < count);
+    _CCArrayReplaceValues(array, CCRangeMake(index, 1), NULL, 0, __func__);
 }
 void CCArrayRemoveItemsInRange(CCArrayNonnullPtr array, CCRange_s range) {
-    
+    _CCArrayReplaceValues(array, range, NULL, 0, __func__);
 }
+
+//void CCArrayPopItemsAtIndexes(CCArrayNonnullPtr array, uint32_t * _Nonnull indexes, uint32_t count) {}
+//void CCArrayRemoveItemsAtIndexes(CCArrayNonnullPtr array, uint32_t * _Nonnull indexes, uint32_t count) {}
+
 
 void CCArrayReplaceValueAtIndex(CCArrayNonnullPtr array, uint32_t idx, const void * _Nonnull value) {
     assert(array);
@@ -708,7 +706,7 @@ void CCArrayReplaceValueAtIndex(CCArrayNonnullPtr array, uint32_t idx, const voi
 
 // NB: AddressBook on the Phone is a fragile flower, so this function cannot do anything
 // that causes the values to be retained or released.
-void CCArrayExchangeValuesAtIndices(CCArrayNonnullPtr array, uint32_t idx1, uint32_t idx2) {
+void CCArrayExchangeItemsAtIndexes(CCArrayNonnullPtr array, uint32_t idx1, uint32_t idx2) {
     assert(array);
     uint32_t count = __CCArrayGetCount(array);
     assert(count > idx1);
@@ -724,21 +722,9 @@ void CCArrayExchangeValuesAtIndices(CCArrayNonnullPtr array, uint32_t idx1, uint
     memcpy(item2, tmp, array->_elementSize);//item2 = tmp
 }
 
-void CCArrayRemoveValueAtIndex(CCArrayNonnullPtr array, uint32_t idx) {
-    _CCArrayReplaceValues(array, CCRangeMake(idx, 1), NULL, 0, __func__);
-}
 
-void CCArrayRemoveAllValues(CCArrayNonnullPtr array) {
-//    CF_SWIFT_FUNCDISPATCHV(CCArrayGetTypeID(), void, (CFSwiftRef)array, NSMutableArray.removeAllObjects);
-//    CF_OBJC_FUNCDISPATCHV(CCArrayGetTypeID(), void, (NSMutableArray *)array, removeAllObjects);
-//    __CFGenericValidateType(array, CCArrayGetTypeID());
-//    CFAssert1(__CCArrayGetType(array) != __kCCArrayImmutable, __kCFLogAssertion, "%s(): array is immutable", __PRETTY_FUNCTION__);
-//    CHECK_FOR_MUTATION(array);
-//    BEGIN_MUTATION(array);
-//    __CCArrayReleaseValues(array, CCRangeMake(0, __CCArrayGetCount(array)), true);
-//    __CCArraySetCount(array, 0);
-//    array->_mutations++;
-//    END_MUTATION(array);
+void CCArrayRemoveAllItems(CCArrayNonnullPtr array) {
+    _CCArrayReplaceValues(array, CCRangeMake(0, __CCArrayGetCount(array)), NULL, 0, __func__);
 }
 //
 //// may move deque storage, as it may need to grow deque
@@ -876,51 +862,7 @@ void CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void *
 // This function does no ObjC dispatch or argument checking;
 // It should only be called from places where that dispatch and check has already been done, or NSCCArray
 void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount, const char * _Nullable func) {
-    assert(array);
-    __CCArrayMutableValidate(array, func);
-    __CCArrayValidateRange(array, range, func);
-    
-    uint32_t elementSize = array->_elementSize;
-    
-    if (newCount > 0) {
-        assert(newValues);
-        CCRetainCallBack_f retainFunc = __CCArrayGetRetainCallBack(array);
-        if (retainFunc) {
-            uint8_t * tmp = (uint8_t *)newValues;
-            for (uint32_t i=0; i<newCount; i++) {
-                retainFunc(tmp, elementSize);
-                tmp += elementSize;
-            }
-        }
-    }
-
-    
-    CCReleaseCallBack_f releaseFunc = __CCArrayGetReleaseCallBack(array);
-    const CCBaseCallBacks *cb;
-    uint32_t idx, cnt, futureCnt;
-    const void **newv, *buffer[256];
-    cnt = __CCArrayGetCount(array);
-    futureCnt = cnt - range.length + newCount;
-    assert(newCount <= futureCnt);
-    
-    
-    /* Now, there are three regions of interest, each of which may be empty:
-     *   A: the region from index 0 to one less than the range.location
-     *   B: the region of the range
-     *   C: the region from range.location + range.length to the end
-     * Note that index 0 is not necessarily at the lowest-address edge
-     * of the available storage. The values in region B need to get
-     * released, and the values in regions A and C (depending) need
-     * to get shifted if the number of new values is different from
-     * the length of the range being replaced.
-     */
-    if (0 < range.length) {
-        __CCArrayReleaseValues(array, range);
-    }
-    CCCircularBuffer_s * circularBuffer = (CCCircularBuffer_s *)array->_store;
-
-    CCVector_s v = CCVectorMake(newValues, newCount);
-    array->_store = __CCCircularBufferReplaceValues(circularBuffer, range, &v, 1);
+    __CCArrayReplaceValues(array, range, newValues, newCount, NULL, func);
 }
 
 //struct _acompareContext {

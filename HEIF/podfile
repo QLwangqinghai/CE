@@ -1,0 +1,45 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+# 使用现有的 workspace(xxx.xcworkspace), 不要生成新的!
+workspace 'HEIF.xcworkspace'
+
+# 配置默认 xcodeproj, 路径是相对于 Podfile 的路径. 这是必须的, 否则会报Syntax错误.
+project 'HEIF.project'
+
+use_frameworks!
+
+# 消除第三方警告
+inhibit_all_warnings!
+
+target 'HEIF' do
+    
+    project 'HEIF.project'
+    platform :ios, '10.0'
+    
+    pod 'SDWebImage'
+    pod 'SDWebImageHEIFCoder'
+pod 'SDWebImageHEIFCoder/libde265'
+pod 'SDWebImageHEIFCoder/libx265'
+
+end
+target 'Demo' do
+  
+  project 'HEIF.project'
+  platform :ios, '10.0'
+  
+  pod 'SDWebImage'
+  pod 'SDWebImageHEIFCoder'
+  pod 'SDWebImageHEIFCoder/libde265'
+  pod 'SDWebImageHEIFCoder/libx265'
+  
+end
+
+post_install do | installer |
+    
+# 去掉多余架构，防止 Too many symbol files 警告
+    installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+            config.build_settings['ARCHS'] = 'arm64'
+        end
+    end
+end

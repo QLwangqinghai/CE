@@ -11,6 +11,7 @@
 #import "SCAVMixHandler.h"
 #import "SCAVMixManager.h"
 #import "SCRecoverManager.h"
+#import <OpenGLES/EAGL.h>
 
 
 @interface ViewController ()
@@ -51,7 +52,7 @@
 
     [items enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         SCAVMixWorkItem * item = [[SCAVMixWorkItem alloc] initWithConfig:[self makeConfig:obj] onResult:^(id<SCAVMixWorkItemProtocol>  _Nonnull citem, SCAVMixWorkItemResult result) {
-            NSLog(@"onresult: %@, result: %ld", item, result);
+            NSLog(@"onresult: %@, result: %ld", citem, result);
             if (SCAVMixWorkItemResultSuccess == result) {
                 SCAVMixWorkItem * obj = (SCAVMixWorkItem *)citem;
 //                [[SCRecoverManager shared] recoverPlaybackGeneratedVideoAtPath:obj.config.outputPath];
@@ -62,14 +63,17 @@
             
             
         }];
+        [item startWithQueue:[SCAVMixManager queue] completion:^(id<SCAVMixWorkItemProtocol>  _Nonnull item) {
+            NSLog(@"%@", item);
+        }];
         [mixs addObject:item];
     }];
 
     
-    [mixs enumerateObjectsUsingBlock:^(SCAVMixWorkItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [SCAVMixManager appendWorkItem:obj];
-    }];
-    
+//    [mixs enumerateObjectsUsingBlock:^(SCAVMixWorkItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        [SCAVMixManager appendWorkItem:obj];
+//    }];
+//    
 //    self.config = [self makeConfig:@"1562663793812"];
     self.mixs = mixs;
     

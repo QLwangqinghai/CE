@@ -32,6 +32,9 @@ extern NSNotificationName const SCAVMixManagerItemUpdateNotification;
 + (NSString *)tmpDirectoryPathForUuid:(NSUUID *)uuid;
 + (NSString *)tmpPathForIdentifier:(NSString *)identifier uuid:(NSUUID *)uuid;
 
+
++ (dispatch_queue_t)queue;
+
 @end
 
 NS_ASSUME_NONNULL_END

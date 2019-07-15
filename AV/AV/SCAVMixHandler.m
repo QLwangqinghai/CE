@@ -178,12 +178,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     rect.origin.y = height - frame.origin.y - frame.size.height;
     
     CGContextDrawImage(bitmapContext, rect, [UIImage imageNamed:@"ipad app-76.png"].CGImage);
-    CGImageRef newImage = CGBitmapContextCreateImage(bitmapContext);
-    UIImage * iamge = [UIImage imageWithCGImage:newImage];
-    CFRelease(newImage);
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"onImage" object:iamge];
-    
     UIGraphicsPopContext();
     CGContextRelease(bitmapContext);
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);

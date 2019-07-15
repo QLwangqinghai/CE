@@ -1,0 +1,5 @@
+framework module libx265 {
+  umbrella header "x265.h"
+  export *
+  module * { export * }
+}

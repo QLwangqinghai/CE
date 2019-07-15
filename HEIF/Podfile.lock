@@ -1,0 +1,73 @@
+PODS:
+  - libde265 (1.0.3)
+  - libheif/libde265 (1.4.0):
+    - libde265
+    - libheif/libheif
+  - libheif/libheif (1.4.0)
+  - libheif/libx265 (1.4.0):
+    - libheif/libheif
+    - libx265
+  - libx265 (3.0):
+    - libx265/common (= 3.0)
+    - libx265/core (= 3.0)
+    - libx265/encoder (= 3.0)
+    - libx265/input (= 3.0)
+    - libx265/output (= 3.0)
+    - libx265/x265 (= 3.0)
+  - libx265/common (3.0):
+    - libx265/core
+  - libx265/core (3.0)
+  - libx265/encoder (3.0):
+    - libx265/output
+  - libx265/input (3.0):
+    - libx265/common
+  - libx265/output (3.0):
+    - libx265/input
+  - libx265/x265 (3.0):
+    - libx265/common
+    - libx265/core
+    - libx265/encoder
+    - libx265/input
+    - libx265/output
+  - SDWebImage (5.0.4):
+    - SDWebImage/Core (= 5.0.4)
+  - SDWebImage/Core (5.0.4)
+  - SDWebImageHEIFCoder (0.5.2):
+    - SDWebImage/Core (~> 5.0)
+    - SDWebImageHEIFCoder/libde265 (= 0.5.2)
+  - SDWebImageHEIFCoder/libde265 (0.5.2):
+    - libheif/libde265
+    - SDWebImage/Core (~> 5.0)
+    - SDWebImageHEIFCoder/libheif
+  - SDWebImageHEIFCoder/libheif (0.5.2):
+    - libheif/libheif (>= 1.4.0)
+    - SDWebImage/Core (~> 5.0)
+  - SDWebImageHEIFCoder/libx265 (0.5.2):
+    - libheif/libx265
+    - SDWebImage/Core (~> 5.0)
+    - SDWebImageHEIFCoder/libheif
+
+DEPENDENCIES:
+  - SDWebImage
+  - SDWebImageHEIFCoder
+  - SDWebImageHEIFCoder/libde265
+  - SDWebImageHEIFCoder/libx265
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - libde265
+    - libheif
+    - libx265
+    - SDWebImage
+    - SDWebImageHEIFCoder
+
+SPEC CHECKSUMS:
+  libde265: b2a0cc3d2aeaafb792b43fcf2a122f42e1de107c
+  libheif: e79ed1935019556d3b7a5b8926dcbaa478cb4180
+  libx265: 23ab716aae3eff1e6b68b3db6ace8883867691c4
+  SDWebImage: c739016e4bdf0a4a1f9a04b5e0385395ad63a282
+  SDWebImageHEIFCoder: f202cd904b30069bccce2bc2ef770d537ffafcc1
+
+PODFILE CHECKSUM: e20735c4b29ec2635266cbc3ae62b67e09ceac4a
+
+COCOAPODS: 1.6.1

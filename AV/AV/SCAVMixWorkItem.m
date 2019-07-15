@@ -106,11 +106,11 @@
 }
 
 - (void)complete {
-    if (self.onResult) {
-        self.onResult(self, self.result);
-    }
     if (self.completion) {
         self.completion(self);
+    }
+    if (self.onResult) {
+        self.onResult(self, self.result);
     }
 }
 

@@ -269,7 +269,6 @@ static inline void ___CCCircularBufferMoveValues(CCCircularBuffer_s * _Nonnull b
     assert(offset <= offsetMax);
     uint8_t tmp[CCElementSizeLimit] = {};
     uint32_t stepSize = CCElementSizeLimit / buffer->_elementSize;
-
     
     if (offset > 0) {//后移
         uint32_t oldEndIndex = range.location + range.length;
@@ -302,9 +301,6 @@ static inline void ___CCCircularBufferMoveValues(CCCircularBuffer_s * _Nonnull b
     }
 }
 
-
-
-
 // This function does no ObjC dispatch or argument checking;
 // It should only be called from places where that dispatch and check has already been done, or NSCCArray
 static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferReplaceValues(CCCircularBuffer_s * _Nonnull buffer, CCRange_s range, const CCVector_s * _Nullable newVectors, int32_t newVectorCount) {
@@ -312,8 +308,6 @@ static inline CCCircularBuffer_s * _Nonnull __CCCircularBufferReplaceValues(CCCi
     if (newVectorCount > 0) {
         assert(newVectors);
     }
-    
-//    __CCCircularBufferGetItemsInRange(buffer, CCRangeMake(0, range.location), <#CCVector_s * _Nonnull vectorsPtr#>)
     
     uint32_t elementSize = buffer->_elementSize;
     uint64_t count = 0;

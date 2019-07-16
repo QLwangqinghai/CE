@@ -715,7 +715,7 @@ void CCArrayExchangeItemsAtIndexes(CCArrayNonnullPtr array, uint32_t idx1, uint3
 
     void * item1 = __CCArrayGetItemAtIndex(array, idx1);
     void * item2 = __CCArrayGetItemAtIndex(array, idx2);
-    uint8_t tmp[array->_elementSize];
+    uint8_t tmp[array->_elementSize];//C99
     
     memcpy(tmp, item1, array->_elementSize);//tmp = item1
     memcpy(item1, item2, array->_elementSize);//item1 = item2

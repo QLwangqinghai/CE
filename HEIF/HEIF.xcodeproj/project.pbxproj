@@ -16,6 +16,9 @@
 		D69288C922DC983A00C24DD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D69288C822DC983A00C24DD3 /* Assets.xcassets */; };
 		D69288CC22DC983A00C24DD3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D69288CA22DC983A00C24DD3 /* LaunchScreen.storyboard */; };
 		D69288D422DC9C4A00C24DD3 /* W.m in Sources */ = {isa = PBXBuildFile; fileRef = D69288D322DC9C4A00C24DD3 /* W.m */; };
+		D69288E222DD92FC00C24DD3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69288E122DD92FC00C24DD3 /* AppDelegate.swift */; };
+		D69288E422DD92FD00C24DD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D69288E322DD92FD00C24DD3 /* Assets.xcassets */; };
+		D69288E722DD92FD00C24DD3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D69288E522DD92FD00C24DD3 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +40,12 @@
 		D69288D122DC9C4900C24DD3 /* Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Demo-Bridging-Header.h"; sourceTree = "<group>"; };
 		D69288D222DC9C4A00C24DD3 /* W.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = W.h; sourceTree = "<group>"; };
 		D69288D322DC9C4A00C24DD3 /* W.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = W.m; sourceTree = "<group>"; };
+		D69288DF22DD92FC00C24DD3 /* mDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D69288E122DD92FC00C24DD3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D69288E322DD92FD00C24DD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D69288E622DD92FD00C24DD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D69288E822DD92FD00C24DD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D69288E922DD92FD00C24DD3 /* mDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mDemo.entitlements; sourceTree = "<group>"; };
 		FB4CF2465CC44B1E84F2DCD6 /* Pods-HEIF.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HEIF.release.xcconfig"; path = "Target Support Files/Pods-HEIF/Pods-HEIF.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -54,6 +63,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				9E1882B48C7555BB70C6DDEA /* Pods_Demo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D69288DC22DD92FC00C24DD3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +101,7 @@
 			children = (
 				D69288B222DC981C00C24DD3 /* HEIF */,
 				D69288C022DC983800C24DD3 /* Demo */,
+				D69288E022DD92FC00C24DD3 /* mDemo */,
 				D69288B122DC981C00C24DD3 /* Products */,
 				7698C12086EF93E8260DC330 /* Pods */,
 				6311A11D336428907BECFD4A /* Frameworks */,
@@ -96,6 +113,7 @@
 			children = (
 				D69288B022DC981C00C24DD3 /* HEIF.framework */,
 				D69288BF22DC983800C24DD3 /* Demo.app */,
+				D69288DF22DD92FC00C24DD3 /* mDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -123,6 +141,18 @@
 				D69288D122DC9C4900C24DD3 /* Demo-Bridging-Header.h */,
 			);
 			path = Demo;
+			sourceTree = "<group>";
+		};
+		D69288E022DD92FC00C24DD3 /* mDemo */ = {
+			isa = PBXGroup;
+			children = (
+				D69288E122DD92FC00C24DD3 /* AppDelegate.swift */,
+				D69288E322DD92FD00C24DD3 /* Assets.xcassets */,
+				D69288E522DD92FD00C24DD3 /* MainMenu.xib */,
+				D69288E822DD92FD00C24DD3 /* Info.plist */,
+				D69288E922DD92FD00C24DD3 /* mDemo.entitlements */,
+			);
+			path = mDemo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,6 +207,23 @@
 			productReference = D69288BF22DC983800C24DD3 /* Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D69288DE22DD92FC00C24DD3 /* mDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D69288EC22DD92FD00C24DD3 /* Build configuration list for PBXNativeTarget "mDemo" */;
+			buildPhases = (
+				D69288DB22DD92FC00C24DD3 /* Sources */,
+				D69288DC22DD92FC00C24DD3 /* Frameworks */,
+				D69288DD22DD92FC00C24DD3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mDemo;
+			productName = mDemo;
+			productReference = D69288DF22DD92FC00C24DD3 /* mDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -193,6 +240,9 @@
 					D69288BE22DC983800C24DD3 = {
 						CreatedOnToolsVersion = 10.2;
 						LastSwiftMigration = 1020;
+					};
+					D69288DE22DD92FC00C24DD3 = {
+						CreatedOnToolsVersion = 10.2;
 					};
 				};
 			};
@@ -211,6 +261,7 @@
 			targets = (
 				D69288AF22DC981C00C24DD3 /* HEIF */,
 				D69288BE22DC983800C24DD3 /* Demo */,
+				D69288DE22DD92FC00C24DD3 /* mDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -230,6 +281,15 @@
 				D69288CC22DC983A00C24DD3 /* LaunchScreen.storyboard in Resources */,
 				D69288C922DC983A00C24DD3 /* Assets.xcassets in Resources */,
 				D69288C722DC983800C24DD3 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D69288DD22DD92FC00C24DD3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D69288E422DD92FD00C24DD3 /* Assets.xcassets in Resources */,
+				D69288E722DD92FD00C24DD3 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +390,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D69288DB22DD92FC00C24DD3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D69288E222DD92FC00C24DD3 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -347,6 +415,14 @@
 				D69288CB22DC983A00C24DD3 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		D69288E522DD92FD00C24DD3 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D69288E622DD92FD00C24DD3 /* Base */,
+			);
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -569,6 +645,48 @@
 			};
 			name = Release;
 		};
+		D69288EA22DD92FD00C24DD3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = mDemo/mDemo.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = mDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.mDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D69288EB22DD92FD00C24DD3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = mDemo/mDemo.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = mDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.mDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -595,6 +713,15 @@
 			buildConfigurations = (
 				D69288CF22DC983A00C24DD3 /* Debug */,
 				D69288D022DC983A00C24DD3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D69288EC22DD92FD00C24DD3 /* Build configuration list for PBXNativeTarget "mDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D69288EA22DD92FD00C24DD3 /* Debug */,
+				D69288EB22DD92FD00C24DD3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

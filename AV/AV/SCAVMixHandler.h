@@ -21,8 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) NSString * identifier;
 @property (nonatomic, copy) NSString * outputPath;
+
+
 @property (nonatomic, copy) NSString * audioInputPath;
 @property (nonatomic, copy) NSString * videoInputPath;
+
+@property (nonatomic, strong) AVAsset * audioAsset;
+@property (nonatomic, strong) AVAsset * videoAsset;
 
 
 - (instancetype)initWithIdentifier:(NSString *)identifier;

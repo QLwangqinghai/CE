@@ -310,8 +310,12 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         self.config = config;
         self.queue = queue;
         
-        self.videoInputUrl = [NSURL fileURLWithPath:config.videoInputPath];
-        self.audioInputUrl = [NSURL fileURLWithPath:config.audioInputPath];
+        if (config.videoInputPath) {
+            self.videoInputUrl = [NSURL fileURLWithPath:config.videoInputPath];
+        }
+        if (config.audioInputPath) {
+            self.audioInputUrl = [NSURL fileURLWithPath:config.audioInputPath];
+        }
         
         NSUUID * uuid = [NSUUID UUID];
         [[NSFileManager defaultManager] createDirectoryAtPath:[SCAVMixManager tmpDirectoryPathForUuid:uuid] withIntermediateDirectories:true attributes:nil error:NULL];
@@ -872,6 +876,26 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         self.identifier = identifier;
     }
     return self;
+}
+
+- (AVAsset *)videoAsset {
+    if (nil == _videoAsset) {
+        if (self.videoInputPath.length > 0) {
+            AVURLAsset * asset = [[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:self.videoInputPath] options:nil];
+            _videoAsset = asset;
+        }
+    }
+    return _videoAsset;
+}
+
+- (AVAsset *)audioAsset {
+    if (nil == _videoAsset) {
+        if (self.audioInputPath.length > 0) {
+            AVURLAsset * asset = [[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:self.audioInputPath] options:nil];
+            _audioAsset = asset;
+        }
+    }
+    return _videoAsset;
 }
 
 @end

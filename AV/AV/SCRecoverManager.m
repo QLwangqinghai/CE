@@ -11,6 +11,16 @@
 NSString * const SCFileExtendedAttributesKey = @"SCFileExtendedAttributes";
 NSString * const SCFileExtendedAttributeRecoverTimestampKey = @"recoverTimestamp";
 
+/*
+ /Library/recover
+ 
+
+ playback/original
+ playback/generated
+
+ */
+
+
 @interface SCRecoverManager ()
 
 @property (nonatomic, copy, readonly) NSString * directoryPath;

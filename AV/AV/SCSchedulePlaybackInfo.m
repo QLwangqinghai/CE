@@ -31,6 +31,9 @@ NSString * const SCPlaybackOutputDirectoryName = @"output";
 
 @implementation SCSchedulePlaybackInfo
 
+
+
+
 + (NSArray<SCSchedulePlaybackInfo *> *)playbackInfoWithUid:(NSString *)uid directoryPath:(NSString *)directoryPath {
     NSMutableArray<SCSchedulePlaybackInfo *> * result = [NSMutableArray array];
     if (directoryPath.length <= 0) {

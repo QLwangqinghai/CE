@@ -17,6 +17,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        let mySourceTypes = CGImageSourceCopyTypeIdentifiers();
+        CFShow(mySourceTypes);
+        let myDestinationTypes = CGImageDestinationCopyTypeIdentifiers();
+        CFShow(myDestinationTypes);
+        
 //        print("\(Date().timeIntervalSince1970)")
 //        W.go()
         
@@ -63,12 +68,29 @@ class ViewController: UIViewController {
 //            }
 //            CGImageDestinationAddImage(imageDestination, image.cgImage!, nil)
 //            CGImageDestinationFinalize(imageDestination)
-//            
+//
 //            print("len : \(mutableData.length)")
 //            return 1
 //        }()
+
+        let _ = { () -> Int in
+            let mutableData = NSMutableData()
+            guard let imageDestination =  CGImageDestinationCreateWithData(mutableData as CFMutableData, AVFileType.heic.rawValue as CFString, 1, nil) else {
+                fatalError("unable to create CGImageDestination ")
+            }
+            
+            for i in 1...11 {
+                let image = UIImage(named: "\(i)")!
+                CGImageDestinationAddImage(imageDestination, image.cgImage!, nil)
+            }
+            
+            let result = CGImageDestinationFinalize(imageDestination)
+
+            print("result:\(result) len : \(mutableData.length)")
+            return 1
+        }()
+        
 //
-//        
 //        let _ = { () -> Int in
 //            let mutableData = NSMutableData()
 //            guard let imageDestination =  CGImageDestinationCreateWithData(mutableData as CFMutableData, AVFileType.heif.rawValue as CFString, 0, nil) else {
@@ -84,10 +106,7 @@ class ViewController: UIViewController {
         print("\(Date().timeIntervalSince1970)")
         
         
-        let mySourceTypes = CGImageSourceCopyTypeIdentifiers();
-        CFShow(mySourceTypes);
-        let myDestinationTypes = CGImageDestinationCopyTypeIdentifiers();
-        CFShow(myDestinationTypes);
+
     }
 
 

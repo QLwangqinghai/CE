@@ -34,6 +34,7 @@
 		D6C17AF322D615E600B080BA /* SCAVMixHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C17AF222D615E600B080BA /* SCAVMixHandler.m */; };
 		D6CA9AC622D6D8300099C3B4 /* SCAVMixWorkItem.m in Sources */ = {isa = PBXBuildFile; fileRef = D6CA9AC522D6D8300099C3B4 /* SCAVMixWorkItem.m */; };
 		D6CA9AC922D723490099C3B4 /* SCSchedulePlaybackInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D6CA9AC822D723490099C3B4 /* SCSchedulePlaybackInfo.m */; };
+		D6E3DCBE22E0431400E3400E /* SCUploadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E3DCBD22E0431400E3400E /* SCUploadManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +74,8 @@
 		D6CA9AC522D6D8300099C3B4 /* SCAVMixWorkItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCAVMixWorkItem.m; sourceTree = "<group>"; };
 		D6CA9AC722D723490099C3B4 /* SCSchedulePlaybackInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCSchedulePlaybackInfo.h; sourceTree = "<group>"; };
 		D6CA9AC822D723490099C3B4 /* SCSchedulePlaybackInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCSchedulePlaybackInfo.m; sourceTree = "<group>"; };
+		D6E3DCBC22E0431400E3400E /* SCUploadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCUploadManager.h; sourceTree = "<group>"; };
+		D6E3DCBD22E0431400E3400E /* SCUploadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCUploadManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +108,7 @@
 		D6C17AB422D4498400B080BA /* AV */ = {
 			isa = PBXGroup;
 			children = (
+				D6E3DCBF22E0442600E3400E /* Source */,
 				D6AC0BB922D8A78B00FDE1C0 /* 1562930748136.wav */,
 				D6AC0BB722D8A75000FDE1C0 /* 1562930748136.mp4 */,
 				D6AC0BB522D8A04B00FDE1C0 /* 1562928616807.wav */,
@@ -130,6 +134,13 @@
 				D6C17AC022D4498500B080BA /* LaunchScreen.storyboard */,
 				D6C17AC322D4498500B080BA /* Info.plist */,
 				D6C17AC422D4498500B080BA /* main.m */,
+			);
+			path = AV;
+			sourceTree = "<group>";
+		};
+		D6E3DCBF22E0442600E3400E /* Source */ = {
+			isa = PBXGroup;
+			children = (
 				D6C17AE522D5E5E900B080BA /* SCAVMixManager.h */,
 				D6C17AE622D5E5E900B080BA /* SCAVMixManager.m */,
 				D6C17AF122D615E600B080BA /* SCAVMixHandler.h */,
@@ -140,8 +151,10 @@
 				D6CA9AC822D723490099C3B4 /* SCSchedulePlaybackInfo.m */,
 				D65DE8D322D877EA006BEFAE /* SCRecoverManager.h */,
 				D65DE8D422D877EA006BEFAE /* SCRecoverManager.m */,
+				D6E3DCBC22E0431400E3400E /* SCUploadManager.h */,
+				D6E3DCBD22E0431400E3400E /* SCUploadManager.m */,
 			);
-			path = AV;
+			path = Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,6 +251,7 @@
 				D6C17AC522D4498500B080BA /* main.m in Sources */,
 				D6C17AB722D4498400B080BA /* AppDelegate.m in Sources */,
 				D6CA9AC922D723490099C3B4 /* SCSchedulePlaybackInfo.m in Sources */,
+				D6E3DCBE22E0431400E3400E /* SCUploadManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

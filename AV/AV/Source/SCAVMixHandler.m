@@ -261,8 +261,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 
 
 
-#import "SCAVMixManager.h"
-
 @interface SCAVMixHandler ()
 
 @property (nonatomic, readonly) NSString * name;
@@ -318,8 +316,9 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         }
         
         NSUUID * uuid = [NSUUID UUID];
-        [[NSFileManager defaultManager] createDirectoryAtPath:[SCAVMixManager tmpDirectoryPathForUuid:uuid] withIntermediateDirectories:true attributes:nil error:NULL];
-        _tmpOutputPath = [SCAVMixManager tmpPathForIdentifier:config.identifier uuid:uuid];
+        NSString * tmpDirectoryPath = [NSTemporaryDirectory() stringByAppendingPathComponent:uuid.UUIDString];
+        [[NSFileManager defaultManager] createDirectoryAtPath:tmpDirectoryPath withIntermediateDirectories:true attributes:nil error:NULL];
+        _tmpOutputPath = [tmpDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mp4", config.identifier]];
         self.tmpOutputUrl = [NSURL fileURLWithPath:_tmpOutputPath];
         
 //        self.writerInput = writerInput;

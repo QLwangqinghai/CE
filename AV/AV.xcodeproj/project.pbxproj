@@ -34,6 +34,7 @@
 		D6C17AF322D615E600B080BA /* SCAVMixHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C17AF222D615E600B080BA /* SCAVMixHandler.m */; };
 		D6CA9AC622D6D8300099C3B4 /* SCAVMixWorkItem.m in Sources */ = {isa = PBXBuildFile; fileRef = D6CA9AC522D6D8300099C3B4 /* SCAVMixWorkItem.m */; };
 		D6CA9AC922D723490099C3B4 /* SCSchedulePlaybackInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D6CA9AC822D723490099C3B4 /* SCSchedulePlaybackInfo.m */; };
+		D6E063A822E1957700FD0DA9 /* CoreDigest.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E063A722E1957700FD0DA9 /* CoreDigest.c */; };
 		D6E3DCBE22E0431400E3400E /* SCUploadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E3DCBD22E0431400E3400E /* SCUploadManager.m */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +75,8 @@
 		D6CA9AC522D6D8300099C3B4 /* SCAVMixWorkItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCAVMixWorkItem.m; sourceTree = "<group>"; };
 		D6CA9AC722D723490099C3B4 /* SCSchedulePlaybackInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCSchedulePlaybackInfo.h; sourceTree = "<group>"; };
 		D6CA9AC822D723490099C3B4 /* SCSchedulePlaybackInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCSchedulePlaybackInfo.m; sourceTree = "<group>"; };
+		D6E063A622E1957700FD0DA9 /* CoreDigest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreDigest.h; sourceTree = "<group>"; };
+		D6E063A722E1957700FD0DA9 /* CoreDigest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CoreDigest.c; sourceTree = "<group>"; };
 		D6E3DCBC22E0431400E3400E /* SCUploadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCUploadManager.h; sourceTree = "<group>"; };
 		D6E3DCBD22E0431400E3400E /* SCUploadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCUploadManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -108,6 +111,7 @@
 		D6C17AB422D4498400B080BA /* AV */ = {
 			isa = PBXGroup;
 			children = (
+				D6E063A522E1956600FD0DA9 /* CoreDigest */,
 				D6E3DCBF22E0442600E3400E /* Source */,
 				D6AC0BB922D8A78B00FDE1C0 /* 1562930748136.wav */,
 				D6AC0BB722D8A75000FDE1C0 /* 1562930748136.mp4 */,
@@ -136,6 +140,15 @@
 				D6C17AC422D4498500B080BA /* main.m */,
 			);
 			path = AV;
+			sourceTree = "<group>";
+		};
+		D6E063A522E1956600FD0DA9 /* CoreDigest */ = {
+			isa = PBXGroup;
+			children = (
+				D6E063A622E1957700FD0DA9 /* CoreDigest.h */,
+				D6E063A722E1957700FD0DA9 /* CoreDigest.c */,
+			);
+			path = CoreDigest;
 			sourceTree = "<group>";
 		};
 		D6E3DCBF22E0442600E3400E /* Source */ = {
@@ -251,6 +264,7 @@
 				D6C17AC522D4498500B080BA /* main.m in Sources */,
 				D6C17AB722D4498400B080BA /* AppDelegate.m in Sources */,
 				D6CA9AC922D723490099C3B4 /* SCSchedulePlaybackInfo.m in Sources */,
+				D6E063A822E1957700FD0DA9 /* CoreDigest.c in Sources */,
 				D6E3DCBE22E0431400E3400E /* SCUploadManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

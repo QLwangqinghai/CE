@@ -25,7 +25,6 @@ typedef NS_ENUM(NSUInteger, SCSchedulePlaybackElementStatus) {
 // 时间单位毫秒
 @property (nonatomic, assign) int64_t createTime;
 
-
 @property (nonatomic, copy, nullable) NSString * audioFilePath;
 @property (nonatomic, copy, nullable) NSString * videoFilePath;
 

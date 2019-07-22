@@ -13,6 +13,7 @@ typedef struct _CFMPixelSize {
     uint32_t height;
 } CFMPixelSize_s;
 
+//sha256 value
 typedef struct _CFMFileIdentifier {
     uint8_t content[32];
 } CFMFileIdentifier_s;

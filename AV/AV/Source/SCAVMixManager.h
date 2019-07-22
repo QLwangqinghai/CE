@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SCAVMixHandler.h"
+#import "SCAVMixWorkItem.h"
 
 
 NS_ASSUME_NONNULL_BEGIN

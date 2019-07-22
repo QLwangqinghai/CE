@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
-#import "SCAVMixWorkItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface SCAVWaterMask : NSObject
+@property (nonatomic, assign) CGRect frame;
+@property (nonatomic, strong) UIImage * image;
+@end
 
 
 @interface SCAVMixConfig : NSObject
@@ -19,18 +22,22 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  user_course_schedule_time
  */
-@property (nonatomic, readonly) NSString * identifier;
+@property (nonatomic, copy, readonly) NSString * identifier;
 @property (nonatomic, copy) NSString * outputPath;
 
+@property (nonatomic, strong, nullable, readonly) AVAsset * audioAsset;
+@property (nonatomic, strong, nullable, readonly) AVAsset * videoAsset;
 
-@property (nonatomic, copy) NSString * audioInputPath;
-@property (nonatomic, copy) NSString * videoInputPath;
+@property (nonatomic, assign) CGSize outputVideoSize;//videoAsset 非空时有效， 宽高都>=SCAVMixSizeMin时有效
+@property (nonatomic, assign) CGFloat outputVideoFrameRate;//videoAsset 非空时有效，
 
-@property (nonatomic, strong) AVAsset * audioAsset;
-@property (nonatomic, strong) AVAsset * videoAsset;
+@property (nonatomic, copy, readonly) NSArray<SCAVWaterMask *> * waterMasks;
 
+//video input 需要是有效的
+- (instancetype)initWithIdentifier:(NSString *)identifier videoInputPath:(NSString *)videoInputPath audioInputPath:(nullable NSString *)audioInputPath;
+- (instancetype)initWithIdentifier:(NSString *)identifier videoAsset:(AVAsset *)videoAsset audioAsset:(nullable AVAsset *)audioAsset;
 
-- (instancetype)initWithIdentifier:(NSString *)identifier;
+- (void)addWaterMask:(SCAVWaterMask *)waterMask;
 
 @end
 

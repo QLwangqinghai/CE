@@ -23,13 +23,13 @@ typedef NS_ENUM(NSUInteger, SCAVWriterInputHandlerKind) {
     SCAVWriterInputHandlerKindAudio,
 };
 
+
 @class SCAVWriterInputHandler;
 typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 @interface SCAVWriterInputHandler : NSObject
 
 @property (atomic, assign) SCAVWriterInputHandlerKind kind;
 @property (atomic, assign) SCAVWriterInputHandlerStatus status;
-
 
 @property (nonatomic, strong) AVAssetReader * assetReader;
 @property (nonatomic, strong) AVAssetWriter * assetWriter;
@@ -42,6 +42,8 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 @property (nonatomic, copy) NSString * tag;
 
 @property (atomic, assign) NSInteger breakFlag;// > 0 标识取消， < 0 标识取消完成
+
+@property (nonatomic, copy) NSArray<SCAVWaterMask *> * waterMasks;
 
 
 //参数全部非空
@@ -118,22 +120,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     });
 }
 
-//- (CGContextRef)creatBitmapContextWithPixelBuffer:(CVPixelBufferRef)pixelBuffer {
-//    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-//    CGContextRef bitmapContext = NULL;
-//    CGSize _viewSize = [self videoSize];
-//    bitmapContext = CGBitmapContextCreate(CVPixelBufferGetBaseAddress(*pixelBuffer),
-//                                          CVPixelBufferGetWidth(*pixelBuffer),
-//                                          CVPixelBufferGetHeight(*pixelBuffer),
-//                                          8, CVPixelBufferGetBytesPerRow(*pixelBuffer), _colorSpace,
-//                                          kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst
-//                                          );
-//    CGAffineTransform flipVertical = CGAffineTransformMake(1, 0, 0, -1, 0, _viewSize.height);
-//    CGContextConcatCTM(bitmapContext, flipVertical);
-//
-//    return bitmapContext;
-//}
-
 + (CGColorSpaceRef)colorSpace {
     static CGColorSpaceRef __colorSpace;
     static dispatch_once_t onceToken;
@@ -143,9 +129,27 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     return __colorSpace;
 }
 
-- (BOOL)addImageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer {
+- (void)drawWaterMask:(SCAVWaterMask *)waterMask context:(CGContextRef)context contextSize:(CGSize)contextSize {
     // 为媒体数据设置一个CMSampleBuffer的Core Video图像缓存对象
+    
+    if (CGRectIsNull(waterMask.frame)) {
+        return;
+    }
+    CGImageRef image = waterMask.image.CGImage;
+    if (nil == image) {
+        return;
+    }
+    CGRect frame = waterMask.frame;
+    CGRect rect = frame;
+    rect.origin.y = contextSize.height - frame.origin.y - frame.size.height;
+    CGContextDrawImage(context, rect, image);
+}
 
+- (void)addWaterMasks:(CMSampleBufferRef) sampleBuffer {
+    if (self.waterMasks.count <= 0) {
+        return;
+    }
+    
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     // 锁定pixel buffer的基地址
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
@@ -161,36 +165,34 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     
     // 创建一个依赖于设备的RGB颜色空间
     CGColorSpaceRef colorSpace = [[self class] colorSpace];
-//    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    //    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     // 用抽样缓存的数据创建一个位图格式的图形上下文（graphics context）对象
     CGContextRef bitmapContext = CGBitmapContextCreate(baseAddress, width, height, 8,
-                                                 bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-//    CGColorSpaceRelease(colorSpace);
+                                                       bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+    //    CGColorSpaceRelease(colorSpace);
     if (NULL == bitmapContext) {
-        NSLog(@"bitmap is nil");
         CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
-        return false;
+        return;
     }
-
-    UIGraphicsPushContext(bitmapContext);
-    CGRect frame = CGRectMake(10, 10, 76, 76);
-    CGRect rect = frame;
-    rect.origin.y = height - frame.origin.y - frame.size.height;
     
-    CGContextDrawImage(bitmapContext, rect, [UIImage imageNamed:@"ipad app-76.png"].CGImage);
+    UIGraphicsPushContext(bitmapContext);
+    
+    CGSize contextSize = CGSizeMake(width, height);
+    [self.waterMasks enumerateObjectsUsingBlock:^(SCAVWaterMask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self drawWaterMask:obj context:bitmapContext contextSize:contextSize];
+    }];
+
     UIGraphicsPopContext();
     CGContextRelease(bitmapContext);
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
-    
-    // 释放context和颜色空间
-    return true;
 }
+
 
 - (CMSampleBufferRef _Nullable)nextSampleBuffer {
     CMSampleBufferRef buffer = [self.readerTrackOutput copyNextSampleBuffer];
     BOOL isVideo = (SCAVWriterInputHandlerKindVideo == self.kind);
     if (isVideo) {
-        [self addImageFromSampleBuffer:buffer];
+        [self addWaterMasks:buffer];
     }
     return buffer;
 }
@@ -263,13 +265,8 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 
 @interface SCAVMixHandler ()
 
-@property (nonatomic, readonly) NSString * name;
-
 @property (nonatomic, assign) SCAVMixHandlerStatus status;
 @property (nonatomic, copy) SCAVMixHandlerBlock completion;
-
-@property (nonatomic, strong) AVAsset * videoAsset;
-@property (nonatomic, strong) AVAsset * audioAsset;
 
 @property (nonatomic, strong) AVAssetReader * assetReader;
 
@@ -283,9 +280,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 @property (nonatomic, strong) SCAVWriterInputHandler * audioWriterInputHandler;
 
 
-@property (nonatomic, copy) NSURL * videoInputUrl;
-@property (nonatomic, copy) NSURL * audioInputUrl;
-
 //文件临时输出地方， 最后成功后移动文件位置
 @property (nonatomic, copy) NSString * tmpOutputPath;
 @property (nonatomic, copy) NSString * outputCachePath;
@@ -293,14 +287,8 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 @property (nonatomic, copy) NSURL * tmpOutputUrl;
 @property (nonatomic, strong) dispatch_queue_t queue;
 
-@property (nonatomic, assign) CGSize videoSize;
-
 @end
 @implementation SCAVMixHandler
-
-- (NSString *)name {
-    return self.config.identifier;
-}
 
 - (instancetype)initWithConfig:(SCAVMixConfig *)config queue:(dispatch_queue_t)queue {
     self = [super init];
@@ -308,23 +296,11 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         self.config = config;
         self.queue = queue;
         
-        if (config.videoInputPath) {
-            self.videoInputUrl = [NSURL fileURLWithPath:config.videoInputPath];
-        }
-        if (config.audioInputPath) {
-            self.audioInputUrl = [NSURL fileURLWithPath:config.audioInputPath];
-        }
-        
         NSUUID * uuid = [NSUUID UUID];
         NSString * tmpDirectoryPath = [NSTemporaryDirectory() stringByAppendingPathComponent:uuid.UUIDString];
         [[NSFileManager defaultManager] createDirectoryAtPath:tmpDirectoryPath withIntermediateDirectories:true attributes:nil error:NULL];
         _tmpOutputPath = [tmpDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mp4", config.identifier]];
         self.tmpOutputUrl = [NSURL fileURLWithPath:_tmpOutputPath];
-        
-//        self.writerInput = writerInput;
-//        self.readerTrackOutput = readerTrackOutput;
-//        self.queue = queue;
-//        self.completion = completion;
     }
     return self;
 }
@@ -349,8 +325,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 - (BOOL)startWithCompletion:(SCAVMixHandlerBlock)completion {
     BOOL result = false;
     if (SCAVMixHandlerStatusNone == self.status) {
-        
-        
         self.status = SCAVMixHandlerStatusRunning;
         self.completion = completion;
         result = [self prepare];
@@ -378,9 +352,8 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 }
 
 - (BOOL)configAssetReader {
-    NSURL * videoUrl = self.videoInputUrl;
-    NSURL * audioUrl = self.audioInputUrl;
-
+    SCAVMixConfig * config = self.config;
+    
     // 时间起点
     CMTime beginTime = CMTimeMakeWithSeconds(0, 15);
     
@@ -388,12 +361,9 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     // 创建可变的音视频组合
     
     AVMutableComposition *comosition = [AVMutableComposition composition];
-
-    //    AVMutableVideoComposition *comosition = [AVMutableVideoComposition composition];
-    
     
     // 视频采集
-    AVURLAsset * videoAsset = [[AVURLAsset alloc] initWithURL:videoUrl options:nil];
+    AVAsset * videoAsset = config.videoAsset;
     // 视频时间范围
     
     CMTimeRange videoTimeRange = CMTimeRangeMake(beginTime, videoAsset.duration);
@@ -408,11 +378,9 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     [videoTrack insertTimeRange:videoTimeRange ofTrack:videoAssetTrack atTime:nextClistartTime error:nil];
     
     comosition.naturalSize = videoAssetTrack.naturalSize;
-    self.videoSize = videoAssetTrack.naturalSize;
-    
     
     // 声音采集
-    AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:audioUrl options:nil];
+    AVAsset * audioAsset = config.audioAsset;
     // 因为视频短这里就直接用视频长度了,如果自动化需要自己写判断
     CMTimeRange audioTimeRange = videoTimeRange;
     // 音频采集通道
@@ -455,8 +423,6 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
         return false;
     }
     
-    CMTime duration = audioAsset.duration;
-    
     //获取资源的一个音频轨道
     AVAssetTrack * atrack = [[comosition tracksWithMediaType:AVMediaTypeAudio] firstObject];
     if (nil != atrack) {
@@ -483,7 +449,7 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 - (BOOL)configWriteInput {
     NSURL * outputUrl = self.tmpOutputUrl;
     NSError * error;
-    CGSize videoSize = self.videoSize;
+    CGSize videoSize = self.config.outputVideoSize;
     
     _assetWriter = [[AVAssetWriter alloc] initWithURL:outputUrl fileType:AVFileTypeMPEG4 error:&error];
     NSInteger bitRat = videoSize.width * videoSize.height * 0.25;//0.75
@@ -495,17 +461,16 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
                                     AVVideoHeightKey:@(videoSize.height),
                                     AVVideoCompressionPropertiesKey:@{
                                             AVVideoMaxKeyFrameIntervalKey : @(90),
-                                            AVVideoExpectedSourceFrameRateKey : @(15),
+                                            AVVideoExpectedSourceFrameRateKey : @(self.config.outputVideoFrameRate),
                                             AVVideoAverageBitRateKey : @(bitRat),
                                             AVVideoProfileLevelKey : AVVideoProfileLevelH264Main31,
                                             }
-                                    
                                     };
     
     AVAssetWriterInput * videoWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:videoSetting];
     
     self.videoWriterInputHandler = [[SCAVWriterInputHandler alloc] initWithWriterInput:videoWriterInput readerTrackOutput:self.videoOutPut queue:self.queue];
-    
+    self.videoWriterInputHandler.waterMasks = self.config.waterMasks;
     self.videoWriterInputHandler.kind = SCAVWriterInputHandlerKindVideo;
     self.videoWriterInputHandler.tag = @"v";
     //添加写入器
@@ -558,7 +523,7 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
 }
 
 -(void)assertReadToAssetInput {
-    NSLog(@"===>assertReadToAssetInput.begin: %@", self.name);
+    NSLog(@"===>assertReadToAssetInput.begin: %@", self.config.identifier);
     dispatch_queue_t queue = dispatch_queue_create("com.writequeue", NULL);
     
     //开启写入会话，并指定样本的开始时间
@@ -582,23 +547,9 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
                     fileSize = (CGFloat)[attributesOfItem[NSFileSize] integerValue];
                 }
                 
-                NSLog(@"===>assertReadToAssetInput.finsished: %@, filePath: %@, fileSize: %.6lfmb, time:%lf", self.name, filePath, fileSize, endTime - beginTime);
-                
-                //                    {
-                //                        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.config.outputUrl options:nil];
-                //                        AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-                //                        gen.appliesPreferredTrackTransform = YES;
-                //                        CMTime time = CMTimeMakeWithSeconds(0.0, 15);
-                //                        NSError *error = nil;
-                //                        CMTime actualTime;
-                //                        CGImageRef image = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
-                //                        UIImage *img = [[UIImage alloc] initWithCGImage:image];
-                //                        CGImageRelease(image);
-                //                        [[NSNotificationCenter defaultCenter] postNotificationName:@"onImage" object:img];
-                //                    }
-                
+                NSLog(@"===>assertReadToAssetInput.finsished: %@, filePath: %@, fileSize: %.6lfmb, time:%lf", self.config.identifier, filePath, fileSize, endTime - beginTime);
             } else {
-                NSLog(@"===>assertReadToAssetInput.failure: %@, error:%@", self.name, self.assetWriter.error);
+                NSLog(@"===>assertReadToAssetInput.failure: %@, error:%@", self.config.identifier, self.assetWriter.error);
             }
             
             BOOL audioBeOk = true;
@@ -644,257 +595,84 @@ typedef void(^SCAVWriterInputHandlerBlock)(SCAVWriterInputHandler * handler);
     }
 }
 
-
-// 混合音乐
-- (void)merge{
-    NSLog(@"%@", NSHomeDirectory());
-    
-    NSString * itemName = @"1562663793812";
-    // mbp提示框
-    // 路径
-    NSString *documents = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-    // 声音来源
-    NSURL *audioInputUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:itemName ofType:@"wav"]];
-    // 视频来源
-    NSURL *videoInputUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:itemName ofType:@"mp4"]];
-    
-    AVFileType fileType = AVFileTypeMPEG4;
-    
-    NSString * outputFileName = [NSString stringWithFormat:@"itemName_%@_merge.mp4", fileType];
-    
-    // 最终合成输出路径
-    NSString *outPutFilePath = [documents stringByAppendingPathComponent:outputFileName];
-    // 添加合成路径
-    NSURL *outputFileUrl = [NSURL fileURLWithPath:outPutFilePath];
-    // 时间起点
-    CMTime nextClistartTime = kCMTimeZero;
-    // 创建可变的音视频组合
-    AVMutableComposition *comosition = [AVMutableComposition composition];
-    
-    // 视频采集
-    AVURLAsset *videoAsset = [[AVURLAsset alloc] initWithURL:videoInputUrl options:nil];
-    // 视频时间范围
-    CMTimeRange videoTimeRange = CMTimeRangeMake(kCMTimeZero, videoAsset.duration);
-    // 视频通道 枚举 kCMPersistentTrackID_Invalid = 0
-    AVMutableCompositionTrack *videoTrack = [comosition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-    // 视频采集通道
-    AVAssetTrack *videoAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] firstObject];
-    //  把采集轨道数据加入到可变轨道之中
-    [videoTrack insertTimeRange:videoTimeRange ofTrack:videoAssetTrack atTime:nextClistartTime error:nil];
-    
-    comosition.naturalSize = videoAssetTrack.naturalSize;
-    
-    // 声音采集
-    AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:audioInputUrl options:nil];
-    // 因为视频短这里就直接用视频长度了,如果自动化需要自己写判断
-    CMTimeRange audioTimeRange = videoTimeRange;
-    // 音频通道
-    AVMutableCompositionTrack *audioTrack = [comosition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-    // 音频采集通道
-    AVAssetTrack *audioAssetTrack = [[audioAsset tracksWithMediaType:AVMediaTypeAudio] firstObject];
-    // 加入合成轨道之中
-    [audioTrack insertTimeRange:audioTimeRange ofTrack:audioAssetTrack atTime:nextClistartTime error:nil];
-    
-    
-    // 创建一个输出
-    AVAssetExportSession *assetExport = [[AVAssetExportSession alloc] initWithAsset:comosition presetName:AVAssetExportPresetHighestQuality];
-    // 输出类型
-    assetExport.outputFileType = fileType;
-    // 输出地址
-    assetExport.outputURL = outputFileUrl;
-    // 优化
-    assetExport.shouldOptimizeForNetworkUse = YES;
-    
-    // 合成完毕
-    [assetExport exportAsynchronouslyWithCompletionHandler:^{
-        // 回到主线程
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // 调用播放方法
-            //            [self playWithUrl:outputFileUrl];
-            
-            
-            
-            
-        });
-    }];
-    
-    //    AVAssetReader * assetReader = [[AVAssetReader alloc] initWithAsset:comosition error:nil];
-    
-    
-}
-
-///** 播放方法 */
-//- (void)playWithUrl:(NSURL *)url{
-//    // 传入地址
-//    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:url];
-//    // 播放器
-//    AVPlayer *player = [AVPlayer playerWithPlayerItem:playerItem];
-//    // 播放器layer
-//    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:player];
-//    playerLayer.frame = self.imageView.frame;
-//    // 视频填充模式
-//    playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-//    // 添加到imageview的layer上
-//    [self.imageView.layer addSublayer:playerLayer];
-//    // 隐藏提示框 开始播放
-////    [MBProgressHUD hideHUD];
-////    [MBProgressHUD showSuccess:@"合成完成"];
-//    // 播放
-//    [player play];
-//}
-
-//利用AVMutableVideoComposition在特定时间添加水印
-- (void)applyVideoEffectsToComposition:(AVMutableVideoComposition *)composition size:(CGSize)size{
-    // 1 - set up the overlay
-    CALayer *overlayLayer = [CALayer layer];
-    UIImage *overlayImage  = [UIImage imageNamed:@"waterMark"];
-    
-    [overlayLayer setContents:(id)[overlayImage CGImage]];
-    overlayLayer.frame = CGRectMake(size.width - 146, 24, 135, 18);
-    [overlayLayer setMasksToBounds:YES];
-    
-    // 2 - set up the parent layer
-    CALayer *parentLayer = [CALayer layer];
-    CALayer *videoLayer = [CALayer layer];
-    parentLayer.frame = CGRectMake(0, 0, size.width, size.height);
-    videoLayer.frame = CGRectMake(0, 0, size.width, size.height);
-    [parentLayer addSublayer:videoLayer];
-    [parentLayer addSublayer:overlayLayer];
-    
-    //*********** For A Special Time
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];
-    [animation setDuration:0];
-    [animation setFromValue:[NSNumber numberWithFloat:1.0]];
-    [animation setToValue:[NSNumber numberWithFloat:0.0]];
-    [animation setBeginTime:5];
-    [animation setRemovedOnCompletion:NO];
-    [animation setFillMode:kCAFillModeForwards];
-    [overlayLayer addAnimation:animation forKey:@"animateOpacity"];
-    
-    // 3 - apply magic
-    composition.animationTool = [AVVideoCompositionCoreAnimationTool
-                                 videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:videoLayer inLayer:parentLayer];
-}
-
-
-//+ (void)applyVideoEffectsToComposition2:(AVVideoComposition *)composition size:(CGSize)size
-//{
-//    // 文字
-//    //    CATextLayer *subtitle1Text = [[CATextLayer alloc] init];
-//    //    //    [subtitle1Text setFont:@"Helvetica-Bold"];
-//    //    [subtitle1Text setFontSize:36];
-//    //    [subtitle1Text setFrame:CGRectMake(10, size.height-10-100, size.width, 100)];
-//    //    [subtitle1Text setString:@"ZHIMABAOBAO"];
-//    //    //    [subtitle1Text setAlignmentMode:kCAAlignmentCenter];
-//    //    [subtitle1Text setForegroundColor:[[UIColor whiteColor] CGColor]];
-//
-//    //图片
-//    CALayer*picLayer = [CALayer layer];
-//    picLayer.contents = (id)[UIImage imageNamed:@"ipad app-76.png"].CGImage;
-//    picLayer.frame = CGRectMake(size.width-15-76, 15, 76, 76);
-//
-//    // 2 - The usual overlay
-//    CALayer *overlayLayer = [CALayer layer];
-//    [overlayLayer addSublayer:picLayer];
-//    overlayLayer.frame = CGRectMake(0, 0, size.width, size.height);
-//    [overlayLayer setMasksToBounds:YES];
-//
-//    CALayer *parentLayer = [CALayer layer];
-//    CALayer *videoLayer = [CALayer layer];
-//    parentLayer.frame = CGRectMake(0, 0, size.width, size.height);
-//    videoLayer.frame = CGRectMake(0, 0, size.width, size.height);
-//    [parentLayer addSublayer:videoLayer];
-//    [parentLayer addSublayer:overlayLayer];
-//
-////    AVVideoCompositionCoreAnimationTool
-//
-//    composition.animationTool = [AVVideoCompositionCoreAnimationTool
-//                                 videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:videoLayer inLayer:parentLayer];
-//
-//}
-
-
-/**
- 设置水印及其对应视频的位置
- 
- @param composition 视频的结构
- @param size 视频的尺寸
- */
-+ (void)applyVideoEffectsToComposition:(AVMutableVideoComposition *)composition size:(CGSize)size
-{
-    // 文字
-    //    CATextLayer *subtitle1Text = [[CATextLayer alloc] init];
-    //    //    [subtitle1Text setFont:@"Helvetica-Bold"];
-    //    [subtitle1Text setFontSize:36];
-    //    [subtitle1Text setFrame:CGRectMake(10, size.height-10-100, size.width, 100)];
-    //    [subtitle1Text setString:@"ZHIMABAOBAO"];
-    //    //    [subtitle1Text setAlignmentMode:kCAAlignmentCenter];
-    //    [subtitle1Text setForegroundColor:[[UIColor whiteColor] CGColor]];
-    
-    //图片
-    CALayer*picLayer = [CALayer layer];
-    picLayer.contents = (id)[UIImage imageNamed:@"ipad app-76.png"].CGImage;
-    picLayer.frame = CGRectMake(size.width-15-76, 15, 76, 76);
-    
-    // 2 - The usual overlay
-    CALayer *overlayLayer = [CALayer layer];
-    [overlayLayer addSublayer:picLayer];
-    overlayLayer.frame = CGRectMake(0, 0, size.width, size.height);
-    [overlayLayer setMasksToBounds:YES];
-    
-    CALayer *parentLayer = [CALayer layer];
-    CALayer *videoLayer = [CALayer layer];
-    parentLayer.frame = CGRectMake(0, 0, size.width, size.height);
-    videoLayer.frame = CGRectMake(0, 0, size.width, size.height);
-    [parentLayer addSublayer:videoLayer];
-    [parentLayer addSublayer:overlayLayer];
-    
-    composition.animationTool = [AVVideoCompositionCoreAnimationTool
-                                 videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:videoLayer inLayer:parentLayer];
-    
-}
-
-
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<SCAVMixHandler: %p, name: %@, status:%ld>", self, self.name, self.status];
+    return [NSString stringWithFormat:@"<SCAVMixHandler: %p, name: %@, status:%ld>", self, self.config.identifier, self.status];
 }
 
 @end
 
 
 
-
 @interface SCAVMixConfig ()
-@property (nonatomic, copy) NSString * identifier;
+
+@property (nonatomic, strong, readonly) NSMutableArray<SCAVWaterMask *> * waterMasksStorage;
+
 @end
 @implementation SCAVMixConfig
 
 - (instancetype)initWithIdentifier:(NSString *)identifier {
     self = [super init];
     if (self) {
-        self.identifier = identifier;
+        _waterMasksStorage = [NSMutableArray array];
+        _identifier = [identifier copy];
+        if (nil == identifier) {
+            NSLog(@"identifier is nil");
+        }
     }
     return self;
 }
 
-- (AVAsset *)videoAsset {
-    if (nil == _videoAsset) {
-        if (self.videoInputPath.length > 0) {
-            AVURLAsset * asset = [[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:self.videoInputPath] options:nil];
-            _videoAsset = asset;
+- (instancetype)initWithIdentifier:(NSString *)identifier videoAsset:(AVAsset *)videoAsset audioAsset:(nullable AVAsset *)audioAsset {
+    self = [self initWithIdentifier:identifier];
+    if (self) {
+        if (nil == videoAsset) {
+            NSLog(@"video is nil");
         }
+        _videoAsset = videoAsset;
+        _audioAsset = audioAsset;
+        
+        if (videoAsset) {
+            AVAssetTrack *videoAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] firstObject];
+            self.outputVideoSize = videoAssetTrack.naturalSize;
+        }
+        _outputVideoFrameRate = 15;
     }
-    return _videoAsset;
+    return self;
 }
 
-- (AVAsset *)audioAsset {
-    if (nil == _videoAsset) {
-        if (self.audioInputPath.length > 0) {
-            AVURLAsset * asset = [[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:self.audioInputPath] options:nil];
-            _audioAsset = asset;
+- (instancetype)initWithIdentifier:(NSString *)identifier videoInputPath:(NSString *)videoInputPath audioInputPath:(nullable NSString *)audioInputPath {
+    AVURLAsset * videoAsset = nil;
+    if (videoInputPath) {
+        videoAsset = [[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:videoInputPath] options:nil];
+        if (!videoAsset.playable) {
+            NSLog(@"video is not playable");
+            videoAsset = nil;
         }
     }
-    return _videoAsset;
+
+    AVURLAsset * audioAsset = nil;
+    if (audioInputPath) {
+        audioAsset = [[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:audioInputPath] options:nil];
+        if (!audioAsset.playable) {
+            NSLog(@"audio is not playable");
+            audioAsset = nil;
+        }
+    }
+
+    return [self initWithIdentifier:identifier videoAsset:videoAsset audioAsset:audioAsset];
 }
 
+- (void)addWaterMask:(SCAVWaterMask *)waterMask {
+    if (waterMask) {
+        [self.waterMasksStorage addObject:waterMask];
+    }
+}
+- (NSArray<SCAVWaterMask *> *)waterMasks {
+    return [self.waterMasksStorage copy];
+}
+
+@end
+
+
+@implementation SCAVWaterMask
 @end

@@ -11,6 +11,10 @@
 		D6570A8022E03F27007FA30F /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6570A7F22E03F27007FA30F /* FileItem.swift */; };
 		D6570A8322E03F8B007FA30F /* FileManagerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6570A8122E03F8B007FA30F /* FileManagerBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6570A8422E03F8B007FA30F /* FileManagerBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6570A8222E03F8B007FA30F /* FileManagerBase.c */; };
+		D6B4B6C022E5712500C91909 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6B4B6BF22E5712500C91909 /* AppDelegate.m */; };
+		D6B4B6C222E5712600C91909 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6B4B6C122E5712600C91909 /* Assets.xcassets */; };
+		D6B4B6C522E5712600C91909 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6B4B6C322E5712600C91909 /* MainMenu.xib */; };
+		D6B4B6C822E5712600C91909 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6B4B6C722E5712600C91909 /* main.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,10 +24,25 @@
 		D6570A7F22E03F27007FA30F /* FileItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
 		D6570A8122E03F8B007FA30F /* FileManagerBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileManagerBase.h; sourceTree = "<group>"; };
 		D6570A8222E03F8B007FA30F /* FileManagerBase.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FileManagerBase.c; sourceTree = "<group>"; };
+		D6B4B6BC22E5712500C91909 /* FDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6B4B6BE22E5712500C91909 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		D6B4B6BF22E5712500C91909 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		D6B4B6C122E5712600C91909 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D6B4B6C422E5712600C91909 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D6B4B6C622E5712600C91909 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D6B4B6C722E5712600C91909 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D6B4B6C922E5712600C91909 /* FDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FDemo.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D6570A7022E03F05007FA30F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6B4B6B922E5712500C91909 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -37,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				D6570A7522E03F05007FA30F /* FileManager */,
+				D6B4B6BD22E5712500C91909 /* FDemo */,
 				D6570A7422E03F05007FA30F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -45,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				D6570A7322E03F05007FA30F /* FileManager.framework */,
+				D6B4B6BC22E5712500C91909 /* FDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,6 +88,20 @@
 				D6570A8222E03F8B007FA30F /* FileManagerBase.c */,
 			);
 			path = Source;
+			sourceTree = "<group>";
+		};
+		D6B4B6BD22E5712500C91909 /* FDemo */ = {
+			isa = PBXGroup;
+			children = (
+				D6B4B6BE22E5712500C91909 /* AppDelegate.h */,
+				D6B4B6BF22E5712500C91909 /* AppDelegate.m */,
+				D6B4B6C122E5712600C91909 /* Assets.xcassets */,
+				D6B4B6C322E5712600C91909 /* MainMenu.xib */,
+				D6B4B6C622E5712600C91909 /* Info.plist */,
+				D6B4B6C722E5712600C91909 /* main.m */,
+				D6B4B6C922E5712600C91909 /* FDemo.entitlements */,
+			);
+			path = FDemo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,6 +137,23 @@
 			productReference = D6570A7322E03F05007FA30F /* FileManager.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		D6B4B6BB22E5712500C91909 /* FDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6B4B6CC22E5712600C91909 /* Build configuration list for PBXNativeTarget "FDemo" */;
+			buildPhases = (
+				D6B4B6B822E5712500C91909 /* Sources */,
+				D6B4B6B922E5712500C91909 /* Frameworks */,
+				D6B4B6BA22E5712500C91909 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FDemo;
+			productName = FDemo;
+			productReference = D6B4B6BC22E5712500C91909 /* FDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -115,6 +167,9 @@
 						CreatedOnToolsVersion = 10.2;
 						LastSwiftMigration = 1020;
 					};
+					D6B4B6BB22E5712500C91909 = {
+						CreatedOnToolsVersion = 10.2;
+					};
 				};
 			};
 			buildConfigurationList = D6570A6D22E03F05007FA30F /* Build configuration list for PBXProject "FileManager" */;
@@ -123,6 +178,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = D6570A6922E03F05007FA30F;
 			productRefGroup = D6570A7422E03F05007FA30F /* Products */;
@@ -130,6 +186,7 @@
 			projectRoot = "";
 			targets = (
 				D6570A7222E03F05007FA30F /* FileManager */,
+				D6B4B6BB22E5712500C91909 /* FDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -139,6 +196,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6B4B6BA22E5712500C91909 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6B4B6C222E5712600C91909 /* Assets.xcassets in Resources */,
+				D6B4B6C522E5712600C91909 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,7 +220,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D6B4B6B822E5712500C91909 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6B4B6C822E5712600C91909 /* main.m in Sources */,
+				D6B4B6C022E5712500C91909 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		D6B4B6C322E5712600C91909 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D6B4B6C422E5712600C91909 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		D6570A7922E03F05007FA30F /* Debug */ = {
@@ -331,6 +417,40 @@
 			};
 			name = Release;
 		};
+		D6B4B6CA22E5712600C91909 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = FDemo/FDemo.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = FDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.FDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D6B4B6CB22E5712600C91909 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = FDemo/FDemo.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = FDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.FDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -348,6 +468,15 @@
 			buildConfigurations = (
 				D6570A7C22E03F05007FA30F /* Debug */,
 				D6570A7D22E03F05007FA30F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D6B4B6CC22E5712600C91909 /* Build configuration list for PBXNativeTarget "FDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6B4B6CA22E5712600C91909 /* Debug */,
+				D6B4B6CB22E5712600C91909 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

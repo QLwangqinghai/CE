@@ -7,3 +7,12 @@
 //
 
 #include "FileManagerBase.h"
+
+#include <unistd.h>
+
+
+
+void aadf() {
+    PAGE_SIZE
+    getpagesize();
+}

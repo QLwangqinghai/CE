@@ -8,34 +8,6 @@
 
 #include "CoreDigest.h"
 
-static inline size_t CDCDVariantSHA2thDigestLength(CDVariant_e e) {
-    switch (e) {
-        case CDVariantSHA2th224:
-            return 224/8;//28
-        case CDVariantSHA2th256:
-            return 256/8;//32
-        case CDVariantSHA2th384:
-            return 384/8;//4
-        case CDVariantSHA2th512:
-            return 512/8;
-        default:
-            return 0;
-    }
-}
-
-static inline size_t CDVariantSHA2thBlockSize(CDVariant_e e) {
-    switch (e) {
-        case CDVariantSHA2th224:
-        case CDVariantSHA2th256:
-            return CDVariantSHA2th256BlockSize;
-        case CDVariantSHA2th384:
-        case CDVariantSHA2th512:
-            return CDVariantSHA2th512BlockSize;
-        default:
-            return 0;
-    }
-}
-
 static inline uint64_t SHAReadUInt64(uint8_t const block[_Nonnull 8]) {
     return (((uint64_t)block[0]) << 56) | (((uint64_t)block[1]) << 48) | (((uint64_t)block[2]) << 40) | (((uint64_t)block[3]) << 32) | (((uint64_t)block[4]) << 24) | (((uint64_t)block[5]) << 16) | (((uint64_t)block[6]) << 8) | ((uint64_t)block[7]);
 }
@@ -509,100 +481,41 @@ void CDSHA2th512Update(CDSHA2th512Context_s * _Nonnull context, uint8_t const * 
 
 
 
-static inline void _CDSHA2th256ExportHashValue(CDSHA2th256Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length) {
+static inline void _CDSHA2th256ExportHashValue(CDSHA2th256Context_s * _Nonnull context, uint8_t * _Nonnull bytes, size_t length) {
     assert(context);
-    assert(length >= 0);
-    
-    if (0 == length) {
-        return;
-    }
     assert(bytes);
+    assert(length == 32 || length == 28);
     
-    size_t blockSize = CDVariantSHA2th256BlockSize;
-    uint8_t const * ptr = bytes;
-    if (context->accumulatedSize > 0) {
-        size_t missingLength = blockSize - context->accumulatedSize;
-        if (length < missingLength) {
-            memcpy(context->accumulated, ptr, length);
-            context->accumulatedSize += length;
-            return;
-        } else {
-            memcpy(context->accumulated, ptr, missingLength);
-            CDSHA2Process32(context->accumulated, context->values);
-            context->accumulatedSize = 0;
-            ptr += missingLength;
-            length -= missingLength;
-            context->bitCount += blockSize * 8;
-        }
-    }
-    uint64_t const mask = 0xFFFFFFFFFFFFFFF8ULL;
-    uint64_t bitCount = length;
-    bitCount = bitCount & mask;
-    bitCount = bitCount << 3;
-    context->bitCount += bitCount;
-    
-    for (; length >= blockSize; length -= blockSize) {
-        CDSHA2Process32(ptr, context->values);
-        ptr += blockSize;
-    }
-    
-    if (length > 0) {
-        memcpy(context->accumulated, ptr, length);
-        context->accumulatedSize += length;
+    uint8_t * ptr = bytes;
+    size_t count = length / 4;
+    for (size_t idx=0; idx<count; idx++) {
+        uint32_t v = context->values[idx];
+        ptr[0] = (uint8_t)(v >> 24);
+        ptr[1] = (uint8_t)(v >> 16);
+        ptr[2] = (uint8_t)(v >> 8);
+        ptr[3] = (uint8_t)(v);
+        ptr += 4;
     }
 }
 
-static inline void _CDSHA2th512ExportHashValue(CDSHA2th512Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length) {
+static inline void _CDSHA2th512ExportHashValue(CDSHA2th512Context_s * _Nonnull context, uint8_t * _Nonnull bytes, size_t length) {
     assert(context);
-    assert(length >= 0);
-    
-    if (0 == length) {
-        return;
-    }
     assert(bytes);
-    
-    size_t blockSize = CDVariantSHA2th512BlockSize;
-    uint8_t const * ptr = bytes;
-    if (context->accumulatedSize > 0) {
-        size_t missingLength = blockSize - context->accumulatedSize;
-        if (length < missingLength) {
-            memcpy(context->accumulated, ptr, length);
-            context->accumulatedSize += length;
-            return;
-        } else {
-            memcpy(context->accumulated, ptr, missingLength);
-            CDSHA2Process64(context->accumulated, context->values);
-            context->accumulatedSize = 0;
-            ptr += missingLength;
-            length -= missingLength;
-            
-            uint64_t bitCountLow = context->bitCountLow + blockSize * 8;
-            if (bitCountLow < context->bitCountLow) {
-                context->bitCountHigh += 1;
-            }
-            context->bitCountLow = bitCountLow;
-        }
-    }
-    uint64_t const mask = 0xFFFFFFFFFFFFFFF8ULL;
-    uint64_t bitCount = length;
-    bitCount = bitCount & mask;
-    context->bitCountHigh += (bitCount >> 61);
-    bitCount = bitCount << 3;
-    
-    uint64_t bitCountLow = context->bitCountLow + bitCount;
-    if (bitCountLow < context->bitCountLow) {
-        context->bitCountHigh += 1;
-    }
-    context->bitCountLow = bitCountLow;
-    
-    for (; length >= blockSize; length -= blockSize) {
-        CDSHA2Process64(ptr, context->values);
-        ptr += blockSize;
-    }
-    
-    if (length > 0) {
-        memcpy(context->accumulated, ptr, length);
-        context->accumulatedSize += length;
+    assert(length == 48 || length == 64);
+
+    uint8_t * ptr = bytes;
+    size_t count = length / 8;
+    for (size_t idx=0; idx<count; idx++) {
+        uint64_t v = context->values[idx];
+        ptr[0] = (uint8_t)(v >> 56);
+        ptr[1] = (uint8_t)(v >> 48);
+        ptr[2] = (uint8_t)(v >> 40);
+        ptr[3] = (uint8_t)(v >> 32);
+        ptr[4] = (uint8_t)(v >> 24);
+        ptr[5] = (uint8_t)(v >> 16);
+        ptr[6] = (uint8_t)(v >> 8);
+        ptr[7] = (uint8_t)(v);
+        ptr += 8;
     }
 }
 
@@ -614,7 +527,7 @@ void CDSHA2th256ExportHashValue(CDSHA2th256Context_s * _Nonnull context, uint8_t
 }
 
 void CDSHA2th384ExportHashValue(CDSHA2th512Context_s * _Nonnull context, uint8_t * _Nonnull bytes) {
-    _CDSHA2th512ExportHashValue(context, bytes, 38);
+    _CDSHA2th512ExportHashValue(context, bytes, 48);
 }
 void CDSHA2th512ExportHashValue(CDSHA2th512Context_s * _Nonnull context, uint8_t * _Nonnull bytes) {
     _CDSHA2th512ExportHashValue(context, bytes, 64);

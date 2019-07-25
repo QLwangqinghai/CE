@@ -24,6 +24,34 @@ typedef enum _CDVariant {
 #define CDVariantSHA2th256BlockSize 64
 #define CDVariantSHA2th512BlockSize 128
 
+static inline size_t CDCDVariantSHA2thDigestLength(CDVariant_e e) {
+    switch (e) {
+        case CDVariantSHA2th224:
+            return 224/8;//28
+        case CDVariantSHA2th256:
+            return 256/8;//32
+        case CDVariantSHA2th384:
+            return 384/8;//48
+        case CDVariantSHA2th512:
+            return 512/8;//64
+        default:
+            return 0;
+    }
+}
+
+static inline size_t CDVariantSHA2thBlockSize(CDVariant_e e) {
+    switch (e) {
+        case CDVariantSHA2th224:
+        case CDVariantSHA2th256:
+            return CDVariantSHA2th256BlockSize;
+        case CDVariantSHA2th384:
+        case CDVariantSHA2th512:
+            return CDVariantSHA2th512BlockSize;
+        default:
+            return 0;
+    }
+}
+
 
 typedef struct _CDSHA2th256Context {
     size_t digestVariant;
@@ -31,7 +59,6 @@ typedef struct _CDSHA2th256Context {
     uint64_t bitCount;
     uint32_t data[16];
     uint8_t accumulated[CDVariantSHA2th256BlockSize];
-    unsigned int num,md_len;
     uint32_t accumulatedSize;
 } CDSHA2th256Context_s;
 
@@ -42,7 +69,6 @@ typedef struct _CDSHA2th512Context {
     uint64_t bitCountHigh;//长度的高位
     uint64_t data[16];
     uint8_t accumulated[CDVariantSHA2th512BlockSize];
-    unsigned int num,md_len;
     uint32_t accumulatedSize;
 } CDSHA2th512Context_s;
 

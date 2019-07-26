@@ -18,6 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CBridage : NSObject
 
+
++ (NSData *)sha224:(NSData *)data;
++ (NSData *)sha256:(NSData *)data;
++ (NSData *)sha384:(NSData *)data;
++ (NSData *)sha512:(NSData *)data;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

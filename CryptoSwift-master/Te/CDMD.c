@@ -48,8 +48,8 @@ static inline void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t curre
         // break chunk into sixteen 32-bit words M[j], 0 ≤ j ≤ 15 and get M[g] value
         uint32_t gAdvanced = j << 2;
         
-        uint32_t Mg = (((uint32_t)block[gAdvanced])) | (((uint32_t)block[gAdvanced + 1]) << 8) | (((uint32_t)block[gAdvanced + 2]) << 16) | (((uint32_t)block[gAdvanced + 3]) << 24);
-        
+        uint32_t Mg = CUInt32MakeWithLittleEndianBytes(&block[gAdvanced]);
+
         B = B + CDUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
         A = dTemp;
     }
@@ -63,7 +63,7 @@ static inline void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t curre
         // break chunk into sixteen 32-bit words M[j], 0 ≤ j ≤ 15 and get M[g] value
         uint32_t gAdvanced = ((5 * j + 1) % 16) << 2;
         
-        uint32_t Mg = (((uint32_t)block[gAdvanced])) | (((uint32_t)block[gAdvanced + 1]) << 8) | (((uint32_t)block[gAdvanced + 2]) << 16) | (((uint32_t)block[gAdvanced + 3]) << 24);
+        uint32_t Mg = CUInt32MakeWithLittleEndianBytes(&block[gAdvanced]);
         
         B = B + CDUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
         A = dTemp;
@@ -77,8 +77,8 @@ static inline void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t curre
         // break chunk into sixteen 32-bit words M[j], 0 ≤ j ≤ 15 and get M[g] value
         uint32_t gAdvanced = ((3 * j + 5) % 16) << 2;
         
-        uint32_t Mg = (((uint32_t)block[gAdvanced])) | (((uint32_t)block[gAdvanced + 1]) << 8) | (((uint32_t)block[gAdvanced + 2]) << 16) | (((uint32_t)block[gAdvanced + 3]) << 24);
-        
+        uint32_t Mg = CUInt32MakeWithLittleEndianBytes(&block[gAdvanced]);
+
         B = B + CDUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
         A = dTemp;
     }
@@ -91,8 +91,8 @@ static inline void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t curre
         // break chunk into sixteen 32-bit words M[j], 0 ≤ j ≤ 15 and get M[g] value
         uint32_t gAdvanced = ((7 * j) % 16) << 2;
         
-        uint32_t Mg = (((uint32_t)block[gAdvanced])) | (((uint32_t)block[gAdvanced + 1]) << 8) | (((uint32_t)block[gAdvanced + 2]) << 16) | (((uint32_t)block[gAdvanced + 3]) << 24);
-        
+        uint32_t Mg = CUInt32MakeWithLittleEndianBytes(&block[gAdvanced]);
+
         B = B + CDUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
         A = dTemp;
     }
@@ -141,26 +141,12 @@ void CDMD5Final(CDMD5Context_s * _Nonnull context) {
     size_t max = blockSize - blockSize / 8;//56
     if (size % blockSize < max) {
         ptr = bytes + max;
-        ptr[7] = (uint8_t)(context->bitCount >> 56);
-        ptr[6] = (uint8_t)(context->bitCount >> 48);
-        ptr[5] = (uint8_t)(context->bitCount >> 40);
-        ptr[4] = (uint8_t)(context->bitCount >> 32);
-        ptr[3] = (uint8_t)(context->bitCount >> 24);
-        ptr[2] = (uint8_t)(context->bitCount >> 16);
-        ptr[1] = (uint8_t)(context->bitCount >> 8);
-        ptr[0] = (uint8_t)(context->bitCount);
         
+        CUInt64ToLittleEndianBytes(context->bitCount, ptr);
         CDMD5Process(bytes, context->values);
     } else {
         ptr = bytes + blockSize + max;
-        ptr[7] = (uint8_t)(context->bitCount >> 56);
-        ptr[6] = (uint8_t)(context->bitCount >> 48);
-        ptr[5] = (uint8_t)(context->bitCount >> 40);
-        ptr[4] = (uint8_t)(context->bitCount >> 32);
-        ptr[3] = (uint8_t)(context->bitCount >> 24);
-        ptr[2] = (uint8_t)(context->bitCount >> 16);
-        ptr[1] = (uint8_t)(context->bitCount >> 8);
-        ptr[0] = (uint8_t)(context->bitCount);
+        CUInt64ToLittleEndianBytes(context->bitCount, ptr);
         CDMD5Process(bytes, context->values);
         CDMD5Process(bytes + blockSize, context->values);
     }
@@ -218,10 +204,7 @@ void CDMD5ExportHashValue(CDMD5Context_s * _Nonnull context, uint8_t bytes[_Nonn
     uint8_t * ptr = bytes;
     for (size_t idx=0; idx<4; idx++) {
         uint32_t v = context->values[idx];
-        ptr[3] = (uint8_t)(v >> 24);
-        ptr[2] = (uint8_t)(v >> 16);
-        ptr[1] = (uint8_t)(v >> 8);
-        ptr[0] = (uint8_t)(v);
+        CUInt32ToLittleEndianBytes(v, ptr);
         ptr += 4;
     }
 }

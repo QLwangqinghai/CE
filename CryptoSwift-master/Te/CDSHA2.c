@@ -38,7 +38,7 @@ static inline void CDSHA2Process64(const uint8_t block[_Nonnull 128], uint64_t c
     uint8_t const * iter = block;
     size_t idx = 0;
     for (; idx<16; idx++) {
-        M[idx] = CDReadUInt64(iter);
+        M[idx] = CUInt64MakeWithBigEndianBytes(iter);
         iter += 8;
     }
     
@@ -107,7 +107,7 @@ static inline void CDSHA2Process32(uint8_t const block[_Nonnull 64], uint32_t cu
     uint8_t const * iter = block;
     size_t idx = 0;
     for (; idx<16; idx++) {
-        M[idx] = CDReadUInt32(iter);
+        M[idx] = CUInt32MakeWithBigEndianBytes(iter);
         iter += 4;
     }
     
@@ -235,26 +235,12 @@ static inline void _CDSHA2th256Final(CDSHA2th256Context_s * _Nonnull context) {
     size_t max = blockSize - blockSize / 8;//56
     if (size % blockSize < max) {
         ptr = bytes + max;
-        ptr[0] = (uint8_t)(context->bitCount >> 56);
-        ptr[1] = (uint8_t)(context->bitCount >> 48);
-        ptr[2] = (uint8_t)(context->bitCount >> 40);
-        ptr[3] = (uint8_t)(context->bitCount >> 32);
-        ptr[4] = (uint8_t)(context->bitCount >> 24);
-        ptr[5] = (uint8_t)(context->bitCount >> 16);
-        ptr[6] = (uint8_t)(context->bitCount >> 8);
-        ptr[7] = (uint8_t)(context->bitCount);
         
+        CUInt64ToBigEndianBytes(context->bitCount, ptr);
         CDSHA2Process32(bytes, context->values);
     } else {
         ptr = bytes + blockSize + max;
-        ptr[0] = (uint8_t)(context->bitCount >> 56);
-        ptr[1] = (uint8_t)(context->bitCount >> 48);
-        ptr[2] = (uint8_t)(context->bitCount >> 40);
-        ptr[3] = (uint8_t)(context->bitCount >> 32);
-        ptr[4] = (uint8_t)(context->bitCount >> 24);
-        ptr[5] = (uint8_t)(context->bitCount >> 16);
-        ptr[6] = (uint8_t)(context->bitCount >> 8);
-        ptr[7] = (uint8_t)(context->bitCount);
+        CUInt64ToBigEndianBytes(context->bitCount, ptr);
         CDSHA2Process32(bytes, context->values);
         CDSHA2Process32(bytes + blockSize, context->values);
     }
@@ -291,48 +277,15 @@ static inline void _CDSHA2th512Final(CDSHA2th512Context_s * _Nonnull context) {
     size_t max = blockSize - blockSize / 8;//112
     if (size % blockSize < max) {
         ptr = bytes + max;
-        ptr[0] = (uint8_t)(context->bitCountHigh >> 56);
-        ptr[1] = (uint8_t)(context->bitCountHigh >> 48);
-        ptr[2] = (uint8_t)(context->bitCountHigh >> 40);
-        ptr[3] = (uint8_t)(context->bitCountHigh >> 32);
-        ptr[4] = (uint8_t)(context->bitCountHigh >> 24);
-        ptr[5] = (uint8_t)(context->bitCountHigh >> 16);
-        ptr[6] = (uint8_t)(context->bitCountHigh >> 8);
-        ptr[7] = (uint8_t)(context->bitCountHigh);
-        
+        CUInt64ToBigEndianBytes(context->bitCountHigh, ptr);
         ptr += 8;
-        ptr[0] = (uint8_t)(context->bitCountLow >> 56);
-        ptr[1] = (uint8_t)(context->bitCountLow >> 48);
-        ptr[2] = (uint8_t)(context->bitCountLow >> 40);
-        ptr[3] = (uint8_t)(context->bitCountLow >> 32);
-        ptr[4] = (uint8_t)(context->bitCountLow >> 24);
-        ptr[5] = (uint8_t)(context->bitCountLow >> 16);
-        ptr[6] = (uint8_t)(context->bitCountLow >> 8);
-        ptr[7] = (uint8_t)(context->bitCountLow);
-        
+        CUInt64ToBigEndianBytes(context->bitCountLow, ptr);
         CDSHA2Process64(bytes, context->values);
     } else {
         ptr = bytes + blockSize + max;
-        
-        ptr[0] = (uint8_t)(context->bitCountHigh >> 56);
-        ptr[1] = (uint8_t)(context->bitCountHigh >> 48);
-        ptr[2] = (uint8_t)(context->bitCountHigh >> 40);
-        ptr[3] = (uint8_t)(context->bitCountHigh >> 32);
-        ptr[4] = (uint8_t)(context->bitCountHigh >> 24);
-        ptr[5] = (uint8_t)(context->bitCountHigh >> 16);
-        ptr[6] = (uint8_t)(context->bitCountHigh >> 8);
-        ptr[7] = (uint8_t)(context->bitCountHigh);
-        
+        CUInt64ToBigEndianBytes(context->bitCountHigh, ptr);
         ptr += 8;
-        ptr[0] = (uint8_t)(context->bitCountLow >> 56);
-        ptr[1] = (uint8_t)(context->bitCountLow >> 48);
-        ptr[2] = (uint8_t)(context->bitCountLow >> 40);
-        ptr[3] = (uint8_t)(context->bitCountLow >> 32);
-        ptr[4] = (uint8_t)(context->bitCountLow >> 24);
-        ptr[5] = (uint8_t)(context->bitCountLow >> 16);
-        ptr[6] = (uint8_t)(context->bitCountLow >> 8);
-        ptr[7] = (uint8_t)(context->bitCountLow);
-        
+        CUInt64ToBigEndianBytes(context->bitCountLow, ptr);
         CDSHA2Process64(bytes, context->values);
         CDSHA2Process64(bytes + blockSize, context->values);
     }
@@ -476,10 +429,7 @@ static inline void _CDSHA2th256ExportHashValue(CDSHA2th256Context_s * _Nonnull c
     size_t count = length / 4;
     for (size_t idx=0; idx<count; idx++) {
         uint32_t v = context->values[idx];
-        ptr[0] = (uint8_t)(v >> 24);
-        ptr[1] = (uint8_t)(v >> 16);
-        ptr[2] = (uint8_t)(v >> 8);
-        ptr[3] = (uint8_t)(v);
+        CUInt32ToBigEndianBytes(v, ptr);
         ptr += 4;
     }
 }
@@ -493,14 +443,7 @@ static inline void _CDSHA2th512ExportHashValue(CDSHA2th512Context_s * _Nonnull c
     size_t count = length / 8;
     for (size_t idx=0; idx<count; idx++) {
         uint64_t v = context->values[idx];
-        ptr[0] = (uint8_t)(v >> 56);
-        ptr[1] = (uint8_t)(v >> 48);
-        ptr[2] = (uint8_t)(v >> 40);
-        ptr[3] = (uint8_t)(v >> 32);
-        ptr[4] = (uint8_t)(v >> 24);
-        ptr[5] = (uint8_t)(v >> 16);
-        ptr[6] = (uint8_t)(v >> 8);
-        ptr[7] = (uint8_t)(v);
+        CUInt64ToBigEndianBytes(v, ptr);
         ptr += 8;
     }
 }

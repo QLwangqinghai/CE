@@ -9,24 +9,6 @@
 #include "CoreDigest.h"
 
 
-
-//public init(key: Array<UInt8>, variant: HMAC.Variant = .md5) {
-//    self.variant = variant
-//    self.key = key
-//
-//    if key.count > variant.blockSize() {
-//        let hash = variant.calculateHash(key)
-//        self.key = hash
-//    }
-//
-//    if key.count < variant.blockSize() {
-//        self.key = ZeroPadding().add(to: key, blockSize: variant.blockSize())
-//    }
-//}
-
-
-//#define CDVariantSHA2th256BlockSize 64
-//#define CDVariantSHA2th512BlockSize 128
 void CDHmacSHA2th224Authenticate(CDSHA2th224Context_s * _Nonnull context, uint8_t const * _Nullable key, size_t keyLength) {
     assert(keyLength >= 0);
 

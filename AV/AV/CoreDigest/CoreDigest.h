@@ -68,7 +68,6 @@ typedef struct _CDMD5Context {
     size_t digestVariant;
     uint32_t values[4];
     uint64_t bitCount;
-    uint32_t data[16];
     uint8_t accumulated[CDVariantMD5BlockSize];
     uint32_t accumulatedSize;
 } CDMD5Context_s;
@@ -77,7 +76,6 @@ typedef struct _CDSHA2th256Context {
     size_t digestVariant;
     uint32_t values[8];
     uint64_t bitCount;
-    uint32_t data[16];
     uint8_t accumulated[CDVariantSHA2th256BlockSize];
     uint32_t accumulatedSize;
 } CDSHA2th256Context_s;
@@ -87,7 +85,6 @@ typedef struct _CDSHA2th512Context {
     uint64_t values[8];
     uint64_t bitCountLow;//长度的低位
     uint64_t bitCountHigh;//长度的高位
-    uint64_t data[16];
     uint8_t accumulated[CDVariantSHA2th512BlockSize];
     uint32_t accumulatedSize;
 } CDSHA2th512Context_s;
@@ -128,13 +125,120 @@ void CDSHA2th512ExportHashValue(CDSHA2th512Context_s * _Nonnull context, uint8_t
 
 
 #pragma mark - helper
-static inline uint64_t CDReadUInt64(uint8_t const block[_Nonnull 8]) {
+
+/*
+ swift.md5 perform used:13.535400986671448
+ m.md5 perform used:0.4624910354614258
+ swift.sha2.224 perform used:28.424542903900146
+ m.sha2.224 perform used:1.3234879970550537
+ swift.sha2.256 perform used:27.459352016448975
+ m.sha2.256 perform used:19.596086025238037
+ swift.sha2.384 perform used:23.193214893341064
+ m.sha2.256 perform used:0.8162709474563599
+ swift.sha2.512 perform used:21.414753913879395
+ m.sha2.512 perform used:0.8110870122909546
+ 
+ swift.md5 perform used:15.19010305404663
+ m.md5 perform used:0.39378201961517334
+ swift.sha2.224 perform used:27.776574969291687
+ m.sha2.224 perform used:1.2761141061782837
+ swift.sha2.256 perform used:26.00479805469513
+ m.sha2.256 perform used:1.227587103843689
+ swift.sha2.384 perform used:21.38883101940155
+ m.sha2.384 perform used:0.8030279874801636
+ swift.sha2.512 perform used:21.72450292110443
+ m.sha2.512 perform used:0.9420390129089355
+ 
+ 
+ 
+ */
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+static inline uint64_t CUInt64MakeWithBigEndianBytes(uint8_t const block[_Nonnull 8]) {
     return (((uint64_t)block[0]) << 56) | (((uint64_t)block[1]) << 48) | (((uint64_t)block[2]) << 40) | (((uint64_t)block[3]) << 32) | (((uint64_t)block[4]) << 24) | (((uint64_t)block[5]) << 16) | (((uint64_t)block[6]) << 8) | ((uint64_t)block[7]);
 }
-
-static inline uint32_t CDReadUInt32(uint8_t const block[_Nonnull 4]) {
+static inline uint32_t CUInt32MakeWithBigEndianBytes(uint8_t const block[_Nonnull 4]) {
     return (((uint32_t)block[0]) << 24) | (((uint32_t)block[1]) << 16) | (((uint32_t)block[2]) << 8) | ((uint32_t)block[3]);
 }
+static inline uint64_t CUInt64MakeWithLittleEndianBytes(uint8_t const block[_Nonnull 8]) {
+    return *((uint64_t *)block);
+}
+static inline uint32_t CUInt32MakeWithLittleEndianBytes(uint8_t const block[_Nonnull 4]) {
+    return *((uint32_t *)block);
+}
+
+
+static inline void CUInt64ToBigEndianBytes(uint64_t value, uint8_t bytes[_Nonnull 8]) {
+    bytes[0] = (uint8_t)(value >> 56);
+    bytes[1] = (uint8_t)(value >> 48);
+    bytes[2] = (uint8_t)(value >> 40);
+    bytes[3] = (uint8_t)(value >> 32);
+    bytes[4] = (uint8_t)(value >> 24);
+    bytes[5] = (uint8_t)(value >> 16);
+    bytes[6] = (uint8_t)(value >> 8);
+    bytes[7] = (uint8_t)(value);
+}
+static inline void CUInt32ToBigEndianBytes(uint32_t value, uint8_t bytes[_Nonnull 4]) {
+    bytes[0] = (uint8_t)(value >> 24);
+    bytes[1] = (uint8_t)(value >> 16);
+    bytes[2] = (uint8_t)(value >> 8);
+    bytes[3] = (uint8_t)(value);
+}
+static inline void CUInt64ToLittleEndianBytes(uint64_t value, uint8_t block[_Nonnull 8]) {
+    *((uint64_t *)block) = value;
+}
+static inline void CUInt32ToLittleEndianBytes(uint32_t value, uint8_t block[_Nonnull 4]) {
+    *((uint32_t *)block) = value;
+}
+
+
+#elif __BYTE_ORDER__== __ORDER_BIG_ENDIAN__
+static inline uint64_t CUInt64MakeWithBigEndianBytes(uint8_t const block[_Nonnull 8]) {
+    return *((uint64_t *)block);
+}
+static inline uint32_t CUInt32MakeWithBigEndianBytes(uint8_t const block[_Nonnull 4]) {
+    return *((uint32_t *)block);
+}
+static inline uint64_t CUInt64MakeWithLittleEndianBytes(uint8_t const block[_Nonnull 8]) {
+    return (((uint64_t)block[0])) | (((uint64_t)block[1]) << 8) | (((uint64_t)block[2]) << 16) | (((uint64_t)block[3]) << 24) | (((uint64_t)block[4]) << 32) | (((uint64_t)block[5]) << 40) | (((uint64_t)block[6]) << 48) | ((uint64_t)block[7] << 56);
+}
+static inline uint32_t CUInt32MakeWithLittleEndianBytes(uint8_t const block[_Nonnull 4]) {
+    return (((uint32_t)block[0])) | (((uint32_t)block[1]) << 8) | (((uint32_t)block[2]) << 16) | (((uint32_t)block[3]) << 24);
+}
+
+
+static inline void CUInt64ToBigEndianBytes(uint64_t value, uint8_t bytes[_Nonnull 8]) {
+    *((uint64_t *)block) = value;
+}
+static inline void CUInt32ToBigEndianBytes(uint32_t value, uint8_t bytes[_Nonnull 4]) {
+    *((uint32_t *)block) = value;
+}
+static inline void CUInt64ToLittleEndianBytes(uint64_t value, uint8_t block[_Nonnull 8]) {
+    bytes[7] = (uint8_t)(value >> 56);
+    bytes[6] = (uint8_t)(value >> 48);
+    bytes[5] = (uint8_t)(value >> 40);
+    bytes[4] = (uint8_t)(value >> 32);
+    bytes[3] = (uint8_t)(value >> 24);
+    bytes[2] = (uint8_t)(value >> 16);
+    bytes[1] = (uint8_t)(value >> 8);
+    bytes[0] = (uint8_t)(value);
+}
+static inline void CUInt32ToLittleEndianBytes(uint32_t value, uint8_t block[_Nonnull 4]) {
+    *((uint32_t *)block) = value;
+    
+    bytes[3] = (uint8_t)(value >> 24);
+    bytes[2] = (uint8_t)(value >> 16);
+    bytes[1] = (uint8_t)(value >> 8);
+    bytes[0] = (uint8_t)(value);
+}
+
+#else
+#error "DEFINE BIG_ENDIAN OR LITTLE_ENDIAN"
+#endif
+
+
+
+
 
 static inline uint64_t CDUInt64RotateRight(uint64_t value, uint64_t by) {
     return (value >> by) | (value << (64 - by));

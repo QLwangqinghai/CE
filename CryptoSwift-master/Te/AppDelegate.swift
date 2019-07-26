@@ -62,6 +62,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let input = data.subdata(with: NSMakeRange(0, 32 * 1024 * 1024))
         
+        self.items.append(WorkItem.init(tag: "swift.md5", block: {
+            let m = input.md5()
+            let result = m.toHexString()
+            self.results.append(result);
+        }));
+        
         
         self.items.append(WorkItem.init(tag: "w.sha2.224", block: {
             let sha2Oncea = SHA2(variant: .sha224).calculate(for: input.bytes)

@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 open class AVWorkItem {
     private static var _nextSequence: UInt64 = 0
     private static let _lock: NSLock = NSLock()

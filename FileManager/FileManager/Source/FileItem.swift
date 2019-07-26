@@ -9,7 +9,7 @@
 import Foundation
 
 public typealias PixelSize = CFMPixelSize_s;
-public typealias FileIdentifier = CFMFileIdentifier_s;
+public typealias FileIdentifier = CFMByte64_s;
 
 public enum ImageType {
     case jpg
@@ -39,6 +39,21 @@ public class ImageItem {
         self.relativePath = relativePath
     }
 }
+
+open class FileDigestInfo {
+    //1/8192  多出来的
+    
+    public static let stepLength: UInt64 = 0x80000
+    public let fileSize: UInt64
+    public let final: CFMByte64_s
+    public let stepDigests: [CFMByte64_s]
+    
+    
+    
+    
+}
+
+
 
 public class FileItem {
     public let id: FileIdentifier

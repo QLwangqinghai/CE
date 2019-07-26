@@ -127,6 +127,8 @@
 		D6398EDD22E87FAE00142A32 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6398EDB22E87FAE00142A32 /* MainMenu.xib */; };
 		D6398EE422E8811000142A32 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754BE45519693E190098E6F3 /* CryptoSwift.framework */; };
 		D6398EE522E8811000142A32 /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 754BE45519693E190098E6F3 /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D6661E9722EAFD43001EB843 /* CDSHA2.c in Sources */ = {isa = PBXBuildFile; fileRef = D6661E9622EAFD43001EB843 /* CDSHA2.c */; };
+		D6661E9A22EAFD6B001EB843 /* CDMD.c in Sources */ = {isa = PBXBuildFile; fileRef = D6661E9922EAFD6B001EB843 /* CDMD.c */; };
 		D6E4FC5322EA0A410071748E /* CBridage.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FC5222EA0A410071748E /* CBridage.m */; };
 		D6E4FC5622EA0A540071748E /* CoreDigest.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FC5522EA0A540071748E /* CoreDigest.c */; };
 		E3FD2D531D6B81CE00A9F35F /* Error+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD2D511D6B813C00A9F35F /* Error+Extension.swift */; };
@@ -401,6 +403,8 @@
 		D6398EDC22E87FAE00142A32 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D6398EDE22E87FAE00142A32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6398EDF22E87FAE00142A32 /* Te.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Te.entitlements; sourceTree = "<group>"; };
+		D6661E9622EAFD43001EB843 /* CDSHA2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CDSHA2.c; sourceTree = "<group>"; };
+		D6661E9922EAFD6B001EB843 /* CDMD.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CDMD.c; sourceTree = "<group>"; };
 		D6E4FC5022EA0A400071748E /* Te-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Te-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6E4FC5122EA0A410071748E /* CBridage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBridage.h; sourceTree = "<group>"; };
 		D6E4FC5222EA0A410071748E /* CBridage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CBridage.m; sourceTree = "<group>"; };
@@ -724,6 +728,8 @@
 				D6E4FC5522EA0A540071748E /* CoreDigest.c */,
 				D6E4FC5422EA0A530071748E /* CoreDigest.h */,
 				D6E4FC5022EA0A400071748E /* Te-Bridging-Header.h */,
+				D6661E9622EAFD43001EB843 /* CDSHA2.c */,
+				D6661E9922EAFD6B001EB843 /* CDMD.c */,
 			);
 			path = Te;
 			sourceTree = "<group>";
@@ -1130,8 +1136,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6661E9A22EAFD6B001EB843 /* CDMD.c in Sources */,
 				D6E4FC5322EA0A410071748E /* CBridage.m in Sources */,
 				D6E4FC5622EA0A540071748E /* CoreDigest.c in Sources */,
+				D6661E9722EAFD43001EB843 /* CDSHA2.c in Sources */,
 				D6398ED822E87FAD00142A32 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

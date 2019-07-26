@@ -130,7 +130,7 @@
 		D6661E9722EAFD43001EB843 /* CDSHA2.c in Sources */ = {isa = PBXBuildFile; fileRef = D6661E9622EAFD43001EB843 /* CDSHA2.c */; };
 		D6661E9A22EAFD6B001EB843 /* CDMD.c in Sources */ = {isa = PBXBuildFile; fileRef = D6661E9922EAFD6B001EB843 /* CDMD.c */; };
 		D6E4FC5322EA0A410071748E /* CBridage.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FC5222EA0A410071748E /* CBridage.m */; };
-		D6E4FC5622EA0A540071748E /* CoreDigest.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FC5522EA0A540071748E /* CoreDigest.c */; };
+		D6E4FC5922EB50270071748E /* CoreDigest.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FC5822EB50270071748E /* CoreDigest.c */; };
 		E3FD2D531D6B81CE00A9F35F /* Error+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD2D511D6B813C00A9F35F /* Error+Extension.swift */; };
 		E6200E141FB9A7AE00258382 /* HKDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6200E131FB9A7AE00258382 /* HKDF.swift */; };
 		E6200E171FB9B68C00258382 /* HKDFTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6200E151FB9B67C00258382 /* HKDFTests.swift */; };
@@ -408,8 +408,8 @@
 		D6E4FC5022EA0A400071748E /* Te-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Te-Bridging-Header.h"; sourceTree = "<group>"; };
 		D6E4FC5122EA0A410071748E /* CBridage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBridage.h; sourceTree = "<group>"; };
 		D6E4FC5222EA0A410071748E /* CBridage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CBridage.m; sourceTree = "<group>"; };
-		D6E4FC5422EA0A530071748E /* CoreDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreDigest.h; path = ../../AV/AV/CoreDigest/CoreDigest.h; sourceTree = "<group>"; };
-		D6E4FC5522EA0A540071748E /* CoreDigest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CoreDigest.c; path = ../../AV/AV/CoreDigest/CoreDigest.c; sourceTree = "<group>"; };
+		D6E4FC5722EB50270071748E /* CoreDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreDigest.h; path = ../../AV/AV/CoreDigest/CoreDigest.h; sourceTree = "<group>"; };
+		D6E4FC5822EB50270071748E /* CoreDigest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CoreDigest.c; path = ../../AV/AV/CoreDigest/CoreDigest.c; sourceTree = "<group>"; };
 		E3FD2D511D6B813C00A9F35F /* Error+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Error+Extension.swift"; sourceTree = "<group>"; };
 		E6200E131FB9A7AE00258382 /* HKDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKDF.swift; sourceTree = "<group>"; };
 		E6200E151FB9B67C00258382 /* HKDFTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKDFTests.swift; sourceTree = "<group>"; };
@@ -718,6 +718,8 @@
 		D6398ED622E87FAD00142A32 /* Te */ = {
 			isa = PBXGroup;
 			children = (
+				D6E4FC5822EB50270071748E /* CoreDigest.c */,
+				D6E4FC5722EB50270071748E /* CoreDigest.h */,
 				D6398ED722E87FAD00142A32 /* AppDelegate.swift */,
 				D6398ED922E87FAE00142A32 /* Assets.xcassets */,
 				D6398EDB22E87FAE00142A32 /* MainMenu.xib */,
@@ -725,8 +727,6 @@
 				D6398EDF22E87FAE00142A32 /* Te.entitlements */,
 				D6E4FC5122EA0A410071748E /* CBridage.h */,
 				D6E4FC5222EA0A410071748E /* CBridage.m */,
-				D6E4FC5522EA0A540071748E /* CoreDigest.c */,
-				D6E4FC5422EA0A530071748E /* CoreDigest.h */,
 				D6E4FC5022EA0A400071748E /* Te-Bridging-Header.h */,
 				D6661E9622EAFD43001EB843 /* CDSHA2.c */,
 				D6661E9922EAFD6B001EB843 /* CDMD.c */,
@@ -1138,8 +1138,8 @@
 			files = (
 				D6661E9A22EAFD6B001EB843 /* CDMD.c in Sources */,
 				D6E4FC5322EA0A410071748E /* CBridage.m in Sources */,
-				D6E4FC5622EA0A540071748E /* CoreDigest.c in Sources */,
 				D6661E9722EAFD43001EB843 /* CDSHA2.c in Sources */,
+				D6E4FC5922EB50270071748E /* CoreDigest.c in Sources */,
 				D6398ED822E87FAD00142A32 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

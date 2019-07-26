@@ -64,6 +64,14 @@ static inline size_t CDVariantBlockSize(CDVariant_e e) {
     }
 }
 
+typedef struct _CDMD5Context {
+    size_t digestVariant;
+    uint32_t values[4];
+    uint64_t bitCount;
+    uint32_t data[16];
+    uint8_t accumulated[CDVariantMD5BlockSize];
+    uint32_t accumulatedSize;
+} CDMD5Context_s;
 
 typedef struct _CDSHA2th256Context {
     size_t digestVariant;
@@ -87,6 +95,11 @@ typedef struct _CDSHA2th512Context {
 typedef CDSHA2th256Context_s CDSHA2th224Context_s;
 typedef CDSHA2th512Context_s CDSHA2th384Context_s;
 
+
+void CDMD5ContextInit(CDMD5Context_s * _Nonnull context);
+void CDMD5Final(CDMD5Context_s * _Nonnull context);
+void CDMD5Update(CDMD5Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDMD5ExportHashValue(CDMD5Context_s * _Nonnull context, uint8_t bytes[_Nonnull 16]);
 
 
 void CDSHA2th224ContextInit(CDSHA2th224Context_s * _Nonnull context);
@@ -130,5 +143,8 @@ static inline uint32_t CDUInt32RotateRight(uint32_t value, uint32_t by) {
     return (value >> by) | (value << (32 - by));
 }
 
+static inline uint32_t CDUInt32RotateLeft(uint32_t value, uint32_t by) {
+    return ((value << by) & 0xffffffff) | (value >> (32 - by));
+}
 
 #endif /* CoreDigest_h */

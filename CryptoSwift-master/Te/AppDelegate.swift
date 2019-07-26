@@ -67,9 +67,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let result = m.toHexString()
             self.results.append(result);
         }));
+        self.items.append(WorkItem.init(tag: "m.md5", block: {
+            let h = CBridage.md5(input)
+            let result = h.toHexString()
+            self.results.append(result);
+        }));
         
         
-        self.items.append(WorkItem.init(tag: "w.sha2.224", block: {
+        self.items.append(WorkItem.init(tag: "swift.sha2.224", block: {
             let sha2Oncea = SHA2(variant: .sha224).calculate(for: input.bytes)
             let result = sha2Oncea.toHexString()
             self.results.append(result);
@@ -83,7 +88,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }));
         
         
-        self.items.append(WorkItem.init(tag: "w.sha2.256", block: {
+        self.items.append(WorkItem.init(tag: "swift.sha2.256", block: {
             let sha2Oncea = SHA2(variant: .sha256).calculate(for: input.bytes)
             let result = sha2Oncea.toHexString()
             self.results.append(result);
@@ -96,18 +101,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.results.append(result);
         }));
         
-        self.items.append(WorkItem.init(tag: "w.sha2.384", block: {
+        self.items.append(WorkItem.init(tag: "swift.sha2.384", block: {
             let sha2Oncea = SHA2(variant: .sha384).calculate(for: input.bytes)
             let result = sha2Oncea.toHexString()
             self.results.append(result);
         }));
-        self.items.append(WorkItem.init(tag: "m.sha2.256", block: {
+        self.items.append(WorkItem.init(tag: "m.sha2.384", block: {
             let sha2Oncea = CBridage.sha384(input)
             let result = sha2Oncea.toHexString()
             self.results.append(result);
         }));
         
-        self.items.append(WorkItem.init(tag: "w.sha2.512", block: {
+        self.items.append(WorkItem.init(tag: "swift.sha2.512", block: {
             let sha2Oncea = SHA2(variant: .sha512).calculate(for: input.bytes)
             let result = sha2Oncea.toHexString()
             self.results.append(result);

@@ -13,6 +13,20 @@
 #include <assert.h>
 #include <string.h>
 
+#ifdef __APPLE__
+#include <libkern/OSByteOrder.h>
+#elif __linux__
+#include <endian.h>
+#elif defined(__FreeBSD__)
+#include <sys/endian.h>
+#elif defined(_WIN32)
+#endif
+
+
+
+
+
+
 typedef enum _CDVariant {
     CDVariantNone,
     CDVariantMD5 = 1,
@@ -125,33 +139,6 @@ void CDSHA2th512ExportHashValue(CDSHA2th512Context_s * _Nonnull context, uint8_t
 
 
 #pragma mark - helper
-
-/*
- swift.md5 perform used:13.535400986671448
- m.md5 perform used:0.4624910354614258
- swift.sha2.224 perform used:28.424542903900146
- m.sha2.224 perform used:1.3234879970550537
- swift.sha2.256 perform used:27.459352016448975
- m.sha2.256 perform used:19.596086025238037
- swift.sha2.384 perform used:23.193214893341064
- m.sha2.256 perform used:0.8162709474563599
- swift.sha2.512 perform used:21.414753913879395
- m.sha2.512 perform used:0.8110870122909546
- 
- swift.md5 perform used:15.19010305404663
- m.md5 perform used:0.39378201961517334
- swift.sha2.224 perform used:27.776574969291687
- m.sha2.224 perform used:1.2761141061782837
- swift.sha2.256 perform used:26.00479805469513
- m.sha2.256 perform used:1.227587103843689
- swift.sha2.384 perform used:21.38883101940155
- m.sha2.384 perform used:0.8030279874801636
- swift.sha2.512 perform used:21.72450292110443
- m.sha2.512 perform used:0.9420390129089355
- 
- 
- 
- */
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 static inline uint64_t CUInt64MakeWithBigEndianBytes(uint8_t const block[_Nonnull 8]) {

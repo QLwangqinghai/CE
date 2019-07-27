@@ -125,12 +125,10 @@
 		D6398ED822E87FAD00142A32 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6398ED722E87FAD00142A32 /* AppDelegate.swift */; };
 		D6398EDA22E87FAE00142A32 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6398ED922E87FAE00142A32 /* Assets.xcassets */; };
 		D6398EDD22E87FAE00142A32 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6398EDB22E87FAE00142A32 /* MainMenu.xib */; };
-		D6398EE422E8811000142A32 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754BE45519693E190098E6F3 /* CryptoSwift.framework */; };
-		D6398EE522E8811000142A32 /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 754BE45519693E190098E6F3 /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D6661E9722EAFD43001EB843 /* CDSHA2.c in Sources */ = {isa = PBXBuildFile; fileRef = D6661E9622EAFD43001EB843 /* CDSHA2.c */; };
-		D6661E9A22EAFD6B001EB843 /* CDMD.c in Sources */ = {isa = PBXBuildFile; fileRef = D6661E9922EAFD6B001EB843 /* CDMD.c */; };
-		D6E4FC5322EA0A410071748E /* CBridage.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FC5222EA0A410071748E /* CBridage.m */; };
-		D6E4FC5922EB50270071748E /* CoreDigest.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FC5822EB50270071748E /* CoreDigest.c */; };
+		D67D6BE222EC07D100A60A9D /* CDMD.c in Sources */ = {isa = PBXBuildFile; fileRef = D67D6BDE22EC07D000A60A9D /* CDMD.c */; };
+		D67D6BE322EC07D100A60A9D /* CBridage.m in Sources */ = {isa = PBXBuildFile; fileRef = D67D6BDF22EC07D100A60A9D /* CBridage.m */; };
+		D67D6BE422EC07D100A60A9D /* CDSHA2.c in Sources */ = {isa = PBXBuildFile; fileRef = D67D6BE122EC07D100A60A9D /* CDSHA2.c */; };
+		D67D6BE722EC07FC00A60A9D /* CoreDigest.c in Sources */ = {isa = PBXBuildFile; fileRef = D67D6BE622EC07FC00A60A9D /* CoreDigest.c */; };
 		E3FD2D531D6B81CE00A9F35F /* Error+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD2D511D6B813C00A9F35F /* Error+Extension.swift */; };
 		E6200E141FB9A7AE00258382 /* HKDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6200E131FB9A7AE00258382 /* HKDF.swift */; };
 		E6200E171FB9B68C00258382 /* HKDFTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6200E151FB9B67C00258382 /* HKDFTests.swift */; };
@@ -221,13 +219,6 @@
 			remoteGlobalIDString = 75211F91207249D8004E41F8;
 			remoteInfo = "CryptoSwift-TestHostApp";
 		};
-		D6398EE622E8811000142A32 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 754BE44C19693E190098E6F3 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 754BE45419693E190098E6F3;
-			remoteInfo = CryptoSwift;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -249,17 +240,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D6398EE822E8811000142A32 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D6398EE522E8811000142A32 /* CryptoSwift.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -403,13 +383,13 @@
 		D6398EDC22E87FAE00142A32 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D6398EDE22E87FAE00142A32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6398EDF22E87FAE00142A32 /* Te.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Te.entitlements; sourceTree = "<group>"; };
-		D6661E9622EAFD43001EB843 /* CDSHA2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CDSHA2.c; sourceTree = "<group>"; };
-		D6661E9922EAFD6B001EB843 /* CDMD.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CDMD.c; sourceTree = "<group>"; };
+		D67D6BDE22EC07D000A60A9D /* CDMD.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDMD.c; sourceTree = "<group>"; };
+		D67D6BDF22EC07D100A60A9D /* CBridage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBridage.m; sourceTree = "<group>"; };
+		D67D6BE022EC07D100A60A9D /* CBridage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBridage.h; sourceTree = "<group>"; };
+		D67D6BE122EC07D100A60A9D /* CDSHA2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDSHA2.c; sourceTree = "<group>"; };
+		D67D6BE522EC07FC00A60A9D /* CoreDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDigest.h; sourceTree = "<group>"; };
+		D67D6BE622EC07FC00A60A9D /* CoreDigest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CoreDigest.c; sourceTree = "<group>"; };
 		D6E4FC5022EA0A400071748E /* Te-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Te-Bridging-Header.h"; sourceTree = "<group>"; };
-		D6E4FC5122EA0A410071748E /* CBridage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBridage.h; sourceTree = "<group>"; };
-		D6E4FC5222EA0A410071748E /* CBridage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CBridage.m; sourceTree = "<group>"; };
-		D6E4FC5722EB50270071748E /* CoreDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreDigest.h; path = ../../AV/AV/CoreDigest/CoreDigest.h; sourceTree = "<group>"; };
-		D6E4FC5822EB50270071748E /* CoreDigest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CoreDigest.c; path = ../../AV/AV/CoreDigest/CoreDigest.c; sourceTree = "<group>"; };
 		E3FD2D511D6B813C00A9F35F /* Error+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Error+Extension.swift"; sourceTree = "<group>"; };
 		E6200E131FB9A7AE00258382 /* HKDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKDF.swift; sourceTree = "<group>"; };
 		E6200E151FB9B67C00258382 /* HKDFTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKDFTests.swift; sourceTree = "<group>"; };
@@ -459,7 +439,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6398EE422E8811000142A32 /* CryptoSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -718,18 +697,18 @@
 		D6398ED622E87FAD00142A32 /* Te */ = {
 			isa = PBXGroup;
 			children = (
-				D6E4FC5822EB50270071748E /* CoreDigest.c */,
-				D6E4FC5722EB50270071748E /* CoreDigest.h */,
+				D67D6BE622EC07FC00A60A9D /* CoreDigest.c */,
+				D67D6BE522EC07FC00A60A9D /* CoreDigest.h */,
+				D67D6BE022EC07D100A60A9D /* CBridage.h */,
+				D67D6BDF22EC07D100A60A9D /* CBridage.m */,
+				D67D6BDE22EC07D000A60A9D /* CDMD.c */,
+				D67D6BE122EC07D100A60A9D /* CDSHA2.c */,
 				D6398ED722E87FAD00142A32 /* AppDelegate.swift */,
 				D6398ED922E87FAE00142A32 /* Assets.xcassets */,
 				D6398EDB22E87FAE00142A32 /* MainMenu.xib */,
 				D6398EDE22E87FAE00142A32 /* Info.plist */,
 				D6398EDF22E87FAE00142A32 /* Te.entitlements */,
-				D6E4FC5122EA0A410071748E /* CBridage.h */,
-				D6E4FC5222EA0A410071748E /* CBridage.m */,
 				D6E4FC5022EA0A400071748E /* Te-Bridging-Header.h */,
-				D6661E9622EAFD43001EB843 /* CDSHA2.c */,
-				D6661E9922EAFD6B001EB843 /* CDMD.c */,
 			);
 			path = Te;
 			sourceTree = "<group>";
@@ -856,12 +835,10 @@
 				D6398ED122E87FAD00142A32 /* Sources */,
 				D6398ED222E87FAD00142A32 /* Frameworks */,
 				D6398ED322E87FAD00142A32 /* Resources */,
-				D6398EE822E8811000142A32 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				D6398EE722E8811000142A32 /* PBXTargetDependency */,
 			);
 			name = Te;
 			productName = Te;
@@ -1136,11 +1113,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6661E9A22EAFD6B001EB843 /* CDMD.c in Sources */,
-				D6E4FC5322EA0A410071748E /* CBridage.m in Sources */,
-				D6661E9722EAFD43001EB843 /* CDSHA2.c in Sources */,
-				D6E4FC5922EB50270071748E /* CoreDigest.c in Sources */,
+				D67D6BE322EC07D100A60A9D /* CBridage.m in Sources */,
 				D6398ED822E87FAD00142A32 /* AppDelegate.swift in Sources */,
+				D67D6BE422EC07D100A60A9D /* CDSHA2.c in Sources */,
+				D67D6BE722EC07FC00A60A9D /* CoreDigest.c in Sources */,
+				D67D6BE222EC07D100A60A9D /* CDMD.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1206,11 +1183,6 @@
 			isa = PBXTargetDependency;
 			target = 75211F91207249D8004E41F8 /* CryptoSwift-TestHostApp */;
 			targetProxy = 75F9482120BDDF9900956311 /* PBXContainerItemProxy */;
-		};
-		D6398EE722E8811000142A32 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 754BE45419693E190098E6F3 /* CryptoSwift */;
-			targetProxy = D6398EE622E8811000142A32 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1397,7 +1369,6 @@
 		D6398EE122E87FAE00142A32 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1462,13 +1433,13 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Te/Te-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
 		D6398EE222E87FAE00142A32 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1525,13 +1496,13 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Te/Te-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
 		D6398EE322E87FAE00142A32 /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1588,6 +1559,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Te/Te-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
+				VALID_ARCHS = x86_64;
 			};
 			name = Test;
 		};

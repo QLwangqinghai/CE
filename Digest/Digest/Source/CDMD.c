@@ -53,7 +53,7 @@ static inline void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t curre
         
         uint32_t Mg = CUInt32MakeWithLittleEndianBytes(&block[gAdvanced]);
 
-        B = B + CDUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
+        B = B + CUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
         A = dTemp;
     }
     
@@ -68,7 +68,7 @@ static inline void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t curre
         
         uint32_t Mg = CUInt32MakeWithLittleEndianBytes(&block[gAdvanced]);
         
-        B = B + CDUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
+        B = B + CUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
         A = dTemp;
     }
     for (; j<48; j++) {
@@ -82,7 +82,7 @@ static inline void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t curre
         
         uint32_t Mg = CUInt32MakeWithLittleEndianBytes(&block[gAdvanced]);
 
-        B = B + CDUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
+        B = B + CUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
         A = dTemp;
     }
     for (; j<64; j++) {
@@ -96,7 +96,7 @@ static inline void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t curre
         
         uint32_t Mg = CUInt32MakeWithLittleEndianBytes(&block[gAdvanced]);
 
-        B = B + CDUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
+        B = B + CUInt32RotateLeft(A + F + k[j] + Mg, s[j]);
         A = dTemp;
     }
 
@@ -321,90 +321,21 @@ typedef union {
 
 
 #define FF(a,b,c,d,M,s,t) \
-a = (a + F(b,c,d) + M + t); a = CC_ROLc(a, s) + b;
+a = (a + F(b,c,d) + M + t); a = CUInt32RotateLeft(a, s) + b;
 
 #define GG(a,b,c,d,M,s,t) \
-a = (a + G(b,c,d) + M + t); a = CC_ROLc(a, s) + b;
+a = (a + G(b,c,d) + M + t); a = CUInt32RotateLeft(a, s) + b;
 
 #define HH(a,b,c,d,M,s,t) \
-a = (a + H(b,c,d) + M + t); a = CC_ROLc(a, s) + b;
+a = (a + H(b,c,d) + M + t); a = CUInt32RotateLeft(a, s) + b;
 
 #define II(a,b,c,d,M,s,t) \
-a = (a + I(b,c,d) + M + t); a = CC_ROLc(a, s) + b;
+a = (a + I(b,c,d) + M + t); a = CUInt32RotateLeft(a, s) + b;
 
 #define ccdigest_u32(_state_)            (&((ccdigest_state_t)(_state_)).hdr->state.u32)
 
 
-#if defined(_MSC_VER)
-// MARK: -- MSVC version
-
-#include <stdlib.h>
-#if !defined(__clang__)
-#pragma intrinsic(_lrotr,_lrotl)
-#endif
-#define    CC_ROR(x,n) _lrotr(x,n)
-#define    CC_ROL(x,n) _lrotl(x,n)
-#define    CC_RORc(x,n) _lrotr(x,n)
-#define    CC_ROLc(x,n) _lrotl(x,n)
-
-#elif (defined(__i386__) || defined(__x86_64__))
-// MARK: -- intel asm version
-
-static inline uint32_t CC_ROL(uint32_t word, int i)
-{
-    __asm__ ("roll %%cl,%0"
-             :"=r" (word)
-             :"0" (word),"c" (i));
-    return word;
-}
-
-static inline uint32_t CC_ROR(uint32_t word, int i)
-{
-    __asm__ ("rorl %%cl,%0"
-             :"=r" (word)
-             :"0" (word),"c" (i));
-    return word;
-}
-
-/* Need to be a macro here, because 'i' is an immediate (constant) */
-#define CC_ROLc(word, i)                \
-({  uint32_t _word=(word);              \
-__asm__ __volatile__ ("roll %2,%0"  \
-:"=r" (_word)                   \
-:"0" (_word),"I" (i));          \
-_word;                              \
-})
-
-
-#define CC_RORc(word, i)                \
-({  uint32_t _word=(word);              \
-__asm__ __volatile__ ("rorl %2,%0"  \
-:"=r" (_word)                   \
-:"0" (_word),"I" (i));          \
-_word;                              \
-})
-
-#else
-
-// MARK: -- default version
-
-static inline uint32_t CC_ROL(uint32_t word, int i)
-{
-    return ( (word<<(i&31)) | (word>>(32-(i&31))) );
-}
-
-static inline uint32_t CC_ROR(uint32_t word, int i)
-{
-    return ( (word>>(i&31)) | (word<<(32-(i&31))) );
-}
-
-#define    CC_ROLc(x, y) CC_ROL(x, y)
-#define    CC_RORc(x, y) CC_ROR(x, y)
-
-#endif
-
-void md5_compress(const void *in, uint32_t currentHash[_Nonnull 4], size_t nblocks)
-{
+void md5_compress(const void *in, uint32_t currentHash[_Nonnull 4], size_t nblocks) {
     uint32_t i, W[16], a, b, c, d;
     uint32_t *s = currentHash;
     const unsigned char *buf = in;
@@ -496,92 +427,3 @@ void md5_compress(const void *in, uint32_t currentHash[_Nonnull 4], size_t nbloc
         buf+=CCMD5_BLOCK_SIZE;
     }
 }
-
-struct ccdigest_info {
-    size_t output_size;
-    size_t state_size;
-    size_t block_size;
-    size_t oid_size;
-    const unsigned char *oid;
-    const void *initial_state;
-    void(*compress)(ccdigest_state_t state, size_t nblocks,
-                    const void *data);
-    void(*final)(const struct ccdigest_info *di, ccdigest_ctx_t ctx,
-                 unsigned char *digest);
-};
-
-
-#define ccdigest_nbits(_di_, _ctx_)      (((uint64_t *)(&((ccdigest_ctx_t)(_ctx_)).hdr->state.u8))[0])
-#define ccdigest_data(_di_, _ctx_)       (&((ccdigest_ctx_t)(_ctx_)).hdr->state.u8 + (_di_)->state_size + sizeof(uint64_t))
-#define ccdigest_num(_di_, _ctx_)        (((unsigned int *)(&((ccdigest_ctx_t)(_ctx_)).hdr->state.u8 + (_di_)->state_size + sizeof(uint64_t) + (_di_)->block_size))[0])
-#define ccdigest_state(_di_, _ctx_)      ((struct ccdigest_state *)(&((ccdigest_ctx_t)(_ctx_)).hdr->state.u8 + sizeof(uint64_t)))
-#define    CC_STORE64_LE(x, y) do {                                    \
-((unsigned char *)(y))[7] = (unsigned char)(((x)>>56)&255);     \
-((unsigned char *)(y))[6] = (unsigned char)(((x)>>48)&255);        \
-((unsigned char *)(y))[5] = (unsigned char)(((x)>>40)&255);        \
-((unsigned char *)(y))[4] = (unsigned char)(((x)>>32)&255);        \
-((unsigned char *)(y))[3] = (unsigned char)(((x)>>24)&255);        \
-((unsigned char *)(y))[2] = (unsigned char)(((x)>>16)&255);        \
-((unsigned char *)(y))[1] = (unsigned char)(((x)>>8)&255);        \
-((unsigned char *)(y))[0] = (unsigned char)((x)&255);            \
-} while(0)
-#define ccdigest_state_u32(_di_, _ctx_)  ccdigest_u32(ccdigest_state((_di_), (_ctx_)))
-#define    CC_STORE32_LE(x, y) do {                                    \
-((unsigned char *)(y))[3] = (unsigned char)(((x)>>24)&255);        \
-((unsigned char *)(y))[2] = (unsigned char)(((x)>>16)&255);        \
-((unsigned char *)(y))[1] = (unsigned char)(((x)>>8)&255);        \
-((unsigned char *)(y))[0] = (unsigned char)((x)&255);            \
-} while(0)
-
-void ccdigest_final_64le(const struct ccdigest_info *di, ccdigest_ctx_t ctx,
-                         unsigned char *digest) {
-    ccdigest_nbits(di, ctx) += ccdigest_num(di, ctx) << 3;
-    ccdigest_data(di, ctx)[ccdigest_num(di, ctx)++] = 0x80;
-    
-    /* If we don't have at least 8 bytes (for the length) left we need to add
-     a second block. */
-    if (ccdigest_num(di, ctx) > 64 - 8) {
-        while (ccdigest_num(di, ctx) < 64) {
-            ccdigest_data(di, ctx)[ccdigest_num(di, ctx)++] = 0;
-        }
-        di->compress(ccdigest_state(di, ctx), 1, ccdigest_data(di, ctx));
-        ccdigest_num(di, ctx) = 0;
-    }
-    
-    /* pad upto block_size minus 8 with 0s */
-    while (ccdigest_num(di, ctx) < 64 - 8) {
-        ccdigest_data(di, ctx)[ccdigest_num(di, ctx)++] = 0;
-    }
-    
-    CC_STORE64_LE(ccdigest_nbits(di, ctx), ccdigest_data(di, ctx) + 64 - 8);
-    di->compress(ccdigest_state(di, ctx), 1, ccdigest_data(di, ctx));
-    
-    /* copy output */
-    for (unsigned int i = 0; i < di->output_size / 4; i++) {
-        CC_STORE32_LE(ccdigest_state_u32(di, ctx)[i], digest+(4*i));
-    }
-}
-
-
-
-
-#define OID_DEF(_VALUE_)  ((const unsigned char *)_VALUE_)
-#define CC_DIGEST_OID_MD5       OID_DEF("\x06\x08\x2A\x86\x48\x86\xF7\x0D\x02\x05")
-
-const uint32_t ccmd4_initial_state[4] = {
-    0x67452301,
-    0xefcdab89,
-    0x98badcfe,
-    0x10325476,
-};
-
-const struct ccdigest_info ccmd5_ltc_di = {
-    .output_size = CCMD5_OUTPUT_SIZE,
-    .state_size = CCMD5_STATE_SIZE,
-    .block_size = CCMD5_BLOCK_SIZE,
-    .oid_size = 10,
-    .oid = CC_DIGEST_OID_MD5,
-    .initial_state = ccmd4_initial_state,
-    .compress = md5_compress,
-    .final = ccdigest_final_64le,
-};

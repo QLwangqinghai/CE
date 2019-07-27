@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D6398ED422E87FAD00142A32"
-               BuildableName = "Te.app"
-               BlueprintName = "Te"
-               ReferencedContainer = "container:CryptoSwift.xcodeproj">
+               BlueprintIdentifier = "D67D6BF522EC0AE400A60A9D"
+               BuildableName = "Digest.app"
+               BlueprintName = "Digest"
+               ReferencedContainer = "container:Digest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D6398ED422E87FAD00142A32"
-            BuildableName = "Te.app"
-            BlueprintName = "Te"
-            ReferencedContainer = "container:CryptoSwift.xcodeproj">
+            BlueprintIdentifier = "D67D6BF522EC0AE400A60A9D"
+            BuildableName = "Digest.app"
+            BlueprintName = "Digest"
+            ReferencedContainer = "container:Digest.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -55,10 +55,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D6398ED422E87FAD00142A32"
-            BuildableName = "Te.app"
-            BlueprintName = "Te"
-            ReferencedContainer = "container:CryptoSwift.xcodeproj">
+            BlueprintIdentifier = "D67D6BF522EC0AE400A60A9D"
+            BuildableName = "Digest.app"
+            BlueprintName = "Digest"
+            ReferencedContainer = "container:Digest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -74,10 +74,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D6398ED422E87FAD00142A32"
-            BuildableName = "Te.app"
-            BlueprintName = "Te"
-            ReferencedContainer = "container:CryptoSwift.xcodeproj">
+            BlueprintIdentifier = "D67D6BF522EC0AE400A60A9D"
+            BuildableName = "Digest.app"
+            BlueprintName = "Digest"
+            ReferencedContainer = "container:Digest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

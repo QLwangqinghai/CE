@@ -8,8 +8,8 @@
 
 #include "CoreDigest.h"
 
-#define Gamma0(x)       (CDUInt64RotateRight(x, 1) ^ CDUInt64RotateRight(x, 8) ^ (x >> 7))
-#define Gamma1(x)       (CDUInt64RotateRight(x, 19) ^ CDUInt64RotateRight(x, 61) ^ (x >> 6))
+#define Gamma0(x)       (CUInt64RotateRight(x, 1) ^ CUInt64RotateRight(x, 8) ^ (x >> 7))
+#define Gamma1(x)       (CUInt64RotateRight(x, 19) ^ CUInt64RotateRight(x, 61) ^ (x >> 6))
 
 
 static inline void CDSHA2Process64(const uint8_t block[_Nonnull 128], uint64_t currentHash[_Nonnull 8]) {
@@ -57,10 +57,10 @@ static inline void CDSHA2Process64(const uint8_t block[_Nonnull 128], uint64_t c
     
 //    // Main loop
 //    for (size_t j=0; j<kCount; j++) {
-//        uint64_t s0 = CDUInt64RotateRight(A, 28) ^ CDUInt64RotateRight(A, 34) ^ CDUInt64RotateRight(A, 39);
+//        uint64_t s0 = CUInt64RotateRight(A, 28) ^ CUInt64RotateRight(A, 34) ^ CUInt64RotateRight(A, 39);
 //        uint64_t maj = (A & B) ^ (A & C) ^ (B & C);
 //        uint64_t t2 = s0 + maj;
-//        uint64_t s1 = CDUInt64RotateRight(E, 14) ^ CDUInt64RotateRight(E, 18) ^ CDUInt64RotateRight(E, 41);
+//        uint64_t s1 = CUInt64RotateRight(E, 14) ^ CUInt64RotateRight(E, 18) ^ CUInt64RotateRight(E, 41);
 //        uint64_t ch = (E & F) ^ ((~E) & G);
 //        uint64_t t1 = H + s1 + ch + k[j] + M[j];
 //
@@ -89,8 +89,8 @@ static inline void CDSHA2Process64(const uint8_t block[_Nonnull 128], uint64_t c
 #define Maj(x,y,z)      (((x | y) & z) | (x & y))
     
 #define RND(a,b,c,d,e,f,g,h,i)                    \
-t0 = h + (CDUInt64RotateRight(e, 14) ^ CDUInt64RotateRight(e, 18) ^ CDUInt64RotateRight(e, 41)) + Ch(e, f, g) + k[i] + M[i];   \
-t1 = (CDUInt64RotateRight(a, 28) ^ CDUInt64RotateRight(a, 34) ^ CDUInt64RotateRight(a, 39)) + Maj(a, b, c);                  \
+t0 = h + (CUInt64RotateRight(e, 14) ^ CUInt64RotateRight(e, 18) ^ CUInt64RotateRight(e, 41)) + Ch(e, f, g) + k[i] + M[i];   \
+t1 = (CUInt64RotateRight(a, 28) ^ CUInt64RotateRight(a, 34) ^ CUInt64RotateRight(a, 39)) + Maj(a, b, c);                  \
 d += t0;                                        \
 h  = t0 + t1;
 
@@ -107,10 +107,10 @@ h  = t0 + t1;
     
 //    // Main loop
 //    for (size_t j=0; j<kCount; j++) {
-//        uint64_t s0 = CDUInt64RotateRight(A, 28) ^ CDUInt64RotateRight(A, 34) ^ CDUInt64RotateRight(A, 39);
+//        uint64_t s0 = CUInt64RotateRight(A, 28) ^ CUInt64RotateRight(A, 34) ^ CUInt64RotateRight(A, 39);
 //        uint64_t maj = (A & B) ^ (A & C) ^ (B & C);
 //        uint64_t t2 = s0 + maj;
-//        uint64_t s1 = CDUInt64RotateRight(E, 14) ^ CDUInt64RotateRight(E, 18) ^ CDUInt64RotateRight(E, 41);
+//        uint64_t s1 = CUInt64RotateRight(E, 14) ^ CUInt64RotateRight(E, 18) ^ CUInt64RotateRight(E, 41);
 //        uint64_t ch = (E & F) ^ ((~E) & G);
 //        uint64_t t1 = H + s1 + ch + k[j] + M[j];
 //
@@ -154,8 +154,8 @@ static inline void CDSHA2Process32(uint8_t const block[_Nonnull 64], uint32_t cu
     }
     
     for (; idx<kCount; idx++) {
-        uint32_t s0 = CDUInt32RotateRight(M[idx - 15], 7) ^ CDUInt32RotateRight(M[idx - 15], 18) ^ (M[idx - 15] >> 3);
-        uint32_t s1 = CDUInt32RotateRight(M[idx - 2], 17) ^ CDUInt32RotateRight(M[idx - 2], 19) ^ (M[idx - 2] >> 10);
+        uint32_t s0 = CUInt32RotateRight(M[idx - 15], 7) ^ CUInt32RotateRight(M[idx - 15], 18) ^ (M[idx - 15] >> 3);
+        uint32_t s1 = CUInt32RotateRight(M[idx - 2], 17) ^ CUInt32RotateRight(M[idx - 2], 19) ^ (M[idx - 2] >> 10);
         M[idx] = M[idx - 16] + s0 + M[idx - 7] + s1;
     }
     
@@ -170,10 +170,10 @@ static inline void CDSHA2Process32(uint8_t const block[_Nonnull 64], uint32_t cu
     
     // Main loop
     for (size_t j=0; j<kCount; j++) {
-        uint32_t s0 = CDUInt32RotateRight(A, 2) ^ CDUInt32RotateRight(A, 13) ^ CDUInt32RotateRight(A, 22);
+        uint32_t s0 = CUInt32RotateRight(A, 2) ^ CUInt32RotateRight(A, 13) ^ CUInt32RotateRight(A, 22);
         uint32_t maj = (A & B) ^ (A & C) ^ (B & C);
         uint32_t t2 = s0 + maj;
-        uint32_t s1 = CDUInt32RotateRight(E, 6) ^ CDUInt32RotateRight(E, 11) ^ CDUInt32RotateRight(E, 25);
+        uint32_t s1 = CUInt32RotateRight(E, 6) ^ CUInt32RotateRight(E, 11) ^ CUInt32RotateRight(E, 25);
         uint32_t ch = (E & F) ^ ((~E) & G);
         uint32_t t1 = H + s1 + ch + k[j] + M[j];
         

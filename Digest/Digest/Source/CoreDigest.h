@@ -140,12 +140,58 @@ void CDSHA2th512ExportHashValue(CDSHA2th512Context_s * _Nonnull context, uint8_t
 
 #pragma mark - helper
 
+
+////arm uint32_t
+//static inline uint32_t CUInt32ByteSwap(uint32_t val) {
+//    __asm__("bswap %0" : "=r" (val) : "0" (val));
+//    return val;
+//}
+//
+//
+////arm uint64_t
+//static inline uint64_t CUInt64ByteSwap64(uint64_t val) {
+//#ifdef __X64
+//    __asm__("bswapq %0" : "=r" (val) : "0" (val));
+//#else
+//
+//    uint64_t lower = val & 0xffffffffU;
+//    uint32_t higher = (val >> 32) & 0xffffffffU;
+//
+//    lower = CUInt32ByteSwap(lower);
+//    higher = CUInt32ByteSwap(higher);
+//
+//    return (lower << 32) + higher;
+//
+//#endif
+//    return val;
+//}
+
+
+static inline uint32_t CUInt32ByteSwap(uint32_t val) {
+    return (((val>>24) & 0x000000FF) | ((val<<24) & 0xFF000000) | ((val>>8) & 0x0000FF00) | ((val<<8) & 0x00FF0000));
+}
+
+static inline uint64_t CUInt64ByteSwap(uint64_t val) {
+    return ((uint64_t)((val & 0xff00000000000000ULL) >> 56) |
+                       ((val & 0x00ff000000000000ULL) >> 40) |
+                       ((val & 0x0000ff0000000000ULL) >> 24) |
+                       ((val & 0x000000ff00000000ULL) >>  8) |
+                       ((val & 0x00000000ff000000ULL) <<  8) |
+                       ((val & 0x0000000000ff0000ULL) << 24) |
+                       ((val & 0x000000000000ff00ULL) << 40) |
+                       ((val & 0x00000000000000ffULL) << 56));
+}
+
+
+
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 static inline uint64_t CUInt64MakeWithBigEndianBytes(uint8_t const block[_Nonnull 8]) {
-    return (((uint64_t)block[0]) << 56) | (((uint64_t)block[1]) << 48) | (((uint64_t)block[2]) << 40) | (((uint64_t)block[3]) << 32) | (((uint64_t)block[4]) << 24) | (((uint64_t)block[5]) << 16) | (((uint64_t)block[6]) << 8) | ((uint64_t)block[7]);
+    uint64_t value = *((uint64_t *)block);
+    return CUInt64ByteSwap(value);
 }
 static inline uint32_t CUInt32MakeWithBigEndianBytes(uint8_t const block[_Nonnull 4]) {
-    return (((uint32_t)block[0]) << 24) | (((uint32_t)block[1]) << 16) | (((uint32_t)block[2]) << 8) | ((uint32_t)block[3]);
+    uint32_t value = *((uint32_t *)block);
+    return CUInt32ByteSwap(value);
 }
 static inline uint64_t CUInt64MakeWithLittleEndianBytes(uint8_t const block[_Nonnull 8]) {
     return *((uint64_t *)block);
@@ -187,10 +233,12 @@ static inline uint32_t CUInt32MakeWithBigEndianBytes(uint8_t const block[_Nonnul
     return *((uint32_t *)block);
 }
 static inline uint64_t CUInt64MakeWithLittleEndianBytes(uint8_t const block[_Nonnull 8]) {
-    return (((uint64_t)block[0])) | (((uint64_t)block[1]) << 8) | (((uint64_t)block[2]) << 16) | (((uint64_t)block[3]) << 24) | (((uint64_t)block[4]) << 32) | (((uint64_t)block[5]) << 40) | (((uint64_t)block[6]) << 48) | ((uint64_t)block[7] << 56);
+    uint64_t value = *((uint64_t *)block);
+    return CUInt64ByteSwap(value);
 }
 static inline uint32_t CUInt32MakeWithLittleEndianBytes(uint8_t const block[_Nonnull 4]) {
-    return (((uint32_t)block[0])) | (((uint32_t)block[1]) << 8) | (((uint32_t)block[2]) << 16) | (((uint32_t)block[3]) << 24);
+    uint32_t value = *((uint32_t *)block);
+    return CUInt32ByteSwap(value);
 }
 
 
@@ -225,17 +273,76 @@ static inline void CUInt32ToLittleEndianBytes(uint32_t value, uint8_t block[_Non
 
 
 
+#if defined(__x86_64__) && !defined(_MSC_VER) //clang _MSVC doesn't support GNU-style inline assembly
+// MARK: -- intel 64 asm version
 
+static inline uint64_t CUInt64RotateLeft(uint64_t word, int i) {
+    __asm__("rolq %%cl,%0"
+            :"=r" (word)
+            :"0" (word),"c" (i));
+    return word;
+}
 
-static inline uint64_t CDUInt64RotateRight(uint64_t value, uint64_t by) {
-    return (value >> by) | (value << (64 - by));
-}
-static inline uint32_t CDUInt32RotateRight(uint32_t value, uint32_t by) {
-    return (value >> by) | (value << (32 - by));
+static inline uint64_t CUInt64RotateRight(uint64_t word, int i) {
+    __asm__("rorq %%cl,%0"
+            :"=r" (word)
+            :"0" (word),"c" (i));
+    return word;
 }
 
-static inline uint32_t CDUInt32RotateLeft(uint32_t value, uint32_t by) {
-    return ((value << by) & 0xffffffff) | (value >> (32 - by));
+#else /* Not x86_64  */
+
+// MARK: -- default C version
+
+static inline uint64_t CUInt64RotateLeft(uint64_t word, int i) {
+    return ( (word<<(i&63)) | (word>>(64-(i&63))) );
 }
+
+static inline uint64_t CUInt64RotateRight(uint64_t word, int i) {
+    return ( (word>>(i&63)) | (word<<(64-(i&63))) );
+}
+
+#endif
+
+// MARK: - 32-bit Rotates
+
+#if defined(_MSC_VER)
+// MARK: -- MSVC version
+
+#include <stdlib.h>
+#if !defined(__clang__)
+#pragma intrinsic(_lrotr,_lrotl)
+#endif
+#define    CUInt32RotateRight(x,n) _lrotr(x,n)
+#define    CUInt32RotateLeft(x,n) _lrotl(x,n)
+
+#elif (defined(__i386__) || defined(__x86_64__))
+// MARK: -- intel asm version
+
+static inline uint32_t CUInt32RotateLeft(uint32_t word, int i) {
+    __asm__ ("roll %%cl,%0"
+             :"=r" (word)
+             :"0" (word),"c" (i));
+    return word;
+}
+
+static inline uint32_t CUInt32RotateRight(uint32_t word, int i) {
+    __asm__ ("rorl %%cl,%0"
+             :"=r" (word)
+             :"0" (word),"c" (i));
+    return word;
+}
+
+#else
+
+static inline uint32_t CUInt32RotateLeft(uint32_t word, int i) {
+    return ( (word<<(i&31)) | (word>>(32-(i&31))) );
+}
+
+static inline uint32_t CUInt32RotateRight(uint32_t word, int i) {
+    return ( (word>>(i&31)) | (word<<(32-(i&31))) );
+}
+
+#endif
 
 #endif /* CoreDigest_h */

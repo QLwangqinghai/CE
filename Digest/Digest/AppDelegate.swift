@@ -71,25 +71,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     
     func aa() throws {
-        var data = NSData(contentsOfFile: "/Users/vector/Downloads/TIMSDK-master.zip")!
+        let data = NSData(contentsOfFile: "/Users/vector/Downloads/TIMSDK-master.zip")!
         
         var array: [Data] = []
         for idx in 0..<32 {
             let a = data.subdata(with: NSMakeRange(idx * 1024 * 1024, 1024 * 1024))
             array.append(a)
         }
-        let ax: CC_MD5_CTX = CC_MD5_CTX()
-        
         let input = data.subdata(with: NSMakeRange(0, 32 * 1024 * 1024))
         
         
         self.items.append(WorkItem.init(tag: "m.md5", block: {
             let h = CBridage.md5(input)
-            let result = h.toHexString()
-            self.results.append(result);
-        }));
-        self.items.append(WorkItem.init(tag: "m.md5.2", block: {
-            let h = CBridage.md52(input)
             let result = h.toHexString()
             self.results.append(result);
         }));
@@ -100,9 +93,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let result = (h as Data).toHexString()
             self.results.append(result);
         }));
-        
-        
-        
+
         
         self.items.append(WorkItem.init(tag: "m.sha2.224", block: {
             let sha2Oncea = CBridage.sha224(input)
@@ -116,9 +107,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.results.append(result);
         }));
         
-        
-        
-        
+
         self.items.append(WorkItem.init(tag: "m.sha2.256", block: {
             let sha2Oncea = CBridage.sha256(input)
             let result = sha2Oncea.toHexString()
@@ -130,7 +119,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let result = (h as Data).toHexString()
             self.results.append(result);
         }));
-        
         
         
         self.items.append(WorkItem.init(tag: "m.sha2.384", block: {
@@ -159,17 +147,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.results.append(result);
         }));
         
+
+        
         for item in self.items {
             item.perform()
         }
-        print("\(self.results)")
-        
-        let a = CFAbsoluteTimeGetCurrent();
-        
-        
-        
-        
-        
+        self.items.removeAll()
+        var idx = 0
+        while idx < self.results.count {
+            let a = self.results[idx]
+            let b = self.results[idx+1]
+            if a == b {
+                print(a)
+            } else {
+                print("!!!!! \(a) \(b)")
+            }
+            idx += 2
+        }
         //        self.items.append(WorkItem.init(tag: "swift.md5", block: {
         //            let m = input.md5()
         //            let result = m.toHexString()

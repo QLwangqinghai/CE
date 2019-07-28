@@ -111,7 +111,6 @@ void CDMD5ContextInit(CDMD5Context_s * _Nonnull context);
 void CDMD5Final(CDMD5Context_s * _Nonnull context);
 void CDMD5Update(CDMD5Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
 void CDMD5ExportHashValue(CDMD5Context_s * _Nonnull context, uint8_t bytes[_Nonnull 16]);
-void CDMD5Update2(CDMD5Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
 
 void CDSHA2th224ContextInit(CDSHA2th224Context_s * _Nonnull context);
 void CDSHA2th224Update(CDSHA2th224Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);

@@ -29,17 +29,6 @@
     CDMD5ExportHashValue(&context, result.mutableBytes);
     return result;
 }
-+ (NSData *)md52:(NSData *)data {
-    NSMutableData * result = [NSMutableData dataWithLength:16];
-    
-    CDMD5Context_s context = {};
-    
-    CDMD5ContextInit(&context);
-    CDMD5Update2(&context, data.bytes, data.length);
-    CDMD5Final(&context);
-    CDMD5ExportHashValue(&context, result.mutableBytes);
-    return result;
-}
 
 + (NSData *)sha224:(NSData *)data {
     NSMutableData * result = [NSMutableData dataWithLength:28];

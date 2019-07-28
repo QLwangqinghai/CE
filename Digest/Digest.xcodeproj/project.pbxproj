@@ -62,6 +62,8 @@
 		D67D6BF822EC0AE400A60A9D /* Digest */ = {
 			isa = PBXGroup;
 			children = (
+				D67D6C1522EC27D900A60A9D /* CBridage.h */,
+				D67D6C1222EC27D900A60A9D /* CBridage.m */,
 				D67D6C0F22EC27D900A60A9D /* Source */,
 				D67D6BF922EC0AE400A60A9D /* AppDelegate.swift */,
 				D67D6BFB22EC0AE600A60A9D /* Assets.xcassets */,
@@ -76,12 +78,10 @@
 		D67D6C0F22EC27D900A60A9D /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				D67D6C1422EC27D900A60A9D /* CoreDigest.h */,
 				D67D6C1022EC27D900A60A9D /* CoreDigest.c */,
 				D67D6C1122EC27D900A60A9D /* CDSHA2.c */,
-				D67D6C1222EC27D900A60A9D /* CBridage.m */,
 				D67D6C1322EC27D900A60A9D /* CDMD.c */,
-				D67D6C1422EC27D900A60A9D /* CoreDigest.h */,
-				D67D6C1522EC27D900A60A9D /* CBridage.h */,
 			);
 			path = Source;
 			sourceTree = "<group>";

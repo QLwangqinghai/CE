@@ -35,6 +35,15 @@ typedef enum _CDVariant {
     CDVariantSHA2th256 = 4,
     CDVariantSHA2th384 = 5,
     CDVariantSHA2th512 = 6,
+    
+    CDVariantSHA3th224 = 7,
+    CDVariantSHA3th256 = 8,
+    CDVariantSHA3th384 = 9,
+    CDVariantSHA3th512 = 10,
+    CDVariantSHA3thKeccak224 = 11,
+    CDVariantSHA3thKeccak256 = 12,
+    CDVariantSHA3thKeccak384 = 13,
+    CDVariantSHA3thKeccak512 = 14,
 } CDVariant_e;
 
 #define CDVariantMD5BlockSize 64
@@ -45,17 +54,25 @@ typedef enum _CDVariant {
 static inline size_t CDCDVariantDigestLength(CDVariant_e e) {
     switch (e) {
         case CDVariantMD5:
-            return 128/8;
+            return 16;
         case CDVariantSHA1th160:
-            return 160/8;
+            return 20;
         case CDVariantSHA2th224:
-            return 224/8;//28
+        case CDVariantSHA3th224:
+        case CDVariantSHA3thKeccak224:
+            return 28;
         case CDVariantSHA2th256:
-            return 256/8;//32
+        case CDVariantSHA3th256:
+        case CDVariantSHA3thKeccak256:
+            return 32;
         case CDVariantSHA2th384:
-            return 384/8;//48
+        case CDVariantSHA3th384:
+        case CDVariantSHA3thKeccak384:
+            return 48;
         case CDVariantSHA2th512:
-            return 512/8;//64
+        case CDVariantSHA3th512:
+        case CDVariantSHA3thKeccak512:
+            return 64;
         default:
             return 0;
     }
@@ -73,34 +90,73 @@ static inline size_t CDVariantBlockSize(CDVariant_e e) {
         case CDVariantSHA2th384:
         case CDVariantSHA2th512:
             return CDVariantSHA2th512BlockSize;
+        case CDVariantSHA3th224:
+        case CDVariantSHA3thKeccak224:
+            return 144;
+        case CDVariantSHA3th256:
+        case CDVariantSHA3thKeccak256:
+            return 136;
+        case CDVariantSHA3th384:
+        case CDVariantSHA3thKeccak384:
+            return 104;
+        case CDVariantSHA3th512:
+        case CDVariantSHA3thKeccak512:
+            return 72;
         default:
             return 0;
     }
 }
 
+static inline size_t CDVariantHashContextSize(CDVariant_e e) {
+    switch (e) {
+        case CDVariantMD5:
+            return 16;
+        case CDVariantSHA1th160:
+            return 20;
+        case CDVariantSHA2th224:
+        case CDVariantSHA2th256:
+            return 32;
+        case CDVariantSHA2th384:
+        case CDVariantSHA2th512:
+            return 64;
+        case CDVariantSHA3th224:
+        case CDVariantSHA3thKeccak224:
+        case CDVariantSHA3th256:
+        case CDVariantSHA3thKeccak256:
+        case CDVariantSHA3th384:
+        case CDVariantSHA3thKeccak384:
+        case CDVariantSHA3th512:
+        case CDVariantSHA3thKeccak512:
+            return 200;
+        default:
+            return 0;
+    }
+}
+
+
 typedef struct _CDMD5Context {
     size_t digestVariant;
+    size_t accumulatedSize;
     uint32_t values[4];
     uint64_t bitCount;
     uint8_t accumulated[CDVariantMD5BlockSize];
-    uint32_t accumulatedSize;
 } CDMD5Context_s;
 
 typedef struct _CDSHA2th256Context {
     size_t digestVariant;
+    size_t accumulatedSize;
     uint32_t values[8];
     uint64_t bitCount;
     uint8_t accumulated[CDVariantSHA2th256BlockSize];
-    uint32_t accumulatedSize;
 } CDSHA2th256Context_s;
 
 typedef struct _CDSHA2th512Context {
     size_t digestVariant;
+    size_t accumulatedSize;
     uint64_t values[8];
     uint64_t bitCountLow;//长度的低位
     uint64_t bitCountHigh;//长度的高位
     uint8_t accumulated[CDVariantSHA2th512BlockSize];
-    uint32_t accumulatedSize;
 } CDSHA2th512Context_s;
 
 typedef CDSHA2th256Context_s CDSHA2th224Context_s;
@@ -134,6 +190,88 @@ void CDSHA2th512ContextInit(CDSHA2th512Context_s * _Nonnull context);
 void CDSHA2th512Update(CDSHA2th512Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
 void CDSHA2th512Final(CDSHA2th512Context_s * _Nonnull context);
 void CDSHA2th512ExportHashValue(CDSHA2th512Context_s * _Nonnull context, uint8_t bytes[_Nonnull 64]);
+
+
+
+
+
+typedef struct _CDSHA3th224Context {
+    size_t digestVariant;
+    size_t accumulatedSize;
+    uint64_t values[25];
+    uint8_t accumulated[144];
+} CDSHA3th224Context_s;
+
+typedef struct _CDSHA3th256Context {
+    size_t digestVariant;
+    size_t accumulatedSize;
+    uint64_t values[25];
+    uint8_t accumulated[136];
+} CDSHA3th256Context_s;
+
+typedef struct _CDSHA3th384Context {
+    size_t digestVariant;
+    size_t accumulatedSize;
+    uint64_t values[25];
+    uint8_t accumulated[104];
+} CDSHA3th384Context_s;
+
+typedef struct _CDSHA3th512Context {
+    size_t digestVariant;
+    size_t accumulatedSize;
+    uint64_t values[25];
+    uint8_t accumulated[72];
+} CDSHA3th512Context_s;
+
+//Keccak
+typedef CDSHA3th224Context_s CDSHA3thKeccak224Context_s;
+typedef CDSHA3th256Context_s CDSHA3thKeccak256Context_s;
+typedef CDSHA3th384Context_s CDSHA3thKeccak384Context_s;
+typedef CDSHA3th512Context_s CDSHA3thKeccak512Context_s;
+
+
+
+void CDSHA3th224ContextInit(CDSHA3th224Context_s * _Nonnull context);
+void CDSHA3th224Final(CDSHA3th224Context_s * _Nonnull context);
+void CDSHA3th224Update(CDSHA3th224Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3th224ExportHashValue(CDSHA3th224Context_s * _Nonnull context, uint8_t bytes[_Nonnull 28]);
+
+void CDSHA3th256ContextInit(CDSHA3th256Context_s * _Nonnull context);
+void CDSHA3th256Final(CDSHA3th256Context_s * _Nonnull context);
+void CDSHA3th256Update(CDSHA3th256Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3th256ExportHashValue(CDSHA3th256Context_s * _Nonnull context, uint8_t bytes[_Nonnull 32]);
+
+void CDSHA3th384ContextInit(CDSHA3th384Context_s * _Nonnull context);
+void CDSHA3th512ContextInit(CDSHA3th512Context_s * _Nonnull context);
+void CDSHA3thKeccak224ContextInit(CDSHA3thKeccak224Context_s * _Nonnull context);
+void CDSHA3thKeccak256ContextInit(CDSHA3thKeccak256Context_s * _Nonnull context);
+void CDSHA3thKeccak384ContextInit(CDSHA3thKeccak384Context_s * _Nonnull context);
+void CDSHA3thKeccak512ContextInit(CDSHA3thKeccak512Context_s * _Nonnull context);
+
+
+void CDSHA3th384Final(CDSHA3th384Context_s * _Nonnull context);
+void CDSHA3th512Final(CDSHA3th512Context_s * _Nonnull context);
+
+void CDSHA3thKeccak224Final(CDSHA3thKeccak224Context_s * _Nonnull context);
+void CDSHA3thKeccak256Final(CDSHA3thKeccak256Context_s * _Nonnull context);
+void CDSHA3thKeccak384Final(CDSHA3thKeccak384Context_s * _Nonnull context);
+void CDSHA3thKeccak512Final(CDSHA3thKeccak512Context_s * _Nonnull context);
+
+void CDSHA3th384Update(CDSHA3th384Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3th512Update(CDSHA3th512Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+
+void CDSHA3thKeccak224Update(CDSHA3thKeccak224Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3thKeccak256Update(CDSHA3thKeccak256Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+
+void CDSHA3thKeccak384Update(CDSHA3thKeccak384Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3thKeccak512Update(CDSHA3thKeccak512Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+
+void CDSHA3th384ExportHashValue(CDSHA3th384Context_s * _Nonnull context, uint8_t bytes[_Nonnull 48]);
+void CDSHA3th512ExportHashValue(CDSHA3th512Context_s * _Nonnull context, uint8_t bytes[_Nonnull 64]);
+void CDSHA3thKeccak224ExportHashValue(CDSHA3thKeccak224Context_s * _Nonnull context, uint8_t bytes[_Nonnull 28]);
+void CDSHA3thKeccak256ExportHashValue(CDSHA3thKeccak256Context_s * _Nonnull context, uint8_t bytes[_Nonnull 32]);
+void CDSHA3thKeccak384ExportHashValue(CDSHA3thKeccak384Context_s * _Nonnull context, uint8_t bytes[_Nonnull 48]);
+void CDSHA3thKeccak512ExportHashValue(CDSHA3thKeccak512Context_s * _Nonnull context, uint8_t bytes[_Nonnull 64]);
 
 
 

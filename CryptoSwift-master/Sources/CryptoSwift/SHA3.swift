@@ -44,11 +44,31 @@ public final class SHA3: DigestType {
         case sha224, sha256, sha384, sha512, keccak224, keccak256, keccak384, keccak512
 
         var digestLength: Int {
-            return 100 - (blockSize / 2)
+//            return 100 - (blockSize / 2)
+            switch self {
+            case .sha224, .keccak224:
+                return 28
+            case .sha256, .keccak256:
+                return 32
+            case .sha384, .keccak384:
+                return 48
+            case .sha512, .keccak512:
+                return 64
+            }
         }
 
         var blockSize: Int {
-            return (1600 - outputLength * 2) / 8
+//            return (1600 - outputLength * 2) / 8
+            switch self {
+            case .sha224, .keccak224:
+                return 144
+            case .sha256, .keccak256:
+                return 136
+            case .sha384, .keccak384:
+                return 104
+            case .sha512, .keccak512:
+                return 72
+            }
         }
 
         var markByte: UInt8 {

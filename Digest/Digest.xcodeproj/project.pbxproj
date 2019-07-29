@@ -14,6 +14,7 @@
 		D67D6C1722EC27D900A60A9D /* CDSHA2.c in Sources */ = {isa = PBXBuildFile; fileRef = D67D6C1122EC27D900A60A9D /* CDSHA2.c */; };
 		D67D6C1822EC27D900A60A9D /* CBridage.m in Sources */ = {isa = PBXBuildFile; fileRef = D67D6C1222EC27D900A60A9D /* CBridage.m */; };
 		D67D6C1922EC27D900A60A9D /* CDMD.c in Sources */ = {isa = PBXBuildFile; fileRef = D67D6C1322EC27D900A60A9D /* CDMD.c */; };
+		D6DBC75E22EEB58F00AA1589 /* CDSHA3.c in Sources */ = {isa = PBXBuildFile; fileRef = D6DBC75D22EEB58F00AA1589 /* CDSHA3.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		D67D6C1322EC27D900A60A9D /* CDMD.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDMD.c; sourceTree = "<group>"; };
 		D67D6C1422EC27D900A60A9D /* CoreDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDigest.h; sourceTree = "<group>"; };
 		D67D6C1522EC27D900A60A9D /* CBridage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBridage.h; sourceTree = "<group>"; };
+		D6DBC75D22EEB58F00AA1589 /* CDSHA3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CDSHA3.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 				D67D6C1022EC27D900A60A9D /* CoreDigest.c */,
 				D67D6C1122EC27D900A60A9D /* CDSHA2.c */,
 				D67D6C1322EC27D900A60A9D /* CDMD.c */,
+				D6DBC75D22EEB58F00AA1589 /* CDSHA3.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -167,6 +170,7 @@
 				D67D6C1622EC27D900A60A9D /* CoreDigest.c in Sources */,
 				D67D6C1822EC27D900A60A9D /* CBridage.m in Sources */,
 				D67D6BFA22EC0AE400A60A9D /* AppDelegate.swift in Sources */,
+				D6DBC75E22EEB58F00AA1589 /* CDSHA3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

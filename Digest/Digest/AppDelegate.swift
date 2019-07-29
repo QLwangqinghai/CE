@@ -72,14 +72,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func aa() throws {
         let data = NSData(contentsOfFile: "/Users/vector/Downloads/TIMSDK-master.zip")!
-        
-        var array: [Data] = []
-        for idx in 0..<32 {
-            let a = data.subdata(with: NSMakeRange(idx * 1024 * 1024, 1024 * 1024))
-            array.append(a)
+        let inputItem = data.subdata(with: NSMakeRange(0, 32 * 1024 * 1024))
+        let buffer = NSMutableData(capacity: 4 * 32 * 1024 * 1024)!
+        for _ in 0..<4 {
+            buffer.append(inputItem)
         }
-        let input = data.subdata(with: NSMakeRange(0, 32 * 1024 * 1024))
-        
+        let input = buffer as Data
         
         self.items.append(WorkItem.init(tag: "m.md5", block: {
             let h = CBridage.md5(input)
@@ -120,6 +118,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.results.append(result);
         }));
         
+        self.items.append(WorkItem.init(tag: "sys.sha.256", block: {
+            let h = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))!
+            CC_SHA256(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
+            let result = (h as Data).toHexString()
+            self.results.append(result);
+        }));
         
         self.items.append(WorkItem.init(tag: "m.sha2.384", block: {
             let sha2Oncea = CBridage.sha384(input)

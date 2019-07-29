@@ -232,48 +232,49 @@ typedef CDSHA3th512Context_s CDSHA3thKeccak512Context_s;
 
 
 void CDSHA3th224ContextInit(CDSHA3th224Context_s * _Nonnull context);
-void CDSHA3th224Final(CDSHA3th224Context_s * _Nonnull context);
 void CDSHA3th224Update(CDSHA3th224Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3th224Final(CDSHA3th224Context_s * _Nonnull context);
 void CDSHA3th224ExportHashValue(CDSHA3th224Context_s * _Nonnull context, uint8_t bytes[_Nonnull 28]);
 
+
 void CDSHA3th256ContextInit(CDSHA3th256Context_s * _Nonnull context);
-void CDSHA3th256Final(CDSHA3th256Context_s * _Nonnull context);
 void CDSHA3th256Update(CDSHA3th256Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3th256Final(CDSHA3th256Context_s * _Nonnull context);
 void CDSHA3th256ExportHashValue(CDSHA3th256Context_s * _Nonnull context, uint8_t bytes[_Nonnull 32]);
 
 void CDSHA3th384ContextInit(CDSHA3th384Context_s * _Nonnull context);
-void CDSHA3th512ContextInit(CDSHA3th512Context_s * _Nonnull context);
-void CDSHA3thKeccak224ContextInit(CDSHA3thKeccak224Context_s * _Nonnull context);
-void CDSHA3thKeccak256ContextInit(CDSHA3thKeccak256Context_s * _Nonnull context);
-void CDSHA3thKeccak384ContextInit(CDSHA3thKeccak384Context_s * _Nonnull context);
-void CDSHA3thKeccak512ContextInit(CDSHA3thKeccak512Context_s * _Nonnull context);
-
-
-void CDSHA3th384Final(CDSHA3th384Context_s * _Nonnull context);
-void CDSHA3th512Final(CDSHA3th512Context_s * _Nonnull context);
-
-void CDSHA3thKeccak224Final(CDSHA3thKeccak224Context_s * _Nonnull context);
-void CDSHA3thKeccak256Final(CDSHA3thKeccak256Context_s * _Nonnull context);
-void CDSHA3thKeccak384Final(CDSHA3thKeccak384Context_s * _Nonnull context);
-void CDSHA3thKeccak512Final(CDSHA3thKeccak512Context_s * _Nonnull context);
-
 void CDSHA3th384Update(CDSHA3th384Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
-void CDSHA3th512Update(CDSHA3th512Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
-
-void CDSHA3thKeccak224Update(CDSHA3thKeccak224Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
-void CDSHA3thKeccak256Update(CDSHA3thKeccak256Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
-
-void CDSHA3thKeccak384Update(CDSHA3thKeccak384Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
-void CDSHA3thKeccak512Update(CDSHA3thKeccak512Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
-
+void CDSHA3th384Final(CDSHA3th384Context_s * _Nonnull context);
 void CDSHA3th384ExportHashValue(CDSHA3th384Context_s * _Nonnull context, uint8_t bytes[_Nonnull 48]);
+
+void CDSHA3th512ContextInit(CDSHA3th512Context_s * _Nonnull context);
+void CDSHA3th512Update(CDSHA3th512Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3th512Final(CDSHA3th512Context_s * _Nonnull context);
 void CDSHA3th512ExportHashValue(CDSHA3th512Context_s * _Nonnull context, uint8_t bytes[_Nonnull 64]);
+
+
+void CDSHA3thKeccak224ContextInit(CDSHA3thKeccak224Context_s * _Nonnull context);
+void CDSHA3thKeccak224Update(CDSHA3thKeccak224Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3thKeccak224Final(CDSHA3thKeccak224Context_s * _Nonnull context);
 void CDSHA3thKeccak224ExportHashValue(CDSHA3thKeccak224Context_s * _Nonnull context, uint8_t bytes[_Nonnull 28]);
+
+
+void CDSHA3thKeccak256ContextInit(CDSHA3thKeccak256Context_s * _Nonnull context);
+void CDSHA3thKeccak256Update(CDSHA3thKeccak256Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3thKeccak256Final(CDSHA3thKeccak256Context_s * _Nonnull context);
 void CDSHA3thKeccak256ExportHashValue(CDSHA3thKeccak256Context_s * _Nonnull context, uint8_t bytes[_Nonnull 32]);
+
+
+void CDSHA3thKeccak384ContextInit(CDSHA3thKeccak384Context_s * _Nonnull context);
+void CDSHA3thKeccak384Update(CDSHA3thKeccak384Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3thKeccak384Final(CDSHA3thKeccak384Context_s * _Nonnull context);
 void CDSHA3thKeccak384ExportHashValue(CDSHA3thKeccak384Context_s * _Nonnull context, uint8_t bytes[_Nonnull 48]);
+
+
+void CDSHA3thKeccak512ContextInit(CDSHA3thKeccak512Context_s * _Nonnull context);
+void CDSHA3thKeccak512Update(CDSHA3thKeccak512Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA3thKeccak512Final(CDSHA3thKeccak512Context_s * _Nonnull context);
 void CDSHA3thKeccak512ExportHashValue(CDSHA3thKeccak512Context_s * _Nonnull context, uint8_t bytes[_Nonnull 64]);
-
-
 
 #pragma mark - helper
 

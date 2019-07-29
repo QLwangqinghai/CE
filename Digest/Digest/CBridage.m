@@ -29,6 +29,15 @@
     CDMD5ExportHashValue(&context, result.mutableBytes);
     return result;
 }
++ (NSData *)sha160:(NSData *)data {
+    NSMutableData * result = [NSMutableData dataWithLength:20];
+    CDSHA1th160Context_s context = {};
+    CDSHA1th160ContextInit(&context);
+    CDSHA1th160Update(&context, data.bytes, data.length);
+    CDSHA1th160Final(&context);
+    CDSHA1th160ExportHashValue(&context, result.mutableBytes);
+    return result;
+}
 
 + (NSData *)sha224:(NSData *)data {
     NSMutableData * result = [NSMutableData dataWithLength:28];
@@ -72,5 +81,24 @@
     return result;
 }
 
+
++ (NSData *)sha3th256:(NSData *)data {
+    NSMutableData * result = [NSMutableData dataWithLength:32];
+    CDSHA3th256Context_s context;
+    CDSHA3th256ContextInit(&context);
+    CDSHA3th256Update(&context, data.bytes, data.length);
+    CDSHA3th256Final(&context);
+    CDSHA3th256ExportHashValue(&context, result.mutableBytes);
+    return result;
+}
++ (NSData *)sha3th224:(NSData *)data {
+    NSMutableData * result = [NSMutableData dataWithLength:28];
+    CDSHA3th224Context_s context;
+    CDSHA3th224ContextInit(&context);
+    CDSHA3th224Update(&context, data.bytes, data.length);
+    CDSHA3th224Final(&context);
+    CDSHA3th224ExportHashValue(&context, result.mutableBytes);
+    return result;
+}
 
 @end

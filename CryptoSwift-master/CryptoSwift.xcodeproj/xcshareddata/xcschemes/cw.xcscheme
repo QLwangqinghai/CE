@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1030"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D67D6BF522EC0AE400A60A9D"
-               BuildableName = "Digest.app"
-               BlueprintName = "Digest"
-               ReferencedContainer = "container:Digest.xcodeproj">
+               BlueprintIdentifier = "D6E4FC6422EF32330071748E"
+               BuildableName = "cw.app"
+               BlueprintName = "cw"
+               ReferencedContainer = "container:CryptoSwift.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D67D6BF522EC0AE400A60A9D"
-            BuildableName = "Digest.app"
-            BlueprintName = "Digest"
-            ReferencedContainer = "container:Digest.xcodeproj">
+            BlueprintIdentifier = "D6E4FC6422EF32330071748E"
+            BuildableName = "cw.app"
+            BlueprintName = "cw"
+            ReferencedContainer = "container:CryptoSwift.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -55,10 +55,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D67D6BF522EC0AE400A60A9D"
-            BuildableName = "Digest.app"
-            BlueprintName = "Digest"
-            ReferencedContainer = "container:Digest.xcodeproj">
+            BlueprintIdentifier = "D6E4FC6422EF32330071748E"
+            BuildableName = "cw.app"
+            BlueprintName = "cw"
+            ReferencedContainer = "container:CryptoSwift.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -74,10 +74,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D67D6BF522EC0AE400A60A9D"
-            BuildableName = "Digest.app"
-            BlueprintName = "Digest"
-            ReferencedContainer = "container:Digest.xcodeproj">
+            BlueprintIdentifier = "D6E4FC6422EF32330071748E"
+            BuildableName = "cw.app"
+            BlueprintName = "cw"
+            ReferencedContainer = "container:CryptoSwift.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

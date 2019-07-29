@@ -327,14 +327,14 @@ static inline void _CDSHA3thExportHashValue(uint64_t * _Nonnull currentHash, uin
     size_t count = length / 8;
     for (size_t idx=0; idx<count; idx++) {
         uint64_t v = currentHash[idx];
-        CUInt64ToBigEndianBytes(v, ptr);
+        CUInt64ToLittleEndianBytes(v, ptr);
         ptr += 8;
     }
     
     size_t rcount = length % 8;
     if (rcount > 0) {
         uint64_t v = currentHash[count];
-        CUInt64ToBigEndianBytes(v, tmp);
+        CUInt64ToLittleEndianBytes(v, tmp);
         memcpy(ptr, tmp, rcount);
     }
 }

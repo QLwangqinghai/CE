@@ -142,6 +142,27 @@ typedef struct _CDMD5Context {
     uint8_t accumulated[CDVariantMD5BlockSize];
 } CDMD5Context_s;
 
+void CDMD5ContextInit(CDMD5Context_s * _Nonnull context);
+void CDMD5Final(CDMD5Context_s * _Nonnull context);
+void CDMD5Update(CDMD5Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDMD5ExportHashValue(CDMD5Context_s * _Nonnull context, uint8_t bytes[_Nonnull 16]);
+
+
+
+typedef struct _CDSHA1th160Context {
+    size_t digestVariant;
+    size_t accumulatedSize;
+    uint64_t bitCount;
+    uint32_t values[5];
+    uint8_t accumulated[CDVariantSHA1th160BlockSize];
+} CDSHA1th160Context_s;
+
+void CDSHA1th160ContextInit(CDSHA1th160Context_s * _Nonnull context);
+void CDSHA1th160Update(CDSHA1th160Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA1th160Final(CDSHA1th160Context_s * _Nonnull context);
+void CDSHA1th160ExportHashValue(CDSHA1th160Context_s * _Nonnull context, uint8_t bytes[_Nonnull 20]);
+
+
 typedef struct _CDSHA2th256Context {
     size_t digestVariant;
     size_t accumulatedSize;
@@ -162,11 +183,6 @@ typedef struct _CDSHA2th512Context {
 typedef CDSHA2th256Context_s CDSHA2th224Context_s;
 typedef CDSHA2th512Context_s CDSHA2th384Context_s;
 
-
-void CDMD5ContextInit(CDMD5Context_s * _Nonnull context);
-void CDMD5Final(CDMD5Context_s * _Nonnull context);
-void CDMD5Update(CDMD5Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
-void CDMD5ExportHashValue(CDMD5Context_s * _Nonnull context, uint8_t bytes[_Nonnull 16]);
 
 void CDSHA2th224ContextInit(CDSHA2th224Context_s * _Nonnull context);
 void CDSHA2th224Update(CDSHA2th224Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
@@ -190,8 +206,6 @@ void CDSHA2th512ContextInit(CDSHA2th512Context_s * _Nonnull context);
 void CDSHA2th512Update(CDSHA2th512Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
 void CDSHA2th512Final(CDSHA2th512Context_s * _Nonnull context);
 void CDSHA2th512ExportHashValue(CDSHA2th512Context_s * _Nonnull context, uint8_t bytes[_Nonnull 64]);
-
-
 
 
 

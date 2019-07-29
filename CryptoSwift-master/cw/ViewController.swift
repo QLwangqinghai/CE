@@ -12,25 +12,32 @@
 //  - This notice may not be removed or altered from any source or binary distribution.
 //
 
-#import <Foundation/Foundation.h>
+import Cocoa
+import CryptoSwift
 
-NS_ASSUME_NONNULL_BEGIN
+class ViewController: NSViewController {
 
-@interface CBridage : NSObject
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-+ (NSData *)md5:(NSData *)data;
-+ (NSData *)sha160:(NSData *)data;
+        
+        let sha3Data = NSData(contentsOfFile: "/Users/vector/Downloads/thunder_3.3.3.4008.dmg")! as Data
+//        let sha3Once = SHA3(variant: SHA3.Variant.sha224).calculate(for: sha3Data.bytes)
+//        let result = sha3Once.toHexString()
+//        print(result)
 
-+ (NSData *)sha224:(NSData *)data;
-+ (NSData *)sha256:(NSData *)data;
-+ (NSData *)sha384:(NSData *)data;
-+ (NSData *)sha512:(NSData *)data;
+        
+        let sha3Once = SHA3(variant: SHA3.Variant.sha256).calculate(for: sha3Data.bytes)
+        let result = sha3Once.toHexString()
+        print(result)
+    }
+
+    override var representedObject: Any? {
+        didSet {
+        // Update the view, if already loaded.
+        }
+    }
 
 
-+ (NSData *)sha3th224:(NSData *)data;
-+ (NSData *)sha3th256:(NSData *)data;
+}
 
-
-@end
-
-NS_ASSUME_NONNULL_END

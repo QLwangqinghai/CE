@@ -12,25 +12,21 @@
 //  - This notice may not be removed or altered from any source or binary distribution.
 //
 
-#import <Foundation/Foundation.h>
+import Cocoa
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface CBridage : NSObject
-
-+ (NSData *)md5:(NSData *)data;
-+ (NSData *)sha160:(NSData *)data;
-
-+ (NSData *)sha224:(NSData *)data;
-+ (NSData *)sha256:(NSData *)data;
-+ (NSData *)sha384:(NSData *)data;
-+ (NSData *)sha512:(NSData *)data;
+@NSApplicationMain
+class AppDelegate: NSObject, NSApplicationDelegate {
 
 
-+ (NSData *)sha3th224:(NSData *)data;
-+ (NSData *)sha3th256:(NSData *)data;
+
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // Insert code here to initialize your application
+    }
+
+    func applicationWillTerminate(_ aNotification: Notification) {
+        // Insert code here to tear down your application
+    }
 
 
-@end
+}
 
-NS_ASSUME_NONNULL_END

@@ -78,6 +78,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     
     func aa() throws {
+        let sha3Data = NSData(contentsOfFile: "/Users/vector/Downloads/thunder_3.3.3.4008.dmg")
+        let wi = WorkItem(tag: "m.sha3.256", block: {
+            let sha2Oncea =
+
+            
+            
+            let sha2Oncea = CBridage.sha256(sha3Data)
+            let result = sha2Oncea.toHexString()
+            self.results.append(result);
+        }
+        
+        
         var data = NSData(contentsOfFile: "/Users/vector/Downloads/TIMSDK-master.zip")!
         
         var array: [Data] = []

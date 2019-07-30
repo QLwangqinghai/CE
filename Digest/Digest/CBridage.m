@@ -42,62 +42,81 @@
 + (NSData *)sha224:(NSData *)data {
     NSMutableData * result = [NSMutableData dataWithLength:28];
     
-    CDSHA2th224Context_s context = {};
+    CDSHA2Context_s context = {};
     
-    CDSHA2th224ContextInit(&context);
-    CDSHA2th224Update(&context, data.bytes, data.length);
-    CDSHA2th224Final(&context);
-    CDSHA2th224ExportHashValue(&context, result.mutableBytes);
+    CDSHA2ContextInit(&context, CDVariantSHA2th224);
+    CDSHA2Update(&context, data.bytes, data.length);
+    CDSHA2Final(&context);
+    CDSHA2ExportHashValue(&context, result.mutableBytes);
     return result;
 }
 
 + (NSData *)sha256:(NSData *)data {
     NSMutableData * result = [NSMutableData dataWithLength:32];
-    CDSHA2th256Context_s context = {};
-    CDSHA2th256ContextInit(&context);
-    CDSHA2th256Update(&context, data.bytes, data.length);
-    CDSHA2th256Final(&context);
-    CDSHA2th256ExportHashValue(&context, result.mutableBytes);
+    CDSHA2Context_s context = {};
+    CDSHA2ContextInit(&context, CDVariantSHA2th256);
+    CDSHA2Update(&context, data.bytes, data.length);
+    CDSHA2Final(&context);
+    CDSHA2ExportHashValue(&context, result.mutableBytes);
     return result;
 }
 
 + (NSData *)sha512:(NSData *)data {
     NSMutableData * result = [NSMutableData dataWithLength:64];
-    CDSHA2th512Context_s context = {};
-    CDSHA2th512ContextInit(&context);
-    CDSHA2th512Update(&context, data.bytes, data.length);
-    CDSHA2th512Final(&context);
-    CDSHA2th512ExportHashValue(&context, result.mutableBytes);
+    CDSHA2Context_s context = {};
+    CDSHA2ContextInit(&context, CDVariantSHA2th512);
+    CDSHA2Update(&context, data.bytes, data.length);
+    CDSHA2Final(&context);
+    CDSHA2ExportHashValue(&context, result.mutableBytes);
     return result;
 }
 
 + (NSData *)sha384:(NSData *)data {
     NSMutableData * result = [NSMutableData dataWithLength:48];
-    CDSHA2th384Context_s context;
-    CDSHA2th384ContextInit(&context);
-    CDSHA2th384Update(&context, data.bytes, data.length);
-    CDSHA2th384Final(&context);
-    CDSHA2th384ExportHashValue(&context, result.mutableBytes);
+    CDSHA2Context_s context;
+    CDSHA2ContextInit(&context, CDVariantSHA2th384);
+    CDSHA2Update(&context, data.bytes, data.length);
+    CDSHA2Final(&context);
+    CDSHA2ExportHashValue(&context, result.mutableBytes);
     return result;
 }
 
 
 + (NSData *)sha3th256:(NSData *)data {
     NSMutableData * result = [NSMutableData dataWithLength:32];
-    CDSHA3th256Context_s context;
-    CDSHA3th256ContextInit(&context);
-    CDSHA3th256Update(&context, data.bytes, data.length);
-    CDSHA3th256Final(&context);
-    CDSHA3th256ExportHashValue(&context, result.mutableBytes);
+    CDSHA3Context_s context;
+    CDSHA3ContextInit(&context, CDVariantSHA3th256);
+    CDSHA3Update(&context, data.bytes, data.length);
+    CDSHA3Final(&context);
+    CDSHA3ExportHashValue(&context, result.mutableBytes);
     return result;
 }
 + (NSData *)sha3th224:(NSData *)data {
     NSMutableData * result = [NSMutableData dataWithLength:28];
-    CDSHA3th224Context_s context;
-    CDSHA3th224ContextInit(&context);
-    CDSHA3th224Update(&context, data.bytes, data.length);
-    CDSHA3th224Final(&context);
-    CDSHA3th224ExportHashValue(&context, result.mutableBytes);
+    CDSHA3Context_s context;
+    CDSHA3ContextInit(&context, CDVariantSHA3th224);
+    CDSHA3Update(&context, data.bytes, data.length);
+    CDSHA3Final(&context);
+    CDSHA3ExportHashValue(&context, result.mutableBytes);
+    return result;
+}
+
++ (NSData *)sha3th384:(NSData *)data {
+    NSMutableData * result = [NSMutableData dataWithLength:48];
+    CDSHA3Context_s context;
+    CDSHA3ContextInit(&context, CDVariantSHA3th384);
+    CDSHA3Update(&context, data.bytes, data.length);
+    CDSHA3Final(&context);
+    CDSHA3ExportHashValue(&context, result.mutableBytes);
+    return result;
+}
++ (NSData *)sha3th512:(NSData *)data {
+    NSMutableData * result = [NSMutableData dataWithLength:64];
+    CDSHA3Context_s context;
+    CDSHA3ContextInit(&context, CDVariantSHA3th512);
+    CDSHA3Update(&context, data.bytes, data.length);
+    CDSHA3Final(&context);
+    CDSHA3ExportHashValue(&context, result.mutableBytes);
     return result;
 }
 

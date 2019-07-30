@@ -103,18 +103,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //            self.results.append(result);
 //        }));
 //
-//        self.items.append(WorkItem.init(tag: "m.md5", block: {
-//            let h = CBridage.md5(input)
-//            let result = h.toHexString()
-//            self.results.append(result);
-//        }));
-//        self.items.append(WorkItem.init(tag: "sys.md5", block: {
-//            let h = NSMutableData(length: Int(CC_MD5_DIGEST_LENGTH))!
-//
-//            CC_MD5(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
-//            let result = (h as Data).toHexString()
-//            self.results.append(result);
-//        }));
+        self.items.append(WorkItem.init(tag: "m.md5", block: {
+            let h = CBridage.md5(input)
+            let result = h.toHexString()
+            self.results.append(result);
+        }));
+        self.items.append(WorkItem.init(tag: "sys.md5", block: {
+            let h = NSMutableData(length: Int(CC_MD5_DIGEST_LENGTH))!
+
+            CC_MD5(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
+            let result = (h as Data).toHexString()
+            self.results.append(result);
+        }));
 
         self.items.append(WorkItem.init(tag: "m.sha1", block: {
             let h = CBridage.sha160(input)
@@ -133,7 +133,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let result = sha2Oncea.toHexString()
             self.results.append(result);
         }));
-        self.items.append(WorkItem.init(tag: "_sys.sha.224", block: {
+        self.items.append(WorkItem.init(tag: "sys.sha2.224", block: {
             let h = NSMutableData(length: Int(CC_SHA224_DIGEST_LENGTH))!
             CC_SHA224(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
             let result = (h as Data).toHexString()
@@ -146,7 +146,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let result = sha2Oncea.toHexString()
             self.results.append(result);
         }));
-        self.items.append(WorkItem.init(tag: "sys.sha.256", block: {
+        self.items.append(WorkItem.init(tag: "sys.sha2.256", block: {
             let h = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))!
             CC_SHA256(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
             let result = (h as Data).toHexString()
@@ -160,7 +160,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.results.append(result);
         }));
         
-        self.items.append(WorkItem.init(tag: "sys.sha.384", block: {
+        self.items.append(WorkItem.init(tag: "sys.sha2.384", block: {
             let h = NSMutableData(length: Int(CC_SHA384_DIGEST_LENGTH))!
             CC_SHA384(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
             let result = (h as Data).toHexString()
@@ -173,7 +173,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let result = sha2Oncea.toHexString()
             self.results.append(result);
         }));
-        self.items.append(WorkItem.init(tag: "sys.sha.512", block: {
+        self.items.append(WorkItem.init(tag: "sys.sha2.512", block: {
             let h = NSMutableData(length: Int(CC_SHA512_DIGEST_LENGTH))!
             CC_SHA512(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
             let result = (h as Data).toHexString()

@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSData *)sha3th224:(NSData *)data;
 + (NSData *)sha3th256:(NSData *)data;
++ (NSData *)sha3th384:(NSData *)data;
++ (NSData *)sha3th512:(NSData *)data;
 
 
 @end

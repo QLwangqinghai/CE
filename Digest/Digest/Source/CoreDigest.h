@@ -23,10 +23,6 @@
 #endif
 
 
-
-
-
-
 typedef enum _CDVariant {
     CDVariantNone,
     CDVariantMD5 = 1,

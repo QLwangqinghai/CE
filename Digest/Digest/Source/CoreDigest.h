@@ -25,9 +25,12 @@
 
 
 typedef enum _CDVariant {
-    CDVariantNone,
+    CDVariantNone = 0,
+    
     CDVariantMD5 = 1,
+    
     CDVariantSHA1th160 = 2,
+    
     CDVariantSHA2th224 = 3,
     CDVariantSHA2th256 = 4,
     CDVariantSHA2th384 = 5,
@@ -48,7 +51,10 @@ typedef enum _CDVariant {
 #define CDVariantSHA2th256BlockSize 64
 #define CDVariantSHA2th512BlockSize 128
 
-static inline size_t CDCDVariantDigestLength(CDVariant_e e) {
+#define CDVariantDigestLengthMax 64
+
+
+static inline size_t CDVariantDigestLength(CDVariant_e e) {
     switch (e) {
         case CDVariantMD5:
             return 16;
@@ -74,6 +80,8 @@ static inline size_t CDCDVariantDigestLength(CDVariant_e e) {
             return 0;
     }
 }
+
+#define CDVariantBlockSizeMax 144
 
 static inline size_t CDVariantBlockSize(CDVariant_e e) {
     switch (e) {
@@ -146,18 +154,18 @@ void CDMD5ExportHashValue(CDMD5Context_s * _Nonnull context, uint8_t bytes[_Nonn
 
 
 
-typedef struct _CDSHA1th160Context {
+typedef struct _CDSHA1Context {
     size_t digestVariant;
     size_t accumulatedSize;
     uint64_t bitCount;
     uint32_t values[5];
     uint8_t accumulated[CDVariantSHA1th160BlockSize];
-} CDSHA1th160Context_s;
+} CDSHA1Context_s;
 
-void CDSHA1th160ContextInit(CDSHA1th160Context_s * _Nonnull context);
-void CDSHA1th160Update(CDSHA1th160Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
-void CDSHA1th160Final(CDSHA1th160Context_s * _Nonnull context);
-void CDSHA1th160ExportHashValue(CDSHA1th160Context_s * _Nonnull context, uint8_t bytes[_Nonnull 20]);
+void CDSHA1ContextInit(CDSHA1Context_s * _Nonnull context);
+void CDSHA1Update(CDSHA1Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDSHA1Final(CDSHA1Context_s * _Nonnull context);
+void CDSHA1ExportHashValue(CDSHA1Context_s * _Nonnull context, uint8_t bytes[_Nonnull 20]);
 
 
 typedef union _CDSHA2State {
@@ -191,6 +199,26 @@ void CDSHA3ContextInit(CDSHA3Context_s * _Nonnull context, CDVariant_e e);
 void CDSHA3Update(CDSHA3Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
 void CDSHA3Final(CDSHA3Context_s * _Nonnull context);
 void CDSHA3ExportHashValue(CDSHA3Context_s * _Nonnull context, uint8_t * _Nonnull bytes);
+
+
+typedef union _CDAllRoundContext {
+    size_t digestVariant;
+    CDMD5Context_s mdContext;
+    CDSHA1Context_s sha1Context;
+    CDSHA2Context_s sha2Context;
+    CDSHA3Context_s sha3Context;
+} CDAllRoundContext_u;
+
+
+void CDContextInit(CDAllRoundContext_u * _Nonnull context, CDVariant_e e);
+void CDUpdate(CDAllRoundContext_u * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CDFinal(CDAllRoundContext_u * _Nonnull context);
+void CDExportHashValue(CDAllRoundContext_u * _Nonnull context, uint8_t * _Nonnull bytes);
+
+
+int32_t CDHmac(CDVariant_e e, uint8_t const * _Nullable key, size_t keyLength, uint8_t const * _Nullable input, size_t inputLength, uint8_t * _Nullable output, size_t outputLength);
+
+
 
 #pragma mark - helper
 

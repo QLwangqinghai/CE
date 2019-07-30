@@ -95,9 +95,9 @@ static inline void CDSHA1Process(uint8_t const * _Nonnull block, uint32_t curren
     hh[4] += e;
 }
 
-void CDSHA1th160ContextInit(CDSHA1th160Context_s * _Nonnull context) {
+void CDSHA1ContextInit(CDSHA1Context_s * _Nonnull context) {
     assert(context);
-    memset(context, 0, sizeof(CDSHA1th160Context_s));
+    memset(context, 0, sizeof(CDSHA1Context_s));
     context->digestVariant = CDVariantSHA1th160;
     context->values[0] = 0x67452301UL;
     context->values[1] = 0xefcdab89UL;
@@ -106,7 +106,7 @@ void CDSHA1th160ContextInit(CDSHA1th160Context_s * _Nonnull context) {
     context->values[4] = 0xc3d2e1f0UL;
 }
 
-void CDSHA1th160Update(CDSHA1th160Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length) {
+void CDSHA1Update(CDSHA1Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length) {
     assert(context);
     assert(length >= 0);
     
@@ -149,7 +149,7 @@ void CDSHA1th160Update(CDSHA1th160Context_s * _Nonnull context, uint8_t const * 
     }
 }
 
-void CDSHA1th160Final(CDSHA1th160Context_s * _Nonnull context) {
+void CDSHA1Final(CDSHA1Context_s * _Nonnull context) {
     assert(context);
     
     size_t blockSize = CDVariantSHA1th160BlockSize;
@@ -186,7 +186,7 @@ void CDSHA1th160Final(CDSHA1th160Context_s * _Nonnull context) {
     }
 }
 
-void CDSHA1th160ExportHashValue(CDSHA1th160Context_s * _Nonnull context, uint8_t bytes[_Nonnull 20]) {
+void CDSHA1ExportHashValue(CDSHA1Context_s * _Nonnull context, uint8_t bytes[_Nonnull 20]) {
     assert(context);
     assert(bytes);
     

@@ -31,11 +31,11 @@
 }
 + (NSData *)sha160:(NSData *)data {
     NSMutableData * result = [NSMutableData dataWithLength:20];
-    CDSHA1th160Context_s context = {};
-    CDSHA1th160ContextInit(&context);
-    CDSHA1th160Update(&context, data.bytes, data.length);
-    CDSHA1th160Final(&context);
-    CDSHA1th160ExportHashValue(&context, result.mutableBytes);
+    CDSHA1Context_s context = {};
+    CDSHA1ContextInit(&context);
+    CDSHA1Update(&context, data.bytes, data.length);
+    CDSHA1Final(&context);
+    CDSHA1ExportHashValue(&context, result.mutableBytes);
     return result;
 }
 

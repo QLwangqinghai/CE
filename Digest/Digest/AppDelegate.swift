@@ -187,6 +187,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         self.items.removeAll()
         var idx = 0
+//        self.results.indices.reduce
         while idx < self.results.count {
             let a = self.results[idx]
             let b = self.results[idx+1]

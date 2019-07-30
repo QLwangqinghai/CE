@@ -15,6 +15,7 @@
 		D6B4B6C222E5712600C91909 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6B4B6C122E5712600C91909 /* Assets.xcassets */; };
 		D6B4B6C522E5712600C91909 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6B4B6C322E5712600C91909 /* MainMenu.xib */; };
 		D6B4B6C822E5712600C91909 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6B4B6C722E5712600C91909 /* main.m */; };
+		D6B80B1322F06BCB00521396 /* UserGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B1222F06BCB00521396 /* UserGroup.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,8 @@
 		D6B4B6C622E5712600C91909 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6B4B6C722E5712600C91909 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D6B4B6C922E5712600C91909 /* FDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FDemo.entitlements; sourceTree = "<group>"; };
+		D6B80B1222F06BCB00521396 /* UserGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGroup.swift; sourceTree = "<group>"; };
+		D6B80B1422F0708C00521396 /* UserGroup.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = UserGroup.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +89,8 @@
 				D6570A7F22E03F27007FA30F /* FileItem.swift */,
 				D6570A8122E03F8B007FA30F /* FileManagerBase.h */,
 				D6570A8222E03F8B007FA30F /* FileManagerBase.c */,
+				D6B80B1222F06BCB00521396 /* UserGroup.swift */,
+				D6B80B1422F0708C00521396 /* UserGroup.md */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -216,6 +221,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6570A8422E03F8B007FA30F /* FileManagerBase.c in Sources */,
+				D6B80B1322F06BCB00521396 /* UserGroup.swift in Sources */,
 				D6570A8022E03F27007FA30F /* FileItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

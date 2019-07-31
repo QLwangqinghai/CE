@@ -10,13 +10,58 @@
 		D67D6BFA22EC0AE400A60A9D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67D6BF922EC0AE400A60A9D /* AppDelegate.swift */; };
 		D67D6BFC22EC0AE600A60A9D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D67D6BFB22EC0AE600A60A9D /* Assets.xcassets */; };
 		D67D6BFF22EC0AE600A60A9D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D67D6BFD22EC0AE600A60A9D /* MainMenu.xib */; };
-		D67D6C1622EC27D900A60A9D /* CoreDigest.c in Sources */ = {isa = PBXBuildFile; fileRef = D67D6C1022EC27D900A60A9D /* CoreDigest.c */; };
-		D67D6C1722EC27D900A60A9D /* CDSHA2.c in Sources */ = {isa = PBXBuildFile; fileRef = D67D6C1122EC27D900A60A9D /* CDSHA2.c */; };
-		D67D6C1822EC27D900A60A9D /* CBridage.m in Sources */ = {isa = PBXBuildFile; fileRef = D67D6C1222EC27D900A60A9D /* CBridage.m */; };
-		D67D6C1922EC27D900A60A9D /* CDMD.c in Sources */ = {isa = PBXBuildFile; fileRef = D67D6C1322EC27D900A60A9D /* CDMD.c */; };
-		D6DBC75E22EEB58F00AA1589 /* CDSHA3.c in Sources */ = {isa = PBXBuildFile; fileRef = D6DBC75D22EEB58F00AA1589 /* CDSHA3.c */; };
-		D6E4FC7D22EF3A060071748E /* CDSHA1.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E4FC7C22EF3A060071748E /* CDSHA1.c */; };
+		D6B80B2322F15D4A00521396 /* CoreDigest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B80B1A22F15D4900521396 /* CoreDigest.framework */; };
+		D6B80B2A22F15D4A00521396 /* CoreDigestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B2922F15D4A00521396 /* CoreDigestTests.swift */; };
+		D6B80B2C22F15D4A00521396 /* CoreDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B80B1C22F15D4900521396 /* CoreDigest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6B80B2F22F15D4A00521396 /* CoreDigest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B80B1A22F15D4900521396 /* CoreDigest.framework */; };
+		D6B80B3022F15D4A00521396 /* CoreDigest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6B80B1A22F15D4900521396 /* CoreDigest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D6B80B3F22F15D6900521396 /* CDAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3922F15D6900521396 /* CDAPI.c */; };
+		D6B80B4022F15D6900521396 /* CDSHA2.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3A22F15D6900521396 /* CDSHA2.c */; };
+		D6B80B4122F15D6900521396 /* CDMD.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3B22F15D6900521396 /* CDMD.c */; };
+		D6B80B4222F15D6900521396 /* CDSHA1.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3C22F15D6900521396 /* CDSHA1.c */; };
+		D6B80B4322F15D6900521396 /* CDAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B80B3D22F15D6900521396 /* CDAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6B80B4422F15D6900521396 /* CDSHA3.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3E22F15D6900521396 /* CDSHA3.c */; };
+		D6B80B4722F15EEA00521396 /* CBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B80B4522F15EEA00521396 /* CBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6B80B4822F15EEA00521396 /* CBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B4622F15EEA00521396 /* CBridge.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D6B80B2422F15D4A00521396 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D67D6BEE22EC0AE400A60A9D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D6B80B1922F15D4900521396;
+			remoteInfo = CoreDigest;
+		};
+		D6B80B2622F15D4A00521396 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D67D6BEE22EC0AE400A60A9D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D67D6BF522EC0AE400A60A9D;
+			remoteInfo = Digest;
+		};
+		D6B80B2D22F15D4A00521396 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D67D6BEE22EC0AE400A60A9D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D6B80B1922F15D4900521396;
+			remoteInfo = CoreDigest;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D6B80B3622F15D4A00521396 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D6B80B3022F15D4A00521396 /* CoreDigest.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		D67D6BF622EC0AE400A60A9D /* Digest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Digest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -26,14 +71,20 @@
 		D67D6C0022EC0AE600A60A9D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D67D6C0122EC0AE600A60A9D /* Digest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Digest.entitlements; sourceTree = "<group>"; };
 		D67D6C0722EC0AFD00A60A9D /* Digest-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Digest-Bridging-Header.h"; sourceTree = "<group>"; };
-		D67D6C1022EC27D900A60A9D /* CoreDigest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CoreDigest.c; sourceTree = "<group>"; };
-		D67D6C1122EC27D900A60A9D /* CDSHA2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDSHA2.c; sourceTree = "<group>"; };
-		D67D6C1222EC27D900A60A9D /* CBridage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBridage.m; sourceTree = "<group>"; };
-		D67D6C1322EC27D900A60A9D /* CDMD.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDMD.c; sourceTree = "<group>"; };
-		D67D6C1422EC27D900A60A9D /* CoreDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDigest.h; sourceTree = "<group>"; };
-		D67D6C1522EC27D900A60A9D /* CBridage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBridage.h; sourceTree = "<group>"; };
-		D6DBC75D22EEB58F00AA1589 /* CDSHA3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CDSHA3.c; sourceTree = "<group>"; };
-		D6E4FC7C22EF3A060071748E /* CDSHA1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CDSHA1.c; sourceTree = "<group>"; };
+		D6B80B1A22F15D4900521396 /* CoreDigest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreDigest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6B80B1C22F15D4900521396 /* CoreDigest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreDigest.h; sourceTree = "<group>"; };
+		D6B80B1D22F15D4900521396 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D6B80B2222F15D4A00521396 /* CoreDigestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreDigestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6B80B2922F15D4A00521396 /* CoreDigestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDigestTests.swift; sourceTree = "<group>"; };
+		D6B80B2B22F15D4A00521396 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D6B80B3922F15D6900521396 /* CDAPI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDAPI.c; sourceTree = "<group>"; };
+		D6B80B3A22F15D6900521396 /* CDSHA2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDSHA2.c; sourceTree = "<group>"; };
+		D6B80B3B22F15D6900521396 /* CDMD.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDMD.c; sourceTree = "<group>"; };
+		D6B80B3C22F15D6900521396 /* CDSHA1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDSHA1.c; sourceTree = "<group>"; };
+		D6B80B3D22F15D6900521396 /* CDAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDAPI.h; sourceTree = "<group>"; };
+		D6B80B3E22F15D6900521396 /* CDSHA3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDSHA3.c; sourceTree = "<group>"; };
+		D6B80B4522F15EEA00521396 /* CBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBridge.h; sourceTree = "<group>"; };
+		D6B80B4622F15EEA00521396 /* CBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CBridge.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +92,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6B80B2F22F15D4A00521396 /* CoreDigest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6B80B1722F15D4900521396 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6B80B1F22F15D4A00521396 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6B80B2322F15D4A00521396 /* CoreDigest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,6 +118,8 @@
 			isa = PBXGroup;
 			children = (
 				D67D6BF822EC0AE400A60A9D /* Digest */,
+				D6B80B1B22F15D4900521396 /* CoreDigest */,
+				D6B80B2822F15D4A00521396 /* CoreDigestTests */,
 				D67D6BF722EC0AE400A60A9D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -59,6 +128,8 @@
 			isa = PBXGroup;
 			children = (
 				D67D6BF622EC0AE400A60A9D /* Digest.app */,
+				D6B80B1A22F15D4900521396 /* CoreDigest.framework */,
+				D6B80B2222F15D4A00521396 /* CoreDigestTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -66,9 +137,6 @@
 		D67D6BF822EC0AE400A60A9D /* Digest */ = {
 			isa = PBXGroup;
 			children = (
-				D67D6C1522EC27D900A60A9D /* CBridage.h */,
-				D67D6C1222EC27D900A60A9D /* CBridage.m */,
-				D67D6C0F22EC27D900A60A9D /* Source */,
 				D67D6BF922EC0AE400A60A9D /* AppDelegate.swift */,
 				D67D6BFB22EC0AE600A60A9D /* Assets.xcassets */,
 				D67D6BFD22EC0AE600A60A9D /* MainMenu.xib */,
@@ -79,20 +147,54 @@
 			path = Digest;
 			sourceTree = "<group>";
 		};
-		D67D6C0F22EC27D900A60A9D /* Source */ = {
+		D6B80B1B22F15D4900521396 /* CoreDigest */ = {
 			isa = PBXGroup;
 			children = (
-				D67D6C1422EC27D900A60A9D /* CoreDigest.h */,
-				D67D6C1022EC27D900A60A9D /* CoreDigest.c */,
-				D67D6C1322EC27D900A60A9D /* CDMD.c */,
-				D6E4FC7C22EF3A060071748E /* CDSHA1.c */,
-				D67D6C1122EC27D900A60A9D /* CDSHA2.c */,
-				D6DBC75D22EEB58F00AA1589 /* CDSHA3.c */,
+				D6B80B4522F15EEA00521396 /* CBridge.h */,
+				D6B80B4622F15EEA00521396 /* CBridge.m */,
+				D6B80B3822F15D6900521396 /* Source */,
+				D6B80B1C22F15D4900521396 /* CoreDigest.h */,
+				D6B80B1D22F15D4900521396 /* Info.plist */,
+			);
+			path = CoreDigest;
+			sourceTree = "<group>";
+		};
+		D6B80B2822F15D4A00521396 /* CoreDigestTests */ = {
+			isa = PBXGroup;
+			children = (
+				D6B80B2922F15D4A00521396 /* CoreDigestTests.swift */,
+				D6B80B2B22F15D4A00521396 /* Info.plist */,
+			);
+			path = CoreDigestTests;
+			sourceTree = "<group>";
+		};
+		D6B80B3822F15D6900521396 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				D6B80B3922F15D6900521396 /* CDAPI.c */,
+				D6B80B3A22F15D6900521396 /* CDSHA2.c */,
+				D6B80B3B22F15D6900521396 /* CDMD.c */,
+				D6B80B3C22F15D6900521396 /* CDSHA1.c */,
+				D6B80B3D22F15D6900521396 /* CDAPI.h */,
+				D6B80B3E22F15D6900521396 /* CDSHA3.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D6B80B1522F15D4900521396 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6B80B2C22F15D4A00521396 /* CoreDigest.h in Headers */,
+				D6B80B4722F15EEA00521396 /* CBridge.h in Headers */,
+				D6B80B4322F15D6900521396 /* CDAPI.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		D67D6BF522EC0AE400A60A9D /* Digest */ = {
@@ -102,15 +204,54 @@
 				D67D6BF222EC0AE400A60A9D /* Sources */,
 				D67D6BF322EC0AE400A60A9D /* Frameworks */,
 				D67D6BF422EC0AE400A60A9D /* Resources */,
+				D6B80B3622F15D4A00521396 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D6B80B2E22F15D4A00521396 /* PBXTargetDependency */,
 			);
 			name = Digest;
 			productName = Digest;
 			productReference = D67D6BF622EC0AE400A60A9D /* Digest.app */;
 			productType = "com.apple.product-type.application";
+		};
+		D6B80B1922F15D4900521396 /* CoreDigest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6B80B3522F15D4A00521396 /* Build configuration list for PBXNativeTarget "CoreDigest" */;
+			buildPhases = (
+				D6B80B1522F15D4900521396 /* Headers */,
+				D6B80B1622F15D4900521396 /* Sources */,
+				D6B80B1722F15D4900521396 /* Frameworks */,
+				D6B80B1822F15D4900521396 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CoreDigest;
+			productName = CoreDigest;
+			productReference = D6B80B1A22F15D4900521396 /* CoreDigest.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D6B80B2122F15D4A00521396 /* CoreDigestTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6B80B3722F15D4A00521396 /* Build configuration list for PBXNativeTarget "CoreDigestTests" */;
+			buildPhases = (
+				D6B80B1E22F15D4A00521396 /* Sources */,
+				D6B80B1F22F15D4A00521396 /* Frameworks */,
+				D6B80B2022F15D4A00521396 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D6B80B2522F15D4A00521396 /* PBXTargetDependency */,
+				D6B80B2722F15D4A00521396 /* PBXTargetDependency */,
+			);
+			name = CoreDigestTests;
+			productName = CoreDigestTests;
+			productReference = D6B80B2222F15D4A00521396 /* CoreDigestTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -131,6 +272,13 @@
 							};
 						};
 					};
+					D6B80B1922F15D4900521396 = {
+						CreatedOnToolsVersion = 10.3;
+					};
+					D6B80B2122F15D4A00521396 = {
+						CreatedOnToolsVersion = 10.3;
+						TestTargetID = D67D6BF522EC0AE400A60A9D;
+					};
 				};
 			};
 			buildConfigurationList = D67D6BF122EC0AE400A60A9D /* Build configuration list for PBXProject "Digest" */;
@@ -147,6 +295,8 @@
 			projectRoot = "";
 			targets = (
 				D67D6BF522EC0AE400A60A9D /* Digest */,
+				D6B80B1922F15D4900521396 /* CoreDigest */,
+				D6B80B2122F15D4A00521396 /* CoreDigestTests */,
 			);
 		};
 /* End PBXProject section */
@@ -161,6 +311,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D6B80B1822F15D4900521396 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6B80B2022F15D4A00521396 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -168,17 +332,50 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D67D6C1922EC27D900A60A9D /* CDMD.c in Sources */,
-				D67D6C1722EC27D900A60A9D /* CDSHA2.c in Sources */,
-				D67D6C1622EC27D900A60A9D /* CoreDigest.c in Sources */,
-				D67D6C1822EC27D900A60A9D /* CBridage.m in Sources */,
-				D6E4FC7D22EF3A060071748E /* CDSHA1.c in Sources */,
 				D67D6BFA22EC0AE400A60A9D /* AppDelegate.swift in Sources */,
-				D6DBC75E22EEB58F00AA1589 /* CDSHA3.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6B80B1622F15D4900521396 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6B80B4822F15EEA00521396 /* CBridge.m in Sources */,
+				D6B80B4122F15D6900521396 /* CDMD.c in Sources */,
+				D6B80B4222F15D6900521396 /* CDSHA1.c in Sources */,
+				D6B80B4022F15D6900521396 /* CDSHA2.c in Sources */,
+				D6B80B3F22F15D6900521396 /* CDAPI.c in Sources */,
+				D6B80B4422F15D6900521396 /* CDSHA3.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6B80B1E22F15D4A00521396 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6B80B2A22F15D4A00521396 /* CoreDigestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D6B80B2522F15D4A00521396 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D6B80B1922F15D4900521396 /* CoreDigest */;
+			targetProxy = D6B80B2422F15D4A00521396 /* PBXContainerItemProxy */;
+		};
+		D6B80B2722F15D4A00521396 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D67D6BF522EC0AE400A60A9D /* Digest */;
+			targetProxy = D6B80B2622F15D4A00521396 /* PBXContainerItemProxy */;
+		};
+		D6B80B2E22F15D4A00521396 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D6B80B1922F15D4900521396 /* CoreDigest */;
+			targetProxy = D6B80B2D22F15D4A00521396 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		D67D6BFD22EC0AE600A60A9D /* MainMenu.xib */ = {
@@ -346,6 +543,100 @@
 			};
 			name = Release;
 		};
+		D6B80B3122F15D4A00521396 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = CoreDigest/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CoreDigest;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		D6B80B3222F15D4A00521396 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = CoreDigest/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CoreDigest;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		D6B80B3322F15D4A00521396 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = CoreDigestTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CoreDigestTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Digest.app/Contents/MacOS/Digest";
+			};
+			name = Debug;
+		};
+		D6B80B3422F15D4A00521396 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = CoreDigestTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.CoreDigestTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Digest.app/Contents/MacOS/Digest";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -363,6 +654,24 @@
 			buildConfigurations = (
 				D67D6C0522EC0AE600A60A9D /* Debug */,
 				D67D6C0622EC0AE600A60A9D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D6B80B3522F15D4A00521396 /* Build configuration list for PBXNativeTarget "CoreDigest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6B80B3122F15D4A00521396 /* Debug */,
+				D6B80B3222F15D4A00521396 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D6B80B3722F15D4A00521396 /* Build configuration list for PBXNativeTarget "CoreDigestTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6B80B3322F15D4A00521396 /* Debug */,
+				D6B80B3422F15D4A00521396 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

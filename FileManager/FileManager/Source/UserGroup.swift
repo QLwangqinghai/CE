@@ -8,6 +8,15 @@
 
 import Foundation
 
+enum Actor: UInt8 {
+    case personal = 0
+    case group
+    case manager
+    case superManager
+//    case any = UInt8.max
+}
+
+
 
 //组是访问文件系统的最小单位， 用户可以归属于不同群组
 
@@ -22,6 +31,7 @@ import Foundation
  */
 /*
  权限：
+ 
  增加
  删除
  读取
@@ -34,8 +44,5 @@ import Foundation
  数据存储层
  */
 
-/** user id  uint64_t*/
-
-
-/** group type  uint8_t [1, 255]*/
-/** group id  uint64_t*/
+/** user id  uint48_t*/
+/** group id  uint48_t*/

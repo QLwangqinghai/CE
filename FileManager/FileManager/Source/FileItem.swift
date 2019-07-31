@@ -39,35 +39,35 @@ public class ImageItem {
         self.relativePath = relativePath
     }
 }
-
-open class FileDigestInfo {
-    //1/8192  多出来的
-    
-    public static let stepLength: UInt64 = 0x80000
-    public let fileSize: UInt64
-    public let final: CFMByte64_s
-    public let stepDigests: [CFMByte64_s]
-    
-    
-    
-    
-}
-
-
-
-public class FileItem {
-    public let id: FileIdentifier
-    public let name: String
-    public let fileSize: UInt64
-
-    public let fileType: FileType
-    public let relativePath: String
-    public let icon: ImageItem
-    public let previewImage: ImageItem
-
-    
-    
-}
+//
+//open class FileDigestInfo {
+//    //1/8192  多出来的
+//    
+//    public static let stepLength: UInt64 = 0x80000
+//    public let fileSize: UInt64
+//    public let final: CFMByte64_s
+//    public let stepDigests: [CFMByte64_s]
+//    
+//    
+//    
+//    
+//}
+//
+//
+//
+//public class FileItem {
+//    public let id: FileIdentifier
+//    public let name: String
+//    public let fileSize: UInt64
+//
+//    public let fileType: FileType
+//    public let relativePath: String
+//    public let icon: ImageItem
+//    public let previewImage: ImageItem
+//
+//    
+//    
+//}
 
 
 //@property (nonatomic, copy) NSString * fileId;

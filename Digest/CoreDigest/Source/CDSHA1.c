@@ -6,7 +6,7 @@
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
-#include "CoreDigest.h"
+#include "CDAPI.h"
 
 
 #define CDSHA1F0(x,y,z)  (z ^ (x & (y ^ z)))

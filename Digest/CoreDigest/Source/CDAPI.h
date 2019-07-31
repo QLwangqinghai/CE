@@ -6,8 +6,8 @@
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
-#ifndef CoreDigest_h
-#define CoreDigest_h
+#ifndef CDAPI_h
+#define CDAPI_h
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -137,7 +137,6 @@ static inline size_t CDVarianStatusSize(CDVariant_e e) {
             return 0;
     }
 }
-
 
 typedef struct _CDMD5Context {
     size_t digestVariant;
@@ -427,4 +426,4 @@ static inline uint32_t CUInt32RotateRight(uint32_t word, int i) {
 
 #endif
 
-#endif /* CoreDigest_h */
+#endif /* CDAPI_h */

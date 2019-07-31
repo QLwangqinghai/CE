@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import <FileManager/FileManager.h>
 
 @interface AppDelegate ()
 
@@ -18,6 +19,8 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
 
+    aa();
+    
     NSString * libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask,YES) firstObject];
     NSString * directoryPath = [libraryPath stringByAppendingPathComponent:@"recover"];
 

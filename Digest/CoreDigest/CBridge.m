@@ -1,19 +1,13 @@
-////  CryptoSwift
 //
-//  Copyright (C) 2014-__YEAR__ Marcin Krzyżanowski <marcin@krzyzanowskim.com>
-//  This software is provided 'as-is', without any express or implied warranty.
+//  CBridge.m
+//  CoreDigest
 //
-//  In no event will the authors be held liable for any damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any purpose,including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
-//
-//  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
-//  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
-//  - This notice may not be removed or altered from any source or binary distribution.
+//  Created by vector on 2019/7/31.
+//  Copyright © 2019 angfung. All rights reserved.
 //
 
-#import "CBridage.h"
-#import "CoreDigest.h"
+#import "CBridge.h"
+#import <CoreDigest/CDAPI.h>
 
 
 @implementation CBridage
@@ -119,5 +113,46 @@
     CDSHA3ExportHashValue(&context, result.mutableBytes);
     return result;
 }
+
+
++ (NSData *)sha3thKeccak256:(NSData *)data {
+    NSMutableData * result = [NSMutableData dataWithLength:32];
+    CDSHA3Context_s context;
+    CDSHA3ContextInit(&context, CDVariantSHA3thKeccak256);
+    CDSHA3Update(&context, data.bytes, data.length);
+    CDSHA3Final(&context);
+    CDSHA3ExportHashValue(&context, result.mutableBytes);
+    return result;
+}
++ (NSData *)sha3thKeccak224:(NSData *)data {
+    NSMutableData * result = [NSMutableData dataWithLength:28];
+    CDSHA3Context_s context;
+    CDSHA3ContextInit(&context, CDVariantSHA3thKeccak224);
+    CDSHA3Update(&context, data.bytes, data.length);
+    CDSHA3Final(&context);
+    CDSHA3ExportHashValue(&context, result.mutableBytes);
+    return result;
+}
+
++ (NSData *)sha3thKeccak384:(NSData *)data {
+    NSMutableData * result = [NSMutableData dataWithLength:48];
+    CDSHA3Context_s context;
+    CDSHA3ContextInit(&context, CDVariantSHA3thKeccak384);
+    CDSHA3Update(&context, data.bytes, data.length);
+    CDSHA3Final(&context);
+    CDSHA3ExportHashValue(&context, result.mutableBytes);
+    return result;
+}
++ (NSData *)sha3thKeccak512:(NSData *)data {
+    NSMutableData * result = [NSMutableData dataWithLength:64];
+    CDSHA3Context_s context;
+    CDSHA3ContextInit(&context, CDVariantSHA3thKeccak512);
+    CDSHA3Update(&context, data.bytes, data.length);
+    CDSHA3Final(&context);
+    CDSHA3ExportHashValue(&context, result.mutableBytes);
+    return result;
+}
+
+
 
 @end

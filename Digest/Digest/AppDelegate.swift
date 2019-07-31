@@ -8,7 +8,7 @@
 
 import Cocoa
 import CommonCrypto
-
+import CoreDigest
 
 public class WorkItem {
     let tag: String
@@ -29,18 +29,46 @@ public class WorkItem {
     
 }
 
-extension Data {
-    
-    
-    public var bytes: Array<UInt8> {
-        return Array(self)
-    }
-    
-    public func toHexString() -> String {
-        return bytes.toHexString()
-    }
-}
+
+
 extension Array where Element == UInt8 {
+    public init(hex: String) {
+        self.init()
+        var buffer: UInt8?
+        var skip = hex.hasPrefix("0x") ? 2 : 0
+        for char in hex.unicodeScalars.lazy {
+            guard skip == 0 else {
+                skip -= 1
+                continue
+            }
+            guard char.value >= 48 && char.value <= 102 else {
+                removeAll()
+                return
+            }
+            let v: UInt8
+            let c: UInt8 = UInt8(char.value)
+            switch c {
+            case let c where c <= 57:
+                v = c - 48
+            case let c where c >= 65 && c <= 70:
+                v = c - 55
+            case let c where c >= 97:
+                v = c - 87
+            default:
+                removeAll()
+                return
+            }
+            if let b = buffer {
+                append(b << 4 | v)
+                buffer = nil
+            } else {
+                buffer = v
+            }
+        }
+        if let b = buffer {
+            append(b)
+        }
+    }
     
     public func toHexString() -> String {
         return `lazy`.reduce("") {
@@ -53,6 +81,35 @@ extension Array where Element == UInt8 {
     }
 }
 
+
+extension Data {
+    
+    public init(hex: String) {
+        self.init(Array<UInt8>(hex: hex))
+    }
+    public var bytes: Array<UInt8> {
+        return Array(self)
+    }
+    
+    public func toHexString() -> String {
+        return bytes.toHexString()
+    }
+}
+
+
+
+/*
+ XCTAssertEqual(SHA3(variant: .sha224).calculate(for: Array<UInt8>(hex: "616263")).toHexString(), "e642824c3f8cf24ad09234ee7d3c766fc9a3a5168d0c94ad73b46fdf")
+ XCTAssertEqual(SHA3(variant: .sha256).calculate(for: Array<UInt8>(hex: "616263")).toHexString(), "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532")
+ XCTAssertEqual(SHA3(variant: .sha384).calculate(for: Array<UInt8>(hex: "616263")).toHexString(), "ec01498288516fc926459f58e2c6ad8df9b473cb0fc08c2596da7cf0e49be4b298d88cea927ac7f539f1edf228376d25")
+ XCTAssertEqual(SHA3(variant: .sha512).calculate(for: Array<UInt8>(hex: "616263")).toHexString(), "b751850b1a57168a5693cd924b6b096e08f621827444f70d884f5d0240d2712e10e116e9192af3c91a7ec57647e3934057340b4cf408d5a56592f8274eec53f0")
+ XCTAssertEqual(SHA3(variant: .keccak224).calculate(for: Array<UInt8>(hex: "616263")).toHexString(), "c30411768506ebe1c2871b1ee2e87d38df342317300a9b97a95ec6a8")
+ XCTAssertEqual(SHA3(variant: .keccak256).calculate(for: Array<UInt8>(hex: "616263")).toHexString(), "4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45")
+ XCTAssertEqual(SHA3(variant: .keccak384).calculate(for: Array<UInt8>(hex: "616263")).toHexString(), "f7df1165f033337be098e7d288ad6a2f74409d7a60b49c36642218de161b1f99f8c681e4afaf31a34db29fb763e3c28e")
+ XCTAssertEqual(SHA3(variant: .keccak512).calculate(for: Array<UInt8>(hex: "616263")).toHexString(), "18587dc2ea106b9a1563e32b3312421ca164c7f1f07bc922a9c83d77cea3a1e5d0c69910739025372dc14ac9642629379540c17e2a65b19d77aa511a9d00bb96")
+ 
+ 
+ */
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -103,6 +160,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //            self.results.append(result);
 //        }));
 //
+        
+        self.items.append(WorkItem(tag: "m.sha3.224", block: {
+            let h = CBridage.sha3th224(Data.init(hex: "616263"))
+            let result = h.toHexString()
+            print("\(224)  \(result) \(result == "e642824c3f8cf24ad09234ee7d3c766fc9a3a5168d0c94ad73b46fdf")")
+        }));
+        
+        
         self.items.append(WorkItem.init(tag: "m.md5", block: {
             let h = CBridage.md5(input)
             let result = h.toHexString()

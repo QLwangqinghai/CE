@@ -6,7 +6,7 @@
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
-#include "CoreDigest.h"
+#include "CDAPI.h"
 
 #define F(x,y,z)  (z ^ (x & (y ^ z)))
 #define G(x,y,z)  (y ^ (z & (y ^ x)))

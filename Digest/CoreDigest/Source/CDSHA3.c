@@ -6,7 +6,7 @@
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
-#include "CoreDigest.h"
+#include "CDAPI.h"
 
 
 
@@ -161,7 +161,7 @@ static inline void _CDSHA3Final(uint8_t * _Nonnull accumulated, size_t * _Nonnul
     assert(accumulatedSizePtr);
     assert(currentHash);
     assert(blockSize == 144 || blockSize == 136 || blockSize == 104 || blockSize == 72);
-    assert(markByte == 0x06 || blockSize == 0x01);
+    assert(markByte == 0x06 || markByte == 0x01);
     
     // Add padding
     size_t markByteIndex = *accumulatedSizePtr;

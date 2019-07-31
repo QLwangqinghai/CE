@@ -6,7 +6,7 @@
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
-#include "CoreDigest.h"
+#include "CDAPI.h"
 
 #define Ch(x,y,z)       (z ^ (x & (y ^ z)))
 #define Maj(x,y,z)      (((x | y) & z) | (x & y))

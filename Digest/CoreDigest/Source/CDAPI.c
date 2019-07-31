@@ -6,7 +6,7 @@
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
-#include "CoreDigest.h"
+#include "CDAPI.h"
 
 
 int32_t CDHmac(CDVariant_e e, uint8_t const * _Nullable key, size_t keyLength, uint8_t const * _Nullable input, size_t inputLength, uint8_t * _Nullable output, size_t outputLength) {

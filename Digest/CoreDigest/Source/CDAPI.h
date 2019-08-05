@@ -246,13 +246,6 @@ int32_t CDHmac(CDVariant_e e, uint8_t const * _Nullable key, size_t keyLength, u
 //    return val;
 //}
 
-#define swap(x,y)   do{x^=y;y^=x;x^=y;}while(0)
-
-static inline void CUInt32Swap(uint32_t * _Nonnull x, uint32_t * _Nonnull y) {
-    uint32_t t = *x;
-    *x = *y;
-    *y = t;
-}
 static inline uint16_t CUInt16ByteSwap(uint16_t data) {
     return (uint16_t)(data << 8 | data >> 8);
 }

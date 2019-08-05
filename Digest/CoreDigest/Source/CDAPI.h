@@ -23,7 +23,6 @@
 #elif defined(_WIN32)
 #endif
 
-
 typedef enum _CDVariant {
     CDVariantNone = 0,
     
@@ -247,23 +246,41 @@ int32_t CDHmac(CDVariant_e e, uint8_t const * _Nullable key, size_t keyLength, u
 //    return val;
 //}
 
+#define swap(x,y)   do{x^=y;y^=x;x^=y;}while(0)
 
-static inline uint32_t CUInt32ByteSwap(uint32_t val) {
-    return (((val>>24) & 0x000000FF) | ((val<<24) & 0xFF000000) | ((val>>8) & 0x0000FF00) | ((val<<8) & 0x00FF0000));
+static inline void CUInt32Swap(uint32_t * _Nonnull x, uint32_t * _Nonnull y) {
+    uint32_t t = *x;
+    *x = *y;
+    *y = t;
+}
+static inline uint16_t CUInt16ByteSwap(uint16_t data) {
+    return (uint16_t)(data << 8 | data >> 8);
 }
 
-static inline uint64_t CUInt64ByteSwap(uint64_t val) {
-    return ((uint64_t)((val & 0xff00000000000000ULL) >> 56) |
-                       ((val & 0x00ff000000000000ULL) >> 40) |
-                       ((val & 0x0000ff0000000000ULL) >> 24) |
-                       ((val & 0x000000ff00000000ULL) >>  8) |
-                       ((val & 0x00000000ff000000ULL) <<  8) |
-                       ((val & 0x0000000000ff0000ULL) << 24) |
-                       ((val & 0x000000000000ff00ULL) << 40) |
-                       ((val & 0x00000000000000ffULL) << 56));
+static inline uint32_t CUInt32ByteSwap(uint32_t data) {
+#if defined(__llvm__)
+    data = __builtin_bswap32(data);
+#else
+    data = (((data ^ (data >> 16 | (data << 16))) & 0xFF00FFFF) >> 8) ^ (data >> 8 | data << 24);
+#endif
+    return data;
 }
 
-
+static inline uint64_t CUInt64ByteSwap(uint64_t data) {
+#if defined(__llvm__)
+    return __builtin_bswap64(data);
+#else
+    union {
+        uint64_t ull;
+        uint32_t ul[2];
+    } u;
+    u.ull = data;
+    uint32_t t = u.ul[0];
+    u.ul[0] = CUInt32ByteSwap(u.ul[1]);
+    u.ul[1] = CUInt32ByteSwap(t);
+    return u.ull;
+#endif
+}
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 static inline uint64_t CUInt64MakeWithBigEndianBytes(uint8_t const block[_Nonnull 8]) {
@@ -283,20 +300,12 @@ static inline uint32_t CUInt32MakeWithLittleEndianBytes(uint8_t const block[_Non
 
 
 static inline void CUInt64ToBigEndianBytes(uint64_t value, uint8_t bytes[_Nonnull 8]) {
-    bytes[0] = (uint8_t)(value >> 56);
-    bytes[1] = (uint8_t)(value >> 48);
-    bytes[2] = (uint8_t)(value >> 40);
-    bytes[3] = (uint8_t)(value >> 32);
-    bytes[4] = (uint8_t)(value >> 24);
-    bytes[5] = (uint8_t)(value >> 16);
-    bytes[6] = (uint8_t)(value >> 8);
-    bytes[7] = (uint8_t)(value);
+    uint64_t v = CUInt64ByteSwap(value);
+    *((uint64_t *)bytes) = v;
 }
 static inline void CUInt32ToBigEndianBytes(uint32_t value, uint8_t bytes[_Nonnull 4]) {
-    bytes[0] = (uint8_t)(value >> 24);
-    bytes[1] = (uint8_t)(value >> 16);
-    bytes[2] = (uint8_t)(value >> 8);
-    bytes[3] = (uint8_t)(value);
+    uint32_t v = CUInt32ByteSwap(value);
+    *((uint32_t *)bytes) = v;
 }
 static inline void CUInt64ToLittleEndianBytes(uint64_t value, uint8_t block[_Nonnull 8]) {
     *((uint64_t *)block) = value;
@@ -330,22 +339,12 @@ static inline void CUInt32ToBigEndianBytes(uint32_t value, uint8_t bytes[_Nonnul
     *((uint32_t *)block) = value;
 }
 static inline void CUInt64ToLittleEndianBytes(uint64_t value, uint8_t block[_Nonnull 8]) {
-    bytes[7] = (uint8_t)(value >> 56);
-    bytes[6] = (uint8_t)(value >> 48);
-    bytes[5] = (uint8_t)(value >> 40);
-    bytes[4] = (uint8_t)(value >> 32);
-    bytes[3] = (uint8_t)(value >> 24);
-    bytes[2] = (uint8_t)(value >> 16);
-    bytes[1] = (uint8_t)(value >> 8);
-    bytes[0] = (uint8_t)(value);
+    uint64_t v = CUInt64ByteSwap(value);
+    *((uint64_t *)bytes) = v;
 }
 static inline void CUInt32ToLittleEndianBytes(uint32_t value, uint8_t block[_Nonnull 4]) {
-    *((uint32_t *)block) = value;
-    
-    bytes[3] = (uint8_t)(value >> 24);
-    bytes[2] = (uint8_t)(value >> 16);
-    bytes[1] = (uint8_t)(value >> 8);
-    bytes[0] = (uint8_t)(value);
+    uint32_t v = CUInt32ByteSwap(value);
+    *((uint32_t *)bytes) = v;
 }
 
 #else

@@ -1,0 +1,21 @@
+# Uncomment this line to define a global platform for your project
+# platform :ios, '9.0'
+
+source 'https://github.com/CocoaPods/Specs.git'
+
+
+target 'Crypto' do
+  platform :macos, '10.14'
+  pod 'BoringSSL'
+
+  
+end
+
+
+target 'iCrypto' do
+  platform :ios, '9.0'
+  pod 'BoringSSL'
+  
+  
+end
+

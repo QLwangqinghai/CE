@@ -12,25 +12,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CBridage : NSObject
 
-+ (NSData *)md5:(NSData *)data;
-+ (NSData *)sha160:(NSData *)data;
++ (void)md5:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha160:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
 
-+ (NSData *)sha224:(NSData *)data;
-+ (NSData *)sha256:(NSData *)data;
-+ (NSData *)sha384:(NSData *)data;
-+ (NSData *)sha512:(NSData *)data;
-
-
-+ (NSData *)sha3th224:(NSData *)data;
-+ (NSData *)sha3th256:(NSData *)data;
-+ (NSData *)sha3th384:(NSData *)data;
-+ (NSData *)sha3th512:(NSData *)data;
++ (void)sha224:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha256:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha384:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha512:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
 
 
-+ (NSData *)sha3thKeccak224:(NSData *)data;
-+ (NSData *)sha3thKeccak256:(NSData *)data;
-+ (NSData *)sha3thKeccak384:(NSData *)data;
-+ (NSData *)sha3thKeccak512:(NSData *)data;
++ (void)sha3th224:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha3th256:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha3th384:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha3th512:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
+
+
++ (void)sha3thKeccak224:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha3thKeccak256:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha3thKeccak384:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
++ (void)sha3thKeccak512:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)hash;
 
 
 @end

@@ -85,6 +85,7 @@
 		D6B80B3E22F15D6900521396 /* CDSHA3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDSHA3.c; sourceTree = "<group>"; };
 		D6B80B4522F15EEA00521396 /* CBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBridge.h; sourceTree = "<group>"; };
 		D6B80B4622F15EEA00521396 /* CBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CBridge.m; sourceTree = "<group>"; };
+		D6F12E3522F9DA8700FEC805 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +144,7 @@
 				D67D6C0022EC0AE600A60A9D /* Info.plist */,
 				D67D6C0122EC0AE600A60A9D /* Digest.entitlements */,
 				D67D6C0722EC0AFD00A60A9D /* Digest-Bridging-Header.h */,
+				D6F12E3522F9DA8700FEC805 /* README.md */,
 			);
 			path = Digest;
 			sourceTree = "<group>";

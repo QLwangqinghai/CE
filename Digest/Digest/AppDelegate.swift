@@ -12,17 +12,31 @@ import CoreDigest
 import Darwin
 
 public class WorkItem {
+    public typealias Block = (_ bytes: UnsafeRawPointer, _ bytesLength: Int, _ hashBuffer: UnsafeMutablePointer<UInt8>) -> Void
+    
+    
     let tag: String
-    let workItem: DispatchWorkItem
+    let workItem: Block
     var time: UInt64 = 0
-    public init(tag: String, block: @escaping @convention(block) () -> Void) {
+    
+    let bytes: UnsafeRawPointer
+    let bytesLength: Int
+
+    let hashBuffer: UnsafeMutablePointer<UInt8>
+    let hashLength: Int
+    
+    public init(tag: String, bytes: UnsafeRawPointer, bytesLength: Int, hashBuffer: UnsafeMutablePointer<UInt8>, hashLength: Int, block: @escaping Block) {
+        self.bytes = bytes
+        self.hashBuffer = hashBuffer
+        self.bytesLength = bytesLength
+        self.hashLength = hashLength
         self.tag = tag
-        self.workItem = DispatchWorkItem(block: block)
+        self.workItem = block
     }
     
     public func perform() {
         let b = mach_absolute_time()
-        self.workItem.perform()
+        self.workItem(self.bytes, self.bytesLength, self.hashBuffer)
         let e = mach_absolute_time()
         self.time = e - b
         
@@ -124,6 +138,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBOutlet weak var window: NSWindow!
     
+    let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 256)
+    
+    let input = UnsafeMutablePointer<UInt8>.allocate(capacity: 4 * 32 * 1024 * 1024)
+
+    
     //sha 224
     //64mb 122.50645196437836/2, 95.70805394649506/2, 65.84227406978607/2
     //32mb 63.18473494052887/2, 49.14368402957916/2, 16.29863202571869/2
@@ -152,10 +171,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let data = NSData(contentsOfFile: "/Users/vector/Downloads/TIMSDK-master.zip")!
         let inputItem = data.subdata(with: NSMakeRange(0, 32 * 1024 * 1024))
         let buffer = NSMutableData(capacity: 4 * 32 * 1024 * 1024)!
+        
+        
         for _ in 0..<4 {
             buffer.append(inputItem)
         }
-        let input = buffer as Data
+        memcpy(self.input, buffer.bytes, buffer.length)
+
+        
+        let hashBuffer: UnsafeMutablePointer<UInt8> = self.buffer
+        
         
 //        self.items.append(WorkItem.init(tag: "m.sha3.224", block: {
 //            let h = CBridage.sha3th224(input)
@@ -168,91 +193,59 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //            self.results.append(result);
 //        }));
 //
+//        self.items.append(WorkItem(tag: "m.sha3.224(6)", block: {
+//            let h = CBridage.sha3th224(Data.init(hex: "616263"))
+//            let result = h.toHexString()
+//            print("\(224)  \(result) \(result == "e642824c3f8cf24ad09234ee7d3c766fc9a3a5168d0c94ad73b46fdf")")
+//        }));
         
-        self.items.append(WorkItem(tag: "m.sha3.224(6)", block: {
-            let h = CBridage.sha3th224(Data.init(hex: "616263"))
-            let result = h.toHexString()
-            print("\(224)  \(result) \(result == "e642824c3f8cf24ad09234ee7d3c766fc9a3a5168d0c94ad73b46fdf")")
-        }));
+        func makeItem(tag: String, hashLength: Int, block: @escaping WorkItem.Block) -> WorkItem {
+            return WorkItem(tag: tag, bytes: input, bytesLength: buffer.length, hashBuffer: hashBuffer, hashLength: hashLength, block: block)
+        }
+    
         
         
-        self.items.append(WorkItem.init(tag: "m.md5", block: {
-            let h = CBridage.md5(input)
-            let result = h.toHexString()
-            self.results.append(result);
-        }));
-        self.items.append(WorkItem.init(tag: "sys.md5", block: {
-            let h = NSMutableData(length: Int(CC_MD5_DIGEST_LENGTH))!
+        self.items.append(makeItem(tag: "m.md5", hashLength: Int(CC_MD5_DIGEST_LENGTH)) { (p, len, h) in
+            CBridage.md5(p, length: len, hash: h)
+        });
+        self.items.append(makeItem(tag: "s.md5", hashLength: Int(CC_MD5_DIGEST_LENGTH)) { (p, len, h) in
+            CC_MD5(p, UInt32(len), h)
+        });
 
-            CC_MD5(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
-            let result = (h as Data).toHexString()
-            self.results.append(result);
-        }));
+        self.items.append(makeItem(tag: "m.sha1", hashLength: Int(CC_SHA1_DIGEST_LENGTH)) { (p, len, h) in
+            CBridage.sha160(p, length: len, hash: h)
+        });
+        self.items.append(makeItem(tag: "s.sha1", hashLength: Int(CC_SHA1_DIGEST_LENGTH)) { (p, len, h) in
+            CC_SHA1(p, UInt32(len), h)
+        });
+        
+        self.items.append(makeItem(tag: "m.sha2.224", hashLength: Int(CC_SHA224_DIGEST_LENGTH)) { (p, len, h) in
+            CBridage.sha224(p, length: len, hash: h)
+        });
+        self.items.append(makeItem(tag: "s.sha2.224", hashLength: Int(CC_SHA224_DIGEST_LENGTH)) { (p, len, h) in
+            CC_SHA224(p, UInt32(len), h)
+        });
+        
+        self.items.append(makeItem(tag: "m.sha2.256", hashLength: Int(CC_SHA256_DIGEST_LENGTH)) { (p, len, h) in
+            CBridage.sha256(p, length: len, hash: h)
+        });
+        self.items.append(makeItem(tag: "s.sha2.256", hashLength: Int(CC_SHA256_DIGEST_LENGTH)) { (p, len, h) in
+            CC_SHA256(p, UInt32(len), h)
+        });
+        
+        self.items.append(makeItem(tag: "m.sha2.384", hashLength: Int(CC_SHA384_DIGEST_LENGTH)) { (p, len, h) in
+            CBridage.sha384(p, length: len, hash: h)
+        });
+        self.items.append(makeItem(tag: "s.sha2.384", hashLength: Int(CC_SHA384_DIGEST_LENGTH)) { (p, len, h) in
+            CC_SHA384(p, UInt32(len), h)
+        });
 
-        self.items.append(WorkItem.init(tag: "m.sha1", block: {
-            let h = CBridage.sha160(input)
-            let result = h.toHexString()
-            self.results.append(result);
-        }));
-        self.items.append(WorkItem.init(tag: "sys.sha1", block: {
-            let h = NSMutableData(length: Int(CC_SHA1_DIGEST_LENGTH))!
-            CC_SHA1(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
-            let result = (h as Data).toHexString()
-            self.results.append(result);
-        }));
-        
-        self.items.append(WorkItem.init(tag: "m.sha2.224", block: {
-            let sha2Oncea = CBridage.sha224(input)
-            let result = sha2Oncea.toHexString()
-            self.results.append(result);
-        }));
-        self.items.append(WorkItem.init(tag: "sys.sha2.224", block: {
-            let h = NSMutableData(length: Int(CC_SHA224_DIGEST_LENGTH))!
-            CC_SHA224(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
-            let result = (h as Data).toHexString()
-            self.results.append(result);
-        }));
-        
-
-        self.items.append(WorkItem.init(tag: "m.sha2.256", block: {
-            let sha2Oncea = CBridage.sha256(input)
-            let result = sha2Oncea.toHexString()
-            self.results.append(result);
-        }));
-        self.items.append(WorkItem.init(tag: "sys.sha2.256", block: {
-            let h = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))!
-            CC_SHA256(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
-            let result = (h as Data).toHexString()
-            self.results.append(result);
-        }));
-        
-        
-        self.items.append(WorkItem.init(tag: "m.sha2.384", block: {
-            let sha2Oncea = CBridage.sha384(input)
-            let result = sha2Oncea.toHexString()
-            self.results.append(result);
-        }));
-        
-        self.items.append(WorkItem.init(tag: "sys.sha2.384", block: {
-            let h = NSMutableData(length: Int(CC_SHA384_DIGEST_LENGTH))!
-            CC_SHA384(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
-            let result = (h as Data).toHexString()
-            self.results.append(result);
-        }));
-        
-        
-        self.items.append(WorkItem.init(tag: "m.sha2.512", block: {
-            let sha2Oncea = CBridage.sha512(input)
-            let result = sha2Oncea.toHexString()
-            self.results.append(result);
-        }));
-        self.items.append(WorkItem.init(tag: "sys.sha2.512", block: {
-            let h = NSMutableData(length: Int(CC_SHA512_DIGEST_LENGTH))!
-            CC_SHA512(input.bytes, UInt32(input.count), h.mutableBytes.assumingMemoryBound(to: UInt8.self))
-            let result = (h as Data).toHexString()
-            self.results.append(result);
-        }));
-        
+        self.items.append(makeItem(tag: "m.sha2.512", hashLength: Int(CC_SHA512_DIGEST_LENGTH)) { (p, len, h) in
+            CBridage.sha512(p, length: len, hash: h)
+        });
+        self.items.append(makeItem(tag: "s.sha2.512", hashLength: Int(CC_SHA512_DIGEST_LENGTH)) { (p, len, h) in
+            CC_SHA512(p, UInt32(len), h)
+        });
 
         
         for item in self.items {

@@ -9,22 +9,30 @@
 import Cocoa
 import CommonCrypto
 import CoreDigest
+import Darwin
 
 public class WorkItem {
     let tag: String
     let workItem: DispatchWorkItem
-    var time: TimeInterval = 0
+    var time: UInt64 = 0
     public init(tag: String, block: @escaping @convention(block) () -> Void) {
         self.tag = tag
         self.workItem = DispatchWorkItem(block: block)
     }
     
     public func perform() {
-        let b = CFAbsoluteTimeGetCurrent();
+        let b = mach_absolute_time()
         self.workItem.perform()
-        let e = CFAbsoluteTimeGetCurrent();
+        let e = mach_absolute_time()
         self.time = e - b
-        print("\(tag): used_time:\(self.time)")
+        
+        let x = self.time / 100000000
+        let rx = self.time % 100000000
+        let y = rx / 100000
+        let ry = rx % 100000
+        let z = ry / 100
+
+        print("\(tag): used_time:\(String(format: "%lu", x)).\(String(format: "%03lu", y))-\(String(format: "%03lu", z))")
     }
     
 }

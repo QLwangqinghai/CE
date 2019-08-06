@@ -36,7 +36,9 @@ public class WorkItem {
     
     public func perform() {
         let b = mach_absolute_time()
-        self.workItem(self.bytes, self.bytesLength, self.hashBuffer)
+        for _ in 1...10 {
+            self.workItem(self.bytes, self.bytesLength, self.hashBuffer)
+        }
         let e = mach_absolute_time()
         self.time = e - b
         

@@ -60,3 +60,31 @@ m.sha2.384: used_time:5.685-754
 sys.sha2.384: used_time:3.492-760
 m.sha2.512: used_time:5.619-307
 sys.sha2.512: used_time:3.495-777
+
+## 5
+m.md5: used_time:3.295-678
+s.md5: used_time:3.184-572
+m.sha1: used_time:5.164-075
+s.sha1: used_time:1.584-365
+m.sha2.224: used_time:8.631-303
+s.sha2.224: used_time:3.939-661
+m.sha2.256: used_time:9.079-992
+s.sha2.256: used_time:3.996-898
+m.sha2.384: used_time:5.792-565
+s.sha2.384: used_time:2.753-736
+m.sha2.512: used_time:5.728-861
+s.sha2.512: used_time:2.749-887
+
+## 6
+m.md5: used_time:30.088-783
+s.md5: used_time:30.243-236
+m.sha1: used_time:49.731-872
+s.sha1: used_time:16.308-104
+m.sha2.224: used_time:86.763-076
+s.sha2.224: used_time:38.933-057
+m.sha2.256: used_time:87.720-466
+s.sha2.256: used_time:39.090-365
+m.sha2.384: used_time:55.811-739
+s.sha2.384: used_time:26.518-267
+m.sha2.512: used_time:56.073-243
+s.sha2.512: used_time:26.610-775

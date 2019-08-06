@@ -161,7 +161,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //        }));
 //
         
-        self.items.append(WorkItem(tag: "m.sha3.224", block: {
+        self.items.append(WorkItem(tag: "m.sha3.224(6)", block: {
             let h = CBridage.sha3th224(Data.init(hex: "616263"))
             let result = h.toHexString()
             print("\(224)  \(result) \(result == "e642824c3f8cf24ad09234ee7d3c766fc9a3a5168d0c94ad73b46fdf")")

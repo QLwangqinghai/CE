@@ -200,6 +200,30 @@ static inline size_t CCDigestStatusSize(CCDigestType_e e) {
     }
 }
 
+static inline size_t CCDigestHashWordSize(CCDigestType_e e) {
+    switch (e) {
+        case CCDigestTypeMd5:
+        case CCDigestTypeSha1:
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha2Variant256:
+            return 4;
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha2Variant512:
+        case CCDigestTypeSha3Variant224:
+        case CCDigestTypeSha3VariantKeccak224:
+        case CCDigestTypeSha3Variant256:
+        case CCDigestTypeSha3VariantKeccak256:
+        case CCDigestTypeSha3Variant384:
+        case CCDigestTypeSha3VariantKeccak384:
+        case CCDigestTypeSha3Variant512:
+        case CCDigestTypeSha3VariantKeccak512:
+            return 8;
+        default:
+            return 0;
+    }
+}
+
+
 static inline size_t CCDigestPaddingBitLengthByteCount(CCDigestType_e e) {
     switch (e) {
         case CCDigestTypeMd5:
@@ -227,6 +251,17 @@ static inline size_t CCDigestPaddingBitLengthByteCount(CCDigestType_e e) {
             return 0;
     }
 }
+
+typedef struct _CCDigestInfo {
+    uint32_t digestType;
+    uint16_t blockSize;
+    uint16_t outputSize;
+    uint16_t stateSize;
+    uint8_t stateWordSize;
+    uint8_t paddingLenghSize;
+    void * _Nullable initialHashValue;
+} CCDigestInfo_s;
+
 
 struct _CCDigestContext;
 typedef struct _CCDigestContext CCDigestContext_s;
@@ -256,6 +291,19 @@ static inline void CCDigestContextAddCount(CCDigestContext_s * _Nonnull context,
     }
     context->countLow = countLow;
 }
+
+typedef struct _CCDigestContextArchive {
+    uint32_t digestType;
+    uint32_t accumulatedSize;
+    uint64_t countLow;//长度的低位
+    uint64_t countHigh;//长度的高位
+    void * _Nonnull states;
+    uint8_t * _Nonnull accumulated;
+    CCDigestProcess_f _Nonnull process;
+    CCDigestFinish_f _Nonnull finish;
+    CCDigestExportHashValue_f _Nonnull exportHashValue;
+} CCDigestContextArchive_s;
+
 
 //accumulatedSize < blockSize
 void CCDigestContextInit(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated);

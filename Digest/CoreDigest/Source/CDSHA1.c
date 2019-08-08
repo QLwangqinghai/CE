@@ -15,7 +15,7 @@
 #define CDSHA1F3(x,y,z)  (x ^ y ^ z)
 
 
-static inline void CDSHA1Process(uint8_t const * _Nonnull block, uint32_t currentHash[_Nonnull 5]) {
+static inline void CDSHA1Process(uint8_t const * _Nonnull block, uint32_t currentHash[_Nonnull 5], size_t blockCount) {
     uint32_t M[80] = {0};
 
     uint32_t a;
@@ -27,72 +27,74 @@ static inline void CDSHA1Process(uint8_t const * _Nonnull block, uint32_t curren
     const uint8_t * iter = block;
     uint32_t * hh = currentHash;
 
-    for (i = 0; i < 16; i++) {
-        M[i] = CUInt32MakeWithBigEndianBytes(iter);
-        iter += 4;
-    }
-
-    /* read state */
-    a = hh[0];
-    b = hh[1];
-    c = hh[2];
-    d = hh[3];
-    e = hh[4];
-
-    /* expand it */
-    for (i = 16; i < 80; i++) {
-        M[i] = CUInt32RotateLeft(M[i-3] ^ M[i-8] ^ M[i-14] ^ M[i-16], 1);
-    }
-    
-    /* compress */
-    /* round one */
+    while (blockCount--) {
+        for (i = 0; i < 16; i++) {
+            M[i] = CUInt32MakeWithBigEndianBytes(iter);
+            iter += 4;
+        }
+        
+        /* read state */
+        a = hh[0];
+        b = hh[1];
+        c = hh[2];
+        d = hh[3];
+        e = hh[4];
+        
+        /* expand it */
+        for (i = 16; i < 80; i++) {
+            M[i] = CUInt32RotateLeft(M[i-3] ^ M[i-8] ^ M[i-14] ^ M[i-16], 1);
+        }
+        
+        /* compress */
+        /* round one */
 #define CDSHA1FF0(a,b,c,d,e,i) e = (CUInt32RotateLeft(a, 5) + CDSHA1F0(b,c,d) + e + M[i] + 0x5a827999); b = CUInt32RotateLeft(b, 30);
 #define CDSHA1FF1(a,b,c,d,e,i) e = (CUInt32RotateLeft(a, 5) + CDSHA1F1(b,c,d) + e + M[i] + 0x6ed9eba1); b = CUInt32RotateLeft(b, 30);
 #define CDSHA1FF2(a,b,c,d,e,i) e = (CUInt32RotateLeft(a, 5) + CDSHA1F2(b,c,d) + e + M[i] + 0x8f1bbcdc); b = CUInt32RotateLeft(b, 30);
 #define CDSHA1FF3(a,b,c,d,e,i) e = (CUInt32RotateLeft(a, 5) + CDSHA1F3(b,c,d) + e + M[i] + 0xca62c1d6); b = CUInt32RotateLeft(b, 30);
-    
-    
-    for (i = 0; i < 20; ) {
-        CDSHA1FF0(a,b,c,d,e,i++);
-        CDSHA1FF0(e,a,b,c,d,i++);
-        CDSHA1FF0(d,e,a,b,c,i++);
-        CDSHA1FF0(c,d,e,a,b,i++);
-        CDSHA1FF0(b,c,d,e,a,i++);
+        
+        
+        for (i = 0; i < 20; ) {
+            CDSHA1FF0(a,b,c,d,e,i++);
+            CDSHA1FF0(e,a,b,c,d,i++);
+            CDSHA1FF0(d,e,a,b,c,i++);
+            CDSHA1FF0(c,d,e,a,b,i++);
+            CDSHA1FF0(b,c,d,e,a,i++);
+        }
+        
+        /* round two */
+        for (; i < 40; )  {
+            CDSHA1FF1(a,b,c,d,e,i++);
+            CDSHA1FF1(e,a,b,c,d,i++);
+            CDSHA1FF1(d,e,a,b,c,i++);
+            CDSHA1FF1(c,d,e,a,b,i++);
+            CDSHA1FF1(b,c,d,e,a,i++);
+        }
+        
+        /* round three */
+        for (; i < 60; )  {
+            CDSHA1FF2(a,b,c,d,e,i++);
+            CDSHA1FF2(e,a,b,c,d,i++);
+            CDSHA1FF2(d,e,a,b,c,i++);
+            CDSHA1FF2(c,d,e,a,b,i++);
+            CDSHA1FF2(b,c,d,e,a,i++);
+        }
+        
+        /* round four */
+        for (; i < 80; )  {
+            CDSHA1FF3(a,b,c,d,e,i++);
+            CDSHA1FF3(e,a,b,c,d,i++);
+            CDSHA1FF3(d,e,a,b,c,i++);
+            CDSHA1FF3(c,d,e,a,b,i++);
+            CDSHA1FF3(b,c,d,e,a,i++);
+        }
+        
+        //     store state
+        hh[0] += a;
+        hh[1] += b;
+        hh[2] += c;
+        hh[3] += d;
+        hh[4] += e;        
     }
-
-    /* round two */
-    for (; i < 40; )  {
-        CDSHA1FF1(a,b,c,d,e,i++);
-        CDSHA1FF1(e,a,b,c,d,i++);
-        CDSHA1FF1(d,e,a,b,c,i++);
-        CDSHA1FF1(c,d,e,a,b,i++);
-        CDSHA1FF1(b,c,d,e,a,i++);
-    }
-
-    /* round three */
-    for (; i < 60; )  {
-        CDSHA1FF2(a,b,c,d,e,i++);
-        CDSHA1FF2(e,a,b,c,d,i++);
-        CDSHA1FF2(d,e,a,b,c,i++);
-        CDSHA1FF2(c,d,e,a,b,i++);
-        CDSHA1FF2(b,c,d,e,a,i++);
-    }
-
-    /* round four */
-    for (; i < 80; )  {
-        CDSHA1FF3(a,b,c,d,e,i++);
-        CDSHA1FF3(e,a,b,c,d,i++);
-        CDSHA1FF3(d,e,a,b,c,i++);
-        CDSHA1FF3(c,d,e,a,b,i++);
-        CDSHA1FF3(b,c,d,e,a,i++);
-    }
-
-//     store state 
-    hh[0] += a;
-    hh[1] += b;
-    hh[2] += c;
-    hh[3] += d;
-    hh[4] += e;
 }
 
 void CDSHA1ContextInit(CDSHA1Context_s * _Nonnull context) {
@@ -115,21 +117,20 @@ void CDSHA1Update(CDSHA1Context_s * _Nonnull context, uint8_t const * _Nonnull b
     }
     assert(bytes);
     
-    size_t blockSize = CCDigestSha1BlockSize;
     uint8_t const * ptr = bytes;
     if (context->accumulatedSize > 0) {
-        size_t missingLength = blockSize - context->accumulatedSize;
+        size_t missingLength = CCDigestSha1BlockSize - context->accumulatedSize;
         if (length < missingLength) {
             memcpy(context->accumulated, ptr, length);
             context->accumulatedSize += length;
             return;
         } else {
             memcpy(context->accumulated, ptr, missingLength);
-            CDSHA1Process(context->accumulated, context->values);
+            CDSHA1Process(context->accumulated, context->values, 1);
             context->accumulatedSize = 0;
             ptr += missingLength;
             length -= missingLength;
-            context->bitCount += blockSize * 8;
+            context->bitCount += CCDigestSha1BlockSize << 3;
         }
     }
     uint64_t const mask = 0xFFFFFFFFFFFFFFF8ULL;
@@ -138,11 +139,12 @@ void CDSHA1Update(CDSHA1Context_s * _Nonnull context, uint8_t const * _Nonnull b
     bitCount = bitCount << 3;
     context->bitCount += bitCount;
     
-    for (; length >= blockSize; length -= blockSize) {
-        CDSHA1Process(ptr, context->values);
-        ptr += blockSize;
+    size_t blockCount = length >> 6;
+    if (blockCount > 0) {
+        CDSHA1Process(ptr, context->values, blockCount);
+        ptr += (blockCount << 6);
     }
-    
+    length = length % CCDigestSha1BlockSize;
     if (length > 0) {
         memcpy(context->accumulated, ptr, length);
         context->accumulatedSize += length;
@@ -177,12 +179,11 @@ void CDSHA1Final(CDSHA1Context_s * _Nonnull context) {
         ptr = bytes + max;
         
         CUInt64ToBigEndianBytes(context->bitCount, ptr);
-        CDSHA1Process(bytes, context->values);
+        CDSHA1Process(bytes, context->values, 1);
     } else {
         ptr = bytes + blockSize + max;
         CUInt64ToBigEndianBytes(context->bitCount, ptr);
-        CDSHA1Process(bytes, context->values);
-        CDSHA1Process(bytes + blockSize, context->values);
+        CDSHA1Process(bytes, context->values, 2);
     }
 }
 

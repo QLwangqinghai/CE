@@ -17,7 +17,7 @@
 		D6B80B3022F15D4A00521396 /* CoreDigest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6B80B1A22F15D4900521396 /* CoreDigest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D6B80B3F22F15D6900521396 /* CDAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3922F15D6900521396 /* CDAPI.c */; };
 		D6B80B4022F15D6900521396 /* CDSHA2.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3A22F15D6900521396 /* CDSHA2.c */; };
-		D6B80B4122F15D6900521396 /* CDMD.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3B22F15D6900521396 /* CDMD.c */; };
+		D6B80B4122F15D6900521396 /* CDMd5.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3B22F15D6900521396 /* CDMd5.c */; };
 		D6B80B4222F15D6900521396 /* CDSHA1.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3C22F15D6900521396 /* CDSHA1.c */; };
 		D6B80B4322F15D6900521396 /* CDAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B80B3D22F15D6900521396 /* CDAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6B80B4422F15D6900521396 /* CDSHA3.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3E22F15D6900521396 /* CDSHA3.c */; };
@@ -79,7 +79,7 @@
 		D6B80B2B22F15D4A00521396 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6B80B3922F15D6900521396 /* CDAPI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDAPI.c; sourceTree = "<group>"; };
 		D6B80B3A22F15D6900521396 /* CDSHA2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDSHA2.c; sourceTree = "<group>"; };
-		D6B80B3B22F15D6900521396 /* CDMD.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDMD.c; sourceTree = "<group>"; };
+		D6B80B3B22F15D6900521396 /* CDMd5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDMd5.c; sourceTree = "<group>"; };
 		D6B80B3C22F15D6900521396 /* CDSHA1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDSHA1.c; sourceTree = "<group>"; };
 		D6B80B3D22F15D6900521396 /* CDAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDAPI.h; sourceTree = "<group>"; };
 		D6B80B3E22F15D6900521396 /* CDSHA3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CDSHA3.c; sourceTree = "<group>"; };
@@ -175,7 +175,7 @@
 			children = (
 				D6B80B3922F15D6900521396 /* CDAPI.c */,
 				D6B80B3A22F15D6900521396 /* CDSHA2.c */,
-				D6B80B3B22F15D6900521396 /* CDMD.c */,
+				D6B80B3B22F15D6900521396 /* CDMd5.c */,
 				D6B80B3C22F15D6900521396 /* CDSHA1.c */,
 				D6B80B3D22F15D6900521396 /* CDAPI.h */,
 				D6B80B3E22F15D6900521396 /* CDSHA3.c */,
@@ -343,7 +343,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6B80B4822F15EEA00521396 /* CBridge.m in Sources */,
-				D6B80B4122F15D6900521396 /* CDMD.c in Sources */,
+				D6B80B4122F15D6900521396 /* CDMd5.c in Sources */,
 				D6B80B4222F15D6900521396 /* CDSHA1.c in Sources */,
 				D6B80B4022F15D6900521396 /* CDSHA2.c in Sources */,
 				D6B80B3F22F15D6900521396 /* CDAPI.c in Sources */,

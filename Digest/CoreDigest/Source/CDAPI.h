@@ -28,7 +28,7 @@
 #endif
 
 typedef enum _CCDigestType {
-    CCDigestTypeNone = 0,
+    CCDigestTypeUnknown = 0,
     
     CCDigestTypeMd5 = 1,
     
@@ -266,7 +266,7 @@ typedef struct _CCDigestInfo {
 struct _CCDigestContext;
 typedef struct _CCDigestContext CCDigestContext_s;
 
-typedef void (*CCDigestProcess_f)(void * _Nonnull state, size_t nblocks, const void * _Nonnull in);
+typedef void (*CCDigestProcess_f)(void * _Nonnull state, size_t blockCount, const void * _Nonnull in);
 typedef void (*CCDigestFinish_f)(CCDigestContext_s * _Nonnull context);
 typedef void (*CCDigestExportHashValue_f)(CCDigestContext_s * _Nonnull context, void * _Nonnull bytes);
 
@@ -292,6 +292,16 @@ static inline void CCDigestContextAddCount(CCDigestContext_s * _Nonnull context,
     context->countLow = countLow;
 }
 
+
+
+/*
+ Big-endian uint32_t, highest 1bit is endian flag, 0 for Big-endian, 1 for Little-endian, version(31bit) |
+ following number using endian flag
+ 
+ remain length(uint32_t) | digestType(uint32_t) | processed length (uint128_t) | 
+ */
+
+
 typedef struct _CCDigestContextArchive {
     uint32_t digestType;
     uint32_t accumulatedSize;
@@ -299,9 +309,6 @@ typedef struct _CCDigestContextArchive {
     uint64_t countHigh;//长度的高位
     void * _Nonnull states;
     uint8_t * _Nonnull accumulated;
-    CCDigestProcess_f _Nonnull process;
-    CCDigestFinish_f _Nonnull finish;
-    CCDigestExportHashValue_f _Nonnull exportHashValue;
 } CCDigestContextArchive_s;
 
 

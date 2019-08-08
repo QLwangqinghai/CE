@@ -29,7 +29,7 @@
 
 + (void)sha224:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA2Context_s context = {};
-    CDSHA2ContextInit(&context, CDVariantSHA2th224);
+    CDSHA2ContextInit(&context, CCDigestTypeSha2Variant224);
     CDSHA2Update(&context, data, length);
     CDSHA2Final(&context);
     CDSHA2ExportHashValue(&context, result);
@@ -37,7 +37,7 @@
 
 + (void)sha256:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA2Context_s context = {};
-    CDSHA2ContextInit(&context, CDVariantSHA2th256);
+    CDSHA2ContextInit(&context, CCDigestTypeSha2Variant256);
     CDSHA2Update(&context, data, length);
     CDSHA2Final(&context);
     CDSHA2ExportHashValue(&context, result);
@@ -45,7 +45,7 @@
 
 + (void)sha512:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA2Context_s context = {};
-    CDSHA2ContextInit(&context, CDVariantSHA2th512);
+    CDSHA2ContextInit(&context, CCDigestTypeSha2Variant512);
     CDSHA2Update(&context, data, length);
     CDSHA2Final(&context);
     CDSHA2ExportHashValue(&context, result);
@@ -53,7 +53,7 @@
 
 + (void)sha384:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA2Context_s context;
-    CDSHA2ContextInit(&context, CDVariantSHA2th384);
+    CDSHA2ContextInit(&context, CCDigestTypeSha2Variant384);
     CDSHA2Update(&context, data, length);
     CDSHA2Final(&context);
     CDSHA2ExportHashValue(&context, result);
@@ -62,14 +62,14 @@
 
 + (void)sha3th256:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA3Context_s context;
-    CDSHA3ContextInit(&context, CDVariantSHA3th256);
+    CDSHA3ContextInit(&context, CCDigestTypeSha3Variant256);
     CDSHA3Update(&context, data, length);
     CDSHA3Final(&context);
     CDSHA3ExportHashValue(&context, result);
 }
 + (void)sha3th224:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA3Context_s context;
-    CDSHA3ContextInit(&context, CDVariantSHA3th224);
+    CDSHA3ContextInit(&context, CCDigestTypeSha3Variant224);
     CDSHA3Update(&context, data, length);
     CDSHA3Final(&context);
     CDSHA3ExportHashValue(&context, result);
@@ -77,14 +77,14 @@
 
 + (void)sha3th384:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA3Context_s context;
-    CDSHA3ContextInit(&context, CDVariantSHA3th384);
+    CDSHA3ContextInit(&context, CCDigestTypeSha3Variant384);
     CDSHA3Update(&context, data, length);
     CDSHA3Final(&context);
     CDSHA3ExportHashValue(&context, result);
 }
 + (void)sha3th512:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA3Context_s context;
-    CDSHA3ContextInit(&context, CDVariantSHA3th512);
+    CDSHA3ContextInit(&context, CCDigestTypeSha3Variant512);
     CDSHA3Update(&context, data, length);
     CDSHA3Final(&context);
     CDSHA3ExportHashValue(&context, result);
@@ -93,14 +93,14 @@
 
 + (void)sha3thKeccak256:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA3Context_s context;
-    CDSHA3ContextInit(&context, CDVariantSHA3thKeccak256);
+    CDSHA3ContextInit(&context, CCDigestTypeSha3VariantKeccak256);
     CDSHA3Update(&context, data, length);
     CDSHA3Final(&context);
     CDSHA3ExportHashValue(&context, result);
 }
 + (void)sha3thKeccak224:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA3Context_s context;
-    CDSHA3ContextInit(&context, CDVariantSHA3thKeccak224);
+    CDSHA3ContextInit(&context, CCDigestTypeSha3VariantKeccak224);
     CDSHA3Update(&context, data, length);
     CDSHA3Final(&context);
     CDSHA3ExportHashValue(&context, result);
@@ -108,14 +108,14 @@
 
 + (void)sha3thKeccak384:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA3Context_s context;
-    CDSHA3ContextInit(&context, CDVariantSHA3thKeccak384);
+    CDSHA3ContextInit(&context, CCDigestTypeSha3VariantKeccak384);
     CDSHA3Update(&context, data, length);
     CDSHA3Final(&context);
     CDSHA3ExportHashValue(&context, result);
 }
 + (void)sha3thKeccak512:(void const * _Nonnull)data length:(size_t)length hash:(uint8_t * _Nonnull)result {
     CDSHA3Context_s context;
-    CDSHA3ContextInit(&context, CDVariantSHA3thKeccak512);
+    CDSHA3ContextInit(&context, CCDigestTypeSha3VariantKeccak512);
     CDSHA3Update(&context, data, length);
     CDSHA3Final(&context);
     CDSHA3ExportHashValue(&context, result);

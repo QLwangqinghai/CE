@@ -26,7 +26,7 @@ a = (a + H(b,c,d) + M + t); a = CUInt32RotateLeft(a, s) + b;
 #define II(a,b,c,d,M,s,t) \
 a = (a + I(b,c,d) + M + t); a = CUInt32RotateLeft(a, s) + b;
 
-void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t currentHash[_Nonnull 4]) {
+void CDMD5Process(uint32_t * _Nonnull currentHash, uint8_t const * _Nonnull block) {
     uint32_t i, W[16], a, b, c, d;
     uint32_t *s = currentHash;
     const uint8_t * ptr = block;
@@ -117,7 +117,7 @@ void CDMD5Process(uint8_t const block[_Nonnull 64], uint32_t currentHash[_Nonnul
 void CDMD5ContextInit(CDMD5Context_s * _Nonnull context) {
     assert(context);
     memset(context, 0, sizeof(CDMD5Context_s));
-    context->digestVariant = CDVariantMD5;
+    context->digestVariant = CCDigestTypeMd5;
     context->values[0] = 0x67452301UL;
     context->values[1] = 0xefcdab89UL;
     context->values[2] = 0x98badcfeUL;
@@ -128,10 +128,10 @@ void CDMD5ContextInit(CDMD5Context_s * _Nonnull context) {
 void CDMD5Final(CDMD5Context_s * _Nonnull context) {
     assert(context);
     
-    size_t blockSize = CDVariantMD5BlockSize;
+    size_t blockSize = CCDigestMd5BlockSize;
     
     size_t size = context->accumulatedSize;
-    uint8_t bytes[CDVariantMD5BlockSize * 2] = {};
+    uint8_t bytes[CCDigestMd5BlockSize * 2] = {};
     
     uint8_t * ptr = bytes;
     if (context->accumulatedSize > 0) {
@@ -153,12 +153,12 @@ void CDMD5Final(CDMD5Context_s * _Nonnull context) {
         ptr = bytes + max;
         
         CUInt64ToLittleEndianBytes(context->bitCount, ptr);
-        CDMD5Process(bytes, context->values);
+        CDMD5Process(context->values, bytes);
     } else {
         ptr = bytes + blockSize + max;
         CUInt64ToLittleEndianBytes(context->bitCount, ptr);
-        CDMD5Process(bytes, context->values);
-        CDMD5Process(bytes + blockSize, context->values);
+        CDMD5Process(context->values, bytes);
+        CDMD5Process(context->values, bytes + blockSize);
     }
 }
 
@@ -171,7 +171,7 @@ void CDMD5Update(CDMD5Context_s * _Nonnull context, uint8_t const * _Nonnull byt
     }
     assert(bytes);
     
-    size_t blockSize = CDVariantMD5BlockSize;
+    size_t blockSize = CCDigestMd5BlockSize;
     uint8_t const * ptr = bytes;
     if (context->accumulatedSize > 0) {
         size_t missingLength = blockSize - context->accumulatedSize;
@@ -181,7 +181,7 @@ void CDMD5Update(CDMD5Context_s * _Nonnull context, uint8_t const * _Nonnull byt
             return;
         } else {
             memcpy(context->accumulated, ptr, missingLength);
-            CDMD5Process(context->accumulated, context->values);
+            CDMD5Process(context->values, context->accumulated);
             context->accumulatedSize = 0;
             ptr += missingLength;
             length -= missingLength;
@@ -195,7 +195,7 @@ void CDMD5Update(CDMD5Context_s * _Nonnull context, uint8_t const * _Nonnull byt
     context->bitCount += bitCount;
     
     for (; length >= blockSize; length -= blockSize) {
-        CDMD5Process(ptr, context->values);
+        CDMD5Process(context->values, ptr);
         ptr += blockSize;
     }
     
@@ -217,3 +217,25 @@ void CDMD5ExportHashValue(CDMD5Context_s * _Nonnull context, uint8_t bytes[_Nonn
         ptr += 4;
     }
 }
+
+void CCDigestSetupMd5(CCDigestContext_s * _Nonnull context, void * _Nonnull states, uint8_t * _Nonnull accumulated) {
+    assert(context);
+    assert(states);
+    assert(accumulated);
+    memset(context, 0, sizeof(CCDigestContext_s));
+    context->digestType = CCDigestTypeMd5;
+    
+}
+
+
+void CCDigestContextInitMd5(CCDigestContext_s * _Nonnull context, void * _Nonnull states, uint8_t * _Nonnull accumulated) {
+    assert(context);
+    assert(states);
+    assert(accumulated);
+    memset(context, 0, sizeof(CCDigestContext_s));
+    context->digestType = CCDigestTypeMd5;
+
+}
+//void CCDigestContextInitSha1(CCDigestContext_s * _Nonnull context, void * _Nonnull states, uint8_t * _Nonnull accumulated);
+//void CCDigestContextInitSha2(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated);
+//void CCDigestContextInitSha3(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated);

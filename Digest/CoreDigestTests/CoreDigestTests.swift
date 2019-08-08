@@ -93,7 +93,7 @@ public final class SHA3 {
         v = variant
         context = CDSHA3Context_s()
         
-        CDSHA3ContextInit(&context, CDVariant_e(variant.rawValue))
+        CDSHA3ContextInit(&context, CCDigestType_e(variant.rawValue))
     }
     
     public func calculate(for bytes: [UInt8]) -> Array<UInt8> {
@@ -107,7 +107,7 @@ public final class SHA3 {
         let result = NSMutableData.init(length: 200)!
         CDSHA3ExportHashValue(&context, result.mutableBytes.assumingMemoryBound(to: UInt8.self))
 
-        let le = CDVariantBlockSize( CDVariant_e(v.rawValue))
+        let le = CCDigestBlockSize( CCDigestType_e(v.rawValue))
         let r = result.subdata(with: NSMakeRange(0, le))
         return r.bytes
     }

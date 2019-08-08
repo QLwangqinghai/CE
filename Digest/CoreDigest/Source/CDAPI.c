@@ -9,12 +9,12 @@
 #include "CDAPI.h"
 
 
-int32_t CDHmac(CDVariant_e e, uint8_t const * _Nullable key, size_t keyLength, uint8_t const * _Nullable input, size_t inputLength, uint8_t * _Nullable output, size_t outputLength) {
+int32_t CDHmac(CCDigestType_e e, uint8_t const * _Nullable key, size_t keyLength, uint8_t const * _Nullable input, size_t inputLength, uint8_t * _Nullable output, size_t outputLength) {
     assert(keyLength >= 0);
     assert(inputLength >= 0);
     assert(outputLength >= 0);
-    size_t digestSize = CDVariantDigestLength(e);
-    size_t blockSize = CDVariantBlockSize(e);
+    size_t digestSize = CCDigestOutputSize(e);
+    size_t blockSize = CCDigestBlockSize(e);
     CDAllRoundContext_u context = {};
 
     if (digestSize <= 0 || blockSize <= 0) {
@@ -24,10 +24,10 @@ int32_t CDHmac(CDVariant_e e, uint8_t const * _Nullable key, size_t keyLength, u
         return -2;
     }
     
-    uint8_t opad[CDVariantBlockSizeMax] = {};
-    uint8_t ipad[CDVariantBlockSizeMax] = {};
-    uint8_t k[CDVariantBlockSizeMax] = {};
-    uint8_t messageHash[CDVariantDigestLengthMax] = {};
+    uint8_t opad[CCDigestBlockSizeMax] = {};
+    uint8_t ipad[CCDigestBlockSizeMax] = {};
+    uint8_t k[CCDigestBlockSizeMax] = {};
+    uint8_t messageHash[CCDigestLengthMax] = {};
     if (keyLength > blockSize) {
         CDContextInit(&context, e);
         CDUpdate(&context, key, keyLength);
@@ -56,36 +56,36 @@ int32_t CDHmac(CDVariant_e e, uint8_t const * _Nullable key, size_t keyLength, u
     CDFinal(&context);
     CDExportHashValue(&context, output);
     
-    size_t size = CDVariantDigestLength(e);
+    size_t size = CCDigestOutputSize(e);
     if (size > 0) {
         if (outputLength < size) {
             return -2;
         }
         switch (e) {
-            case CDVariantMD5: {
+            case CCDigestTypeMd5: {
                 CDContextInit(&context, e);
                 
-                return CDVariantMD5BlockSize;
+                return CCDigestMd5BlockSize;
             }
-            case CDVariantSHA1th160:
-                return CDVariantSHA1th160BlockSize;
-            case CDVariantSHA2th224:
-            case CDVariantSHA2th256:
-                return CDVariantSHA2th256BlockSize;
-            case CDVariantSHA2th384:
-            case CDVariantSHA2th512:
-                return CDVariantSHA2th512BlockSize;
-            case CDVariantSHA3th224:
-            case CDVariantSHA3thKeccak224:
+            case CCDigestTypeSha1:
+                return CCDigestSha1BlockSize;
+            case CCDigestTypeSha2Variant224:
+            case CCDigestTypeSha2Variant256:
+                return CCDigestSha2Variant256BlockSize;
+            case CCDigestTypeSha2Variant384:
+            case CCDigestTypeSha2Variant512:
+                return CCDigestSha2Variant512BlockSize;
+            case CCDigestTypeSha3Variant224:
+            case CCDigestTypeSha3VariantKeccak224:
                 return 144;
-            case CDVariantSHA3th256:
-            case CDVariantSHA3thKeccak256:
+            case CCDigestTypeSha3Variant256:
+            case CCDigestTypeSha3VariantKeccak256:
                 return 136;
-            case CDVariantSHA3th384:
-            case CDVariantSHA3thKeccak384:
+            case CCDigestTypeSha3Variant384:
+            case CCDigestTypeSha3VariantKeccak384:
                 return 104;
-            case CDVariantSHA3th512:
-            case CDVariantSHA3thKeccak512:
+            case CCDigestTypeSha3Variant512:
+            case CCDigestTypeSha3VariantKeccak512:
                 return 72;
             default:
                 return 0;
@@ -96,29 +96,115 @@ int32_t CDHmac(CDVariant_e e, uint8_t const * _Nullable key, size_t keyLength, u
     }
 }
 
+//accumulatedSize < blockSize
+void CCDigestContextInit(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated) {
+    switch (type) {
+        case CCDigestTypeMd5: {
+            CCDigestContextInitMd5(context, states, accumulated);
+        }
+            break;
+        case CCDigestTypeSha1: {
+            CCDigestContextInitSha1(context, states, accumulated);
+        }
+            break;
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha2Variant256:
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha2Variant512: {
+            CCDigestContextInitSha2(context, type, states, accumulated);
+        }
+            break;
+        case CCDigestTypeSha3Variant224:
+        case CCDigestTypeSha3VariantKeccak224:
+        case CCDigestTypeSha3Variant256:
+        case CCDigestTypeSha3VariantKeccak256:
+        case CCDigestTypeSha3Variant384:
+        case CCDigestTypeSha3VariantKeccak384:
+        case CCDigestTypeSha3Variant512:
+        case CCDigestTypeSha3VariantKeccak512: {
+            CCDigestContextInitSha3(context, type, states, accumulated);
+        }
+            break;
+        default:
+            abort();
+    }
+    
+}
+void CCDigestUpdate(CCDigestContext_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length) {
+    assert(context);
+    assert(length >= 0);
+    
+    if (0 == length) {
+        return;
+    }
+    assert(bytes);
+    assert(context->process);
 
-void CDContextInit(CDAllRoundContext_u * _Nonnull context, CDVariant_e e) {
+    size_t blockSize = CCDigestBlockSize(context->digestType);
+    assert(blockSize > 0);
+    uint8_t const * ptr = bytes;
+    if (context->accumulatedSize > 0) {
+        size_t missingLength = blockSize - context->accumulatedSize;
+        if (length < missingLength) {
+            memcpy(context->accumulated, ptr, length);
+            context->accumulatedSize += length;
+            return;
+        } else {
+            memcpy(context->accumulated, ptr, missingLength);
+            context->process(context->states, 1, context->accumulated);
+            context->accumulatedSize = 0;
+            ptr += missingLength;
+            length -= missingLength;
+            CCDigestContextAddCount(context, blockSize);
+        }
+    }
+    uint64_t tmp = length / blockSize;
+    context->process(context->states, tmp, context->accumulated);
+    tmp = tmp * blockSize;
+    CCDigestContextAddCount(context, tmp);
+    ptr += tmp;
+    tmp = length % blockSize;
+
+    if (tmp > 0) {
+        memcpy(context->accumulated, ptr, tmp);
+        context->accumulatedSize += tmp;
+    }
+}
+void CCDigestFinal(CCDigestContext_s * _Nonnull context) {
+    assert(context);
+    assert(context->finish);
+    context->finish(context);
+}
+void CCDigestExportHashValue(CCDigestContext_s * _Nonnull context, uint8_t * _Nonnull bytes) {
+    assert(context);
+    assert(context->exportHashValue);
+    context->exportHashValue(context, bytes);
+}
+
+
+
+void CDContextInit(CDAllRoundContext_u * _Nonnull context, CCDigestType_e e) {
     switch (e) {
-        case CDVariantMD5:
+        case CCDigestTypeMd5:
             CDMD5ContextInit(&(context->mdContext));
             break;
-        case CDVariantSHA1th160:
+        case CCDigestTypeSha1:
             CDSHA1ContextInit(&(context->sha1Context));
             break;
-        case CDVariantSHA2th224:
-        case CDVariantSHA2th256:
-        case CDVariantSHA2th384:
-        case CDVariantSHA2th512:
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha2Variant256:
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha2Variant512:
             CDSHA2ContextInit(&(context->sha2Context), e);
             break;
-        case CDVariantSHA3th224:
-        case CDVariantSHA3thKeccak224:
-        case CDVariantSHA3th256:
-        case CDVariantSHA3thKeccak256:
-        case CDVariantSHA3th384:
-        case CDVariantSHA3thKeccak384:
-        case CDVariantSHA3th512:
-        case CDVariantSHA3thKeccak512:
+        case CCDigestTypeSha3Variant224:
+        case CCDigestTypeSha3VariantKeccak224:
+        case CCDigestTypeSha3Variant256:
+        case CCDigestTypeSha3VariantKeccak256:
+        case CCDigestTypeSha3Variant384:
+        case CCDigestTypeSha3VariantKeccak384:
+        case CCDigestTypeSha3Variant512:
+        case CCDigestTypeSha3VariantKeccak512:
             CDSHA3ContextInit(&(context->sha3Context), e);
             break;
         default:
@@ -128,26 +214,26 @@ void CDContextInit(CDAllRoundContext_u * _Nonnull context, CDVariant_e e) {
 }
 void CDUpdate(CDAllRoundContext_u * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length) {
     switch (context->digestVariant) {
-        case CDVariantMD5:
+        case CCDigestTypeMd5:
             CDMD5Update(&(context->mdContext), bytes, length);
             break;
-        case CDVariantSHA1th160:
+        case CCDigestTypeSha1:
             CDSHA1Update(&(context->sha1Context), bytes, length);
             break;
-        case CDVariantSHA2th224:
-        case CDVariantSHA2th256:
-        case CDVariantSHA2th384:
-        case CDVariantSHA2th512:
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha2Variant256:
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha2Variant512:
             CDSHA2Update(&(context->sha2Context), bytes, length);
             break;
-        case CDVariantSHA3th224:
-        case CDVariantSHA3thKeccak224:
-        case CDVariantSHA3th256:
-        case CDVariantSHA3thKeccak256:
-        case CDVariantSHA3th384:
-        case CDVariantSHA3thKeccak384:
-        case CDVariantSHA3th512:
-        case CDVariantSHA3thKeccak512:
+        case CCDigestTypeSha3Variant224:
+        case CCDigestTypeSha3VariantKeccak224:
+        case CCDigestTypeSha3Variant256:
+        case CCDigestTypeSha3VariantKeccak256:
+        case CCDigestTypeSha3Variant384:
+        case CCDigestTypeSha3VariantKeccak384:
+        case CCDigestTypeSha3Variant512:
+        case CCDigestTypeSha3VariantKeccak512:
             CDSHA3Update(&(context->sha3Context), bytes, length);
             break;
         default:
@@ -157,26 +243,26 @@ void CDUpdate(CDAllRoundContext_u * _Nonnull context, uint8_t const * _Nonnull b
 }
 void CDFinal(CDAllRoundContext_u * _Nonnull context) {
     switch (context->digestVariant) {
-        case CDVariantMD5:
+        case CCDigestTypeMd5:
             CDMD5Final(&(context->mdContext));
             break;
-        case CDVariantSHA1th160:
+        case CCDigestTypeSha1:
             CDSHA1Final(&(context->sha1Context));
             break;
-        case CDVariantSHA2th224:
-        case CDVariantSHA2th256:
-        case CDVariantSHA2th384:
-        case CDVariantSHA2th512:
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha2Variant256:
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha2Variant512:
             CDSHA2Final(&(context->sha2Context));
             break;
-        case CDVariantSHA3th224:
-        case CDVariantSHA3thKeccak224:
-        case CDVariantSHA3th256:
-        case CDVariantSHA3thKeccak256:
-        case CDVariantSHA3th384:
-        case CDVariantSHA3thKeccak384:
-        case CDVariantSHA3th512:
-        case CDVariantSHA3thKeccak512:
+        case CCDigestTypeSha3Variant224:
+        case CCDigestTypeSha3VariantKeccak224:
+        case CCDigestTypeSha3Variant256:
+        case CCDigestTypeSha3VariantKeccak256:
+        case CCDigestTypeSha3Variant384:
+        case CCDigestTypeSha3VariantKeccak384:
+        case CCDigestTypeSha3Variant512:
+        case CCDigestTypeSha3VariantKeccak512:
             CDSHA3Final(&(context->sha3Context));
             break;
         default:
@@ -186,26 +272,26 @@ void CDFinal(CDAllRoundContext_u * _Nonnull context) {
 }
 void CDExportHashValue(CDAllRoundContext_u * _Nonnull context, uint8_t * _Nonnull bytes) {
     switch (context->digestVariant) {
-        case CDVariantMD5:
+        case CCDigestTypeMd5:
             CDMD5ExportHashValue(&(context->mdContext), bytes);
             break;
-        case CDVariantSHA1th160:
+        case CCDigestTypeSha1:
             CDSHA1ExportHashValue(&(context->sha1Context), bytes);
             break;
-        case CDVariantSHA2th224:
-        case CDVariantSHA2th256:
-        case CDVariantSHA2th384:
-        case CDVariantSHA2th512:
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha2Variant256:
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha2Variant512:
             CDSHA2ExportHashValue(&(context->sha2Context), bytes);
             break;
-        case CDVariantSHA3th224:
-        case CDVariantSHA3thKeccak224:
-        case CDVariantSHA3th256:
-        case CDVariantSHA3thKeccak256:
-        case CDVariantSHA3th384:
-        case CDVariantSHA3thKeccak384:
-        case CDVariantSHA3th512:
-        case CDVariantSHA3thKeccak512:
+        case CCDigestTypeSha3Variant224:
+        case CCDigestTypeSha3VariantKeccak224:
+        case CCDigestTypeSha3Variant256:
+        case CCDigestTypeSha3VariantKeccak256:
+        case CCDigestTypeSha3Variant384:
+        case CCDigestTypeSha3VariantKeccak384:
+        case CCDigestTypeSha3Variant512:
+        case CCDigestTypeSha3VariantKeccak512:
             CDSHA3ExportHashValue(&(context->sha3Context), bytes);
             break;
         default:

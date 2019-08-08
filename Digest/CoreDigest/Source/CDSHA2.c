@@ -199,22 +199,22 @@ static inline void _CDSHA2th512ContextSetHashInitialValue(uint64_t values[_Nonnu
     values[7] = 0x5be0cd19137e2179ULL;
 }
 
-void CDSHA2ContextInit(CDSHA2Context_s * _Nonnull context, CDVariant_e e) {
+void CDSHA2ContextInit(CDSHA2Context_s * _Nonnull context, CCDigestType_e e) {
     assert(context);
     memset(context, 0, sizeof(CDSHA2Context_s));
     context->digestVariant = e;
     
     switch (e) {
-        case CDVariantSHA2th224:
+        case CCDigestTypeSha2Variant224:
             _CDSHA2th224ContextSetHashInitialValue(context->states.u32Values);
             break;
-        case CDVariantSHA2th256:
+        case CCDigestTypeSha2Variant256:
             _CDSHA2th256ContextSetHashInitialValue(context->states.u32Values);
             break;
-        case CDVariantSHA2th384:
+        case CCDigestTypeSha2Variant384:
             _CDSHA2th384ContextSetHashInitialValue(context->states.u64Values);
             break;
-        case CDVariantSHA2th512:
+        case CCDigestTypeSha2Variant512:
             _CDSHA2th512ContextSetHashInitialValue(context->states.u64Values);
             break;
         default:
@@ -234,7 +234,7 @@ static inline void _CDSHA2Update256(CDSHA2Context_s * _Nonnull context, uint8_t 
     }
     assert(bytes);
     
-    size_t blockSize = CDVariantSHA2th256BlockSize;
+    size_t blockSize = CCDigestSha2Variant256BlockSize;
     uint8_t const * ptr = bytes;
     if (context->accumulatedSize > 0) {
         size_t missingLength = blockSize - context->accumulatedSize;
@@ -278,7 +278,7 @@ static inline void _CDSHA2Update512(CDSHA2Context_s * _Nonnull context, uint8_t 
     }
     assert(bytes);
     
-    size_t blockSize = CDVariantSHA2th512BlockSize;
+    size_t blockSize = CCDigestSha2Variant512BlockSize;
     uint8_t const * ptr = bytes;
     if (context->accumulatedSize > 0) {
         size_t missingLength = blockSize - context->accumulatedSize;
@@ -324,12 +324,12 @@ static inline void _CDSHA2Update512(CDSHA2Context_s * _Nonnull context, uint8_t 
 }
 void CDSHA2Update(CDSHA2Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length) {
     switch (context->digestVariant) {
-        case CDVariantSHA2th224:
-        case CDVariantSHA2th256:
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha2Variant256:
             _CDSHA2Update256(context, bytes, length);
             break;
-        case CDVariantSHA2th384:
-        case CDVariantSHA2th512:
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha2Variant512:
             _CDSHA2Update512(context, bytes, length);
             break;
         default:
@@ -343,10 +343,10 @@ void CDSHA2Update(CDSHA2Context_s * _Nonnull context, uint8_t const * _Nonnull b
 static inline void _CDSHA2Final256(CDSHA2Context_s * _Nonnull context) {
     assert(context);
     
-    size_t blockSize = CDVariantSHA2th256BlockSize;
+    size_t blockSize = CCDigestSha2Variant256BlockSize;
     
     size_t size = context->accumulatedSize;
-    uint8_t bytes[CDVariantSHA2th256BlockSize * 2] = {};
+    uint8_t bytes[CCDigestSha2Variant256BlockSize * 2] = {};
     
     uint8_t * ptr = bytes;
     if (context->accumulatedSize > 0) {
@@ -380,10 +380,10 @@ static inline void _CDSHA2Final256(CDSHA2Context_s * _Nonnull context) {
 static inline void _CDSHA2Final512(CDSHA2Context_s * _Nonnull context) {
     assert(context);
     
-    size_t blockSize = CDVariantSHA2th512BlockSize;
+    size_t blockSize = CCDigestSha2Variant512BlockSize;
     
     size_t size = context->accumulatedSize;
-    uint8_t bytes[CDVariantSHA2th512BlockSize * 2] = {};
+    uint8_t bytes[CCDigestSha2Variant512BlockSize * 2] = {};
     
     uint8_t * ptr = bytes;
     if (context->accumulatedSize > 0) {
@@ -425,12 +425,12 @@ static inline void _CDSHA2Final512(CDSHA2Context_s * _Nonnull context) {
 
 void CDSHA2Final(CDSHA2Context_s * _Nonnull context) {
     switch (context->digestVariant) {
-        case CDVariantSHA2th224:
-        case CDVariantSHA2th256:
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha2Variant256:
             _CDSHA2Final256(context);
             break;
-        case CDVariantSHA2th384:
-        case CDVariantSHA2th512:
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha2Variant512:
             _CDSHA2Final512(context);
             break;
         default:
@@ -468,16 +468,16 @@ static inline void _CDSHA2ExportHashValue512(CDSHA2Context_s * _Nonnull context,
 }
 void CDSHA2ExportHashValue(CDSHA2Context_s * _Nonnull context, uint8_t * _Nonnull bytes) {
     switch (context->digestVariant) {
-        case CDVariantSHA2th224:
+        case CCDigestTypeSha2Variant224:
             _CDSHA2ExportHashValue256(context, bytes, 28);
             break;
-        case CDVariantSHA2th256:
+        case CCDigestTypeSha2Variant256:
             _CDSHA2ExportHashValue256(context, bytes, 32);
             break;
-        case CDVariantSHA2th384:
+        case CCDigestTypeSha2Variant384:
             _CDSHA2ExportHashValue512(context, bytes, 48);
             break;
-        case CDVariantSHA2th512:
+        case CCDigestTypeSha2Variant512:
             _CDSHA2ExportHashValue512(context, bytes, 64);
             break;
         default:

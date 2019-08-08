@@ -22,127 +22,264 @@
 #include <sys/endian.h>
 #elif defined(_WIN32)
 #endif
+#if defined(__GNUC__)
+#include <stdint.h>
+#include <stdbool.h>
+#endif
 
-typedef enum _CDVariant {
-    CDVariantNone = 0,
+typedef enum _CCDigestType {
+    CCDigestTypeNone = 0,
     
-    CDVariantMD5 = 1,
+    CCDigestTypeMd5 = 1,
     
-    CDVariantSHA1th160 = 2,
+    CCDigestTypeSha1 = 2,
     
-    CDVariantSHA2th224 = 3,
-    CDVariantSHA2th256 = 4,
-    CDVariantSHA2th384 = 5,
-    CDVariantSHA2th512 = 6,
+    CCDigestTypeSha2Variant224 = 3,
+    CCDigestTypeSha2Variant256 = 4,
+    CCDigestTypeSha2Variant384 = 5,
+    CCDigestTypeSha2Variant512 = 6,
     
-    CDVariantSHA3th224 = 7,
-    CDVariantSHA3th256 = 8,
-    CDVariantSHA3th384 = 9,
-    CDVariantSHA3th512 = 10,
-    CDVariantSHA3thKeccak224 = 11,
-    CDVariantSHA3thKeccak256 = 12,
-    CDVariantSHA3thKeccak384 = 13,
-    CDVariantSHA3thKeccak512 = 14,
-} CDVariant_e;
+    CCDigestTypeSha3Variant224 = 7,
+    CCDigestTypeSha3Variant256 = 8,
+    CCDigestTypeSha3Variant384 = 9,
+    CCDigestTypeSha3Variant512 = 10,
+    CCDigestTypeSha3VariantKeccak224 = 11,
+    CCDigestTypeSha3VariantKeccak256 = 12,
+    CCDigestTypeSha3VariantKeccak384 = 13,
+    CCDigestTypeSha3VariantKeccak512 = 14,
+} CCDigestType_e;
 
-#define CDVariantMD5BlockSize 64
-#define CDVariantSHA1th160BlockSize 64
-#define CDVariantSHA2th256BlockSize 64
-#define CDVariantSHA2th512BlockSize 128
+static inline _Bool CCDigestTypeIsValid(CCDigestType_e type) {
+    return (0 < type && type <= 14);
+}
 
-#define CDVariantDigestLengthMax 64
+//block size
+#define CCDigestMd5BlockSize 64
+#define CCDigestSha1BlockSize 64
+#define CCDigestSha2Variant224BlockSize 64
+#define CCDigestSha2Variant256BlockSize 64
+#define CCDigestSha2Variant384BlockSize 128
+#define CCDigestSha2Variant512BlockSize 128
+#define CCDigestSha3Variant224BlockSize 144
+#define CCDigestSha3VariantKeccak224BlockSize 144
+#define CCDigestSha3Variant256BlockSize 136
+#define CCDigestSha3VariantKeccak256BlockSize 136
+#define CCDigestSha3Variant384BlockSize 104
+#define CCDigestSha3VariantKeccak384BlockSize 104
+#define CCDigestSha3Variant512BlockSize 72
+#define CCDigestSha3VariantKeccak512BlockSize 72
+
+//state size
+#define CCDigestMd5StateSize 16
+#define CCDigestSha1StateSize 20
+#define CCDigestSha2Variant224StateSize 32
+#define CCDigestSha2Variant256StateSize 32
+#define CCDigestSha2Variant384StateSize 64
+#define CCDigestSha2Variant512StateSize 64
+#define CCDigestSha3StateSize 200
+#define CCDigestSha3Variant224StateSize CCDigestSha3StateSize
+#define CCDigestSha3VariantKeccak224StateSize CCDigestSha3StateSize
+#define CCDigestSha3Variant256StateSize CCDigestSha3StateSize
+#define CCDigestSha3VariantKeccak256StateSize CCDigestSha3StateSize
+#define CCDigestSha3Variant384StateSize CCDigestSha3StateSize
+#define CCDigestSha3VariantKeccak384StateSize CCDigestSha3StateSize
+#define CCDigestSha3Variant512StateSize CCDigestSha3StateSize
+#define CCDigestSha3VariantKeccak512StateSize CCDigestSha3StateSize
+
+//out size
+#define CCDigestMd5OutputSize 16
+#define CCDigestSha1OutputSize 20
+#define CCDigestSha224OutputSize 28
+#define CCDigestSha256OutputSize 32
+#define CCDigestSha384OutputSize 48
+#define CCDigestSha512OutputSize 64
+#define CCDigestSha2Variant224OutputSize CCDigestSha224OutputSize
+#define CCDigestSha2Variant256OutputSize CCDigestSha256OutputSize
+#define CCDigestSha2Variant384OutputSize CCDigestSha384OutputSize
+#define CCDigestSha2Variant512OutputSize CCDigestSha512OutputSize
+#define CCDigestSha3Variant224OutputSize CCDigestSha224OutputSize
+#define CCDigestSha3VariantKeccak224OutputSize CCDigestSha224OutputSize
+#define CCDigestSha3Variant256OutputSize CCDigestSha256OutputSize
+#define CCDigestSha3VariantKeccak256OutputSize CCDigestSha256OutputSize
+#define CCDigestSha3Variant384OutputSize CCDigestSha384OutputSize
+#define CCDigestSha3VariantKeccak384OutputSize CCDigestSha384OutputSize
+#define CCDigestSha3Variant512OutputSize CCDigestSha512OutputSize
+#define CCDigestSha3VariantKeccak512OutputSize CCDigestSha512OutputSize
 
 
-static inline size_t CDVariantDigestLength(CDVariant_e e) {
+#define CCDigestLengthMax 64
+
+
+static inline size_t CCDigestOutputSize(CCDigestType_e e) {
     switch (e) {
-        case CDVariantMD5:
+        case CCDigestTypeMd5:
             return 16;
-        case CDVariantSHA1th160:
+        case CCDigestTypeSha1:
             return 20;
-        case CDVariantSHA2th224:
-        case CDVariantSHA3th224:
-        case CDVariantSHA3thKeccak224:
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha3Variant224:
+        case CCDigestTypeSha3VariantKeccak224:
             return 28;
-        case CDVariantSHA2th256:
-        case CDVariantSHA3th256:
-        case CDVariantSHA3thKeccak256:
+        case CCDigestTypeSha2Variant256:
+        case CCDigestTypeSha3Variant256:
+        case CCDigestTypeSha3VariantKeccak256:
             return 32;
-        case CDVariantSHA2th384:
-        case CDVariantSHA3th384:
-        case CDVariantSHA3thKeccak384:
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha3Variant384:
+        case CCDigestTypeSha3VariantKeccak384:
             return 48;
-        case CDVariantSHA2th512:
-        case CDVariantSHA3th512:
-        case CDVariantSHA3thKeccak512:
+        case CCDigestTypeSha2Variant512:
+        case CCDigestTypeSha3Variant512:
+        case CCDigestTypeSha3VariantKeccak512:
             return 64;
         default:
             return 0;
     }
 }
 
-#define CDVariantBlockSizeMax 144
+#define CCDigestBlockSizeMax 144
 
-static inline size_t CDVariantBlockSize(CDVariant_e e) {
+static inline size_t CCDigestBlockSize(CCDigestType_e e) {
     switch (e) {
-        case CDVariantMD5:
-            return CDVariantMD5BlockSize;
-        case CDVariantSHA1th160:
-            return CDVariantSHA1th160BlockSize;
-        case CDVariantSHA2th224:
-        case CDVariantSHA2th256:
-            return CDVariantSHA2th256BlockSize;
-        case CDVariantSHA2th384:
-        case CDVariantSHA2th512:
-            return CDVariantSHA2th512BlockSize;
-        case CDVariantSHA3th224:
-        case CDVariantSHA3thKeccak224:
-            return 144;
-        case CDVariantSHA3th256:
-        case CDVariantSHA3thKeccak256:
-            return 136;
-        case CDVariantSHA3th384:
-        case CDVariantSHA3thKeccak384:
-            return 104;
-        case CDVariantSHA3th512:
-        case CDVariantSHA3thKeccak512:
-            return 72;
+        case CCDigestTypeMd5:
+            return CCDigestMd5BlockSize;
+        case CCDigestTypeSha1:
+            return CCDigestSha1BlockSize;
+        case CCDigestTypeSha2Variant224:
+        case CCDigestTypeSha2Variant256:
+            return CCDigestSha2Variant256BlockSize;
+        case CCDigestTypeSha2Variant384:
+        case CCDigestTypeSha2Variant512:
+            return CCDigestSha2Variant512BlockSize;
+        case CCDigestTypeSha3Variant224:
+            return CCDigestSha3Variant224BlockSize;
+        case CCDigestTypeSha3VariantKeccak224:
+            return CCDigestSha3VariantKeccak224BlockSize;
+        case CCDigestTypeSha3Variant256:
+            return CCDigestSha3Variant256BlockSize;
+        case CCDigestTypeSha3VariantKeccak256:
+            return CCDigestSha3VariantKeccak256BlockSize;
+        case CCDigestTypeSha3Variant384:
+            return CCDigestSha3Variant384BlockSize;
+        case CCDigestTypeSha3VariantKeccak384:
+            return CCDigestSha3VariantKeccak384BlockSize;
+        case CCDigestTypeSha3Variant512:
+            return CCDigestSha3Variant512BlockSize;
+        case CCDigestTypeSha3VariantKeccak512:
+            return CCDigestSha3VariantKeccak512BlockSize;
         default:
             return 0;
     }
 }
 
-static inline size_t CDVarianStatusSize(CDVariant_e e) {
+static inline size_t CCDigestStatusSize(CCDigestType_e e) {
     switch (e) {
-        case CDVariantMD5:
+        case CCDigestTypeMd5:
+            return CCDigestMd5StateSize;
+        case CCDigestTypeSha1:
+            return CCDigestSha1StateSize;
+        case CCDigestTypeSha2Variant224:
+            return CCDigestSha2Variant224StateSize;
+        case CCDigestTypeSha2Variant256:
+            return CCDigestSha2Variant256StateSize;
+        case CCDigestTypeSha2Variant384:
+            return CCDigestSha2Variant384StateSize;
+        case CCDigestTypeSha2Variant512:
+            return CCDigestSha2Variant512StateSize;
+        case CCDigestTypeSha3Variant224:
+        case CCDigestTypeSha3VariantKeccak224:
+        case CCDigestTypeSha3Variant256:
+        case CCDigestTypeSha3VariantKeccak256:
+        case CCDigestTypeSha3Variant384:
+        case CCDigestTypeSha3VariantKeccak384:
+        case CCDigestTypeSha3Variant512:
+        case CCDigestTypeSha3VariantKeccak512:
+            return CCDigestSha3StateSize;
+        default:
+            return 0;
+    }
+}
+
+static inline size_t CCDigestPaddingBitLengthByteCount(CCDigestType_e e) {
+    switch (e) {
+        case CCDigestTypeMd5:
+            return 8;
+        case CCDigestTypeSha1:
+            return 8;
+        case CCDigestTypeSha2Variant224:
+            return 8;
+        case CCDigestTypeSha2Variant256:
+            return 8;
+        case CCDigestTypeSha2Variant384:
             return 16;
-        case CDVariantSHA1th160:
-            return 20;
-        case CDVariantSHA2th224:
-        case CDVariantSHA2th256:
-            return 32;
-        case CDVariantSHA2th384:
-        case CDVariantSHA2th512:
-            return 64;
-        case CDVariantSHA3th224:
-        case CDVariantSHA3thKeccak224:
-        case CDVariantSHA3th256:
-        case CDVariantSHA3thKeccak256:
-        case CDVariantSHA3th384:
-        case CDVariantSHA3thKeccak384:
-        case CDVariantSHA3th512:
-        case CDVariantSHA3thKeccak512:
-            return 200;
+        case CCDigestTypeSha2Variant512:
+            return 16;
+        case CCDigestTypeSha3Variant224:
+        case CCDigestTypeSha3VariantKeccak224:
+        case CCDigestTypeSha3Variant256:
+        case CCDigestTypeSha3VariantKeccak256:
+        case CCDigestTypeSha3Variant384:
+        case CCDigestTypeSha3VariantKeccak384:
+        case CCDigestTypeSha3Variant512:
+        case CCDigestTypeSha3VariantKeccak512:
+            return 0;
         default:
             return 0;
     }
 }
+
+struct _CCDigestContext;
+typedef struct _CCDigestContext CCDigestContext_s;
+
+typedef void (*CCDigestProcess_f)(void * _Nonnull state, size_t nblocks, const void * _Nonnull in);
+typedef void (*CCDigestFinish_f)(CCDigestContext_s * _Nonnull context);
+typedef void (*CCDigestExportHashValue_f)(CCDigestContext_s * _Nonnull context, void * _Nonnull bytes);
+
+struct _CCDigestContext {
+    uint32_t digestType;
+    uint32_t accumulatedSize;
+    uint64_t countLow;//长度的低位
+    uint64_t countHigh;//长度的高位
+    void * _Nonnull states;
+    uint8_t * _Nonnull accumulated;
+    CCDigestProcess_f _Nonnull process;
+    CCDigestFinish_f _Nonnull finish;
+    CCDigestExportHashValue_f _Nonnull exportHashValue;
+};
+
+static inline void CCDigestContextAddCount(CCDigestContext_s * _Nonnull context, size_t count) {
+    assert(context);
+    assert(count >= 0);
+    uint64_t countLow = context->countLow + count;
+    if (countLow < context->countLow) {
+        context->countHigh += 1;
+    }
+    context->countLow = countLow;
+}
+
+//accumulatedSize < blockSize
+void CCDigestContextInit(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated);
+void CCDigestContextInitMd5(CCDigestContext_s * _Nonnull context, void * _Nonnull states, uint8_t * _Nonnull accumulated);
+void CCDigestContextInitSha1(CCDigestContext_s * _Nonnull context, void * _Nonnull states, uint8_t * _Nonnull accumulated);
+void CCDigestContextInitSha2(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated);
+void CCDigestContextInitSha3(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated);
+
+void CCDigestUpdate(CCDigestContext_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
+void CCDigestFinal(CCDigestContext_s * _Nonnull context);
+void CCDigestExportHashValue(CCDigestContext_s * _Nonnull context, uint8_t * _Nonnull bytes);
+
+
+
+
+
+
 
 typedef struct _CDMD5Context {
     size_t digestVariant;
     size_t accumulatedSize;
     uint32_t values[4];
     uint64_t bitCount;
-    uint8_t accumulated[CDVariantMD5BlockSize];
+    uint8_t accumulated[CCDigestMd5BlockSize];
 } CDMD5Context_s;
 
 void CDMD5ContextInit(CDMD5Context_s * _Nonnull context);
@@ -157,7 +294,7 @@ typedef struct _CDSHA1Context {
     size_t accumulatedSize;
     uint64_t bitCount;
     uint32_t values[5];
-    uint8_t accumulated[CDVariantSHA1th160BlockSize];
+    uint8_t accumulated[CCDigestSha1BlockSize];
 } CDSHA1Context_s;
 
 void CDSHA1ContextInit(CDSHA1Context_s * _Nonnull context);
@@ -180,7 +317,7 @@ typedef struct _CDSHA2Context {
     uint8_t accumulated[128];
 } CDSHA2Context_s;
 
-void CDSHA2ContextInit(CDSHA2Context_s * _Nonnull context, CDVariant_e e);
+void CDSHA2ContextInit(CDSHA2Context_s * _Nonnull context, CCDigestType_e e);
 void CDSHA2Update(CDSHA2Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
 void CDSHA2Final(CDSHA2Context_s * _Nonnull context);
 void CDSHA2ExportHashValue(CDSHA2Context_s * _Nonnull context, uint8_t * _Nonnull bytes);
@@ -193,7 +330,7 @@ typedef struct _CDSHA3Context {
     uint8_t accumulated[144];
 } CDSHA3Context_s;
 
-void CDSHA3ContextInit(CDSHA3Context_s * _Nonnull context, CDVariant_e e);
+void CDSHA3ContextInit(CDSHA3Context_s * _Nonnull context, CCDigestType_e e);
 void CDSHA3Update(CDSHA3Context_s * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
 void CDSHA3Final(CDSHA3Context_s * _Nonnull context);
 void CDSHA3ExportHashValue(CDSHA3Context_s * _Nonnull context, uint8_t * _Nonnull bytes);
@@ -208,13 +345,13 @@ typedef union _CDAllRoundContext {
 } CDAllRoundContext_u;
 
 
-void CDContextInit(CDAllRoundContext_u * _Nonnull context, CDVariant_e e);
+void CDContextInit(CDAllRoundContext_u * _Nonnull context, CCDigestType_e e);
 void CDUpdate(CDAllRoundContext_u * _Nonnull context, uint8_t const * _Nonnull bytes, size_t length);
 void CDFinal(CDAllRoundContext_u * _Nonnull context);
 void CDExportHashValue(CDAllRoundContext_u * _Nonnull context, uint8_t * _Nonnull bytes);
 
 
-int32_t CDHmac(CDVariant_e e, uint8_t const * _Nullable key, size_t keyLength, uint8_t const * _Nullable input, size_t inputLength, uint8_t * _Nullable output, size_t outputLength);
+int32_t CDHmac(CCDigestType_e e, uint8_t const * _Nullable key, size_t keyLength, uint8_t const * _Nullable input, size_t inputLength, uint8_t * _Nullable output, size_t outputLength);
 
 
 

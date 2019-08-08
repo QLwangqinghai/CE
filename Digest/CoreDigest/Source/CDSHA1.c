@@ -98,7 +98,7 @@ static inline void CDSHA1Process(uint8_t const * _Nonnull block, uint32_t curren
 void CDSHA1ContextInit(CDSHA1Context_s * _Nonnull context) {
     assert(context);
     memset(context, 0, sizeof(CDSHA1Context_s));
-    context->digestVariant = CDVariantSHA1th160;
+    context->digestVariant = CCDigestTypeSha1;
     context->values[0] = 0x67452301UL;
     context->values[1] = 0xefcdab89UL;
     context->values[2] = 0x98badcfeUL;
@@ -115,7 +115,7 @@ void CDSHA1Update(CDSHA1Context_s * _Nonnull context, uint8_t const * _Nonnull b
     }
     assert(bytes);
     
-    size_t blockSize = CDVariantSHA1th160BlockSize;
+    size_t blockSize = CCDigestSha1BlockSize;
     uint8_t const * ptr = bytes;
     if (context->accumulatedSize > 0) {
         size_t missingLength = blockSize - context->accumulatedSize;
@@ -152,10 +152,10 @@ void CDSHA1Update(CDSHA1Context_s * _Nonnull context, uint8_t const * _Nonnull b
 void CDSHA1Final(CDSHA1Context_s * _Nonnull context) {
     assert(context);
     
-    size_t blockSize = CDVariantSHA1th160BlockSize;
+    size_t blockSize = CCDigestSha1BlockSize;
     
     size_t size = context->accumulatedSize;
-    uint8_t bytes[CDVariantSHA1th160BlockSize * 2] = {};
+    uint8_t bytes[CCDigestSha1BlockSize * 2] = {};
     
     uint8_t * ptr = bytes;
     if (context->accumulatedSize > 0) {

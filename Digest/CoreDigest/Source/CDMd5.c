@@ -7,6 +7,8 @@
 //
 
 #include "CDAPI.h"
+#include "CInteger.h"
+#include "CInteger.h"
 
 #define F(x,y,z)  (z ^ (x & (y ^ z)))
 #define G(x,y,z)  (y ^ (z & (y ^ x)))

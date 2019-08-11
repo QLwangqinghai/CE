@@ -23,6 +23,8 @@
 		D6B80B4422F15D6900521396 /* CDSHA3.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B3E22F15D6900521396 /* CDSHA3.c */; };
 		D6B80B4722F15EEA00521396 /* CBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B80B4522F15EEA00521396 /* CBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6B80B4822F15EEA00521396 /* CBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D6B80B4622F15EEA00521396 /* CBridge.m */; };
+		D6F12E5923006A7B00FEC805 /* CInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F12E5723006A7B00FEC805 /* CInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6F12E5A23006A7B00FEC805 /* CInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = D6F12E5823006A7B00FEC805 /* CInteger.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +88,8 @@
 		D6B80B4522F15EEA00521396 /* CBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBridge.h; sourceTree = "<group>"; };
 		D6B80B4622F15EEA00521396 /* CBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CBridge.m; sourceTree = "<group>"; };
 		D6F12E3522F9DA8700FEC805 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D6F12E5723006A7B00FEC805 /* CInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CInteger.h; sourceTree = "<group>"; };
+		D6F12E5823006A7B00FEC805 /* CInteger.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CInteger.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +183,8 @@
 				D6B80B3C22F15D6900521396 /* CDSHA1.c */,
 				D6B80B3D22F15D6900521396 /* CDAPI.h */,
 				D6B80B3E22F15D6900521396 /* CDSHA3.c */,
+				D6F12E5723006A7B00FEC805 /* CInteger.h */,
+				D6F12E5823006A7B00FEC805 /* CInteger.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -192,6 +198,7 @@
 			files = (
 				D6B80B2C22F15D4A00521396 /* CoreDigest.h in Headers */,
 				D6B80B4722F15EEA00521396 /* CBridge.h in Headers */,
+				D6F12E5923006A7B00FEC805 /* CInteger.h in Headers */,
 				D6B80B4322F15D6900521396 /* CDAPI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -347,6 +354,7 @@
 				D6B80B4222F15D6900521396 /* CDSHA1.c in Sources */,
 				D6B80B4022F15D6900521396 /* CDSHA2.c in Sources */,
 				D6B80B3F22F15D6900521396 /* CDAPI.c in Sources */,
+				D6F12E5A23006A7B00FEC805 /* CInteger.c in Sources */,
 				D6B80B4422F15D6900521396 /* CDSHA3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

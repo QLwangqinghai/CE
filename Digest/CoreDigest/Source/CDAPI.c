@@ -299,3 +299,8 @@ void CDExportHashValue(CDAllRoundContext_u * _Nonnull context, uint8_t * _Nonnul
             break;
     }
 }
+
+
+void CCDigestContextInitSha1(CCDigestContext_s * _Nonnull context, void * _Nonnull states, uint8_t * _Nonnull accumulated) {}
+void CCDigestContextInitSha2(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated) {}
+void CCDigestContextInitSha3(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated) {}

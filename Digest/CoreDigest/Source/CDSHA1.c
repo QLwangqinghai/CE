@@ -7,6 +7,7 @@
 //
 
 #include "CDAPI.h"
+#include "CInteger.h"
 
 
 #define CDSHA1F0(x,y,z)  (z ^ (x & (y ^ z)))

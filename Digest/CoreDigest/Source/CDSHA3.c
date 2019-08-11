@@ -7,6 +7,7 @@
 //
 
 #include "CDAPI.h"
+#include "CInteger.h"
 
 
 

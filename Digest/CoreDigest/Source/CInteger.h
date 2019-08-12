@@ -32,11 +32,11 @@ typedef struct _CUInt128 {
 } CUInt128_t;
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define CUInt128HighOffset 8
-#define CUInt128LowOffset 0
+#define CUInt128High64Offset 8
+#define CUInt128Low64Offset 0
 #elif __BYTE_ORDER__== __ORDER_BIG_ENDIAN__
-#define CUInt128HighOffset 0
-#define CUInt128LowOffset 8
+#define CUInt128High64Offset 0
+#define CUInt128Low64Offset 8
 #else
 #error "DEFINE BIG_ENDIAN OR LITTLE_ENDIAN"
 #endif
@@ -74,15 +74,15 @@ static inline CUInt128_t CUInt128Xor(CUInt128_t a, CUInt128_t b) {
     return v;
 }
 
-#define _kCUInt128GetLow64Ptr(a) ((uint64_t *)(&((a).content[CUInt128LowOffset])))
-#define _kCUInt128GetHigh64Ptr(a) ((uint64_t *)(&((a).content[CUInt128HighOffset])))
+#define _kCUInt128GetLow64Ptr(a) ((uint64_t *)(&((a).content[CUInt128Low64Offset])))
+#define _kCUInt128GetHigh64Ptr(a) ((uint64_t *)(&((a).content[CUInt128High64Offset])))
 
 static inline uint64_t * _Nonnull _CUInt128GetLow64Ptr(CUInt128_t * _Nonnull a) {
-    return ((uint64_t *)(&(a->content[CUInt128LowOffset])));
+    return ((uint64_t *)(&(a->content[CUInt128Low64Offset])));
 }
 
 static inline uint64_t * _Nonnull _CUInt128GetHigh64Ptr(CUInt128_t * _Nonnull a) {
-    return ((uint64_t *)(&(a->content[CUInt128HighOffset])));
+    return ((uint64_t *)(&(a->content[CUInt128High64Offset])));
 }
 
 static inline CUInt128_t CUInt128MakeWithUInt64(uint64_t high, uint64_t low) {
@@ -131,7 +131,21 @@ static inline CUInt128_t CUInt128RotateRight(CUInt128_t word, unsigned int offse
     return CUInt128Or(CUInt128Shr(word, offset&127), CUInt128Shl(word, 128-(offset&127)));
 }
 
+static inline CUInt128_t CUInt128Opposite(CUInt128_t word) {
+    CUInt128_t v = {};
+    uint64_t h = *_kCUInt128GetHigh64Ptr(word);
+    uint64_t l = *_kCUInt128GetLow64Ptr(word);
 
+    if (h & 0x8000000000000000ULL) {//minus
+        
+    } else {
+        
+        
+    }
+    
+    
+    return CUInt128Or(CUInt128Shr(word, offset&127), CUInt128Shl(word, 128-(offset&127)));
+}
 
 
 static inline uint16_t CUInt16ByteSwap(uint16_t data) {

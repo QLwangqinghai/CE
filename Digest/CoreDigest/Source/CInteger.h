@@ -43,48 +43,50 @@ extern const CUInt128_t CUInt128Zero;
 #error "DEFINE BIG_ENDIAN OR LITTLE_ENDIAN"
 #endif
 
-
-//~a
-static inline CUInt128_t CUInt128Not(CUInt128_t a) {
-    CUInt128_t v = {};
-    *((uint64_t *)(&(v.content[0]))) = ~(*((uint64_t *)(&(a.content[0]))));
-    *((uint64_t *)(&(v.content[8]))) = ~(*((uint64_t *)(&(a.content[8]))));
-    return v;
-}
-
-//a | b
-static inline CUInt128_t CUInt128Or(CUInt128_t a, CUInt128_t b) {
-    CUInt128_t v = {};
-    *((uint64_t *)(&(v.content[0]))) = (*((uint64_t *)(&(a.content[0])))) | (*((uint64_t *)(&(b.content[0]))));
-    *((uint64_t *)(&(v.content[8]))) = (*((uint64_t *)(&(a.content[8])))) | (*((uint64_t *)(&(b.content[8]))));
-    return v;
-}
-
-//a & b
-static inline CUInt128_t CUInt128And(CUInt128_t a, CUInt128_t b) {
-    CUInt128_t v = {};
-    *((uint64_t *)(&(v.content[0]))) = (*((uint64_t *)(&(a.content[0])))) & (*((uint64_t *)(&(b.content[0]))));
-    *((uint64_t *)(&(v.content[8]))) = (*((uint64_t *)(&(a.content[8])))) & (*((uint64_t *)(&(b.content[8]))));
-    return v;
-}
-
-//a ^ b
-static inline CUInt128_t CUInt128Xor(CUInt128_t a, CUInt128_t b) {
-    CUInt128_t v = {};
-    *((uint64_t *)(&(v.content[0]))) = (*((uint64_t *)(&(a.content[0])))) ^ (*((uint64_t *)(&(b.content[0]))));
-    *((uint64_t *)(&(v.content[8]))) = (*((uint64_t *)(&(a.content[8])))) ^ (*((uint64_t *)(&(b.content[8]))));
-    return v;
-}
-
 #define _kCUInt128GetLow64Ptr(a) ((uint64_t *)(&((a).content[CUInt128Low64Offset])))
 #define _kCUInt128GetHigh64Ptr(a) ((uint64_t *)(&((a).content[CUInt128High64Offset])))
 
 static inline uint64_t * _Nonnull _CUInt128GetLow64Ptr(CUInt128_t * _Nonnull a) {
     return ((uint64_t *)(&(a->content[CUInt128Low64Offset])));
 }
-
 static inline uint64_t * _Nonnull _CUInt128GetHigh64Ptr(CUInt128_t * _Nonnull a) {
     return ((uint64_t *)(&(a->content[CUInt128High64Offset])));
+}
+
+//~a
+static inline CUInt128_t CUInt128Not(CUInt128_t a) {
+    uint64_t * l = _kCUInt128GetLow64Ptr(a);
+    uint64_t * h = _kCUInt128GetHigh64Ptr(a);
+    *l = ~(*l);
+    *h = ~(*h);
+    return a;
+}
+
+//a | b
+static inline CUInt128_t CUInt128Or(CUInt128_t a, CUInt128_t b) {
+    uint64_t * l = _kCUInt128GetLow64Ptr(a);
+    uint64_t * h = _kCUInt128GetHigh64Ptr(a);
+    *l = (*l) | (*_kCUInt128GetLow64Ptr(b));
+    *h = (*h) | (*_kCUInt128GetHigh64Ptr(b));
+    return a;
+}
+
+//a & b
+static inline CUInt128_t CUInt128And(CUInt128_t a, CUInt128_t b) {
+    uint64_t * l = _kCUInt128GetLow64Ptr(a);
+    uint64_t * h = _kCUInt128GetHigh64Ptr(a);
+    *l = (*l) & (*_kCUInt128GetLow64Ptr(b));
+    *h = (*h) & (*_kCUInt128GetHigh64Ptr(b));
+    return a;
+}
+
+//a ^ b
+static inline CUInt128_t CUInt128Xor(CUInt128_t a, CUInt128_t b) {
+    uint64_t * l = _kCUInt128GetLow64Ptr(a);
+    uint64_t * h = _kCUInt128GetHigh64Ptr(a);
+    *l = (*l) ^ (*_kCUInt128GetLow64Ptr(b));
+    *h = (*h) ^ (*_kCUInt128GetHigh64Ptr(b));
+    return a;
 }
 
 static inline CUInt128_t CUInt128MakeWithUInt64(uint64_t high, uint64_t low) {
@@ -111,7 +113,6 @@ static inline CUInt128_t CUInt128Shl(CUInt128_t word, unsigned int offset) {
 static inline CUInt128_t CUInt128Shr(CUInt128_t word, unsigned int offset) {
     uint64_t * l = _kCUInt128GetLow64Ptr(word);
     uint64_t * h = _kCUInt128GetHigh64Ptr(word);
-
     if (offset < 64) {
         uint64_t t = (*h) << (64 - offset);
         *h = (*h) >> offset;
@@ -132,40 +133,33 @@ static inline CUInt128_t CUInt128RotateRight(CUInt128_t word, unsigned int offse
 }
 
 static inline CUInt128_t CUInt128Add(CUInt128_t a, CUInt128_t b) {
-    CUInt128_t v = CUInt128Zero;
-    uint64_t ah = *_kCUInt128GetHigh64Ptr(a);
-    uint64_t al = *_kCUInt128GetLow64Ptr(a);
+    uint64_t * h = _kCUInt128GetHigh64Ptr(a);
+    uint64_t * l = _kCUInt128GetLow64Ptr(a);
     uint64_t bh = *_kCUInt128GetHigh64Ptr(b);
     uint64_t bl = *_kCUInt128GetLow64Ptr(b);
-
-    uint64_t * h = _kCUInt128GetHigh64Ptr(v);
-    uint64_t * l = _kCUInt128GetLow64Ptr(v);
     uint64_t carry = 0;
-    *l = al + bl;
-    if (*l < al) {
+    *l = *l + bl;
+    if (*l < bl) {
         carry = 1;
     }
-    *h = ah + bh + carry;
-    return v;
+    *h = *h + bh + carry;
+    return a;
 }
 
 //a-b
 static inline CUInt128_t CUInt128Sub(CUInt128_t a, CUInt128_t b) {
-    CUInt128_t v = CUInt128Zero;
-    uint64_t ah = *_kCUInt128GetHigh64Ptr(a);
-    uint64_t al = *_kCUInt128GetLow64Ptr(a);
+    uint64_t * h = _kCUInt128GetHigh64Ptr(a);
+    uint64_t * l = _kCUInt128GetLow64Ptr(a);
     uint64_t bh = *_kCUInt128GetHigh64Ptr(b);
     uint64_t bl = *_kCUInt128GetLow64Ptr(b);
-    
-    uint64_t * h = _kCUInt128GetHigh64Ptr(v);
-    uint64_t * l = _kCUInt128GetLow64Ptr(v);
+
     uint64_t carry = 0;
-    *l = al - bl;
-    if (al > bl) {
+    if (*l < bl) {
         carry = 1;
     }
-    *h = ah - bh - carry;
-    return v;
+    *l = *l - bl;
+    *h = *h - bh - carry;
+    return a;
 }
 
 

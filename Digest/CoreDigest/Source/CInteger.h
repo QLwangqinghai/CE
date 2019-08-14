@@ -31,6 +31,8 @@ typedef struct _CUInt128 {
     uint8_t content[16];
 } CUInt128_t;
 
+extern const CUInt128_t CUInt128Zero;
+
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define CUInt128High64Offset 8
 #define CUInt128Low64Offset 0
@@ -86,16 +88,15 @@ static inline uint64_t * _Nonnull _CUInt128GetHigh64Ptr(CUInt128_t * _Nonnull a)
 }
 
 static inline CUInt128_t CUInt128MakeWithUInt64(uint64_t high, uint64_t low) {
-    CUInt128_t v = {};
+    CUInt128_t v = CUInt128Zero;
     *(_kCUInt128GetLow64Ptr(v)) = low;
     *(_kCUInt128GetHigh64Ptr(v)) = high;
     return v;
 }
 
 static inline CUInt128_t CUInt128Shl(CUInt128_t word, unsigned int offset) {
-    CUInt128_t v = {};
-    uint64_t * l = _kCUInt128GetLow64Ptr(v);
-    uint64_t * h = _kCUInt128GetHigh64Ptr(v);
+    uint64_t * l = _kCUInt128GetLow64Ptr(word);
+    uint64_t * h = _kCUInt128GetHigh64Ptr(word);
     if (offset < 64) {
         uint64_t t = (*l) >> (64 - offset);
         *h = ((*h) << offset) | t;
@@ -104,13 +105,12 @@ static inline CUInt128_t CUInt128Shl(CUInt128_t word, unsigned int offset) {
         *h = (*l) << (offset - 64);
         *l = 0;
     }
-    return v;
+    return word;
 }
 
 static inline CUInt128_t CUInt128Shr(CUInt128_t word, unsigned int offset) {
-    CUInt128_t v = {};
-    uint64_t * l = _kCUInt128GetLow64Ptr(v);
-    uint64_t * h = _kCUInt128GetHigh64Ptr(v);
+    uint64_t * l = _kCUInt128GetLow64Ptr(word);
+    uint64_t * h = _kCUInt128GetHigh64Ptr(word);
 
     if (offset < 64) {
         uint64_t t = (*h) << (64 - offset);
@@ -120,7 +120,7 @@ static inline CUInt128_t CUInt128Shr(CUInt128_t word, unsigned int offset) {
         *h = 0;
         *l = (*h) >> (offset - 64);
     }
-    return v;
+    return word;
 }
 
 static inline CUInt128_t CUInt128RotateLeft(CUInt128_t word, unsigned int offset) {
@@ -131,20 +131,46 @@ static inline CUInt128_t CUInt128RotateRight(CUInt128_t word, unsigned int offse
     return CUInt128Or(CUInt128Shr(word, offset&127), CUInt128Shl(word, 128-(offset&127)));
 }
 
-static inline CUInt128_t CUInt128Opposite(CUInt128_t word) {
-    CUInt128_t v = {};
-    uint64_t h = *_kCUInt128GetHigh64Ptr(word);
-    uint64_t l = *_kCUInt128GetLow64Ptr(word);
+static inline CUInt128_t CUInt128Add(CUInt128_t a, CUInt128_t b) {
+    CUInt128_t v = CUInt128Zero;
+    uint64_t ah = *_kCUInt128GetHigh64Ptr(a);
+    uint64_t al = *_kCUInt128GetLow64Ptr(a);
+    uint64_t bh = *_kCUInt128GetHigh64Ptr(b);
+    uint64_t bl = *_kCUInt128GetLow64Ptr(b);
 
-    if (h & 0x8000000000000000ULL) {//minus
-        
-    } else {
-        
-        
+    uint64_t * h = _kCUInt128GetHigh64Ptr(v);
+    uint64_t * l = _kCUInt128GetLow64Ptr(v);
+    uint64_t carry = 0;
+    *l = al + bl;
+    if (*l < al) {
+        carry = 1;
     }
+    *h = ah + bh + carry;
+    return v;
+}
+
+//a-b
+static inline CUInt128_t CUInt128Sub(CUInt128_t a, CUInt128_t b) {
+    CUInt128_t v = CUInt128Zero;
+    uint64_t ah = *_kCUInt128GetHigh64Ptr(a);
+    uint64_t al = *_kCUInt128GetLow64Ptr(a);
+    uint64_t bh = *_kCUInt128GetHigh64Ptr(b);
+    uint64_t bl = *_kCUInt128GetLow64Ptr(b);
     
-    
-    return CUInt128Or(CUInt128Shr(word, offset&127), CUInt128Shl(word, 128-(offset&127)));
+    uint64_t * h = _kCUInt128GetHigh64Ptr(v);
+    uint64_t * l = _kCUInt128GetLow64Ptr(v);
+    uint64_t carry = 0;
+    *l = al - bl;
+    if (al > bl) {
+        carry = 1;
+    }
+    *h = ah - bh - carry;
+    return v;
+}
+
+
+static inline CUInt128_t CUInt128Opposite(CUInt128_t word) {
+    return CUInt128Sub(CUInt128Zero, word);
 }
 
 

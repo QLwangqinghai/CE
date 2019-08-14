@@ -8,6 +8,8 @@
 
 #include "CInteger.h"
 
+const CUInt128_t CUInt128Zero = {};
+
 
 ////arm uint32_t
 //static inline uint32_t CUInt32ByteSwap(uint32_t val) {

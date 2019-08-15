@@ -239,12 +239,23 @@ void CCDigestContextInitMd5(CCDigestContext_s * _Nonnull context, void * _Nonnul
     assert(accumulated);
     memset(context, 0, sizeof(CCDigestContext_s));
     context->digestType = CCDigestTypeMd5;
+    context->states = states;
 
+//    void * _Nonnull states;
+//    uint8_t * _Nonnull accumulated;
+//    CCDigestProcess_f _Nonnull process;
+//    CCDigestFinish_f _Nonnull finish;
+//    CCDigestExportHashValue_f _Nonnull exportHashValue;
+//    CCDigestExportHashValue_f _Nonnull exportStatus;
+    
+    
+    
 }
 /*
  typedef void (*CCDigestProcess_f)(void * _Nonnull state, size_t blockCount, const void * _Nonnull in);
  typedef void (*CCDigestFinish_f)(CCDigestContext_s * _Nonnull context);
  typedef void (*CCDigestExportHashValue_f)(CCDigestContext_s * _Nonnull context, void * _Nonnull bytes);
+ typedef void (*CCDigestExportStatus_f)(CCDigestContext_s * _Nonnull context, void * _Nonnull bytes);
  */
 
 //void CCDigestContextInitSha1(CCDigestContext_s * _Nonnull context, void * _Nonnull states, uint8_t * _Nonnull accumulated);

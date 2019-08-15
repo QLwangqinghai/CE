@@ -57,6 +57,23 @@ static inline _Bool CCDigestTypeIsValid(CCDigestType_e type) {
 #define CCDigestSha3VariantKeccak384BlockSize 104
 #define CCDigestSha3Variant512BlockSize 72
 #define CCDigestSha3VariantKeccak512BlockSize 72
+#define CCDigestBlockSizeMax 144
+
+//buffer size Buffer
+#define CCDigestMd5BufferSize 128
+#define CCDigestSha1BufferSize 128
+#define CCDigestSha2Variant224BufferSize 128
+#define CCDigestSha2Variant256BufferSize 128
+#define CCDigestSha2Variant384BufferSize 256
+#define CCDigestSha2Variant512BufferSize 256
+#define CCDigestSha3Variant224BufferSize 144
+#define CCDigestSha3VariantKeccak224BufferSize 144
+#define CCDigestSha3Variant256BufferSize 136
+#define CCDigestSha3VariantKeccak256BufferSize 136
+#define CCDigestSha3Variant384BufferSize 104
+#define CCDigestSha3VariantKeccak384BufferSize 104
+#define CCDigestSha3Variant512BufferSize 72
+#define CCDigestSha3VariantKeccak512BufferSize 72
 
 //state size
 #define CCDigestMd5StateSize 16
@@ -74,6 +91,9 @@ static inline _Bool CCDigestTypeIsValid(CCDigestType_e type) {
 #define CCDigestSha3VariantKeccak384StateSize CCDigestSha3StateSize
 #define CCDigestSha3Variant512StateSize CCDigestSha3StateSize
 #define CCDigestSha3VariantKeccak512StateSize CCDigestSha3StateSize
+
+#define CCDigestBufferAndStateSumMax 344
+
 
 //out size
 #define CCDigestMd5OutputSize 16
@@ -98,158 +118,19 @@ static inline _Bool CCDigestTypeIsValid(CCDigestType_e type) {
 
 #define CCDigestLengthMax 64
 
-
-static inline size_t CCDigestOutputSize(CCDigestType_e e) {
-    switch (e) {
-        case CCDigestTypeMd5:
-            return 16;
-        case CCDigestTypeSha1:
-            return 20;
-        case CCDigestTypeSha2Variant224:
-        case CCDigestTypeSha3Variant224:
-        case CCDigestTypeSha3VariantKeccak224:
-            return 28;
-        case CCDigestTypeSha2Variant256:
-        case CCDigestTypeSha3Variant256:
-        case CCDigestTypeSha3VariantKeccak256:
-            return 32;
-        case CCDigestTypeSha2Variant384:
-        case CCDigestTypeSha3Variant384:
-        case CCDigestTypeSha3VariantKeccak384:
-            return 48;
-        case CCDigestTypeSha2Variant512:
-        case CCDigestTypeSha3Variant512:
-        case CCDigestTypeSha3VariantKeccak512:
-            return 64;
-        default:
-            return 0;
-    }
-}
-
-#define CCDigestBlockSizeMax 144
-
-static inline size_t CCDigestBlockSize(CCDigestType_e e) {
-    switch (e) {
-        case CCDigestTypeMd5:
-            return CCDigestMd5BlockSize;
-        case CCDigestTypeSha1:
-            return CCDigestSha1BlockSize;
-        case CCDigestTypeSha2Variant224:
-        case CCDigestTypeSha2Variant256:
-            return CCDigestSha2Variant256BlockSize;
-        case CCDigestTypeSha2Variant384:
-        case CCDigestTypeSha2Variant512:
-            return CCDigestSha2Variant512BlockSize;
-        case CCDigestTypeSha3Variant224:
-            return CCDigestSha3Variant224BlockSize;
-        case CCDigestTypeSha3VariantKeccak224:
-            return CCDigestSha3VariantKeccak224BlockSize;
-        case CCDigestTypeSha3Variant256:
-            return CCDigestSha3Variant256BlockSize;
-        case CCDigestTypeSha3VariantKeccak256:
-            return CCDigestSha3VariantKeccak256BlockSize;
-        case CCDigestTypeSha3Variant384:
-            return CCDigestSha3Variant384BlockSize;
-        case CCDigestTypeSha3VariantKeccak384:
-            return CCDigestSha3VariantKeccak384BlockSize;
-        case CCDigestTypeSha3Variant512:
-            return CCDigestSha3Variant512BlockSize;
-        case CCDigestTypeSha3VariantKeccak512:
-            return CCDigestSha3VariantKeccak512BlockSize;
-        default:
-            return 0;
-    }
-}
-
-static inline size_t CCDigestStatusSize(CCDigestType_e e) {
-    switch (e) {
-        case CCDigestTypeMd5:
-            return CCDigestMd5StateSize;
-        case CCDigestTypeSha1:
-            return CCDigestSha1StateSize;
-        case CCDigestTypeSha2Variant224:
-            return CCDigestSha2Variant224StateSize;
-        case CCDigestTypeSha2Variant256:
-            return CCDigestSha2Variant256StateSize;
-        case CCDigestTypeSha2Variant384:
-            return CCDigestSha2Variant384StateSize;
-        case CCDigestTypeSha2Variant512:
-            return CCDigestSha2Variant512StateSize;
-        case CCDigestTypeSha3Variant224:
-        case CCDigestTypeSha3VariantKeccak224:
-        case CCDigestTypeSha3Variant256:
-        case CCDigestTypeSha3VariantKeccak256:
-        case CCDigestTypeSha3Variant384:
-        case CCDigestTypeSha3VariantKeccak384:
-        case CCDigestTypeSha3Variant512:
-        case CCDigestTypeSha3VariantKeccak512:
-            return CCDigestSha3StateSize;
-        default:
-            return 0;
-    }
-}
-
-static inline size_t CCDigestHashWordSize(CCDigestType_e e) {
-    switch (e) {
-        case CCDigestTypeMd5:
-        case CCDigestTypeSha1:
-        case CCDigestTypeSha2Variant224:
-        case CCDigestTypeSha2Variant256:
-            return 4;
-        case CCDigestTypeSha2Variant384:
-        case CCDigestTypeSha2Variant512:
-        case CCDigestTypeSha3Variant224:
-        case CCDigestTypeSha3VariantKeccak224:
-        case CCDigestTypeSha3Variant256:
-        case CCDigestTypeSha3VariantKeccak256:
-        case CCDigestTypeSha3Variant384:
-        case CCDigestTypeSha3VariantKeccak384:
-        case CCDigestTypeSha3Variant512:
-        case CCDigestTypeSha3VariantKeccak512:
-            return 8;
-        default:
-            return 0;
-    }
-}
-
-
-static inline size_t CCDigestPaddingBitLengthByteCount(CCDigestType_e e) {
-    switch (e) {
-        case CCDigestTypeMd5:
-            return 8;
-        case CCDigestTypeSha1:
-            return 8;
-        case CCDigestTypeSha2Variant224:
-            return 8;
-        case CCDigestTypeSha2Variant256:
-            return 8;
-        case CCDigestTypeSha2Variant384:
-            return 16;
-        case CCDigestTypeSha2Variant512:
-            return 16;
-        case CCDigestTypeSha3Variant224:
-        case CCDigestTypeSha3VariantKeccak224:
-        case CCDigestTypeSha3Variant256:
-        case CCDigestTypeSha3VariantKeccak256:
-        case CCDigestTypeSha3Variant384:
-        case CCDigestTypeSha3VariantKeccak384:
-        case CCDigestTypeSha3Variant512:
-        case CCDigestTypeSha3VariantKeccak512:
-            return 0;
-        default:
-            return 0;
-    }
-}
-
 typedef struct _CCDigestInfo {
     uint32_t digestType;
-    uint16_t blockSize;
     uint16_t outputSize;
+    uint16_t blockSize;
+    uint16_t bufferSize;
     uint16_t stateSize;
-    uint8_t stateWordSize;
-    uint8_t paddingLenghSize;
-    void * _Nullable initialHashValue;
+    uint16_t stateWordSize;
+    uint16_t paddingLenghSize;
+    void * _Nonnull initialStatusValue;
 } CCDigestInfo_s;
+
+const CCDigestInfo_s * _Nullable CCDigestInfo(CCDigestType_e type);
+
 
 
 struct _CCDigestContext;
@@ -258,6 +139,7 @@ typedef struct _CCDigestContext CCDigestContext_s;
 typedef void (*CCDigestProcess_f)(void * _Nonnull state, size_t blockCount, const void * _Nonnull in);
 typedef void (*CCDigestFinish_f)(CCDigestContext_s * _Nonnull context);
 typedef void (*CCDigestExportHashValue_f)(CCDigestContext_s * _Nonnull context, void * _Nonnull bytes);
+typedef void (*CCDigestExportStatus_f)(CCDigestContext_s * _Nonnull context, void * _Nonnull bytes);
 
 struct _CCDigestContext {
     uint32_t digestType;
@@ -268,6 +150,7 @@ struct _CCDigestContext {
     CCDigestProcess_f _Nonnull process;
     CCDigestFinish_f _Nonnull finish;
     CCDigestExportHashValue_f _Nonnull exportHashValue;
+    CCDigestExportHashValue_f _Nonnull exportStatus;
 };
 
 static inline void CCDigestContextAddCount(CCDigestContext_s * _Nonnull context, size_t count) {

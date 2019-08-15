@@ -132,6 +132,19 @@ static inline CUInt128_t CUInt128RotateRight(CUInt128_t word, unsigned int offse
     return CUInt128Or(CUInt128Shr(word, offset&127), CUInt128Shl(word, 128-(offset&127)));
 }
 
+static inline CUInt128_t CUInt128AddUInt64(CUInt128_t a, uint64_t b) {
+    uint64_t * h = _kCUInt128GetHigh64Ptr(a);
+    uint64_t * l = _kCUInt128GetLow64Ptr(a);
+    uint64_t carry = 0;
+    *l = *l + b;
+    if (*l < b) {
+        carry = 1;
+        *h = *h + carry;
+    }
+    return a;
+}
+
+
 static inline CUInt128_t CUInt128Add(CUInt128_t a, CUInt128_t b) {
     uint64_t * h = _kCUInt128GetHigh64Ptr(a);
     uint64_t * l = _kCUInt128GetLow64Ptr(a);
@@ -226,7 +239,10 @@ static inline uint32_t CUInt32MakeWithLittleEndianBytes(uint8_t const block[_Non
     return *((uint32_t *)block);
 }
 
-
+static inline void CUInt128ToBigEndianBytes(CUInt128_t value, uint8_t bytes[_Nonnull 16]) {
+    CUInt128_t v = CUInt128ByteSwap(value);
+    memcpy(bytes, &(v.content[0]), 16);
+}
 static inline void CUInt64ToBigEndianBytes(uint64_t value, uint8_t bytes[_Nonnull 8]) {
     uint64_t v = CUInt64ByteSwap(value);
     *((uint64_t *)bytes) = v;
@@ -234,6 +250,9 @@ static inline void CUInt64ToBigEndianBytes(uint64_t value, uint8_t bytes[_Nonnul
 static inline void CUInt32ToBigEndianBytes(uint32_t value, uint8_t bytes[_Nonnull 4]) {
     uint32_t v = CUInt32ByteSwap(value);
     *((uint32_t *)bytes) = v;
+}
+static inline void CUInt128ToLittleEndianBytes(CUInt128_t value, uint8_t bytes[_Nonnull 16]) {
+    memcpy(bytes, &(value.content[0]), 16);
 }
 static inline void CUInt64ToLittleEndianBytes(uint64_t value, uint8_t block[_Nonnull 8]) {
     *((uint64_t *)block) = value;
@@ -265,11 +284,18 @@ static inline uint32_t CUInt32MakeWithLittleEndianBytes(uint8_t const block[_Non
 }
 
 
+static inline void CUInt128ToBigEndianBytes(CUInt128_t value, uint8_t bytes[_Nonnull 16]) {
+    memcpy(bytes, &(value.content[0]), 16);
+}
 static inline void CUInt64ToBigEndianBytes(uint64_t value, uint8_t bytes[_Nonnull 8]) {
     *((uint64_t *)block) = value;
 }
 static inline void CUInt32ToBigEndianBytes(uint32_t value, uint8_t bytes[_Nonnull 4]) {
     *((uint32_t *)block) = value;
+}
+static inline void CUInt128ToLittleEndianBytes(CUInt128_t value, uint8_t bytes[_Nonnull 16]) {
+    CUInt128_t v = CUInt128ByteSwap(value);
+    memcpy(bytes, &(v.content[0]), 16);
 }
 static inline void CUInt64ToLittleEndianBytes(uint64_t value, uint8_t block[_Nonnull 8]) {
     uint64_t v = CUInt64ByteSwap(value);

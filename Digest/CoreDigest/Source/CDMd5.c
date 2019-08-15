@@ -7,8 +7,6 @@
 //
 
 #include "CDAPI.h"
-#include "CInteger.h"
-#include "CInteger.h"
 
 #define F(x,y,z)  (z ^ (x & (y ^ z)))
 #define G(x,y,z)  (y ^ (z & (y ^ x)))
@@ -243,6 +241,12 @@ void CCDigestContextInitMd5(CCDigestContext_s * _Nonnull context, void * _Nonnul
     context->digestType = CCDigestTypeMd5;
 
 }
+/*
+ typedef void (*CCDigestProcess_f)(void * _Nonnull state, size_t blockCount, const void * _Nonnull in);
+ typedef void (*CCDigestFinish_f)(CCDigestContext_s * _Nonnull context);
+ typedef void (*CCDigestExportHashValue_f)(CCDigestContext_s * _Nonnull context, void * _Nonnull bytes);
+ */
+
 //void CCDigestContextInitSha1(CCDigestContext_s * _Nonnull context, void * _Nonnull states, uint8_t * _Nonnull accumulated);
 //void CCDigestContextInitSha2(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated);
 //void CCDigestContextInitSha3(CCDigestContext_s * _Nonnull context, CCDigestType_e type, void * _Nonnull states, uint8_t * _Nonnull accumulated);

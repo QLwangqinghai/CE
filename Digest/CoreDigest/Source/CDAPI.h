@@ -13,19 +13,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include "CInteger.h"
 
-#ifdef __APPLE__
-#include <libkern/OSByteOrder.h>
-#elif __linux__
-#include <endian.h>
-#elif defined(__FreeBSD__)
-#include <sys/endian.h>
-#elif defined(_WIN32)
-#endif
-#if defined(__GNUC__)
-#include <stdint.h>
-#include <stdbool.h>
-#endif
 
 typedef enum _CCDigestType {
     CCDigestTypeUnknown = 0,
@@ -273,8 +262,7 @@ typedef void (*CCDigestExportHashValue_f)(CCDigestContext_s * _Nonnull context, 
 struct _CCDigestContext {
     uint32_t digestType;
     uint32_t accumulatedSize;
-    uint64_t countLow;//长度的低位
-    uint64_t countHigh;//长度的高位
+    CUInt128_t count;
     void * _Nonnull states;
     uint8_t * _Nonnull accumulated;
     CCDigestProcess_f _Nonnull process;
@@ -285,11 +273,7 @@ struct _CCDigestContext {
 static inline void CCDigestContextAddCount(CCDigestContext_s * _Nonnull context, size_t count) {
     assert(context);
     assert(count >= 0);
-    uint64_t countLow = context->countLow + count;
-    if (countLow < context->countLow) {
-        context->countHigh += 1;
-    }
-    context->countLow = countLow;
+    context->count = CUInt128AddUInt64(context->count, count);
 }
 
 
@@ -305,8 +289,7 @@ static inline void CCDigestContextAddCount(CCDigestContext_s * _Nonnull context,
 typedef struct _CCDigestContextArchive {
     uint32_t digestType;
     uint32_t accumulatedSize;
-    uint64_t countLow;//长度的低位
-    uint64_t countHigh;//长度的高位
+    CUInt128_t count;
     void * _Nonnull states;
     uint8_t * _Nonnull accumulated;
 } CCDigestContextArchive_s;

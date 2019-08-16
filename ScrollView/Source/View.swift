@@ -12,9 +12,49 @@ public typealias Rect = UIRect
 public typealias Size = UISize
 public typealias Point = UIPoint
 
-open class View: Responder {
-    public private(set) var subviews1: [UIView] = []
+open class DisplayLayer: Hashable {
+    public static func == (lhs: DisplayLayer, rhs: DisplayLayer) -> Bool {
+        return lhs === rhs
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(Unmanaged.passUnretained(self).toOpaque())
+    }
+    public private(set) var sublayers: [DisplayLayer] = []
+    public private(set) unowned var superlayer: DisplayLayer?
+    public var frame: Rect
+    
+    public init(frame: Rect) {
+        self.frame = frame
+    }
+    
+    private func __addSubview(_ subview: View) {
+        subviews.append(subview)
+        subview.superview = self
+    }
+    
+    open func addSublayper(_ subview: View) {
+        subview.removeFromSuperview()
+        __addSubview(subview)
+    }
+    
+    open func removeSubview(_ view: View) {
+        if view.superview == self {
+            self.subviews.removeAll(where: { (item) -> Bool in
+                return (item == self)
+            })
+            view.superview = nil
+        }
+    }
+    
+    open func removeFromSuperview() {
+        self.superview?.removeSubview(self)
+    }
+    
+}
 
+
+
+open class View: Responder {
     public private(set) var subviews: [View] = []
     public private(set) unowned var superview: View?
     public var frame: Rect
@@ -51,9 +91,13 @@ open class View: Responder {
 
 
 open class MV : UIView {
+    
+    open override func draw(_ layer: CALayer, in ctx: CGContext) {
+//        layer.superlayer
+    }
+    
     open override func draw(_ rect: CGRect) {
         
     }
-    draw
     
 }

@@ -211,19 +211,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
         
         
-        self.items.append(makeItem(tag: "m.md5", hashLength: Int(CC_MD5_DIGEST_LENGTH)) { (p, len, h) in
-            CBridage.md5(p, length: len, hash: h)
-        });
-        self.items.append(makeItem(tag: "s.md5", hashLength: Int(CC_MD5_DIGEST_LENGTH)) { (p, len, h) in
-            CC_MD5(p, UInt32(len), h)
-        });
-
-        self.items.append(makeItem(tag: "m.sha1", hashLength: Int(CC_SHA1_DIGEST_LENGTH)) { (p, len, h) in
-            CBridage.sha160(p, length: len, hash: h)
-        });
-        self.items.append(makeItem(tag: "s.sha1", hashLength: Int(CC_SHA1_DIGEST_LENGTH)) { (p, len, h) in
-            CC_SHA1(p, UInt32(len), h)
-        });
+//        self.items.append(makeItem(tag: "m.md5", hashLength: Int(CC_MD5_DIGEST_LENGTH)) { (p, len, h) in
+//            CBridage.md5(p, length: len, hash: h)
+//        });
+//        self.items.append(makeItem(tag: "s.md5", hashLength: Int(CC_MD5_DIGEST_LENGTH)) { (p, len, h) in
+//            CC_MD5(p, UInt32(len), h)
+//        });
+//
+//        self.items.append(makeItem(tag: "m.sha1", hashLength: Int(CC_SHA1_DIGEST_LENGTH)) { (p, len, h) in
+//            CBridage.sha160(p, length: len, hash: h)
+//        });
+//        self.items.append(makeItem(tag: "s.sha1", hashLength: Int(CC_SHA1_DIGEST_LENGTH)) { (p, len, h) in
+//            CC_SHA1(p, UInt32(len), h)
+//        });
         
         self.items.append(makeItem(tag: "m.sha2.224", hashLength: Int(CC_SHA224_DIGEST_LENGTH)) { (p, len, h) in
             CBridage.sha224(p, length: len, hash: h)
@@ -232,26 +232,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             CC_SHA224(p, UInt32(len), h)
         });
         
-        self.items.append(makeItem(tag: "m.sha2.256", hashLength: Int(CC_SHA256_DIGEST_LENGTH)) { (p, len, h) in
-            CBridage.sha256(p, length: len, hash: h)
-        });
-        self.items.append(makeItem(tag: "s.sha2.256", hashLength: Int(CC_SHA256_DIGEST_LENGTH)) { (p, len, h) in
-            CC_SHA256(p, UInt32(len), h)
-        });
-        
-        self.items.append(makeItem(tag: "m.sha2.384", hashLength: Int(CC_SHA384_DIGEST_LENGTH)) { (p, len, h) in
-            CBridage.sha384(p, length: len, hash: h)
-        });
-        self.items.append(makeItem(tag: "s.sha2.384", hashLength: Int(CC_SHA384_DIGEST_LENGTH)) { (p, len, h) in
-            CC_SHA384(p, UInt32(len), h)
-        });
-
-        self.items.append(makeItem(tag: "m.sha2.512", hashLength: Int(CC_SHA512_DIGEST_LENGTH)) { (p, len, h) in
-            CBridage.sha512(p, length: len, hash: h)
-        });
-        self.items.append(makeItem(tag: "s.sha2.512", hashLength: Int(CC_SHA512_DIGEST_LENGTH)) { (p, len, h) in
-            CC_SHA512(p, UInt32(len), h)
-        });
+//        self.items.append(makeItem(tag: "m.sha2.256", hashLength: Int(CC_SHA256_DIGEST_LENGTH)) { (p, len, h) in
+//            CBridage.sha256(p, length: len, hash: h)
+//        });
+//        self.items.append(makeItem(tag: "s.sha2.256", hashLength: Int(CC_SHA256_DIGEST_LENGTH)) { (p, len, h) in
+//            CC_SHA256(p, UInt32(len), h)
+//        });
+//        
+//        self.items.append(makeItem(tag: "m.sha2.384", hashLength: Int(CC_SHA384_DIGEST_LENGTH)) { (p, len, h) in
+//            CBridage.sha384(p, length: len, hash: h)
+//        });
+//        self.items.append(makeItem(tag: "s.sha2.384", hashLength: Int(CC_SHA384_DIGEST_LENGTH)) { (p, len, h) in
+//            CC_SHA384(p, UInt32(len), h)
+//        });
+//
+//        self.items.append(makeItem(tag: "m.sha2.512", hashLength: Int(CC_SHA512_DIGEST_LENGTH)) { (p, len, h) in
+//            CBridage.sha512(p, length: len, hash: h)
+//        });
+//        self.items.append(makeItem(tag: "s.sha2.512", hashLength: Int(CC_SHA512_DIGEST_LENGTH)) { (p, len, h) in
+//            CC_SHA512(p, UInt32(len), h)
+//        });
 
         
         for item in self.items {

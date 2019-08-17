@@ -88,3 +88,15 @@ m.sha2.384: used_time:55.811-739
 s.sha2.384: used_time:26.518-267
 m.sha2.512: used_time:56.073-243
 s.sha2.512: used_time:26.610-775
+
+
+
+
+m.md5: used_time:30.483-024
+s.md5: used_time:29.908-539
+m.sha1: used_time:53.445-624
+s.sha1: used_time:18.969-821
+m.sha2.224: used_time:101.417-707
+s.sha2.224: used_time:42.584-050
+m.sha2.256: used_time:96.806-816
+s.sha2.256: used_time:51.736-673

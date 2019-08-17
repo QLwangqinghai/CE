@@ -27,28 +27,28 @@ open class DisplayLayer: Hashable {
         self.frame = frame
     }
     
-    private func __addSubview(_ subview: View) {
-        subviews.append(subview)
-        subview.superview = self
-    }
-    
-    open func addSublayper(_ subview: View) {
-        subview.removeFromSuperview()
-        __addSubview(subview)
-    }
-    
-    open func removeSubview(_ view: View) {
-        if view.superview == self {
-            self.subviews.removeAll(where: { (item) -> Bool in
-                return (item == self)
-            })
-            view.superview = nil
-        }
-    }
-    
-    open func removeFromSuperview() {
-        self.superview?.removeSubview(self)
-    }
+//    private func __addSubview(_ subview: View) {
+//        subviews.append(subview)
+//        subview.superview = self
+//    }
+//    
+//    open func addSublayper(_ subview: View) {
+//        subview.removeFromSuperview()
+//        __addSubview(subview)
+//    }
+//    
+//    open func removeSubview(_ view: View) {
+//        if view.superview == self {
+//            self.subviews.removeAll(where: { (item) -> Bool in
+//                return (item == self)
+//            })
+//            view.superview = nil
+//        }
+//    }
+//    
+//    open func removeFromSuperview() {
+//        self.superview?.removeSubview(self)
+//    }
     
 }
 

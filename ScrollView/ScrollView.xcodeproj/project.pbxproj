@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		D63B1C472305685200AFD97E /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C462305685200AFD97E /* View.swift */; };
 		D63B1C492305687400AFD97E /* Responder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C482305687400AFD97E /* Responder.swift */; };
+		D63B1C53230A6BED00AFD97E /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C52230A6BEC00AFD97E /* ScrollView.swift */; };
+		D63B1C67230AA5B500AFD97E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C66230AA5B500AFD97E /* main.swift */; };
+		D63B1C6D230AD1F800AFD97E /* Core2D.c in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C6C230AD1F800AFD97E /* Core2D.c */; };
 		D67F5A252306F41E00F1CE91 /* GLES.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F5A242306F41E00F1CE91 /* GLES.swift */; };
 		D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC1F230536D100432D18 /* AppDelegate.swift */; };
 		D69FCC22230536D100432D18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC21230536D100432D18 /* ViewController.swift */; };
@@ -18,9 +21,26 @@
 		D69FCC352305370900432D18 /* ScrollViewCore.m in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC342305370900432D18 /* ScrollViewCore.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		D63B1C62230AA5B500AFD97E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		D63B1C462305685200AFD97E /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		D63B1C482305687400AFD97E /* Responder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Responder.swift; sourceTree = "<group>"; };
+		D63B1C52230A6BEC00AFD97E /* ScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollView.swift; sourceTree = "<group>"; };
+		D63B1C64230AA5B500AFD97E /* Add */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Add; sourceTree = BUILT_PRODUCTS_DIR; };
+		D63B1C66230AA5B500AFD97E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		D63B1C6B230AD1F800AFD97E /* Core2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Core2D.h; sourceTree = "<group>"; };
+		D63B1C6C230AD1F800AFD97E /* Core2D.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Core2D.c; sourceTree = "<group>"; };
 		D67F5A242306F41E00F1CE91 /* GLES.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLES.swift; sourceTree = "<group>"; };
 		D69FCC1C230536D100432D18 /* ScrollView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D69FCC1F230536D100432D18 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -35,6 +55,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D63B1C61230AA5B500AFD97E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D69FCC19230536D100432D18 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -45,11 +72,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D63B1C65230AA5B500AFD97E /* Add */ = {
+			isa = PBXGroup;
+			children = (
+				D63B1C66230AA5B500AFD97E /* main.swift */,
+			);
+			path = Add;
+			sourceTree = "<group>";
+		};
 		D69FCC13230536D100432D18 = {
 			isa = PBXGroup;
 			children = (
 				D69FCC31230536E700432D18 /* Source */,
 				D69FCC1E230536D100432D18 /* ScrollView */,
+				D63B1C65230AA5B500AFD97E /* Add */,
 				D69FCC1D230536D100432D18 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -58,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				D69FCC1C230536D100432D18 /* ScrollView.app */,
+				D63B1C64230AA5B500AFD97E /* Add */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -78,12 +115,15 @@
 		D69FCC31230536E700432D18 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				D63B1C52230A6BEC00AFD97E /* ScrollView.swift */,
 				D69FCC332305370900432D18 /* ScrollViewCore.h */,
 				D69FCC342305370900432D18 /* ScrollViewCore.m */,
 				D69FCC322305370900432D18 /* ScrollView-Bridging-Header.h */,
 				D63B1C462305685200AFD97E /* View.swift */,
 				D63B1C482305687400AFD97E /* Responder.swift */,
 				D67F5A242306F41E00F1CE91 /* GLES.swift */,
+				D63B1C6B230AD1F800AFD97E /* Core2D.h */,
+				D63B1C6C230AD1F800AFD97E /* Core2D.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -91,6 +131,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D63B1C63230AA5B500AFD97E /* Add */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D63B1C68230AA5B500AFD97E /* Build configuration list for PBXNativeTarget "Add" */;
+			buildPhases = (
+				D63B1C60230AA5B500AFD97E /* Sources */,
+				D63B1C61230AA5B500AFD97E /* Frameworks */,
+				D63B1C62230AA5B500AFD97E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Add;
+			productName = Add;
+			productReference = D63B1C64230AA5B500AFD97E /* Add */;
+			productType = "com.apple.product-type.tool";
+		};
 		D69FCC1B230536D100432D18 /* ScrollView */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D69FCC2E230536D300432D18 /* Build configuration list for PBXNativeTarget "ScrollView" */;
@@ -118,6 +175,9 @@
 				LastUpgradeCheck = 1030;
 				ORGANIZATIONNAME = angfung;
 				TargetAttributes = {
+					D63B1C63230AA5B500AFD97E = {
+						CreatedOnToolsVersion = 10.3;
+					};
 					D69FCC1B230536D100432D18 = {
 						CreatedOnToolsVersion = 10.3;
 						LastSwiftMigration = 1030;
@@ -138,6 +198,7 @@
 			projectRoot = "";
 			targets = (
 				D69FCC1B230536D100432D18 /* ScrollView */,
+				D63B1C63230AA5B500AFD97E /* Add */,
 			);
 		};
 /* End PBXProject section */
@@ -156,11 +217,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D63B1C60230AA5B500AFD97E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D63B1C67230AA5B500AFD97E /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D69FCC18230536D100432D18 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D63B1C6D230AD1F800AFD97E /* Core2D.c in Sources */,
 				D63B1C472305685200AFD97E /* View.swift in Sources */,
+				D63B1C53230A6BED00AFD97E /* ScrollView.swift in Sources */,
 				D63B1C492305687400AFD97E /* Responder.swift in Sources */,
 				D67F5A252306F41E00F1CE91 /* GLES.swift in Sources */,
 				D69FCC352305370900432D18 /* ScrollViewCore.m in Sources */,
@@ -191,6 +262,30 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D63B1C69230AA5B500AFD97E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D63B1C6A230AA5B500AFD97E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		D69FCC2C230536D300432D18 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -353,6 +448,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D63B1C68230AA5B500AFD97E /* Build configuration list for PBXNativeTarget "Add" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D63B1C69230AA5B500AFD97E /* Debug */,
+				D63B1C6A230AA5B500AFD97E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D69FCC17230536D100432D18 /* Build configuration list for PBXProject "ScrollView" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

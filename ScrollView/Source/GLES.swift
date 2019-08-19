@@ -28,12 +28,12 @@ class GLES: NSObject {
     
     
     func aa() {
-        let context = EAGLContext(api: EAGLRenderingAPI.openGLES3)
-        EAGLContext.setCurrent(context)
-        
-        let a : CAMetalLayer
-        let glLayer: CAEAGLLayer
-        CAGradientLayer
+//        let context = EAGLContext(api: EAGLRenderingAPI.openGLES3)
+//        EAGLContext.setCurrent(context)
+//        
+//        let a : CAMetalLayer
+//        let glLayer: CAEAGLLayer
+//        CAGradientLayer
         //init layer
 //        _layer =[[JFCAEGLayer alloc]initWithFrame:CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height)];
 //        [self.view.layer addSublayer:_layer];

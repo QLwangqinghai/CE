@@ -8,9 +8,13 @@
 
 import Foundation
 
-public typealias Rect = UIRect
-public typealias Size = UISize
-public typealias Point = UIPoint
+public typealias Rect = C2DRect
+public typealias Size = C2DSize
+public typealias Point = C2DPoint
+
+public typealias Rect64 = C2DRect64
+public typealias Size64 = C2DSize64
+public typealias Point64 = C2DPoint64
 
 open class DisplayLayer: Hashable {
     public static func == (lhs: DisplayLayer, rhs: DisplayLayer) -> Bool {

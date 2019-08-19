@@ -7,30 +7,38 @@
 //
 
 import UIKit
+import Metal
 
 class ViewController: UIViewController {
     let timer: DispatchSourceTimer = DispatchSource.makeTimerSource(flags: [], queue: DispatchQueue.main)
-
+//    public func setViewports(_ viewports: [MTLViewport])
+//
+//    @available(OSX 10.13, iOS 12.0, *)
+//    public func setScissorRects(_ scissorRects: [MTLScissorRect])
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+
         
-//        let view = UIImageView(frame: CGRect(x: 100, y: 100, width: 100, height: 100))
-////        view.contentMode = .scaleAspectFill
-//        view.contentMode = .top
-//        view.image = UIImage.init(named: "WechatIMG46")
-//        view.layer.borderWidth = 2
-//        self.view.addSubview(view)
-//        view.bounds.origin.y += 200
-//        view.bounds.size.width += 100
+        let imageView = UIImageView(frame: CGRect(x: 110, y: 100, width: -100, height: 300))
+        imageView.clipsToBounds = true;
+//        view.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFill
+        imageView.image = UIImage.init(named: "WechatIMG46")
+        imageView.layer.borderWidth = 2
+        self.view.addSubview(imageView)
+        imageView.isUserInteractionEnabled = true
+
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer.init(target: self, action:#selector(tapped(tap:)))
+        imageView.addGestureRecognizer(tap)
 //
 //        let s = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
 //        view.addSubview(s)
 //        s.backgroundColor = UIColor.red
         
         
-        let view = UIScrollView(frame: CGRect(x: 100, y: 100, width: 100, height: 100))
+        let view = UIScrollView(frame: CGRect(x: 230, y: 300, width: 100, height: 100))
         //        view.contentMode = .scaleAspectFill
 //        view.contentMode = .top
 //        view.image = UIImage.init(named: "WechatIMG46")
@@ -42,7 +50,7 @@ class ViewController: UIViewController {
         let s = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
         view.addSubview(s)
         s.backgroundColor = UIColor.red
-        
+        return
         DispatchQueue.main.async {
             print(view)
             print(view.frame)
@@ -61,6 +69,9 @@ class ViewController: UIViewController {
         
     }
 
+    @objc func tapped(tap: UITapGestureRecognizer) {
+        print(tap)
+    }
 
 }
 

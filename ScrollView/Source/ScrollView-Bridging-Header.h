@@ -5,3 +5,4 @@
 #import "ScrollViewCore.h"
 
 #define GLES_SILENCE_DEPRECATION 1
+#include "Core2D.h"

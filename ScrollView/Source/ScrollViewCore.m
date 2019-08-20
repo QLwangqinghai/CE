@@ -42,12 +42,12 @@ ClassInfo * classInfo(Class cls) {
     
     unsigned int numIvars;
     Ivar *vars = class_copyIvarList(cls, &numIvars);
-    NSString *key=nil;
     for(int i = 0; i < numIvars; i++) {
+        Ivar ivar = vars[i];
+        NSString * key = [NSString stringWithUTF8String:ivar_getName(ivar)];
+        NSString * type = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
         
-        Ivar thisIvar = vars[i];
-        key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
-        [info.vars addObject:key];
+        [info.vars addObject:[NSString stringWithFormat:@"%@: %@", key, type]];
     }
     free(vars);
     return info;
@@ -70,9 +70,8 @@ ClassInfo * classInfo(Class cls) {
     ClassInfo * collectionViewInfo = classInfo([UICollectionView class]);
 
     NSLog(@"UIView\n");
-    
-    NSLog(@"methods:%@\n", viewInfo.methods);
     NSLog(@"vars:%@\n\n\n", viewInfo.vars);
+    NSLog(@"methods:%@\n", viewInfo.methods);
 
     NSLog(@"UIScrollView\n");
     {

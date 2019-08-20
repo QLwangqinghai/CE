@@ -29,6 +29,14 @@ class ViewController: UIViewController {
         imageView.layer.borderWidth = 2
         self.view.addSubview(imageView)
         imageView.isUserInteractionEnabled = true
+        
+        let v1 = UIView(frame: CGRect(x: 0, y: 0, width: -30, height: 30))
+        v1.backgroundColor = .red
+        imageView.addSubview(v1)
+        
+        let v2 = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        v2.backgroundColor = .green
+        imageView.addSubview(v2)
 
         let tap: UITapGestureRecognizer = UITapGestureRecognizer.init(target: self, action:#selector(tapped(tap:)))
         imageView.addGestureRecognizer(tap)

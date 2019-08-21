@@ -8,11 +8,11 @@
 
 import Foundation
 
-public typealias Rect = C2DRect
+//public typealias Rect = C2DRect
 public typealias Size = C2DSize
 public typealias Point = C2DPoint
 
-public typealias Rect64 = C2DRect64
+//public typealias Rect64 = C2DRect64
 public typealias Size64 = C2DSize64
 public typealias Point64 = C2DPoint64
 
@@ -25,10 +25,31 @@ open class DisplayLayer: Hashable {
     }
     public private(set) var sublayers: [DisplayLayer] = []
     public private(set) unowned var superlayer: DisplayLayer?
-    public var frame: Rect
     
-    public init(frame: Rect) {
-        self.frame = frame
+    var _origin: Point
+    var _size: Size
+    
+    public var origin: Point {
+        set {
+            _origin = newValue
+        }
+        get {
+            return _origin
+        }
+    }
+    public var size: Size {
+        set {
+            _size = newValue
+        }
+        get {
+            return _size
+        }
+    }
+    
+    
+    public init(origin: Point, size: Size) {
+        _origin = origin
+        _size = size
     }
     
 //    private func __addSubview(_ subview: View) {
@@ -61,10 +82,31 @@ open class DisplayLayer: Hashable {
 open class View: Responder {
     public private(set) var subviews: [View] = []
     public private(set) unowned var superview: View?
-    public var frame: Rect
     
-    public init(frame: Rect) {
-        self.frame = frame
+    var _origin: Point
+    var _size: Size
+    
+    public var origin: Point {
+        set {
+            _origin = newValue
+        }
+        get {
+            return _origin
+        }
+    }
+    public var size: Size {
+        set {
+            _size = newValue
+        }
+        get {
+            return _size
+        }
+    }
+    
+    
+    public init(origin: Point, size: Size) {
+        _origin = origin
+        _size = size
         super.init()
     }
     

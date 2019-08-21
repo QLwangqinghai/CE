@@ -20,10 +20,29 @@ public enum Origin : UInt16 {
 
 public extension ScrollView {
     fileprivate final class ContentLayout {
-        fileprivate var bounds: Rect64
+        var _origin: Point64
+        var _size: Size64
         
-        fileprivate init(bounds: Rect64) {
-            self.bounds = bounds
+        fileprivate var origin: Point64 {
+            set {
+                _origin = newValue
+            }
+            get {
+                return _origin
+            }
+        }
+        fileprivate var size: Size64 {
+            set {
+                _size = newValue
+            }
+            get {
+                return _size
+            }
+        }
+        
+        fileprivate init(origin: Point64, size: Size64) {
+            _origin = origin
+            _size = size
         }
     }
 }
@@ -66,13 +85,10 @@ open class ScrollView: View {
     
     fileprivate let contentLayout: ContentLayout
     fileprivate let contentMode: ContentMode
-
-    public init(frame: Rect, contentMode: ContentMode = .top) {
+    public init(origin: Point, size: Size, contentMode: ContentMode = .top) {
         self.contentMode = contentMode
-        var bounds: Rect64 = Rect64()
-        bounds.origin = contentMode.origin
-        self.contentLayout = ContentLayout(bounds:bounds)
-        super.init(frame: frame)
+        self.contentLayout = ContentLayout(origin: contentMode.origin, size: Size64())
+        super.init(origin: origin, size: size)
     }
     
     

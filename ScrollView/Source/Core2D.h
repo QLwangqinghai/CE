@@ -22,10 +22,10 @@ typedef struct {
     int32_t height;
 } C2DSize;
 
-typedef struct {
-    C2DPoint origin;
-    C2DSize size;
-} C2DRect;
+//typedef struct {
+//    C2DPoint origin;
+//    C2DSize size;
+//} C2DRect;
 
 
 
@@ -39,10 +39,10 @@ typedef struct {
     int64_t height;
 } C2DSize64;
 
-typedef struct {
-    C2DPoint64 origin;
-    C2DSize64 size;
-} C2DRect64;
+//typedef struct {
+//    C2DPoint64 origin;
+//    C2DSize64 size;
+//} C2DRect64;
 
 
 typedef struct {
@@ -55,13 +55,13 @@ static inline C2DEdgeInsets C2DEdgeInsetsMake(int32_t top, int32_t left, int32_t
 }
 
 
-static inline C2DRect C2DEdgeInsetsInsetRect(C2DRect rect, C2DEdgeInsets insets) {
-    rect.origin.x    += insets.left;
-    rect.origin.y    += insets.top;
-    rect.size.width  -= (insets.left + insets.right);
-    rect.size.height -= (insets.top  + insets.bottom);
-    return rect;
-}
+//static inline C2DRect C2DEdgeInsetsInsetRect(C2DRect rect, C2DEdgeInsets insets) {
+//    rect.origin.x    += insets.left;
+//    rect.origin.y    += insets.top;
+//    rect.size.width  -= (insets.left + insets.right);
+//    rect.size.height -= (insets.top  + insets.bottom);
+//    return rect;
+//}
 
 static inline _Bool C2DEdgeInsetsEqualToEdgeInsets(C2DEdgeInsets insets1, C2DEdgeInsets insets2) {
     return insets1.left == insets2.left && insets1.top == insets2.top && insets1.right == insets2.right && insets1.bottom == insets2.bottom;

@@ -19,6 +19,7 @@
 		D69FCC27230536D300432D18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D69FCC26230536D300432D18 /* Assets.xcassets */; };
 		D69FCC2A230536D300432D18 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D69FCC28230536D300432D18 /* LaunchScreen.storyboard */; };
 		D69FCC352305370900432D18 /* ScrollViewCore.m in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC342305370900432D18 /* ScrollViewCore.m */; };
+		D6D45738230E864E00E1F5FB /* CoreBitMap.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D45737230E864E00E1F5FB /* CoreBitMap.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,6 +53,8 @@
 		D69FCC322305370900432D18 /* ScrollView-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ScrollView-Bridging-Header.h"; sourceTree = "<group>"; };
 		D69FCC332305370900432D18 /* ScrollViewCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollViewCore.h; sourceTree = "<group>"; };
 		D69FCC342305370900432D18 /* ScrollViewCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScrollViewCore.m; sourceTree = "<group>"; };
+		D6D45736230E864E00E1F5FB /* CoreBitMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreBitMap.h; sourceTree = "<group>"; };
+		D6D45737230E864E00E1F5FB /* CoreBitMap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CoreBitMap.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +127,8 @@
 				D67F5A242306F41E00F1CE91 /* GLES.swift */,
 				D63B1C6B230AD1F800AFD97E /* Core2D.h */,
 				D63B1C6C230AD1F800AFD97E /* Core2D.c */,
+				D6D45736230E864E00E1F5FB /* CoreBitMap.h */,
+				D6D45737230E864E00E1F5FB /* CoreBitMap.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -237,6 +242,7 @@
 				D69FCC352305370900432D18 /* ScrollViewCore.m in Sources */,
 				D69FCC22230536D100432D18 /* ViewController.swift in Sources */,
 				D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */,
+				D6D45738230E864E00E1F5FB /* CoreBitMap.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

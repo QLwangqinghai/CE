@@ -6,3 +6,4 @@
 
 #define GLES_SILENCE_DEPRECATION 1
 #include "Core2D.h"
+#include "CoreBitMap.h"

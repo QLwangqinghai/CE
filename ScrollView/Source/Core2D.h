@@ -22,10 +22,10 @@ typedef struct {
     int32_t height;
 } C2DSize;
 
-//typedef struct {
-//    C2DPoint origin;
-//    C2DSize size;
-//} C2DRect;
+typedef struct {
+    C2DPoint origin;
+    C2DSize size;
+} C2DRect;
 
 
 

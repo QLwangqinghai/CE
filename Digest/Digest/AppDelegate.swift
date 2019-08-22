@@ -36,10 +36,14 @@ public class WorkItem {
     
     public func perform() {
         let b = mach_absolute_time()
+        let cs: clock_t = clock()
         for _ in 1...10 {
             self.workItem(self.bytes, self.bytesLength, self.hashBuffer)
         }
         let e = mach_absolute_time()
+        let ce: clock_t = clock()
+
+        
         self.time = e - b
         
         let x = self.time / 100000000
@@ -48,7 +52,7 @@ public class WorkItem {
         let ry = rx % 100000
         let z = ry / 100
 
-        print("\(tag): used_time:\(String(format: "%lu", x)).\(String(format: "%03lu", y))-\(String(format: "%03lu", z))")
+        print("\(tag): used_time:\(String(format: "%lu", x)).\(String(format: "%03lu", y))-\(String(format: "%03lu", z)) | \(ce - cs)")
     }
     
 }
@@ -160,7 +164,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var results: [String] = []
     
     
-    func aa() throws {
+    func aa() throws {        
+//        // sleep
+//        clockstart = clock();
+//        gettimeofday(&start, NULL);
+//        work_sleep();
+//        clockend = clock();
+        
+        
         //fec234e24b0a8e908217d21f6e2c4e379eb087ed0c8cc02d41e2de8f 908e0a4be234c2fe 374e2c6e1fd217822dc08c0ced87b09ebc6afdec
 //        let sha3Data = NSData(contentsOfFile: "/Users/vector/Downloads/thunder_3.3.3.4008.dmg")! as Data
 //        self.items.append(WorkItem.init(tag: "m.sha3.224", block: {
@@ -211,9 +222,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
         
         
-//        self.items.append(makeItem(tag: "m.md5", hashLength: Int(CC_MD5_DIGEST_LENGTH)) { (p, len, h) in
-//            CBridage.md5(p, length: len, hash: h)
-//        });
+        self.items.append(makeItem(tag: "m.md5", hashLength: Int(CC_MD5_DIGEST_LENGTH)) { (p, len, h) in
+            CBridage.md5(p, length: len, hash: h)
+        });
 //        self.items.append(makeItem(tag: "s.md5", hashLength: Int(CC_MD5_DIGEST_LENGTH)) { (p, len, h) in
 //            CC_MD5(p, UInt32(len), h)
 //        });

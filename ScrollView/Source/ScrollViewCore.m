@@ -64,6 +64,8 @@ ClassInfo * classInfo(Class cls) {
 */
 
 + (void)log {
+    
+    
     ClassInfo * viewInfo = classInfo([UIView class]);
     ClassInfo * scrollViewInfo = classInfo([UIScrollView class]);
     ClassInfo * tableViewInfo = classInfo([UITableView class]);
@@ -148,86 +150,86 @@ ClassInfo * classInfo(Class cls) {
 
 
 
-- (void)drawImage
-
-{
-    
-        CGImageRef cgimage = [self.imageView.image CGImage];
-    
-        
-    
-        size_t width = CGImageGetWidth(cgimage); // 图片宽度
-    
-        size_t height = CGImageGetHeight(cgimage); // 图片高度
-    
-        unsigned char *data = calloc(width * height * 4, sizeof(unsigned char)); // 取图片首地址
-    
-        size_t bitsPerComponent = 8; // r g b a 每个component bits数目
-    
-        size_t bytesPerRow = width * 4; // 一张图片每行字节数目 (每个像素点包含r g b a 四个字节)
-    
-        CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB(); // 创建rgb颜色空间
-    
-        
-    
-        CGContextRef context =
-    
-        CGBitmapContextCreate(data,
-                              
-                                                        width,
-                              
-                                                        height,
-                              
-                                                        bitsPerComponent,
-                              
-                                                        bytesPerRow,
-                              
-                                                        space,
-                              
-                                                        kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-    
-        CGContextDrawImage(context, CGRectMake(0, 0, width, height), cgimage);
-    
-        
-    
-        for (size_t i = 0; i < height; i++)
-        
-            {
-            
-                    for (size_t j = 0; j < width; j++)
-                
-                        {
-                    
-                                size_t pixelIndex = i * width * 4 + j * 4;
-                    
-                                
-                    
-                                unsigned char red = data[pixelIndex];
-                    
-                                unsigned char green = data[pixelIndex + 1];
-                    
-                                unsigned char blue = data[pixelIndex + 2];
-                    
-                                
-                    
-                        // 修改颜色
-                    
-                                red = 0;
-                    
-                                data[pixelIndex] = red;
-                    
-                                data[pixelIndex] = green;
-                    
-                                data[pixelIndex] = blue;
-                    
-                            }
-            
-                }
-    
-        
-    
-        cgimage = CGBitmapContextCreateImage(context);
-    
-        self.imageView.image = [UIImage imageWithCGImage:cgimage];
-    
-}
+//- (void)drawImage
+//
+//{
+//    
+//        CGImageRef cgimage = [self.imageView.image CGImage];
+//    
+//        
+//    
+//        size_t width = CGImageGetWidth(cgimage); // 图片宽度
+//    
+//        size_t height = CGImageGetHeight(cgimage); // 图片高度
+//    
+//        unsigned char *data = calloc(width * height * 4, sizeof(unsigned char)); // 取图片首地址
+//    
+//        size_t bitsPerComponent = 8; // r g b a 每个component bits数目
+//    
+//        size_t bytesPerRow = width * 4; // 一张图片每行字节数目 (每个像素点包含r g b a 四个字节)
+//    
+//        CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB(); // 创建rgb颜色空间
+//    
+//        
+//    
+//        CGContextRef context =
+//    
+//        CGBitmapContextCreate(data,
+//                              
+//                                                        width,
+//                              
+//                                                        height,
+//                              
+//                                                        bitsPerComponent,
+//                              
+//                                                        bytesPerRow,
+//                              
+//                                                        space,
+//                              
+//                                                        kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+//    
+//        CGContextDrawImage(context, CGRectMake(0, 0, width, height), cgimage);
+//    
+//        
+//    
+//        for (size_t i = 0; i < height; i++)
+//        
+//            {
+//            
+//                    for (size_t j = 0; j < width; j++)
+//                
+//                        {
+//                    
+//                                size_t pixelIndex = i * width * 4 + j * 4;
+//                    
+//                                
+//                    
+//                                unsigned char red = data[pixelIndex];
+//                    
+//                                unsigned char green = data[pixelIndex + 1];
+//                    
+//                                unsigned char blue = data[pixelIndex + 2];
+//                    
+//                                
+//                    
+//                        // 修改颜色
+//                    
+//                                red = 0;
+//                    
+//                                data[pixelIndex] = red;
+//                    
+//                                data[pixelIndex] = green;
+//                    
+//                                data[pixelIndex] = blue;
+//                    
+//                            }
+//            
+//                }
+//    
+//        
+//    
+//        cgimage = CGBitmapContextCreateImage(context);
+//    
+//        self.imageView.image = [UIImage imageWithCGImage:cgimage];
+//    
+//}

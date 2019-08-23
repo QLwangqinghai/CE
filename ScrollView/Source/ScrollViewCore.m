@@ -63,9 +63,7 @@ ClassInfo * classInfo(Class cls) {
 }
 */
 
-+ (void)log {
-    
-    
++ (void)log {    
     ClassInfo * viewInfo = classInfo([UIView class]);
     ClassInfo * scrollViewInfo = classInfo([UIScrollView class]);
     ClassInfo * tableViewInfo = classInfo([UITableView class]);

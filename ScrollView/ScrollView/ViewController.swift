@@ -9,6 +9,26 @@
 import UIKit
 import Metal
 
+
+/*
+ current:177796.438314261 linkInfo.current:177796.43738376902 linkInfo.target177796.45405043603
+ current:177796.454138153 linkInfo.current:177796.454050436 linkInfo.target177796.47071710302
+ current:177796.471807141 linkInfo.current:177796.47071710302 linkInfo.target177796.48738377003
+ current:177796.48855514202 linkInfo.current:177796.48738377 linkInfo.target177796.504050437
+ current:177796.504278598 linkInfo.current:177796.504050437 linkInfo.target177796.52071710402
+ current:177796.521790495 linkInfo.current:177796.52071710402 linkInfo.target177796.53738377104
+ current:177796.538562163 linkInfo.current:177796.537383771 linkInfo.target177796.55405043802
+ current:177796.555210947 linkInfo.current:177796.55405043802 linkInfo.target177796.57071710503
+ current:177796.57179016102 linkInfo.current:177796.570717105 linkInfo.target177796.587383772
+ current:177796.588546051 linkInfo.current:177796.587383772 linkInfo.target177796.60405043903
+ current:177796.60522652502 linkInfo.current:177796.604050439 linkInfo.target177796.620717106
+ current:177796.620782698 linkInfo.current:177796.620717106 linkInfo.target177796.63738377302
+ current:177796.637515019 linkInfo.current:177796.63738377302 linkInfo.target177796.65405044003
+ current:177796.65511287202 linkInfo.current:177796.65405044 linkInfo.target177796.67071710702
+
+ 
+ */
+
 class ViewController: UIViewController {
     let timer: DispatchSourceTimer = DispatchSource.makeTimerSource(flags: [], queue: DispatchQueue.main)
 //    public func setViewports(_ viewports: [MTLViewport])
@@ -16,10 +36,46 @@ class ViewController: UIViewController {
 //    @available(OSX 10.13, iOS 12.0, *)
 //    public func setScissorRects(_ scissorRects: [MTLScissorRect])
     
+    var displaylink: CADisplayLink?
+    
+    func createDisplayLink() {
+        // 创建CADisplayLink
+        displaylink = CADisplayLink(target: self,
+                                    selector: #selector(step))
+        
+        displaylink!.add(to: .current,
+                         forMode: RunLoop.Mode.default)
+    }
+    
+    
+//    open var timestamp: CFTimeInterval { get }
+//
+//    open var duration: CFTimeInterval { get }
+//
+//
+//    /* The next timestamp that the client should target their render for. */
+//
+//    @available(iOS 10.0, *)
+//    open var targetTimestamp: CFTimeInterval { get }
+
+    @objc func step(displaylink: CADisplayLink) {
+        // 打印时间戳
+        print("current:\(CACurrentMediaTime()) linkInfo.current:\(displaylink.timestamp) linkInfo.target\(displaylink.targetTimestamp)")
+    }
+    
+    // 停止CADisplayLink
+    func stopDisplaylink() {
+        displaylink?.invalidate()
+        displaylink = nil
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
 
+        self.createDisplayLink()
+        let _ = self.view.layer
         
         let imageView = UIImageView(frame: CGRect(x: 110, y: 100, width: -100, height: 300))
         imageView.clipsToBounds = true;

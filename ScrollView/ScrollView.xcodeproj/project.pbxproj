@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D6083FC9230EE12E00C09C75 /* BitMapBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6083FC8230EE12E00C09C75 /* BitMapBlock.swift */; };
+		D6083FC9230EE12E00C09C75 /* BitmapBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6083FC8230EE12E00C09C75 /* BitmapBlock.swift */; };
 		D63B1C472305685200AFD97E /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C462305685200AFD97E /* View.swift */; };
 		D63B1C492305687400AFD97E /* Responder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C482305687400AFD97E /* Responder.swift */; };
 		D63B1C53230A6BED00AFD97E /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C52230A6BEC00AFD97E /* ScrollView.swift */; };
@@ -36,7 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D6083FC8230EE12E00C09C75 /* BitMapBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitMapBlock.swift; sourceTree = "<group>"; };
+		D6083FC8230EE12E00C09C75 /* BitmapBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapBlock.swift; sourceTree = "<group>"; };
 		D63B1C462305685200AFD97E /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		D63B1C482305687400AFD97E /* Responder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Responder.swift; sourceTree = "<group>"; };
 		D63B1C52230A6BEC00AFD97E /* ScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollView.swift; sourceTree = "<group>"; };
@@ -131,7 +131,7 @@
 				D63B1C6C230AD1F800AFD97E /* Core2D.c */,
 				D6D45736230E864E00E1F5FB /* CoreBitMap.h */,
 				D6D45737230E864E00E1F5FB /* CoreBitMap.c */,
-				D6083FC8230EE12E00C09C75 /* BitMapBlock.swift */,
+				D6083FC8230EE12E00C09C75 /* BitmapBlock.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -243,7 +243,7 @@
 				D63B1C492305687400AFD97E /* Responder.swift in Sources */,
 				D67F5A252306F41E00F1CE91 /* GLES.swift in Sources */,
 				D69FCC352305370900432D18 /* ScrollViewCore.m in Sources */,
-				D6083FC9230EE12E00C09C75 /* BitMapBlock.swift in Sources */,
+				D6083FC9230EE12E00C09C75 /* BitmapBlock.swift in Sources */,
 				D69FCC22230536D100432D18 /* ViewController.swift in Sources */,
 				D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */,
 				D6D45738230E864E00E1F5FB /* CoreBitMap.c in Sources */,

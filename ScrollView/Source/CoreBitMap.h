@@ -59,36 +59,36 @@ typedef struct {
     uint32_t height;
 } MediaTimingBitmapRect_s;
 
-static inline _Bool C2DArgbPixelIsEqual(uint32_t a, uint32_t b) {
-    if (a == b) {
-        return true;
-    } else {
-        if (a < 0x1000000UL && b < 0x1000000UL) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
-
-static inline _Bool C2DTwoArgbPixelIsEqual(uint64_t a, uint64_t b) {
-    if (a == b) {
-        return true;
-    } else {
-        if ((0xFF000000FF000000ULL & a) == 0) {
-            if ((0xFF000000FF000000ULL & b) == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-}
+//static inline _Bool C2DArgbPixelIsEqual(uint32_t a, uint32_t b) {
+//    if (a == b) {
+//        return true;
+//    } else {
+//        if (a < 0x1000000UL && b < 0x1000000UL) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+//}
+//
+//static inline _Bool C2DTwoArgbPixelIsEqual(uint64_t a, uint64_t b) {
+//    if (a == b) {
+//        return true;
+//    } else {
+//        if ((0xFF000000FF000000ULL & a) == 0) {
+//            if ((0xFF000000FF000000ULL & b) == 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } else {
+//            return false;
+//        }
+//    }
+//}
 
 _Bool C2DArgbPixelsIsEqual(void const * _Nonnull a, void const * _Nonnull b, uint32_t pixelsCount);
 
-
+void * ContextCreate(void);
 
 #endif /* CoreBitMap_h */

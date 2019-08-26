@@ -94,3 +94,32 @@ open class ScrollView: View {
     
 
 }
+
+open class CollectionReusableView: View {
+    public struct ReuseIdentifier: Hashable {
+        public let name: String
+        public let style: String
+        public static func == (lhs: ReuseIdentifier, rhs: ReuseIdentifier) -> Bool {
+            return lhs.name == rhs.name && lhs.style == rhs.style
+        }
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(self.name)
+            hasher.combine(self.style)
+        }
+    }
+    public let reuseIdentifier: ReuseIdentifier
+
+    internal init(size: Size, reuseIdentifier: ReuseIdentifier) {
+        self.reuseIdentifier = reuseIdentifier
+        super.init(origin: Point(), size: size)
+        self.onCreate()
+    }
+//    - (void)prepareForReuse;
+    
+    
+    open func onCreate() {}
+    
+    
+    
+    
+}

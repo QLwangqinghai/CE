@@ -41,3 +41,7 @@ void * ContextCreate(void) {
     printf("size %ld, %p\n", size, p);
     return p;
 }
+
+C2DBitMapBlock_s * addddd() {
+    return NULL;
+}

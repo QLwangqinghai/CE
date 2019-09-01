@@ -24,7 +24,7 @@ public struct MediaTimingBitmap {
             self.width = width
             self.height = height
             self.deallocate = deallocate
-            self.bytesPerRow = Int(width) * 4;
+            self.bytesPerRow = Int(width) * 4
         }
     }
     
@@ -64,13 +64,9 @@ public struct MediaTimingBitmap {
         
         
         // 1 <= blockWidth <= 2048, 1 <= blockHeight <= 2048
-        public init?(blockWidth: UInt32, blockHeight: UInt32, maxCache: Int) {
-            if blockHeight > 2048 || blockHeight < 1 {
-                return nil
-            }
-            if blockWidth > 2048 || blockWidth < 1 {
-                return nil
-            }
+        public init?(maxCache: Int) {
+            let blockHeight: UInt32 = 256
+            let blockWidth: UInt32 = 256
             self.caches = []
             self.lock = NSLock()
             self.maxCache = maxCache
@@ -90,6 +86,12 @@ public struct MediaTimingBitmap {
             self.lock.unlock()
             return p
         }
+        public func makeBlock(x: Int, y: Int) {
+             let a = addddd()
+        
+            
+        }
+
         
         
 //        public func makeBlock(x: Int, y: Int)-> Block {

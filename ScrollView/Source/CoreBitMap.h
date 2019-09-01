@@ -21,10 +21,11 @@
  int32_t height;
  */
 
-typedef struct {
-    C2DRect frame;
+typedef struct _C2DBitMapBlock {
+    uint32_t x;
+    uint32_t y;
     uint32_t * _Nonnull storage;
-} C2DBitMapBlock_s;// 64k
+} C2DBitMapBlock_s;
 
 
 typedef void * C2DBitMapBlockRef;
@@ -87,8 +88,16 @@ typedef struct {
 //    }
 //}
 
+C2DBitMapBlock_s * addddd();
+
 _Bool C2DArgbPixelsIsEqual(void const * _Nonnull a, void const * _Nonnull b, uint32_t pixelsCount);
 
-void * ContextCreate(void);
+
+
+
+
+
+//void * ContextCreate(void);
+
 
 #endif /* CoreBitMap_h */

@@ -122,4 +122,14 @@ open class CollectionReusableView: View {
     
     
     
+    
 }
+
+
+
+/*
+ update x
+ update y
+ 
+ 
+ */

@@ -24,9 +24,13 @@
 typedef struct _C2DBitMapBlock {
     uint32_t x;
     uint32_t y;
+    uint64_t t;
     uint32_t * _Nonnull storage;
 } C2DBitMapBlock_s;
 
+typedef struct _C2DBitMapBlockCacheItem {
+    struct _C2DBitMapBlockCacheItem * _Nullable next;
+} C2DBitMapBlockCacheItem_s;
 
 typedef void * C2DBitMapBlockRef;
 
@@ -44,11 +48,25 @@ typedef struct {
     
 } C2DBitMap;
 
+
+typedef struct __C2DBitMapBlockCircularBuffer {
+    uint32_t _capacity;
+    uint32_t _indexOffset;
+    C2DBitMapBlock_s * _Nullable items[];
+} C2DBitMapBlockCircularBuffer_s;
+
+typedef struct __C2DBitMapBlockRowCircularBuffer {
+    uint32_t _capacity;
+    uint32_t _indexOffset;
+    C2DBitMapBlockCircularBuffer_s * _Nullable items[];
+} C2DBitMapBlockRowCircularBuffer_s;
+
 typedef struct {
     int32_t countLimit;
     int32_t blockCount;
     int32_t blockSize;
     int32_t numberOfCaches;
+    C2DBitMapBlockRowCircularBuffer_s * _Nonnull buffers;
     C2DBitMapBlock_s * _Nonnull * _Nonnull caches;
 } C2DBitMapBlockPool;
 

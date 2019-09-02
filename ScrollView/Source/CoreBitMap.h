@@ -113,9 +113,14 @@ _Bool C2DArgbPixelsIsEqual(void const * _Nonnull a, void const * _Nonnull b, uin
 
 
 
+//pixelsCount 必须是4 的整数倍
+void C2DLittle16ArgbPixelsSet(void * _Nonnull buffer, uint16_t color, uint32_t pixelsCount);
+
+//pixelsCount 必须是2 的整数倍
+void C2DLittle32ArgbPixelsSet(void * _Nonnull buffer, uint32_t color, uint32_t pixelsCount);
 
 
-//void * ContextCreate(void);
+void * ContextCreate(void);
 
 
 #endif /* CoreBitMap_h */

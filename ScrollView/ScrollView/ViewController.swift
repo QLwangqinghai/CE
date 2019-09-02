@@ -9,6 +9,22 @@
 import UIKit
 import Metal
 
+public struct TimingBlock {
+    
+    
+    public static func `do`(_ block:() -> Void) {
+        let b = CACurrentMediaTime()
+        block()
+        let e = CACurrentMediaTime()
+        let time = UInt64((e - b) * 1000)
+        
+        let sec = time / 10000
+        let ms = time % 10000 / 10
+        let ms2 = time % 10
+        let str = String(format: "%ld.%03ld.%01ld", sec, ms, ms2)
+        print("used: \(str)")
+    }
+}
 
 /*
  current:177796.438314261 linkInfo.current:177796.43738376902 linkInfo.target177796.45405043603
@@ -69,13 +85,21 @@ class ViewController: UIViewController {
         displaylink = nil
     }
     
-    
+    var a: UnsafeMutableRawPointer? = nil
+    var b: UnsafeMutableRawPointer? = nil
+    var c: UnsafeMutableRawPointer? = nil
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
 
-//        ContextCreate();
-//        ContextCreate();
+        TimingBlock.do {
+            a = ContextCreate()
+        }
+        TimingBlock.do {
+            b = ContextCreate();
+        }
+//        c = ContextCreate();
 
         
         
@@ -86,7 +110,7 @@ class ViewController: UIViewController {
         imageView.clipsToBounds = true;
 //        view.contentMode = .scaleAspectFill
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage.init(named: "WechatIMG46")
+        imageView.image = UIImage(named: "WechatIMG46")
         imageView.layer.borderWidth = 2
         self.view.addSubview(imageView)
         imageView.isUserInteractionEnabled = true

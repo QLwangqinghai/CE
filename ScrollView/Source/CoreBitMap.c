@@ -8,6 +8,7 @@
 
 #include "CoreBitMap.h"
 #include <stdlib.h>
+#include <string.h>
 
 
 _Bool C2DArgbPixelsIsEqual(void const * _Nonnull a, void const * _Nonnull b, uint32_t pixelsCount) {
@@ -36,12 +37,39 @@ _Bool C2DArgbPixelsIsEqual(void const * _Nonnull a, void const * _Nonnull b, uin
 
 
 void * ContextCreate(void) {
-    size_t size = (1920 * 4) * (1920 * 8); //117 964 800
+    size_t w = 256 * 6;
+    size_t h = 256 * 4;
+    size_t bytesPerPixel = 4;
+    size_t page = 10;
+
+    size_t size = w * h * bytesPerPixel * page; //117 964 800
+    
+//    size_t size = (1920 * 4) * (1920 * 8); //117 964 800
     void * p = malloc(size);
-    printf("size %ld, %p\n", size, p);
+    memset(p, 0, size);
+    printf("width:%ld, height:%ld, bytesPerPixel:%ld, page:%ld, size %ld, %p\n", w, h, bytesPerPixel, page, size, p);
     return p;
 }
 
 C2DBitMapBlock_s * addddd() {
     return NULL;
+}
+
+void C2DLittle16ArgbPixelsSet(void * _Nonnull buffer, uint16_t color, uint32_t pixelsCount) {
+    uint64_t c = (((uint64_t)color) << 48) | (((uint64_t)color) << 32) | (((uint64_t)color) << 16) | (((uint64_t)color) << 0);
+    uint32_t loopCount = pixelsCount / 4;
+    uint8_t * ptr = buffer;
+    for (uint32_t idx=0; idx<loopCount; idx++) {
+        *((uint64_t *)ptr) = c;
+        ptr += 8;
+    }
+}
+void C2DLittle32ArgbPixelsSet(void * _Nonnull buffer, uint32_t color, uint32_t pixelsCount) {
+    uint64_t c = (((uint64_t)color) << 32) | (((uint64_t)color) << 0);
+    uint32_t loopCount = pixelsCount / 2;
+    uint8_t * ptr = buffer;
+    for (uint32_t idx=0; idx<loopCount; idx++) {
+        *((uint64_t *)ptr) = c;
+        ptr += 8;
+    }
 }

@@ -13,6 +13,7 @@
 		D63B1C53230A6BED00AFD97E /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C52230A6BEC00AFD97E /* ScrollView.swift */; };
 		D63B1C67230AA5B500AFD97E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C66230AA5B500AFD97E /* main.swift */; };
 		D63B1C6D230AD1F800AFD97E /* Core2D.c in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C6C230AD1F800AFD97E /* Core2D.c */; };
+		D64E0429231D361F0036F348 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64E0428231D361F0036F348 /* DrawingView.swift */; };
 		D67F5A252306F41E00F1CE91 /* GLES.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F5A242306F41E00F1CE91 /* GLES.swift */; };
 		D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC1F230536D100432D18 /* AppDelegate.swift */; };
 		D69FCC22230536D100432D18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC21230536D100432D18 /* ViewController.swift */; };
@@ -44,6 +45,7 @@
 		D63B1C66230AA5B500AFD97E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		D63B1C6B230AD1F800AFD97E /* Core2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Core2D.h; sourceTree = "<group>"; };
 		D63B1C6C230AD1F800AFD97E /* Core2D.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Core2D.c; sourceTree = "<group>"; };
+		D64E0428231D361F0036F348 /* DrawingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
 		D67F5A242306F41E00F1CE91 /* GLES.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLES.swift; sourceTree = "<group>"; };
 		D69FCC1C230536D100432D18 /* ScrollView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D69FCC1F230536D100432D18 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				D6D45736230E864E00E1F5FB /* CoreBitMap.h */,
 				D6D45737230E864E00E1F5FB /* CoreBitMap.c */,
 				D6083FC8230EE12E00C09C75 /* BitmapBlock.swift */,
+				D64E0428231D361F0036F348 /* DrawingView.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -246,6 +249,7 @@
 				D6083FC9230EE12E00C09C75 /* BitmapBlock.swift in Sources */,
 				D69FCC22230536D100432D18 /* ViewController.swift in Sources */,
 				D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */,
+				D64E0429231D361F0036F348 /* DrawingView.swift in Sources */,
 				D6D45738230E864E00E1F5FB /* CoreBitMap.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -418,14 +422,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = T5DNYT7CXU;
+				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = ScrollView/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.ScrollView;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.t;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Source/ScrollView-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -440,14 +444,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = T5DNYT7CXU;
+				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = ScrollView/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.ScrollView;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.t;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Source/ScrollView-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

@@ -92,13 +92,15 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-
-        TimingBlock.do {
-            a = ContextCreate()
-        }
-        TimingBlock.do {
-            b = ContextCreate();
-        }
+        let scrollView = DrawingScrollView(frame: self.view.bounds)
+        self.view.addSubview(scrollView)
+        return;
+//        TimingBlock.do {
+//            a = ContextCreate()
+//        }
+//        TimingBlock.do {
+//            b = ContextCreate();
+//        }
 //        c = ContextCreate();
 
         

@@ -18,11 +18,11 @@ public class DrawingContext {
         public let width: UInt32
         public let height: UInt32
         public let pixelsCount: UInt32
-        public var colorSpace: ColorSpace = .little16Argb
+        public let colorSpace: ColorSpace
         public var backgroundColor: Color = Color(little32Argb: 0)
         public let bufferSize: Int
 
-        public init(width: UInt32, height: UInt32) {
+        public init(width: UInt32, height: UInt32, colorSpace: ColorSpace = .little32Argb) {
             let blockSize: UInt32 = 256
             let blockPerRow = (width + blockSize - 1) / blockSize
             let numberOfRows = (height + blockSize - 1) / blockSize
@@ -37,22 +37,44 @@ public class DrawingContext {
             self.height = h
             self.pixelsCount = pixelsCount
             self.bufferSize = size
+            self.colorSpace = colorSpace
+            
+            print("bufferSize:\(self.bufferSize)")
         }
     }
     
 
     public enum ColorSpace: UInt32 {
-        case little16Argb = 0
         case little32Argb = 1
         
         public var bytesPerPixel: UInt32 {
             switch self {
-            case .little16Argb:
-                return 2
             case .little32Argb:
                 return 4
             }
         }
+        public var bitsPerComponent: Int {
+            switch self {
+            case .little32Argb:
+                return 8
+            }
+        }
+        public var bitsPerPixel: Int {
+            switch self {
+            case .little32Argb:
+                return 32
+            }
+        }
+        
+        
+        public var bitmapInfo: UInt32 {
+            switch self {
+            case .little32Argb:
+                return CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue
+            }
+        }
+        
+        
     }
     public struct Color {
         public let color32: UInt32
@@ -78,19 +100,144 @@ public class DrawingContext {
     
     public let mainPtr: UnsafeMutableRawPointer
     public let duplicatePtr: UnsafeMutableRawPointer
-
     public let config: Config
+    public var image: CGImage? = nil
+    public let context: CGContext
+    public let dataProvider: CGDataProvider
+    
     public init(config: Config) {
-        self.mainPtr = UnsafeMutableRawPointer.allocate(byteCount: config.bufferSize, alignment: 128)
+        let mainPtr = UnsafeMutableRawPointer.allocate(byteCount: config.bufferSize, alignment: 128)
+        self.mainPtr = mainPtr
         self.duplicatePtr = UnsafeMutableRawPointer.allocate(byteCount: config.bufferSize, alignment: 128)
         self.config = config
+        let colorSpace = config.colorSpace
+        
+        self.context = CGContext(data: mainPtr, width: Int(config.width), height: Int(config.height), bitsPerComponent: colorSpace.bitsPerComponent, bytesPerRow: Int(config.width * 4), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
+        }, releaseInfo: nil)!
+        
+        self.dataProvider = CGDataProvider(dataInfo: nil, data: self.mainPtr, size: self.config.bufferSize) { (mptr, ptr, size) in
+            print("de")
+            }!
+
+        
+        
+//        let callback = CGDataProviderDirectCallbacks.init(version: 0, getBytePointer: { (ptr) -> UnsafeRawPointer? in
+//            return ptr
+//        }, releaseBytePointer: { (context, ptr) in
+//
+//        }, getBytesAtPosition: { (context, ptr, offset, size) -> Int in
+//
+//        }) { (context) in
+//
+//        }
+//
+//
+//
+//        CGDataProvider.init(directInfo: <#T##UnsafeMutableRawPointer?#>, size: <#T##off_t#>, callbacks: <#T##UnsafePointer<CGDataProviderDirectCallbacks>#>)
+//        let dataProvider: CGDataProvider = CGDataProvider.init(directInfo: nil, size: 0, callbacks: UnsafePointer<CGDataProviderDirectCallbacks>)
+//
+        
+//        switch self.config.colorSpace {
+//        case .little32Argb:
+//            C2DLittle32ArgbPixelsSet(self.mainPtr, self.config.backgroundColor.color32, self.config.pixelsCount)
+//            C2DLittle32ArgbPixelsSet(self.mainPtr, self.config.backgroundColor.color32, self.config.pixelsCount)
+//        }
+
+//        let dataProvider: CGDataProvider = CGDataProvider(dataInfo: nil, data: self.mainPtr, size: self.config.bufferSize) { (mptr, ptr, size) in
+//            print("de")
+//        }!
+
+//        var bitmapInfo: UInt32 = 0
+//        bitmapInfo |= CGImageAlphaInfo.premultipliedFirst.rawValue
+//        bitmapInfo |= CGBitmapInfo.byteOrder32Little.rawValue
+//
+//        self.image = CGImage(width: Int(config.width), height: Int(config.height), bitsPerComponent: colorSpace.bitsPerComponent, bitsPerPixel: colorSpace.bitsPerPixel, bytesPerRow: Int(config.width * 4), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)!
+//
+//        switch self.config.colorSpace {
+//        case .little32Argb:
+//            C2DLittle32ArgbPixelsSet(self.mainPtr, self.config.backgroundColor.color32, self.config.pixelsCount)
+//            C2DLittle32ArgbPixelsSet(self.mainPtr, self.config.backgroundColor.color32, self.config.pixelsCount)
+//        }
     }
+    
+    func makeImage() -> CGImage? {
+        var bitmapInfo: UInt32 = 0
+        bitmapInfo |= CGImageAlphaInfo.premultipliedFirst.rawValue
+        bitmapInfo |= CGBitmapInfo.byteOrder32Little.rawValue
+        let colorSpace = self.config.colorSpace
+        return CGImage(width: Int(config.width), height: Int(config.height), bitsPerComponent: colorSpace.bitsPerComponent, bitsPerPixel: colorSpace.bitsPerPixel, bytesPerRow: Int(config.width * 4), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: self.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+    }
+    
 }
 
 
 
 
-class DrawingView: UIView {
+open class DrawingView: UIView {
+    public var context: DrawingContext? = nil {
+        didSet {
+            self.layer.contents = context?.image
+            self.setNeedsDisplay()
+        }
+    }
+    
 
- 
+    
+    
+}
+
+open class DrawingScrollView: UIScrollView {
+    public var contentView: DrawingView
+    var array: [CGImage?] = []
+
+    public override init(frame: CGRect) {
+        let w: UInt32 = 256 * 6
+        let h: UInt32 = 256 * 4 * 10
+
+        self.contentView = DrawingView(frame: CGRect(x: 0, y: 0, width: CGFloat(w) / UIScreen.main.scale, height: CGFloat(h) / UIScreen.main.scale))
+        super.init(frame: frame)
+        var config = DrawingContext.Config(width: w, height: h, colorSpace: .little32Argb)
+        config.backgroundColor = DrawingContext.Color.init(little32Argb: arc4random())
+        let context: DrawingContext = DrawingContext(config: config)
+        self.addSubview(self.contentView)
+        self.contentView.context = context
+        
+        self.contentSize = self.contentView.frame.size
+        
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+            
+            
+            if let context = self.contentView.context {
+                for _ in 1 ..< 100 {
+                    self.array.append(context.makeImage())
+                }
+                
+                C2DLittle32ArgbPixelsSet(context.mainPtr, arc4random() | 0x80_00_00_00, context.config.pixelsCount)
+                self.contentView.layer.contents = context.makeImage()
+                self.contentView.setNeedsDisplay()
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
+            if let context = self.contentView.context {
+                C2DLittle32ArgbPixelsSet(context.mainPtr, arc4random() | 0x80_00_00_00, context.config.pixelsCount)
+                self.contentView.layer.contents = context.makeImage()
+                self.contentView.setNeedsDisplay()
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 7) {
+            if let context = self.contentView.context {
+                C2DLittle32ArgbPixelsSet(context.mainPtr, arc4random() | 0x80_00_00_00, context.config.pixelsCount)
+                self.contentView.layer.contents = context.makeImage()
+                self.contentView.setNeedsDisplay()
+            }
+        }
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
 }

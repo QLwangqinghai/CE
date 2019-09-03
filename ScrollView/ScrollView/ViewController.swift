@@ -76,7 +76,7 @@ class ViewController: UIViewController {
 
     @objc func step(displaylink: CADisplayLink) {
         // 打印时间戳
-        print("current:\(CACurrentMediaTime()) linkInfo.current:\(displaylink.timestamp) linkInfo.target\(displaylink.targetTimestamp)")
+//        print("current:\(CACurrentMediaTime()) linkInfo.current:\(displaylink.timestamp) linkInfo.target\(displaylink.targetTimestamp)")
     }
     
     // 停止CADisplayLink
@@ -89,12 +89,27 @@ class ViewController: UIViewController {
     var b: UnsafeMutableRawPointer? = nil
     var c: UnsafeMutableRawPointer? = nil
 
+    var scrollViewFrame: CGRect = CGRect()
+    var scrollView: UIScrollView? = nil
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let leftItem = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        leftItem.backgroundColor = UIColor.red
+        self.view.addSubview(leftItem)
+        let leftItemTap: UITapGestureRecognizer = UITapGestureRecognizer.init(target: self, action:#selector(leftItemTapped(tap:)))
+        leftItem.addGestureRecognizer(leftItemTap)
+        
+        
         // Do any additional setup after loading the view.
-        let scrollView = DrawingScrollView(frame: self.view.bounds)
+        var frame = self.view.bounds
+        frame = frame.inset(by: UIEdgeInsets(top: 100, left: 0, bottom: 60, right: 0))
+        self.scrollViewFrame = frame
+        let scrollView = DrawingScrollView(frame: frame)
+        scrollView.contentMode = .bottom
+//        scrollView.clipsToBounds = true
         self.view.addSubview(scrollView)
-        return;
+        self.scrollView = scrollView
 //        TimingBlock.do {
 //            a = ContextCreate()
 //        }
@@ -108,13 +123,15 @@ class ViewController: UIViewController {
         self.createDisplayLink()
         let _ = self.view.layer
         
-        let imageView = UIImageView(frame: CGRect(x: 110, y: 100, width: -100, height: 300))
+        let image = UIImage(named: "WechatIMG46")!
+
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: image.size.width / UIScreen.main.scale, height: image.size.height / UIScreen.main.scale))
         imageView.clipsToBounds = true;
 //        view.contentMode = .scaleAspectFill
-        imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "WechatIMG46")
+//        imageView.contentMode = .scaleAspectFill
+        imageView.image = image
         imageView.layer.borderWidth = 2
-        self.view.addSubview(imageView)
+        scrollView.addSubview(imageView)
         imageView.isUserInteractionEnabled = true
         
         let v1 = UIView(frame: CGRect(x: 0, y: 0, width: -30, height: 30))
@@ -167,6 +184,16 @@ class ViewController: UIViewController {
     @objc func tapped(tap: UITapGestureRecognizer) {
         print(tap)
     }
+    
+    @objc func leftItemTapped(tap: UITapGestureRecognizer) {
+        print(tap)
+        
+        var frame = self.scrollViewFrame
+        frame.size.height -= CGFloat(arc4random() % 150)
+        self.scrollView?.frame = frame
+        
+    }
+
 
 }
 

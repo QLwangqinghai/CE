@@ -252,9 +252,32 @@ public class Display {
     }
 }
 
+public struct DisplayIdentifier: Hashable {
+    public let address: UInt
+    public let mask: UInt
+    
+    private static var sequence: UInt = 0
+    private static func nextSequence() -> UInt {
+        sequence &+= 1
+        return sequence
+    }
+    public init(_ obj: AnyObject) {
+        var objPtr = Unmanaged.passUnretained(obj).toOpaque()
+        let ptrptr = UnsafeRawPointer(&objPtr)
+        let value: UInt = ptrptr.load(as: UInt.self)
+        self.address = value
+        self.mask = DisplayIdentifier.nextSequence()
+    }
+    
+    public static func == (lhs: DisplayIdentifier, rhs: DisplayIdentifier) -> Bool {
+        return lhs.address == rhs.address && lhs.mask == rhs.mask
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.address)
+    }
+}
 
-
-public class BaseDisplay {
+public class BaseDisplay: Hashable {
 //    public private(set) unowned var parent: BaseDisplay?
 //    public private(set) var childs: [BaseDisplay] = []
 //
@@ -283,50 +306,143 @@ public class BaseDisplay {
 ////    public func didMoveToParent() {
 ////    }
 //
+    private var _identifier: DisplayIdentifier? = nil
+    public var identifier: DisplayIdentifier {
+        if let value = self._identifier {
+            return value
+        } else {
+            let value = DisplayIdentifier(self)
+            _identifier = value
+            return value
+        }
+    }
+    
     public init() {
+        let _ = self.identifier
+    }
+    
+    public static func == (lhs: BaseDisplay, rhs: BaseDisplay) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+    public func hash(into hasher: inout Hasher) {
+        self.identifier.hash(into: &hasher)
     }
 }
 
-//
-//public protocol HeadBodyFootDisplayable where Self: DisplayCollection {
-//    var header: Display? {get}
-//    var footer: Display? {get}
-//    var body: Display? {get}
-//}
-
-public class TableDisplay: BaseDisplay {
-
+public enum ScrollDirection: UInt32 {
+    case vertical
+    case horizontal
 }
 
-public class TableItem: TableDisplay {
+public enum TableDisplayAlign {
+    case autoHeight(CGFloat)
+    case autoWidth(CGFloat)
+}
+
+public class TableDisplay: BaseDisplay {
+    public private(set) var size: CGSize
+    public var align: TableDisplayAlign
+    public var offset: CGFloat
+
+    public init(align: TableDisplayAlign, offset: CGFloat = 0) {
+        self.align = align
+        self.offset = offset
+        
+        var size: CGSize = CGSize()
+        switch align {
+        case .autoWidth(let width):
+            size.width = width
+            size.height = offset
+        case .autoHeight(let height):
+            size.height = height
+            size.width = offset
+        }
+        self.size = size
+        super.init()
+    }
+    
+    
+}
+
+protocol TableDisplaySequence {
+    var displaySequence: Int {
+        get set
+    }
+}
+
+public class TableItem: TableDisplay, TableDisplaySequence {
+    var displaySequence: Int = 0
     fileprivate(set) unowned var parent: TableSection?
     public var header: Display?
     public var footer: Display?
     public var body: Display?
     
-    fileprivate override init() {
-        super.init()
+    
+    
+    fileprivate override init(align: TableDisplayAlign, offset: CGFloat = 0) {
+        super.init(align: align, offset: offset)
     }
+    
 }
-//public class DisplayCollection {
-//    public var items: [DisplayElement] {
-//        return []
-//    }
-//    public init() {
-//    }
-//}
+internal class DisplayOrderedCollection<T: TableDisplay & TableDisplaySequence> {
+    public var items: [T] = []
+    public init() {
+    }
+    
+    public func append(_ item: T) {
+        self.items.append(item)
+    }
+    public func prepend(_ item: T) {
+        self.items.insert(item, at: 0)
+    }
+    public func insert(_ item: T, at index: Int) {
+        if index == 0 {
+            self.prepend(item)
+        } else if index >= self.items.count {
+            self.append(item)
+        } else {
+            self.items.insert(item, at: index)
+        }
+    }
+    
+    public func remove(at index: Int) -> T? {
+        if index >= 0 && index < self.items.count {
+            let value: T = self.items[index]
+            self.items.remove(at: index)
+            return value
+        } else {
+            return nil
+        }
+    }
+    
+    public func remove(item: T) -> Bool {
+        if let index = self.items.firstIndex(of: item) {
+            self.items.remove(at: index)
+            return true
+        } else {
+            return false
+        }
+    }
+    
+}
 
-public class TableSection: TableDisplay {
+public class TableSection: TableDisplay, TableDisplaySequence {
+    var displaySequence: Int = 0
+
     public var header: Display?
-    public fileprivate(set) var items: [TableItem]
     public var footer: Display?
-
+    fileprivate var _items: DisplayOrderedCollection<TableItem>
+    
+    public var items: [TableItem] {
+        return _items.items
+    }
+    
     public override init() {
-        self.items = []
+        self._items = DisplayOrderedCollection<TableItem>()
         super.init()
     }
     
-    @discardableResult public addItem
+//    @discardableResult public addItem
     
 }
 
@@ -338,10 +454,14 @@ public class TableContent: TableDisplay {
 
     public var header: Display?
     public var footer: Display?
-    public fileprivate(set) var sections: [TableSection]
+    fileprivate var _sections: DisplayOrderedCollection<TableSection>
+
+    public var sections: [TableSection] {
+        return _sections.items
+    }
     
     public override init() {
-        self.sections = []
+        self._sections = DisplayOrderedCollection<TableSection>()
         super.init()
     }
     public func reloadData() {
@@ -349,10 +469,7 @@ public class TableContent: TableDisplay {
     }
 }
 
-public enum ScrollDirection: UInt32 {
-    case vertical
-    case horizontal
-}
+
 
 public enum ScrollViewContentStyle {
     case table(ScrollDirection)
@@ -365,28 +482,28 @@ public class ScrollContentContext {
     
 }
 
-public class ScrollContentElement {
-    private(set) var context: ScrollContentContext?
-    
-    public private(set) var context: ScrollContentContext?
-    public var contentView: UIView? {
-        return self.context?.contentView
-    }
-    
-    public let view: UIView?
-    public private(set) var width: CGFloat
-    public private(set) var height: CGFloat
-    
-    public private(set) var frame: CGRect
-    
-    public init(view: UIView?, size: CGSize) {
-        self.view = view
-    }
-    
-    //    public func willMoveToParent
-    
-    
-}
+//public class ScrollContentElement {
+//    private(set) var context: ScrollContentContext?
+//
+////    public private(set) var context: ScrollContentContext?
+//    public var contentView: UIView? {
+//        return self.context?.contentView
+//    }
+//
+//    public let view: UIView?
+//    public private(set) var width: CGFloat
+//    public private(set) var height: CGFloat
+//
+//    public private(set) var frame: CGRect
+//
+//    public init(view: UIView?, size: CGSize) {
+//        self.view = view
+//    }
+//
+//    //    public func willMoveToParent
+//
+//
+//}
 
 open class ScrollViewItem {
     //    open class HeaderView: UIView {
@@ -419,10 +536,10 @@ open class ScrollViewItem {
     
     //    public private(set) var section: S
     
-    public dynamic var elementSize: CGSize
-    public dynamic var header: Item?
-    public dynamic var body: Item?
-    public dynamic var footer: Item?
+//    public dynamic var elementSize: CGSize
+//    public dynamic var header: Item?
+//    public dynamic var body: Item?
+//    public dynamic var footer: Item?
     
     public init() {
     }
@@ -439,27 +556,24 @@ open class ScrollViewItem {
 }
 
 
-public class ScrollSection {
-    public private(set) var context: ScrollContentContext?
-    public let view: UIView?
-    
-    public var contentView: UIView? {
-        return self.context?.contentView
-    }
-    
-    public private(set) var width: CGFloat
-    public private(set) var height: CGFloat
-    
-    public private(set) var frame: CGRect
-    
-    public init(view: UIView) {
-        <#statements#>
-    }
-    - (void)appendCell:(SCScrollViewCell *)item;
-    - (void)prependCell:(SCScrollViewCell *)item;
-    - (void)insertCell:(SCScrollViewCell *)item atIndex:(NSInteger)index;
-    - (BOOL)removeCell:(SCScrollViewCell *)item;
-}
+//public class ScrollSection {
+//    public private(set) var context: ScrollContentContext?
+//    public let view: UIView?
+//
+//    public var contentView: UIView? {
+//        return self.context?.contentView
+//    }
+//
+//    public private(set) var width: CGFloat
+//    public private(set) var height: CGFloat
+//
+//    public private(set) var frame: CGRect
+//
+//    public init(view: UIView) {
+//        <#statements#>
+//    }
+//
+//}
 
 
 open class ScrollView: UIScrollView {

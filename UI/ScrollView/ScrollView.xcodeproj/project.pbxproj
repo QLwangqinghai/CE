@@ -13,7 +13,20 @@
 		D6CB85DC231E571700683649 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6CB85DB231E571700683649 /* Assets.xcassets */; };
 		D6CB85DF231E571700683649 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6CB85DD231E571700683649 /* LaunchScreen.storyboard */; };
 		D6CB85E8231E574300683649 /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CB85E7231E574300683649 /* ScrollView.swift */; };
+		D6CB85F7231F8CFC00683649 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CB85F6231F8CFC00683649 /* main.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D6CB85F2231F8CFC00683649 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		D6CB85D1231E571600683649 /* ScrollView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollView.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -24,10 +37,19 @@
 		D6CB85DE231E571700683649 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6CB85E0231E571700683649 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6CB85E7231E574300683649 /* ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollView.swift; sourceTree = "<group>"; };
+		D6CB85F4231F8CFC00683649 /* Hash */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Hash; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6CB85F6231F8CFC00683649 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D6CB85CE231E571600683649 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6CB85F1231F8CFC00683649 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -42,6 +64,7 @@
 			children = (
 				D6CB85E6231E571D00683649 /* Source */,
 				D6CB85D3231E571600683649 /* ScrollView */,
+				D6CB85F5231F8CFC00683649 /* Hash */,
 				D6CB85D2231E571600683649 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				D6CB85D1231E571600683649 /* ScrollView.app */,
+				D6CB85F4231F8CFC00683649 /* Hash */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -75,6 +99,14 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		D6CB85F5231F8CFC00683649 /* Hash */ = {
+			isa = PBXGroup;
+			children = (
+				D6CB85F6231F8CFC00683649 /* main.swift */,
+			);
+			path = Hash;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -95,6 +127,23 @@
 			productReference = D6CB85D1231E571600683649 /* ScrollView.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D6CB85F3231F8CFC00683649 /* Hash */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6CB85F8231F8CFC00683649 /* Build configuration list for PBXNativeTarget "Hash" */;
+			buildPhases = (
+				D6CB85F0231F8CFC00683649 /* Sources */,
+				D6CB85F1231F8CFC00683649 /* Frameworks */,
+				D6CB85F2231F8CFC00683649 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Hash;
+			productName = Hash;
+			productReference = D6CB85F4231F8CFC00683649 /* Hash */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -106,6 +155,9 @@
 				ORGANIZATIONNAME = angfung;
 				TargetAttributes = {
 					D6CB85D0231E571600683649 = {
+						CreatedOnToolsVersion = 10.3;
+					};
+					D6CB85F3231F8CFC00683649 = {
 						CreatedOnToolsVersion = 10.3;
 					};
 				};
@@ -124,6 +176,7 @@
 			projectRoot = "";
 			targets = (
 				D6CB85D0231E571600683649 /* ScrollView */,
+				D6CB85F3231F8CFC00683649 /* Hash */,
 			);
 		};
 /* End PBXProject section */
@@ -149,6 +202,14 @@
 				D6CB85D7231E571600683649 /* ViewController.swift in Sources */,
 				D6CB85D5231E571600683649 /* AppDelegate.swift in Sources */,
 				D6CB85E8231E574300683649 /* ScrollView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6CB85F0231F8CFC00683649 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6CB85F7231F8CFC00683649 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +385,30 @@
 			};
 			name = Release;
 		};
+		D6CB85F9231F8CFC00683649 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D6CB85FA231F8CFC00683649 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -341,6 +426,15 @@
 			buildConfigurations = (
 				D6CB85E4231E571700683649 /* Debug */,
 				D6CB85E5231E571700683649 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D6CB85F8231F8CFC00683649 /* Build configuration list for PBXNativeTarget "Hash" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6CB85F9231F8CFC00683649 /* Debug */,
+				D6CB85FA231F8CFC00683649 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

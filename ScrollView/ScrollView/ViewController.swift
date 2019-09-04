@@ -167,7 +167,6 @@ class ViewController: UIViewController {
             print(view)
             print(view.frame)
             print(view.bounds)
-
         }
         timer.setEventHandler {
             print(view)

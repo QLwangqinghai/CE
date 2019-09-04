@@ -204,21 +204,23 @@ open class DrawingScrollView: UIScrollView {
         
         self.contentSize = self.contentView.frame.size
         
-        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            if let context = self.contentView.context {
+                C2DLittle32ArgbPixelsSet(context.mainPtr, 0xff_ff_00_00, context.config.pixelsCount)
+                self.contentView.layer.contents = context.makeImage()
+                self.contentView.setNeedsDisplay()
+            }
+        }
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
-            
-            
             if let context = self.contentView.context {
                 for _ in 1 ..< 100 {
                     self.array.append(context.makeImage())
                 }
-                
                 C2DLittle32ArgbPixelsSet(context.mainPtr, arc4random() | 0x80_00_00_00, context.config.pixelsCount)
                 self.contentView.layer.contents = context.makeImage()
                 self.contentView.setNeedsDisplay()
             }
         }
-        
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
             if let context = self.contentView.context {
                 C2DLittle32ArgbPixelsSet(context.mainPtr, arc4random() | 0x80_00_00_00, context.config.pixelsCount)

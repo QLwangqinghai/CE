@@ -364,6 +364,26 @@ public class TableDisplay: BaseDisplay {
     
 }
 
+public struct DisplayGroupSequence {
+    public let main: Int32
+    public let sub: Int32
+
+    public init(main: Int32, sub: Int32) {
+        self.main = main
+        self.sub = sub
+    }
+    
+    public static func == (lhs: DisplayGroupSequence, rhs: DisplayGroupSequence) -> Bool {
+        return lhs.main == rhs.main && lhs.sub == rhs.sub
+    }
+    public static func < (lhs: DisplayGroupSequence, rhs: DisplayGroupSequence) -> Bool {
+        return lhs.main != rhs.main ? (lhs.main < rhs.main) : lhs.sub < rhs.sub
+    }
+    public static func > (lhs: DisplayGroupSequence, rhs: DisplayGroupSequence) -> Bool {
+        return lhs.main != rhs.main ? (lhs.main > rhs.main) : lhs.sub > rhs.sub
+    }
+}
+
 protocol TableDisplaySequence {
     var displaySequence: Int {
         get set
@@ -385,10 +405,12 @@ public class TableItem: TableDisplay, TableDisplaySequence {
     
 }
 internal class DisplayOrderedCollection<T: TableDisplay & TableDisplaySequence> {
-    public var items: [T] = []
+    private var items: [T] = []
     public init() {
+//        collection.objectf
     }
-    
+    //    open subscript(idx: Int) -> Any { get }
+
     public func append(_ item: T) {
         self.items.append(item)
     }

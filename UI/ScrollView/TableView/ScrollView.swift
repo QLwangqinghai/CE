@@ -1,241 +1,3 @@
-////
-////  ScrollView.swift
-////  ScrollView
-////
-////  Created by vector on 2019/9/3.
-////  Copyright © 2019 angfung. All rights reserved.
-////
-//
-//import UIKit
-//
-//
-//public class Display {
-//    public var subdisplays: [Display] {
-//        return []
-//    }
-//
-//    public init() {
-//    }
-//}
-//
-//
-//
-//public enum DisplayElement {
-//    case display(Display)
-//    case group(DisplayGroup)
-//}
-//public class DisplayGroup {
-//    public var subitems: [DisplayCollection] {
-//        return []
-//    }
-//    public init() {
-//    }
-//}
-//public class DisplayCollection {
-//    public enum ElementType {
-//        case display
-//        case group
-//    }
-//    public var elements: [DisplayElement] {
-//        return []
-//    }
-//    public init() {
-//    }
-//}
-//
-////
-////public protocol HeadBodyFootDisplayable where Self: DisplayCollection {
-////    var header: Display? {get}
-////    var footer: Display? {get}
-////    var body: Display? {get}
-////}
-//
-//public class TableItem: DisplayCollection {
-////        public dynamic var elementSize: CGSize
-//    public var header: Display?
-//    public var footer: Display?
-//    public var body: Display?
-//
-//    public override var elements: [DisplayElement] {
-//        var items: [DisplayElement] = []
-//        if let header = self.header {
-//            items.append(DisplayElement.display(header))
-//        }
-//        if let body = self.body {
-//            items.append(DisplayElement.display(body))
-//        }
-//        if let footer = self.footer {
-//            items.append(DisplayElement.display(footer))
-//        }
-//        return items
-//    }
-//}
-//public class TableGroup: DisplayCollection {
-//
-//    public override var elements: [DisplayElement] {
-//        var items: [DisplayElement] = []
-//        if let header = self.header {
-//            items.append(DisplayElement.display(header))
-//        }
-//        if let body = self.body {
-//            items.append(DisplayElement.display(body))
-//        }
-//        if let footer = self.footer {
-//            items.append(DisplayElement.display(footer))
-//        }
-//        return items
-//    }
-//
-//
-//    public var items: [TableItem] {
-//        return self.subdisplays as! [TableItem]
-//    }
-//}
-//public class TableSection: Display, HeadBodyFootDisplayable {
-//    public var header: Display?
-//    public var footer: Display?
-//    public let group: TableGroup
-//    public var body: Display? {
-//        return self.group
-//    }
-//
-//    public override init() {
-//        self.group = TableGroup()
-//        super.init()
-//    }
-//
-////        public dynamic var head: Group?
-////        public dynamic var body: Group?
-////        public dynamic var foot: Group?
-//
-//}
-//
-//
-//
-//public enum ScrollDirection: UInt32 {
-//    case vertical
-//    case horizontal
-//}
-//
-//public enum ScrollViewContentStyle {
-//    case table(ScrollDirection)
-//
-//}
-//
-//public class ScrollContentContext {
-//    public private(set) unowned var contentView: UIView?
-//
-//
-//}
-//
-//public class ScrollContentElement {
-//    private(set) var context: ScrollContentContext?
-//
-//    public private(set) var context: ScrollContentContext?
-//    public var contentView: UIView? {
-//        return self.context?.contentView
-//    }
-//
-//    public let view: UIView?
-//    public private(set) var width: CGFloat
-//    public private(set) var height: CGFloat
-//
-//    public private(set) var frame: CGRect
-//
-//    public init(view: UIView?, size: CGSize) {
-//        self.view = view
-//    }
-//
-////    public func willMoveToParent
-//
-//
-//}
-//
-//open class ScrollViewItem {
-////    open class HeaderView: UIView {
-////        public override init(frame: CGRect) {
-////            super.init(frame: frame)
-////        }
-////
-////        required public init?(coder aDecoder: NSCoder) {
-////            super.init(coder: aDecoder)
-////        }
-////    }
-////    open class BodyView: UIView {
-////        public override init(frame: CGRect) {
-////            super.init(frame: frame)
-////        }
-////
-////        required public init?(coder aDecoder: NSCoder) {
-////            super.init(coder: aDecoder)
-////        }
-////    }
-////    open class FooterView: UIView {
-////        public override init(frame: CGRect) {
-////            super.init(frame: frame)
-////        }
-////
-////        required public init?(coder aDecoder: NSCoder) {
-////            super.init(coder: aDecoder)
-////        }
-////    }
-//
-////    public private(set) var section: S
-//
-//    public dynamic var elementSize: CGSize
-//    public dynamic var header: Item?
-//    public dynamic var body: Item?
-//    public dynamic var footer: Item?
-//
-//    public init() {
-//    }
-//
-//
-//    /*
-//     // Only override draw() if you perform custom drawing.
-//     // An empty implementation adversely affects performance during animation.
-//     override func draw(_ rect: CGRect) {
-//     // Drawing code
-//     }
-//     */
-//
-//}
-//
-//
-//public class ScrollSection {
-//    public private(set) var context: ScrollContentContext?
-//    public let view: UIView?
-//
-//    public var contentView: UIView? {
-//        return self.context?.contentView
-//    }
-//
-//    public private(set) var width: CGFloat
-//    public private(set) var height: CGFloat
-//
-//    public private(set) var frame: CGRect
-//
-//    public init(view: UIView) {
-//        <#statements#>
-//    }
-//
-//}
-//
-//
-//open class ScrollView: UIScrollView {
-//
-//    /*
-//    // Only override draw() if you perform custom drawing.
-//    // An empty implementation adversely affects performance during animation.
-//    override func draw(_ rect: CGRect) {
-//        // Drawing code
-//    }
-//    */
-//
-//}
-
-
-
 //
 //  ScrollView.swift
 //  ScrollView
@@ -339,7 +101,7 @@ public enum TableDisplayAlign {
     case autoWidth(CGFloat)
 }
 
-public class TableDisplay: BaseDisplay {
+public class BaseTableDisplay: BaseDisplay {
     public fileprivate(set) var align: TableDisplayAlign
     public fileprivate(set) var inset: CGFloat
     
@@ -348,6 +110,14 @@ public class TableDisplay: BaseDisplay {
         self.inset = inset
         super.init()
     }
+}
+
+public class TableDisplay: BaseTableDisplay {
+    
+}
+
+public class TableDisplayGroup: BaseTableDisplay {
+
 }
 
 public class TableDisplayView: UIView {

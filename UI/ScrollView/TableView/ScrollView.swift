@@ -9,11 +9,6 @@
 import UIKit
 
 
-public class Display {
-    public init() {
-    }
-}
-
 public struct DisplayIdentifier: Hashable {
     public let address: UInt
     public let mask: UInt
@@ -39,35 +34,12 @@ public struct DisplayIdentifier: Hashable {
     }
 }
 
+public enum DisplayElement {
+    case none
+    case view(UIView)
+    case collection(DisplayCollection)
+}
 public class BaseDisplay: Hashable {
-//    public private(set) unowned var parent: BaseDisplay?
-//    public private(set) var childs: [BaseDisplay] = []
-//
-//    fileprivate func append(_ sub: BaseDisplay) -> Bool {
-//        if let _ = sub.parent {
-//            return false
-//        }
-//        self.childs.append(sub)
-//        sub.parent = self
-////        sub.didMoveToParent()
-//        return true
-//    }
-//    fileprivate func remove(at index: Int) {
-//        self.childs.remove(at: index)
-//        childs[index]
-//
-//        if let _ = sub.parent {
-//            return false
-//        }
-//        self.childs.append(sub)
-//        sub.parent = self
-//        sub.didMoveToParent()
-//        return true
-//    }
-//
-////    public func didMoveToParent() {
-////    }
-//
     private var _identifier: DisplayIdentifier? = nil
     public var identifier: DisplayIdentifier {
         if let value = self._identifier {
@@ -91,6 +63,33 @@ public class BaseDisplay: Hashable {
     }
 }
 
+public protocol DisplayCollectionable {
+    var parent: DisplayCollection? { get }
+}
+public protocol Displayable {
+
+}
+
+public class Display: BaseDisplay, DisplayCollectionable {
+    public unowned fileprivate(set)  var parent: DisplayCollection? = nil
+
+    public var element: DisplayElement
+    public var origin: CGPoint
+    public var size: CGSize
+
+    public init(origin: CGPoint, size: CGSize, element: DisplayElement) {
+        self.origin = origin
+        self.size = size
+        self.element = element
+        super.init()
+        let _ = self.identifier
+    }
+}
+public class DisplayCollection: BaseDisplay, DisplayCollectionable {
+    public unowned fileprivate(set)  var parent: DisplayCollection? = nil
+}
+
+
 public enum ScrollDirection: UInt32 {
     case vertical
     case horizontal
@@ -101,15 +100,94 @@ public enum TableDisplayAlign {
     case autoWidth(CGFloat)
 }
 
-public class BaseTableDisplay: BaseDisplay {
+public class BaseTableDisplay: DisplayCollection {
+    public var origin: CGPoint
+    public var size: CGSize
     public fileprivate(set) var align: TableDisplayAlign
-    public fileprivate(set) var inset: CGFloat
+    public fileprivate(set) var insetSize: CGFloat {
+        didSet(oldValue) {
+            if oldValue != self.insetSize {
+                self.resetFitSize()
+            }
+        }
+    }
+    fileprivate func resetFitSize() {
+        var size: CGSize = CGSize()
+        switch self.align {
+        case .autoWidth(let width):
+            size.width = width
+            size.height = self.insetSize
+        case .autoHeight(let height):
+            size.height = height
+            size.width = self.insetSize
+        }
+        self.fitSize = size
+    }
+
+    //update by update insetSize
+    public private(set) var fitSize: CGSize {
+        didSet(oldValue) {
+            if oldValue != self.fitSize {
+                self.didFitSizeChanged(from: oldValue, to: self.fitSize)
+            }
+        }
+    }
+    public  var items: [Display] = []
     
-    public init(align: TableDisplayAlign, inset: CGFloat = 0) {
+//    public func append(_ item: Display) {
+//        self.items.append(item)
+//    }
+//    public func prepend(_ item: Display) {
+//        self.items.insert(item, at: 0)
+//    }
+//    public func insert(_ item: Display, at index: Int) {
+//        if index == 0 {
+//            self.prepend(item)
+//        } else if index >= self.items.count {
+//            self.append(item)
+//        } else {
+//            self.items.insert(item, at: index)
+//        }
+//    }
+//
+//    public func remove(at index: Int) -> Display? {
+//        if index >= 0 && index < self.items.count {
+//            let value: Display = self.items[index]
+//            self.items.remove(at: index)
+//            return value
+//        } else {
+//            return nil
+//        }
+//    }
+//
+//    public func remove(item: Display) -> Bool {
+//        if let index = self.items.firstIndex(of: item) {
+//            self.items.remove(at: index)
+//            return true
+//        } else {
+//            return false
+//        }
+//    }
+
+    
+    public init(origin: CGPoint, align: TableDisplayAlign, insetSize: CGFloat = 0) {
         self.align = align
-        self.inset = inset
+        self.insetSize = insetSize
+        var size: CGSize = CGSize()
+        switch align {
+        case .autoWidth(let width):
+            size.width = width
+            size.height = insetSize
+        case .autoHeight(let height):
+            size.height = height
+            size.width = insetSize
+        }
+        self.fitSize = size
+        self.origin = origin
+        self.size = size
         super.init()
     }
+    internal func didFitSizeChanged(from: CGSize, to: CGSize) {}
 }
 
 public class TableDisplay: BaseTableDisplay {
@@ -131,8 +209,6 @@ public class TableDisplayView: UIView {
         super.init(coder: aDecoder)
         self.clipsToBounds = true
     }
-    
-    
 }
 
 public struct DisplayGroupSequence {
@@ -236,12 +312,12 @@ public class TableInsetItem: TableDisplay {
         
         super.init(align: align, inset: inset)
     }
-    internal func didSizeChanged(from: CGSize, to: CGSize) {
+    
+    internal func didFitSizeChanged(from: CGSize, to: CGSize) {
     }
 }
 
 public class TableItem: TableInsetItem {
-    fileprivate(set) unowned var parent: TableSection?
     public var header: Display?
     public var footer: Display?
     public var body: Display?

@@ -41,14 +41,14 @@ class View: UIView {
     
     override func addSubview(_ view: UIView) {
         print("{")
-        print("addSubview:\(view) \(self.t)")
+        print("addSubview:\(UIView.description(view)) \(self.t)")
         super.addSubview(view)
         print("}")
     }
     
     override func didAddSubview(_ subview: UIView) {
         print("{")
-        print("didAddSubview:\(subview) \(self.t)")
+        print("didAddSubview:\(UIView.description(subview)) \(self.t)")
         super.didAddSubview(subview)
         print("}")
     }
@@ -62,7 +62,7 @@ class View: UIView {
     
     open override func willMove(toSuperview newSuperview: UIView?) {
         print("{")
-        print("willMove toWindow:\(newSuperview) \(self.t)")
+        print("willMove toWindow:\(UIView.description(newSuperview)) \(self.t)")
         super.willMove(toSuperview: newSuperview)
         print("}")
     }
@@ -76,7 +76,7 @@ class View: UIView {
     
     open override func willMove(toWindow newWindow: UIWindow?) {
         print("{")
-        print("willMove toWindow:\(newWindow) \(self.t)")
+        print("willMove toWindow:\(UIView.description(newWindow)) \(self.t)")
         super.willMove(toWindow: newWindow)
         print("}")
     }

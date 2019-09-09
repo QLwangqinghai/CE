@@ -18,12 +18,16 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        let _ = LayoutGroup(origin: LayoutPoint.init(x: 0, y: 0), size: LayoutSize.init(width: 0, height: 0))
+//        let _ = LayoutGroup(origin: LayoutVector.init(x: 0, y: 0), size: LayoutVector.init(x: 0, y: 0))
+//        
+//        let a = LayoutViewBridge.viewContentLayout(layout: ViewContentLayout.init(origin: LayoutVector.init(x: 0, y: 0), size: LayoutVector.init(x: 0, y: 0)))
+//        a.bind(view: self.view)
         
-        let a = LayoutViewBridge.viewContentLayout(layout: ViewContentLayout.init(origin: LayoutPoint.init(x: 0, y: 0), size: LayoutSize.init(width: 0, height: 0)))
-        a.bind(view: self.view)
+//        self.view.window?
         
-        self.view.window
+        let a: [Int] = [1, 2, 3]
+        
+        a.enumerated()
         
     }
 

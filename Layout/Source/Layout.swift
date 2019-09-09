@@ -8,77 +8,72 @@
 
 import UIKit
 
-public struct LayoutPoint: Hashable {
+public struct LayoutVector: Hashable {
+    public static let scale: CGFloat = {
+        return UIScreen.main.scale
+    }()
+    
     public var x: Int32
     public var y: Int32
     public init(x: Int32, y: Int32) {
         self.x = x
         self.y = y
     }
-    public static func == (lhs: LayoutPoint, rhs: LayoutPoint) -> Bool {
+    public static func == (lhs: LayoutVector, rhs: LayoutVector) -> Bool {
         return lhs.x == rhs.x && lhs.y == rhs.y
     }
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.x)
         hasher.combine(self.y)
     }
-}
-public struct LayoutSize: Hashable {
-    public var width: Int32
-    public var height: Int32
-    public init(width: Int32, height: Int32) {
-        self.width = width
-        self.height = height
+    public func transform(scale: CGFloat = LayoutVector.scale) -> (CGFloat, CGFloat) {
+        var x = CGFloat(self.x)
+        var y = CGFloat(self.y)
+        x = x / scale
+        y = y / scale
+        return (x, y)
     }
-    public static func == (lhs: LayoutSize, rhs: LayoutSize) -> Bool {
-        return lhs.width == rhs.width && lhs.height == rhs.height
-    }
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.width)
-        hasher.combine(self.height)
-    }
-}
-public struct LayoutEdgeInsets: Hashable {
-    public var top: Int32
-    public var left: Int32
-    public var bottom: Int32
-    public var right: Int32
-    public init(top: Int32, left: Int32, bottom: Int32, right: Int32) {
-        self.top = top
-        self.left = left
-        self.bottom = bottom
-        self.right = right
-    }
-    public static func == (lhs: LayoutEdgeInsets, rhs: LayoutEdgeInsets) -> Bool {
-        return lhs.top == rhs.top && lhs.left == rhs.left && lhs.bottom == rhs.bottom && lhs.right == rhs.right
-    }
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.top)
-        hasher.combine(self.left)
-        hasher.combine(self.bottom)
-        hasher.combine(self.right)
+    
+    public static func +(lhs: LayoutVector, rhs: LayoutVector) -> LayoutVector {
+        var result = lhs
+        result.x += rhs.x
+        result.y += rhs.y
+        return result
     }
 }
 
+public struct LayoutRect: Hashable {
+    public internal(set) var origin: LayoutVector
+    public internal(set) var size: LayoutVector
+    public static func == (lhs: LayoutRect, rhs: LayoutRect) -> Bool {
+        return lhs.origin == rhs.origin && lhs.size == rhs.size
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(origin)
+    }
+}
 
-//public struct LayoutRect: Hashable {
-//    public var x: Int
-//    public var y: Int
-//    public var height: Int
-//    public var width: Int
-//    public init() {
+//public struct LayoutEdgeInsets: Hashable {
+//    public var top: Int32
+//    public var left: Int32
+//    public var bottom: Int32
+//    public var right: Int32
+//    public init(top: Int32, left: Int32, bottom: Int32, right: Int32) {
+//        self.top = top
+//        self.left = left
+//        self.bottom = bottom
+//        self.right = right
 //    }
-//    public static func == (lhs: LayoutRect, rhs: LayoutRect) -> Bool {
-//        return lhs.x == rhs.x && lhs.y == rhs.y && lhs.width == rhs.width && lhs.height == rhs.height
+//    public static func == (lhs: LayoutEdgeInsets, rhs: LayoutEdgeInsets) -> Bool {
+//        return lhs.top == rhs.top && lhs.left == rhs.left && lhs.bottom == rhs.bottom && lhs.right == rhs.right
 //    }
 //    public func hash(into hasher: inout Hasher) {
-//        hasher.combine(x)
-//        hasher.combine(y)
+//        hasher.combine(self.top)
+//        hasher.combine(self.left)
+//        hasher.combine(self.bottom)
+//        hasher.combine(self.right)
 //    }
 //}
-
-
-
 
 
 public class LayoutViewBridge: NSObject {
@@ -88,7 +83,7 @@ public class LayoutViewBridge: NSObject {
         case layoutToView
     }
     
-    private class ViewToLayout: LayoutViewBridge {
+    private final class ViewToLayout: LayoutViewBridge {
         private static var observerContextValue: Int = 0
         public let _layout: ViewContentLayout
 
@@ -133,7 +128,7 @@ public class LayoutViewBridge: NSObject {
         }
     }
     
-    private class LayoutToView: LayoutViewBridge {
+    private final class LayoutToView: LayoutViewBridge {
         private static var observerContextValue: Int = 0
         
         public override var view: UIView? {
@@ -162,7 +157,6 @@ public class LayoutViewBridge: NSObject {
     public func bind(view: UIView?) {
         if view != self.view {
             self.view = view
-
 //            if self.view != nil && view != nil {
 //                self.view = nil
 //                self.view = view
@@ -189,7 +183,7 @@ public class ViewContentLayout: Layout {
     public override var currentContext: LayoutContext? {
         return self.context
     }
-    public override init(origin: LayoutPoint, size: LayoutSize) {
+    public override init(origin: LayoutVector, size: LayoutVector) {
         self.context = LayoutContext()
         super.init(origin: origin, size: size)
         self.context.didViewChanged = {[weak self](context: LayoutContext) -> Void in
@@ -207,7 +201,21 @@ public class ViewContentLayout: Layout {
     }
 }
 
+open class LayoutView: UIView {
+    public var contentLayout: Layout? = nil {
+        willSet(newValue) {
+            
+        }
+        didSet(oldValue) {
+            
+        }
+    }
 
+    
+}
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------
 public final class LayoutContext {
     fileprivate(set) unowned var view: UIView?
 //    {
@@ -232,32 +240,34 @@ public final class LayoutContext {
     }
     
 }
-public class Layout {
-    public weak private(set) var parent: Layout?
+public class BaseLayout {
+    public weak private(set) var parent: BaseLayout?
     
     //remove from context
     //remove from parent
     
     //add to parent
     //add to context
+
     
-    
-//    fileprivate func updateParent(_ newParent: Layout?) {
-//        let currentParent: Layout? = self.parent
-//        if let to = newParent {
-//            if let from = currentParent {
-//                self.parent = to
-//            } else {
-//                self.parent = to
-//            }
-//        } else {
-//            if currentParent == nil {
-//                return
-//            } else {
-//                self.parent = nil
-//            }
-//        }
-//    }
+    fileprivate func willMoveToParent(_ newParent: Layout?) {
+        self.isParentEnabledInContext = false
+    }
+    fileprivate func didMoveToParent(_ newParent: Layout?) {
+        if let parent = newParent {
+            self.isParentEnabledInContext = parent.isEnabledInContext
+        } else {
+            self.isParentEnabledInContext = false
+        }
+    }
+    fileprivate func didMoveToContext(_ newParent: Layout?) {
+        self.parent = newParent
+        if let parent = newParent {
+            self.isParentEnabledInContext = parent.isEnabledInContext
+        } else {
+            self.isParentEnabledInContext = false
+        }
+    }
 //
 //    fileprivate func unbind(child: Layout) {
 //        if let p = child.parent {
@@ -283,7 +293,7 @@ public class Layout {
 //        //add
 //        child.updateParent(parent)
 //    }
-    public internal(set) var origin: LayoutPoint {
+    public internal(set) var origin: LayoutVector {
         didSet(oldValue) {
             let newValue = self.origin
             if oldValue != newValue {
@@ -294,7 +304,16 @@ public class Layout {
             }
         }
     }
-    public internal(set) var size: LayoutSize {
+    public internal(set) var originInContext: LayoutVector?  {
+        didSet(oldValue) {
+            let newValue = self.originInContext
+            if oldValue != newValue {
+                self.didOriginInContextChanged(from: oldValue, to: newValue)
+                self.layoutChildsOriginInContext(newValue)
+            }
+        }
+    }
+    public internal(set) var size: LayoutVector {
         didSet(oldValue) {
             let newValue = self.size
             if oldValue != newValue {
@@ -305,23 +324,86 @@ public class Layout {
             }
         }
     }
-    public var isEnabled: Bool = true {
-        didSet(oldValue) {
-            let newValue = self.isEnabled
+    
+    private static let parentDisabledInContextFlag: UInt32 = 0x1
+    private static let disabledFlag: UInt32 = 0x2
+    private static let removingFlag: UInt32 = 0x4
+
+    private var disableFlag: UInt32 = BaseLayout.parentDisabledInContextFlag {
+        willSet(newValue) {
+            let oldValue = self.disableFlag
             if oldValue != newValue {
-                self.didIsEnabledChanged(from: oldValue, to: newValue)
-                if let parent = self.parent {
-                    parent.didChildIsEnabledChanged(self, from: oldValue, to: newValue)
+                if oldValue == 0 {
+                    self.isEnabledInContextWillChanged(to: true)
+                } else if newValue == 0 {
+                    self.isEnabledInContextWillChanged(to: false)
+                }
+            }
+        }
+        didSet(oldValue) {
+            let newValue = self.disableFlag
+            if oldValue != newValue {
+                if oldValue == 0 {
+                    self.isEnabledInContextDidChanged(to: true)
+                } else if newValue == 0 {
+                    self.isEnabledInContextDidChanged(to: false)
                 }
             }
         }
     }
+    
+    fileprivate(set) var isParentEnabledInContext: Bool {
+        get {
+            return (self.disableFlag & BaseLayout.parentDisabledInContextFlag == BaseLayout.parentDisabledInContextFlag)
+        }
+        set(newValue) {
+            let oldValue = self.isParentEnabledInContext
+            if oldValue != newValue {
+                if newValue {
+                    self.disableFlag = (self.disableFlag & (~BaseLayout.parentDisabledInContextFlag))
+                } else {
+                    self.disableFlag = self.disableFlag | BaseLayout.parentDisabledInContextFlag
+                }
+            }
+        }
+    }
+    
+    var isEnabledInContext: Bool {
+        get {
+            return (self.disableFlag == 0)
+        }
+    }
+    
+    public var isEnabled: Bool {
+        get {
+            return (self.disableFlag & BaseLayout.disabledFlag == BaseLayout.disabledFlag)
+        }
+        set(newValue) {
+            let oldValue = self.isEnabled
+            if oldValue != newValue {
+                if newValue {
+                    self.disableFlag = (self.disableFlag & (~BaseLayout.disabledFlag))
+                } else {
+                    self.disableFlag = self.disableFlag | BaseLayout.disabledFlag
+                }
+            }
+        }
+//        didSet(oldValue) {
+//            let newValue = self.isEnabled
+//            if oldValue != newValue {
+//                self.isEnabledInContext = self.isParentEnabledInContext && self.isEnabled
+//                if let parent = self.parent {
+//                    parent.didChildIsEnabledChanged(self, from: oldValue, to: newValue)
+//                }
+//            }
+//        }
+    }
 
-    public init(origin: LayoutPoint, size: LayoutSize) {
+    public init(origin: LayoutVector, size: LayoutVector) {
         self.origin = origin
         self.size = size
     }
-    public static func == (lhs: Layout, rhs: Layout) -> Bool {
+    public static func == (lhs: BaseLayout, rhs: BaseLayout) -> Bool {
         return lhs === rhs
     }
     public func hash(into hasher: inout Hasher) {
@@ -333,29 +415,50 @@ public class Layout {
         return parent?.currentContext
     }
     
+    internal func clearOriginInContext() {
+        print("clearOriginInContext")
+        self.originInContext = nil
+    }
+    internal func layoutOriginInContext(parentOriginInContext: LayoutVector) {
+        print("layoutOriginInContext")
+        self.originInContext = parentOriginInContext + self.origin
+    }
+    
     //self changed
-    internal func didParentChanged(to: Layout?) {
+    internal func didParentChanged(to: BaseLayout?) {
         print("didIsEnabledChanged")
     }
-    internal func didIsEnabledChanged(from: Bool, to: Bool) {
-        print("didIsEnabledChanged")
+    internal func isEnabledInContextWillChanged(to: Bool) {
+        if !to {
+            //remove from context
+        }
+        print("isEnabledInContextWillChanged")
     }
-    internal func didOriginChanged(from: LayoutPoint, to: LayoutPoint) {
+    internal func isEnabledInContextDidChanged(to: Bool) {
+        print("isEnabledInContextDidChanged")
+        if to {
+            //add to context
+        }
+    }
+    internal func didOriginInContextChanged(from: LayoutVector?, to: LayoutVector?) {
+        print("didOriginInContextChanged")
+    }
+    internal func didOriginChanged(from: LayoutVector, to: LayoutVector) {
         print("didOriginChanged")
     }
-    internal func didSizeChanged(from: LayoutSize, to: LayoutSize) {
+    internal func didSizeChanged(from: LayoutVector, to: LayoutVector) {
         print("didOriginChanged")
     }
     
     //child changed
 
-    internal func didChildIsEnabledChanged(_ child: Layout, from: Bool, to: Bool) {
+    internal func didChildIsEnabledChanged(_ child: BaseLayout, from: Bool, to: Bool) {
         print("didChildIsEnabledChanged")
     }
-    internal func didChildOriginChanged(_ child: Layout, from: LayoutPoint, to: LayoutPoint) {
+    internal func didChildOriginChanged(_ child: BaseLayout, from: LayoutVector, to: LayoutVector) {
         print("didChildOriginChanged")
     }
-    internal func didChildSizeChanged(_ child: Layout, from: LayoutSize, to: LayoutSize) {
+    internal func didChildSizeChanged(_ child: BaseLayout, from: LayoutVector, to: LayoutVector) {
         print("didChildOriginChanged")
     }
     
@@ -367,11 +470,76 @@ public class Layout {
 
     }
     
+    //子类实现
+    
+    internal func clearChildsOriginInContext() {
+        print("clearChildsOriginInContext")
+    }
+    internal func layoutChildsOriginInContext(_ originInContext: LayoutVector?) {
+        print("layoutChildsOriginInContext")
+    }
     
 }
 
-public class LayoutGroup: Layout {
-    public override init(origin: LayoutPoint, size: LayoutSize) {
+public class Layout: BaseLayout {
+    public var view: UIView? = nil {
+        didSet {
+            self.resetViewFrame()
+        }
+    }
+    
+    public override var originInContext: LayoutVector?  {
+        didSet {
+            self.resetViewFrame()
+        }
+    }
+    
+    
+    private func viewFrame(origin: LayoutVector, size: LayoutVector) -> CGRect {
+        let (x, y) = origin.transform()
+        let (width, height) = size.transform()
+        let frame: CGRect = CGRect(x: x, y: y, width: width, height: height)
+        return frame
+    }
+    private func resetViewFrame() {
+        guard let viewOrigin = self.originInContext else {
+            return
+        }
+        guard let view = self.view else {
+            return
+        }
+        view.frame = self.viewFrame(origin: viewOrigin, size: self.size)
+    }
+    
+    internal override func didSizeChanged(from: LayoutVector, to: LayoutVector) {
+        super.didSizeChanged(from: from, to: to)
+        self.resetViewFrame()
+    }
+    
+//    public override init(origin: LayoutVector, size: LayoutVector) {
+//        super.init(origin: origin, size: size)
+//    }
+    
+    internal override func isEnabledInContextDidChanged(to: Bool) {
+        super.isEnabledInContextDidChanged(to: to)
+
+        guard let view = self.view else {
+            return
+        }
+        if to {
+            if let contentView = self.currentContext?.view {
+                contentView.addSubview(view)
+            }
+        } else {
+            view.removeFromSuperview()
+        }
+    }
+    
+    
+    
+}
+public class LayoutGroup: BaseLayout {
+    public override init(origin: LayoutVector, size: LayoutVector) {
         super.init(origin: origin, size: size)
         self.isEnabled = false
         self.isEnabled = false

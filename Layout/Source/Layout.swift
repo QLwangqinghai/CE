@@ -243,12 +243,108 @@ public final class LayoutContext {
 public class BaseLayout {
     public weak private(set) var parent: BaseLayout?
     
+    //disable in context
     //remove from context
+    //clear context
+    //clear parent
     //remove from parent
     
     //add to parent
+    //check enabled in context
     //add to context
+    
+    public private(set) var childs: Set<BaseLayout> = []
+    
+    fileprivate func _toStore(child: BaseLayout) {
+        self.childs.append(child)
 
+    }
+    fileprivate func _clearStore(child: BaseLayout) {
+        self.childs.remove(child)
+    }
+    
+    
+    internal func _addChild(child: BaseLayout) {
+        child._removeFromParent()
+        
+        if let context = self.context {
+            child.willMoveToContext(context)
+        }
+        self.willAddChild(child)
+        child.willMoveToParent(self)
+        self._toStore(child)
+        child.parent = self
+        child.context = self.context
+        child.didMoveToParent(self)
+        self.didAddChild(child)
+        if let context = self.context {
+            child.didMoveToContext(context)
+        }
+    }
+    internal func _removeFromParent() {
+        guard let parent = self.parent else {
+            return
+        }
+        parent.willRemoveChild(self)
+        self.willMoveToContext(nil)
+        self.willMoveToParent(nil)
+        self.context = nil
+        self.parent = nil
+        parent._clearStore(child)
+        parent.didRemoveChild(child)
+        self.didMoveToParent(nil)
+        self.didMoveToContext(nil)
+        
+    }
+    
+    
+    
+    internal func willRemoveChild(_ child: BaseLayout) {
+        
+        
+    }
+    internal func didRemoveChild(_ child: BaseLayout) {
+        
+        
+    }
+    internal func willAddChild(_ child: BaseLayout) {
+        
+        
+    }
+    internal func didAddChild(_ child: BaseLayout) {
+        
+        
+    }
+    
+    internal func willMoveToParent(_ parent: BaseLayout) {
+        
+        
+    }
+    internal func didMoveToParent(_ parent: BaseLayout) {
+        
+        
+    }
+    
+    internal func willMoveToContext(_ context: LayoutContext?) {
+    }
+    internal func didMoveToContext() {
+    }
+
+    
+    public fileprivate(set) var context: LayoutContext? = nil {
+        willSet(newValue) {
+            let oldValue = self.context
+            if oldValue != newValue {
+                
+            }
+        }
+        didSet(oldValue) {
+            let newValue = self.context
+            if oldValue != newValue {
+                
+            }
+        }
+    }
     
     fileprivate func willMoveToParent(_ newParent: Layout?) {
         self.isParentEnabledInContext = false
@@ -326,8 +422,8 @@ public class BaseLayout {
     }
     
     private static let parentDisabledInContextFlag: UInt32 = 0x1
-    private static let disabledFlag: UInt32 = 0x2
-    private static let removingFlag: UInt32 = 0x4
+    private static let disabledFlag: UInt32 = 0x1 << 1
+    private static let removingFlag: UInt32 = 0x1 << 2
 
     private var disableFlag: UInt32 = BaseLayout.parentDisabledInContextFlag {
         willSet(newValue) {
@@ -399,9 +495,10 @@ public class BaseLayout {
 //        }
     }
 
-    public init(origin: LayoutVector, size: LayoutVector) {
+    public init(origin: LayoutVector, size: LayoutVector, context: LayoutContext? = nil) {
         self.origin = origin
         self.size = size
+        self.context = context
     }
     public static func == (lhs: BaseLayout, rhs: BaseLayout) -> Bool {
         return lhs === rhs
@@ -409,10 +506,6 @@ public class BaseLayout {
     public func hash(into hasher: inout Hasher) {
         let objPtr = Unmanaged.passUnretained(self).toOpaque()
         hasher.combine(objPtr)
-    }
-    
-    public var currentContext: LayoutContext? {
-        return parent?.currentContext
     }
     
     internal func clearOriginInContext() {
@@ -429,8 +522,9 @@ public class BaseLayout {
         print("didIsEnabledChanged")
     }
     internal func isEnabledInContextWillChanged(to: Bool) {
+        self.noticeChildsIsParentEnabledInContextWillChanged(to)
         if !to {
-            //remove from context
+            //self remove from context
         }
         print("isEnabledInContextWillChanged")
     }
@@ -439,6 +533,7 @@ public class BaseLayout {
         if to {
             //add to context
         }
+        self.noticeChildsIsParentEnabledInContextDidChanged(to)
     }
     internal func didOriginInContextChanged(from: LayoutVector?, to: LayoutVector?) {
         print("didOriginInContextChanged")
@@ -478,7 +573,12 @@ public class BaseLayout {
     internal func layoutChildsOriginInContext(_ originInContext: LayoutVector?) {
         print("layoutChildsOriginInContext")
     }
-    
+    internal func noticeChildsIsParentEnabledInContextWillChanged(to: Bool) {
+        
+    }
+    internal func noticeChildsIsParentEnabledInContextDidChanged(to: Bool) {
+        
+    }
 }
 
 public class Layout: BaseLayout {

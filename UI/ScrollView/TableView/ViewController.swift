@@ -45,7 +45,13 @@ class View: UIView {
         super.addSubview(view)
         print("}")
     }
-    
+
+    override func willRemoveSubview(_ subview: UIView) {
+        print("{")
+        print("willRemoveSubview:\(UIView.description(subview)) \(self.t)")
+        super.willRemoveSubview(subview)
+        print("}")
+    }
     override func didAddSubview(_ subview: UIView) {
         print("{")
         print("didAddSubview:\(UIView.description(subview)) \(self.t)")
@@ -62,7 +68,7 @@ class View: UIView {
     
     open override func willMove(toSuperview newSuperview: UIView?) {
         print("{")
-        print("willMove toWindow:\(UIView.description(newSuperview)) \(self.t)")
+        print("willMove toSuperview:\(UIView.description(newSuperview)) \(self.t)")
         super.willMove(toSuperview: newSuperview)
         print("}")
     }
@@ -85,6 +91,7 @@ class View: UIView {
         print("{")
         print("[didMoveToWindow \(self.t)")
         super.didMoveToWindow()
+        print("super: \(self.superview)")
         print("}")
         self.window
     }
@@ -119,6 +126,19 @@ class ViewController: UIViewController {
 //            self.navigationController?.pushViewController(AViewController(nibName: nil, bundle: nil), animated: true)
 //        }
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+            print("add ------------------")
+            
+            let view1: View = View(frame: self.view.bounds)
+            view1.t = "view-B"
+            view.addSubview(view1)
+            print("remove =======------------------")
+
+            view1.removeFromSuperview()
+            print("------------------=========")
+
+            return
+            
+            
             print("{")
             print("update frame y")
             var frame = view.frame

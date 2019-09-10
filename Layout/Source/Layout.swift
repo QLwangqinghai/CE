@@ -75,54 +75,40 @@ public struct LayoutRect: Hashable {
 //    }
 //}
 
-public class ViewContentLayout: Layout {
-    public init(origin: LayoutVector, size: LayoutVector) {
-        let context: LayoutContext = LayoutContext()
-        super.init(origin: origin, size: size, flag: .none, context: context)
-        context.didViewChanged = {[weak self](context: LayoutContext) -> Void in
-            guard let `self` = self else {
-                return
-            }
-            self.didContextViewChanged()
-        }
-    }
-    deinit {
-        self.context?.didViewChanged = nil
-    }
-    private func didContextViewChanged() {
-        
-    }
-}
-
-open class LayoutView: UIView {
-    public var contentLayout: Layout? = nil {
-        willSet(newValue) {
-            
-        }
-        didSet(oldValue) {
-            
-        }
-    }
-
-    
-}
+//public class ViewContentLayout: Layout {
+//    public init(origin: LayoutVector, size: LayoutVector) {
+//        let context: LayoutContext = LayoutContext()
+//        super.init(origin: origin, size: size, flag: .none, context: context)
+//        context.didViewChanged = {[weak self](context: LayoutContext) -> Void in
+//            guard let `self` = self else {
+//                return
+//            }
+//            self.didContextViewChanged()
+//        }
+//    }
+//    deinit {
+//        self.context?.didViewChanged = nil
+//    }
+//    private func didContextViewChanged() {
+//
+//    }
+//}
+//
+//open class LayoutView: UIView {
+//    public var contentLayout: Layout? = nil {
+//        willSet(newValue) {
+//
+//        }
+//        didSet(oldValue) {
+//
+//        }
+//    }
+//}
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------
-public struct LayoutFlag: OptionSet {
-    public var rawValue: UInt32
-    
-    public init(rawValue: UInt32) {
-        self.rawValue = rawValue
-    }
-    
-    static let groupable: LayoutFlag = LayoutFlag(rawValue: 1 << 0)
-    static let none: LayoutFlag = []
-}
-public final class LayoutContext {
+public final class LayoutContext: Hashable {
 
-
-    
     fileprivate(set) unowned var view: UIView?
 //    {
 //        didSet {
@@ -135,20 +121,64 @@ public final class LayoutContext {
 //            }
 //        }
 //    }
-    fileprivate var didViewChanged: ((LayoutContext) -> Void)?
+    
+    fileprivate var viewWillChange: ((_ context: LayoutContext, _ from: UIView?, _ to: UIView?) -> Void)?
+
+    fileprivate var viewDidChange: ((_ context: LayoutContext, _ from: UIView?, _ to: UIView?) -> Void)?
 //    fileprivate private(set) var viewIdentifier: Int
 
     
     public init() {
         self.view = nil
-        self.didViewChanged = nil
-//        self.viewIdentifier = 0
+        self.viewWillChange = nil
+        self.viewDidChange = nil
+    }
+    
+    public static func == (lhs: LayoutContext, rhs: LayoutContext) -> Bool {
+        return lhs === rhs
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(Unmanaged.passUnretained(self).toOpaque())
     }
     
 }
-public class BaseLayout {
+public class Layout: Hashable {
     
-    public weak private(set) var parent: LayoutGroup?
+    public static func == (lhs: Layout, rhs: Layout) -> Bool {
+        return lhs === rhs
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(Unmanaged.passUnretained(self).toOpaque())
+    }
+    
+    
+    public weak fileprivate(set) var parent: LayoutGroup?
+    
+    public var view: UIView? = nil {
+        didSet(oldValue) {
+            let newValue = self.view
+            if oldValue != newValue {
+                self.resetViewFrame()
+            }
+        }
+    }
+
+    private func viewFrame(origin: LayoutVector, size: LayoutVector) -> CGRect {
+        let (x, y) = origin.transform()
+        let (width, height) = size.transform()
+        let frame: CGRect = CGRect(x: x, y: y, width: width, height: height)
+        return frame
+    }
+    private func resetViewFrame() {
+        guard let viewOrigin = self.originInContext else {
+            return
+        }
+        guard let view = self.view else {
+            return
+        }
+        view.frame = self.viewFrame(origin: viewOrigin, size: self.size)
+    }
+    
     
     //disable in context
     //remove from context
@@ -167,27 +197,20 @@ public class BaseLayout {
         parent.willRemoveChild(self)
         self.willMoveToContext(nil)
         self.willMoveToParent(nil)
+        self.isDisabledByParent = true
         self.context = nil
         self.parent = nil
-        parent._clearStore(child)
-        parent.didRemoveChild(child)
-        self.didMoveToParent(nil)
-        self.didMoveToContext(nil)
+        parent._clearStore(child: self)
+        parent.didRemoveChild(self)
+        self.didMoveToParent()
+        self.didMoveToContext()
     }
-    
-    internal func willRemoveChild(_ child: BaseLayout) {
-        
-        
-    }
-    internal func didRemoveChild(_ child: BaseLayout) {
+
+    internal func willAddChild(_ child: Layout) {
         
         
     }
-    internal func willAddChild(_ child: BaseLayout) {
-        
-        
-    }
-    internal func didAddChild(_ child: BaseLayout) {
+    internal func didAddChild(_ child: Layout) {
         
         
     }
@@ -204,21 +227,6 @@ public class BaseLayout {
     internal func willMoveToContext(_ context: LayoutContext?) {
     }
     internal func didMoveToContext() {
-    }
-    
-    private var contextStorage: ContextStorage  {
-        willSet(newValue) {
-            let oldValue = self.contextStorage
-            if oldValue.childContext != newValue.childContext {
-                
-            }
-        }
-        didSet(oldValue) {
-            let newValue = self.contextStorage
-            if oldValue.childContext != newValue.childContext {
-                
-            }
-        }
     }
     
     public var childContext: LayoutContext? {
@@ -241,24 +249,24 @@ public class BaseLayout {
 //        }
 //    }
     
-    fileprivate func willMoveToParent(_ newParent: Layout?) {
-        self.isParentEnabledInContext = false
-    }
-    fileprivate func didMoveToParent(_ newParent: Layout?) {
-        if let parent = newParent {
-            self.isParentEnabledInContext = parent.isEnabledInContext
-        } else {
-            self.isParentEnabledInContext = false
-        }
-    }
-    fileprivate func didMoveToContext(_ newParent: Layout?) {
-        self.parent = newParent
-        if let parent = newParent {
-            self.isParentEnabledInContext = parent.isEnabledInContext
-        } else {
-            self.isParentEnabledInContext = false
-        }
-    }
+//    fileprivate func willMoveToParent(_ newParent: Layout?) {
+//        self.isParentEnabledInContext = false
+//    }
+//    fileprivate func didMoveToParent(_ newParent: Layout?) {
+//        if let parent = newParent {
+//            self.isParentEnabledInContext = parent.isEnabledInContext
+//        } else {
+//            self.isParentEnabledInContext = false
+//        }
+//    }
+//    fileprivate func didMoveToContext(_ newParent: Layout?) {
+//        self.parent = newParent
+//        if let parent = newParent {
+//            self.isParentEnabledInContext = parent.isEnabledInContext
+//        } else {
+//            self.isParentEnabledInContext = false
+//        }
+//    }
 //
 //    fileprivate func unbind(child: Layout) {
 //        if let p = child.parent {
@@ -301,6 +309,7 @@ public class BaseLayout {
             if oldValue != newValue {
                 self.didOriginInContextChanged(from: oldValue, to: newValue)
                 self.layoutChildsOriginInContext(newValue)
+                self.resetViewFrame()
             }
         }
     }
@@ -316,28 +325,27 @@ public class BaseLayout {
         }
     }
     
-    private static let parentDisabledInContextFlag: UInt32 = 0x1
-    private static let disabledFlag: UInt32 = 0x1 << 1
-    private static let movingFlag: UInt32 = 0x1 << 31
-
-    fileprivate(set) var isMoving: Bool {
-        get {
-            return (self.disableFlag & BaseLayout.movingFlag == BaseLayout.movingFlag)
-        }
-        set(newValue) {
-            let oldValue = self.isMoving
-            if oldValue != newValue {
-                if newValue {
-                    self.disableFlag = self.disableFlag | BaseLayout.movingFlag
-                } else {
-                    self.disableFlag = (self.disableFlag & (~BaseLayout.movingFlag))
-                }
-            }
-        }
-    }
+    private static let disabledByParentFlag: UInt32 = 0x1
+    private static let disabledFlag: UInt32 = 0x1 << 31
+//    private static let movingFlag: UInt32 = 0x1 << 31
+//
+//    fileprivate(set) var isMoving: Bool {
+//        get {
+//            return (self.disableFlag & Layout.movingFlag == Layout.movingFlag)
+//        }
+//        set(newValue) {
+//            let oldValue = self.isMoving
+//            if oldValue != newValue {
+//                if newValue {
+//                    self.disableFlag = self.disableFlag | Layout.movingFlag
+//                } else {
+//                    self.disableFlag = (self.disableFlag & (~Layout.movingFlag))
+//                }
+//            }
+//        }
+//    }
     
-    private var flag: UInt32
-    private var disableFlag: UInt32 = BaseLayout.parentDisabledInContextFlag {
+    private var disableFlag: UInt32 = Layout.disabledByParentFlag {
         willSet(newValue) {
             let oldValue = self.disableFlag
             if oldValue != newValue {
@@ -360,17 +368,17 @@ public class BaseLayout {
         }
     }
     
-    fileprivate(set) var isParentEnabledInContext: Bool {
+    fileprivate(set) var isDisabledByParent: Bool {
         get {
-            return (self.disableFlag & BaseLayout.parentDisabledInContextFlag == BaseLayout.parentDisabledInContextFlag)
+            return (self.disableFlag & Layout.disabledByParentFlag == Layout.disabledByParentFlag)
         }
         set(newValue) {
-            let oldValue = self.isParentEnabledInContext
+            let oldValue = self.isDisabledByParent
             if oldValue != newValue {
                 if newValue {
-                    self.disableFlag = (self.disableFlag & (~BaseLayout.parentDisabledInContextFlag))
+                    self.disableFlag = (self.disableFlag & (~Layout.disabledByParentFlag))
                 } else {
-                    self.disableFlag = self.disableFlag | BaseLayout.parentDisabledInContextFlag
+                    self.disableFlag = self.disableFlag | Layout.disabledByParentFlag
                 }
             }
         }
@@ -384,15 +392,15 @@ public class BaseLayout {
     
     public var isEnabled: Bool {
         get {
-            return (self.disableFlag & BaseLayout.disabledFlag == BaseLayout.disabledFlag)
+            return (self.disableFlag & Layout.disabledFlag == Layout.disabledFlag)
         }
         set(newValue) {
             let oldValue = self.isEnabled
             if oldValue != newValue {
                 if newValue {
-                    self.disableFlag = (self.disableFlag & (~BaseLayout.disabledFlag))
+                    self.disableFlag = (self.disableFlag & (~Layout.disabledFlag))
                 } else {
-                    self.disableFlag = self.disableFlag | BaseLayout.disabledFlag
+                    self.disableFlag = self.disableFlag | Layout.disabledFlag
                 }
             }
         }
@@ -407,19 +415,12 @@ public class BaseLayout {
 //        }
     }
 
-    public init(origin: LayoutVector, size: LayoutVector, flag: LayoutFlag, context: LayoutContext? = nil) {
+    internal init(origin: LayoutVector, size: LayoutVector) {
         self.origin = origin
         self.size = size
-        self.contextStorage = ContextStorage(current: context)
-        self.flag = flag.rawValue
+        self.context = nil
     }
-    public static func == (lhs: BaseLayout, rhs: BaseLayout) -> Bool {
-        return lhs === rhs
-    }
-    public func hash(into hasher: inout Hasher) {
-        let objPtr = Unmanaged.passUnretained(self).toOpaque()
-        hasher.combine(objPtr)
-    }
+
     
     internal func clearOriginInContext() {
         print("clearOriginInContext")
@@ -431,22 +432,14 @@ public class BaseLayout {
     }
     
     //self changed
-    internal func didParentChanged(to: BaseLayout?) {
+    internal func didParentChanged(to: Layout?) {
         print("didIsEnabledChanged")
     }
     internal func isEnabledInContextWillChanged(to: Bool) {
-        self.noticeChildsIsParentEnabledInContextWillChanged(to)
-        if !to {
-            //self remove from context
-        }
         print("isEnabledInContextWillChanged")
     }
     internal func isEnabledInContextDidChanged(to: Bool) {
         print("isEnabledInContextDidChanged")
-        if to {
-            //add to context
-        }
-        self.noticeChildsIsParentEnabledInContextDidChanged(to)
     }
     internal func didOriginInContextChanged(from: LayoutVector?, to: LayoutVector?) {
         print("didOriginInContextChanged")
@@ -456,17 +449,18 @@ public class BaseLayout {
     }
     internal func didSizeChanged(from: LayoutVector, to: LayoutVector) {
         print("didOriginChanged")
+        self.resetViewFrame()
     }
     
     //child changed
 
-    internal func didChildIsEnabledChanged(_ child: BaseLayout, from: Bool, to: Bool) {
+    internal func didChildIsEnabledChanged(_ child: Layout, from: Bool, to: Bool) {
         print("didChildIsEnabledChanged")
     }
-    internal func didChildOriginChanged(_ child: BaseLayout, from: LayoutVector, to: LayoutVector) {
+    internal func didChildOriginChanged(_ child: Layout, from: LayoutVector, to: LayoutVector) {
         print("didChildOriginChanged")
     }
-    internal func didChildSizeChanged(_ child: BaseLayout, from: LayoutVector, to: LayoutVector) {
+    internal func didChildSizeChanged(_ child: Layout, from: LayoutVector, to: LayoutVector) {
         print("didChildOriginChanged")
     }
     
@@ -474,9 +468,9 @@ public class BaseLayout {
         print("willMove")
     }
     
-    internal func didMoveToContext() {
-
-    }
+//    internal func didMoveToContext() {
+//
+//    }
     
     //子类实现
     
@@ -486,97 +480,129 @@ public class BaseLayout {
     internal func layoutChildsOriginInContext(_ originInContext: LayoutVector?) {
         print("layoutChildsOriginInContext")
     }
-    internal func noticeChildsIsParentEnabledInContextWillChanged(to: Bool) {
-        
-    }
-    internal func noticeChildsIsParentEnabledInContextDidChanged(to: Bool) {
-        
-    }
-
 }
 
-public class Layout: BaseLayout {
-    public var view: UIView? = nil {
-        didSet {
-            self.resetViewFrame()
-        }
-    }
+public class LayoutGroup: Layout {
     
-    public override var originInContext: LayoutVector?  {
-        didSet {
-            self.resetViewFrame()
-        }
-    }
-    
-    
-    private func viewFrame(origin: LayoutVector, size: LayoutVector) -> CGRect {
-        let (x, y) = origin.transform()
-        let (width, height) = size.transform()
-        let frame: CGRect = CGRect(x: x, y: y, width: width, height: height)
-        return frame
-    }
-    private func resetViewFrame() {
-        guard let viewOrigin = self.originInContext else {
-            return
-        }
-        guard let view = self.view else {
-            return
-        }
-        view.frame = self.viewFrame(origin: viewOrigin, size: self.size)
-    }
-    
-    internal override func didSizeChanged(from: LayoutVector, to: LayoutVector) {
-        super.didSizeChanged(from: from, to: to)
-        self.resetViewFrame()
-    }
-    
-//    public override init(origin: LayoutVector, size: LayoutVector) {
-//        super.init(origin: origin, size: size)
-//    }
-    
-    internal override func isEnabledInContextDidChanged(to: Bool) {
-        super.isEnabledInContextDidChanged(to: to)
-
-        guard let view = self.view else {
-            return
-        }
-        if to {
-            if let contentView = self.currentContext?.view {
-                contentView.addSubview(view)
+    public override var view: UIView? {
+        willSet(newValue) {
+            let oldValue = self.view
+            if oldValue != newValue {
+                if newValue == nil {
+                    self.childContext?.view = nil
+                }
             }
-        } else {
-            view.removeFromSuperview()
+        }
+        didSet(oldValue) {
+            let newValue = self.view
+            if oldValue != newValue {
+                if newValue != nil {
+                    self.childContext?.view = newValue
+                }
+            }
         }
     }
     
     
-    
-}
-public class LayoutGroup: BaseLayout {
-    public var _childContext: LayoutContext?
-
-    private func getChildContext(context: LayoutContext?, childContext: LayoutContext?) {
-        return childContext ?? context
+    public var isContentContextEnabled: Bool = false {
+        willSet(newValue) {
+            let oldValue = self.isContentContextEnabled
+            if newValue != oldValue {
+                if !newValue {
+                    self.contentContext = nil
+                }
+            }
+        }
+        didSet(oldValue) {
+            let newValue = self.isContentContextEnabled
+            if newValue != oldValue {
+                if newValue {
+                    let contentContext = LayoutContext()
+                    contentContext.view = self.view
+                    contentContext.viewDidChange = {(context, from, to) -> Void in
+                        
+                        
+                    }
+                    contentContext.viewWillChange = {(context, from, to) -> Void in
+                        
+                        
+                    }
+                    self.contentContext = contentContext
+                }
+            }
+        }
     }
     
-    public override var context: LayoutContext? = nil {
+    
+    public private(set) var contentContext: LayoutContext? = nil {
+        willSet(newValue) {
+            
+        }
+        didSet(oldValue) {
+            let newValue = self.contentContext
+            if newValue != oldValue {
+                if newValue == nil {
+                    self.resetChildDisabled(to: !self.isEnabledInContext)
+                } else {
+                    self.resetChildDisabled(to: false)
+                }
+            }
+        }
+    }
+    internal override func isEnabledInContextWillChanged(to: Bool) {
+        if !to && self.contentContext == nil {
+            self.resetChildDisabled(to: false)
+        }
+        print("isEnabledInContextWillChanged")
+    }
+    internal override func isEnabledInContextDidChanged(to: Bool) {
+        print("isEnabledInContextDidChanged")
+        if to && self.contentContext == nil {
+            self.resetChildDisabled(to: true)
+        }
+    }
+    
+    private func resetChildDisabled(to: Bool) {
+        for child in self.childs {
+            child.isDisabledByParent = to
+        }
+    }
+    
+    internal func willRemoveChild(_ child: Layout) {
+        
+        
+    }
+    internal func didRemoveChild(_ child: Layout) {
+        
+        
+    }
+    
+    public override var context: LayoutContext? {
         willSet(newValue) {
             let oldValue = self.context
             if oldValue != newValue {
-                let oldChildContext = self.getChildContext(context: oldValue, childContext: self._childContext)
-                let newChildContext = self.getChildContext(context: newValue, childContext: self._childContext)
+                let oldChildContext = self.contentContext ?? oldValue
+                let newChildContext = self.contentContext ?? newValue
                 if oldChildContext != newChildContext {
-                    self.childContextWillChanged(to: newChildContext)
+                    if oldChildContext != nil {
+                        for child in self.childs {
+                            child.context = nil
+                        }
+                    }
                 }
             }
         }
         didSet(oldValue) {
             let newValue = self.context
             if oldValue != newValue {
-                let oldChildContext = self._childContext ?? oldValue
-                let newChildContext = self._childContext ?? newValue
+                let oldChildContext = self.contentContext ?? oldValue
+                let newChildContext = self.contentContext ?? newValue
                 if oldChildContext != newChildContext {
-                    self.childContextDidChanged(to: newChildContext)
+                    if newChildContext != nil {
+                        for child in self.childs {
+                            child.context = newChildContext
+                        }
+                    }
                 }
             }
         }
@@ -584,32 +610,43 @@ public class LayoutGroup: BaseLayout {
         
         
     public override var childContext: LayoutContext? {
-        return self._childContext ?? self.context
+        return self.contentContext ?? self.context
     }
 
-    internal private(set) var childs: [BaseLayout] = []
+    internal private(set) var childs: [Layout] = []
     
-    fileprivate func _toStore(child: BaseLayout) {
+    fileprivate func _toStore(child: Layout) {
         self.childs.append(child)
     }
-    fileprivate func _clearStore(child: BaseLayout) {
-        self.childs.remove(child)
+    fileprivate func _clearStore(child: Layout) {
+        if let index = self.childs.firstIndex(of: child) {
+            self.childs.remove(at: index)
+            if let _ = self.childs.firstIndex(of: child) {
+                print("error _clearStore \(child)")
+            }
+        }
     }
-    fileprivate func _addChild(child: BaseLayout) {
+    fileprivate func _addChild(child: Layout) {
         child._removeFromParent()
         
-        if let context = self.context {
-            child.willMoveToContext(context)
+        let childContext = self.childContext
+        if childContext != nil {
+            child.willMoveToContext(childContext)
         }
         self.willAddChild(child)
         child.willMoveToParent(self)
-        self._toStore(child)
+        self._toStore(child: child)
         child.parent = self
-        child.context = self.context
-        child.didMoveToParent(self)
+        child.context = context
+        if self.contentContext != nil {
+            child.isDisabledByParent = false
+        } else {
+            child.isDisabledByParent = !self.isEnabledInContext
+        }
+        child.didMoveToParent()
         self.didAddChild(child)
-        if let context = self.context {
-            child.didMoveToContext(context)
+        if childContext != nil {
+            child.didMoveToContext()
         }
     }
     
@@ -618,13 +655,6 @@ public class LayoutGroup: BaseLayout {
         self.isEnabled = false
         self.isEnabled = false
 
-    }
-
-    internal func childContextWillChanged(to: LayoutContext?) {
-        
-    }
-    internal func childContextDidChanged(to: LayoutContext?) {
-        
     }
 }
 

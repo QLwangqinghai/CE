@@ -8,33 +8,28 @@
 
 import UIKit
 
-public struct LayoutVector: Hashable {
-    public static let scale: CGFloat = {
-        return UIScreen.main.scale
-    }()
-    
-    public var x: Int32
-    public var y: Int32
-    public init(x: Int32, y: Int32) {
-        self.x = x
-        self.y = y
-    }
+public typealias LayoutVector = CLVector_t
+extension LayoutVector: Hashable {
     public static func == (lhs: LayoutVector, rhs: LayoutVector) -> Bool {
-        return lhs.x == rhs.x && lhs.y == rhs.y
+        return CLVectorEqualToVector(lhs, rhs)
     }
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.x)
         hasher.combine(self.y)
     }
-    public func transform(scale: CGFloat = LayoutVector.scale) -> (CGFloat, CGFloat) {
+}
+public extension LayoutVector {
+    static let scale: CGFloat = {
+        return UIScreen.main.scale
+    }()
+    func transform(scale: CGFloat = LayoutVector.scale) -> (CGFloat, CGFloat) {
         var x = CGFloat(self.x)
         var y = CGFloat(self.y)
         x = x / scale
         y = y / scale
         return (x, y)
     }
-    
-    public static func +(lhs: LayoutVector, rhs: LayoutVector) -> LayoutVector {
+    static func +(lhs: LayoutVector, rhs: LayoutVector) -> LayoutVector {
         var result = lhs
         result.x += rhs.x
         result.y += rhs.y
@@ -42,9 +37,9 @@ public struct LayoutVector: Hashable {
     }
 }
 
-public struct LayoutRect: Hashable {
-    public internal(set) var origin: LayoutVector
-    public internal(set) var size: LayoutVector
+public typealias LayoutRect = CLRect_t
+
+extension LayoutRect: Hashable {
     public static func == (lhs: LayoutRect, rhs: LayoutRect) -> Bool {
         return lhs.origin == rhs.origin && lhs.size == rhs.size
     }
@@ -504,19 +499,16 @@ public class LayoutGroup: Layout {
     }
     
     
-    public var isContentContextEnabled: Bool = false {
-        willSet(newValue) {
+    public var isContentContextEnabled: Bool {
+        get {
+            return self.contentContext != nil
+        }
+        set(newValue) {
             let oldValue = self.isContentContextEnabled
             if newValue != oldValue {
                 if !newValue {
                     self.contentContext = nil
-                }
-            }
-        }
-        didSet(oldValue) {
-            let newValue = self.isContentContextEnabled
-            if newValue != oldValue {
-                if newValue {
+                } else {
                     let contentContext = LayoutContext()
                     contentContext.view = self.view
                     contentContext.viewDidChange = {(context, from, to) -> Void in

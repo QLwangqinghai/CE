@@ -10,4 +10,7 @@
 
 @implementation Old
 
++ (void)aa {
+}
+
 @end

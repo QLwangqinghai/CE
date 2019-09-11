@@ -12,6 +12,7 @@
 		D61B0BF82327C327005473A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61B0BF72327C327005473A6 /* AppDelegate.swift */; };
 		D61B0BFA2327C329005473A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D61B0BF92327C329005473A6 /* Assets.xcassets */; };
 		D61B0BFD2327C329005473A6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D61B0BFB2327C329005473A6 /* MainMenu.xib */; };
+		D61B0C3B23291118005473A6 /* CoreLayout.c in Sources */ = {isa = PBXBuildFile; fileRef = D61B0C3A23291118005473A6 /* CoreLayout.c */; };
 		D6E354B92324B5140046BAB6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E354B82324B5140046BAB6 /* AppDelegate.swift */; };
 		D6E354BB2324B5140046BAB6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E354BA2324B5140046BAB6 /* ViewController.swift */; };
 		D6E354BE2324B5140046BAB6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6E354BC2324B5140046BAB6 /* Main.storyboard */; };
@@ -29,6 +30,8 @@
 		D61B0BFC2327C329005473A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D61B0BFE2327C329005473A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D61B0BFF2327C329005473A6 /* TestStruct.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TestStruct.entitlements; sourceTree = "<group>"; };
+		D61B0C3923291118005473A6 /* CoreLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreLayout.h; sourceTree = "<group>"; };
+		D61B0C3A23291118005473A6 /* CoreLayout.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CoreLayout.c; sourceTree = "<group>"; };
 		D6E354B52324B5140046BAB6 /* Layout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Layout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6E354B82324B5140046BAB6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6E354BA2324B5140046BAB6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -113,6 +116,8 @@
 				D6E354CB2324B5280046BAB6 /* Layout.swift */,
 				D61B0BDB23261FE8005473A6 /* Old.h */,
 				D61B0BDC23261FE8005473A6 /* Old.m */,
+				D61B0C3923291118005473A6 /* CoreLayout.h */,
+				D61B0C3A23291118005473A6 /* CoreLayout.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -231,6 +236,7 @@
 				D6E354BB2324B5140046BAB6 /* ViewController.swift in Sources */,
 				D6E354B92324B5140046BAB6 /* AppDelegate.swift in Sources */,
 				D61B0BDD23261FE8005473A6 /* Old.m in Sources */,
+				D61B0C3B23291118005473A6 /* CoreLayout.c in Sources */,
 				D6E354D023256AEA0046BAB6 /* AS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 public typealias LayoutVector = CLVector_t
 extension LayoutVector: Hashable {
     public static func == (lhs: LayoutVector, rhs: LayoutVector) -> Bool {
@@ -102,41 +103,82 @@ extension LayoutRect: Hashable {
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------
-public final class LayoutContext: Hashable {
 
+public final class LayoutContextEntity: Hashable {
+    
     fileprivate(set) unowned var view: UIView?
-//    {
-//        didSet {
-//            if let value = view {
-//                let objPtr = Unmanaged.passUnretained(self).toOpaque()
-//                let address: Int = objPtr.load(as:Int.self)
-//                self.viewIdentifier = address
-//            } else {
-//                self.viewIdentifier = 0
-//            }
-//        }
-//    }
+    //    {
+    //        didSet {
+    //            if let value = view {
+    //                let objPtr = Unmanaged.passUnretained(self).toOpaque()
+    //                let address: Int = objPtr.load(as:Int.self)
+    //                self.viewIdentifier = address
+    //            } else {
+    //                self.viewIdentifier = 0
+    //            }
+    //        }
+    //    }
     
     fileprivate var viewWillChange: ((_ context: LayoutContext, _ from: UIView?, _ to: UIView?) -> Void)?
-
-    fileprivate var viewDidChange: ((_ context: LayoutContext, _ from: UIView?, _ to: UIView?) -> Void)?
-//    fileprivate private(set) var viewIdentifier: Int
-
     
-    public init() {
+    fileprivate var viewDidChange: ((_ context: LayoutContext, _ from: UIView?, _ to: UIView?) -> Void)?
+    //    fileprivate private(set) var viewIdentifier: Int
+    
+    
+    internal init() {
         self.view = nil
         self.viewWillChange = nil
         self.viewDidChange = nil
     }
     
-    public static func == (lhs: LayoutContext, rhs: LayoutContext) -> Bool {
+    public static func == (lhs: LayoutContextEntity, rhs: LayoutContextEntity) -> Bool {
         return lhs === rhs
     }
     public func hash(into hasher: inout Hasher) {
         hasher.combine(Unmanaged.passUnretained(self).toOpaque())
     }
+}
+
+
+public struct LayoutContext: Equatable {
+
+    fileprivate var entity: LayoutContextEntity
+    public internal(set) var origin: LayoutVector
+
+    internal init(entity: LayoutContextEntity, origin: LayoutVector) {
+        self.entity = entity
+        self.origin = origin
+    }
+    
+    public static func == (lhs: LayoutContext, rhs: LayoutContext) -> Bool {
+        return lhs.entity == rhs.entity && lhs.origin == rhs.origin
+    }
+}
+
+fileprivate class LayoutPool {
+    fileprivate static var pools: [LayoutPool] = []
+
+    fileprivate static func push() -> LayoutPool {
+        
+    }
+    fileprivate static func pop() -> LayoutPool {
+        
+    }
+
+    fileprivate var items: NSPointerArray = NSPointerArray(options: NSPointerFunctions.Options.weakMemory)
+
+    fileprivate func append(layout: Layout) {
+        let ptrptr = UnsafeRawPointer(&objPtr)
+        let value: UInt = ptrptr.load(as: UInt.self)
+
+        
+        
+        self.items.addPointer(Unmanaged.passUnretained(self).toOpaque())
+    }
     
 }
+
+
 public class Layout: Hashable {
     
     public static func == (lhs: Layout, rhs: Layout) -> Bool {
@@ -146,6 +188,9 @@ public class Layout: Hashable {
         hasher.combine(Unmanaged.passUnretained(self).toOpaque())
     }
     
+    public static func layout(_ closure: () -> ()) {
+        
+    }
     
     public weak fileprivate(set) var parent: LayoutGroup?
     
@@ -165,13 +210,13 @@ public class Layout: Hashable {
         return frame
     }
     private func resetViewFrame() {
-        guard let viewOrigin = self.originInContext else {
+        guard let context = self.context else {
             return
         }
         guard let view = self.view else {
             return
         }
-        view.frame = self.viewFrame(origin: viewOrigin, size: self.size)
+        view.frame = self.viewFrame(origin: context.origin + self.origin, size: self.size)
     }
     
     
@@ -224,7 +269,7 @@ public class Layout: Hashable {
     internal func didMoveToContext() {
     }
     
-    public var childContext: LayoutContext? {
+    fileprivate var childContext: LayoutContext? {
         return self.context
     }
 
@@ -291,23 +336,23 @@ public class Layout: Hashable {
         didSet(oldValue) {
             let newValue = self.origin
             if oldValue != newValue {
-                self.didOriginChanged(from: oldValue, to: newValue)
+                self.resetViewFrame()
                 if let parent = self.parent {
-                    parent.didChildOriginChanged(self, from: oldValue, to: newValue)
+                    parent.setNeedsLayoutChilds()
                 }
             }
         }
     }
-    public internal(set) var originInContext: LayoutVector?  {
-        didSet(oldValue) {
-            let newValue = self.originInContext
-            if oldValue != newValue {
-                self.didOriginInContextChanged(from: oldValue, to: newValue)
-                self.layoutChildsOriginInContext(newValue)
-                self.resetViewFrame()
-            }
-        }
-    }
+//    public internal(set) var originInContext: LayoutVector?  {
+//        didSet(oldValue) {
+//            let newValue = self.originInContext
+//            if oldValue != newValue {
+//                self.didOriginInContextChanged(from: oldValue, to: newValue)
+//                self.layoutChildsOriginInContext(newValue)
+//                self.resetViewFrame()
+//            }
+//        }
+//    }
     public internal(set) var size: LayoutVector {
         didSet(oldValue) {
             let newValue = self.size
@@ -419,11 +464,11 @@ public class Layout: Hashable {
     
     internal func clearOriginInContext() {
         print("clearOriginInContext")
-        self.originInContext = nil
+//        self.originInContext = nil
     }
     internal func layoutOriginInContext(parentOriginInContext: LayoutVector) {
         print("layoutOriginInContext")
-        self.originInContext = parentOriginInContext + self.origin
+//        self.originInContext = parentOriginInContext + self.origin
     }
     
     //self changed
@@ -484,7 +529,7 @@ public class LayoutGroup: Layout {
             let oldValue = self.view
             if oldValue != newValue {
                 if newValue == nil {
-                    self.childContext?.view = nil
+                    self.childContext?.entity.view = nil
                 }
             }
         }
@@ -492,7 +537,7 @@ public class LayoutGroup: Layout {
             let newValue = self.view
             if oldValue != newValue {
                 if newValue != nil {
-                    self.childContext?.view = newValue
+                    self.childContext?.entity.view = newValue
                 }
             }
         }
@@ -501,37 +546,37 @@ public class LayoutGroup: Layout {
     
     public var isContentContextEnabled: Bool {
         get {
-            return self.contentContext != nil
+            return self.contentContextEntity != nil
         }
         set(newValue) {
             let oldValue = self.isContentContextEnabled
             if newValue != oldValue {
                 if !newValue {
-                    self.contentContext = nil
+                    self.contentContextEntity = nil
                 } else {
-                    let contentContext = LayoutContext()
-                    contentContext.view = self.view
-                    contentContext.viewDidChange = {(context, from, to) -> Void in
+                    let entity = LayoutContextEntity()
+                    entity.view = self.view
+                    entity.viewDidChange = {(context, from, to) -> Void in
                         
                         
                     }
-                    contentContext.viewWillChange = {(context, from, to) -> Void in
+                    entity.viewWillChange = {(context, from, to) -> Void in
                         
                         
                     }
-                    self.contentContext = contentContext
+                    self.contentContextEntity = entity
                 }
             }
         }
     }
     
     
-    public private(set) var contentContext: LayoutContext? = nil {
+    public private(set) var contentContextEntity: LayoutContextEntity? = nil {
         willSet(newValue) {
             
         }
         didSet(oldValue) {
-            let newValue = self.contentContext
+            let newValue = self.contentContextEntity
             if newValue != oldValue {
                 if newValue == nil {
                     self.resetChildDisabled(to: !self.isEnabledInContext)
@@ -542,14 +587,14 @@ public class LayoutGroup: Layout {
         }
     }
     internal override func isEnabledInContextWillChanged(to: Bool) {
-        if !to && self.contentContext == nil {
+        if !to && self.contentContextEntity == nil {
             self.resetChildDisabled(to: false)
         }
         print("isEnabledInContextWillChanged")
     }
     internal override func isEnabledInContextDidChanged(to: Bool) {
         print("isEnabledInContextDidChanged")
-        if to && self.contentContext == nil {
+        if to && self.contentContextEntity == nil {
             self.resetChildDisabled(to: true)
         }
     }
@@ -569,12 +614,27 @@ public class LayoutGroup: Layout {
         
     }
     
+//    private enum ChildContextStyle {
+//        case parentContext(context: LayoutContext)
+//        case parentContentContext(context: LayoutContext)
+//        case none
+//    }
+    
+    private func makeChildContext(context: LayoutContext?, contentContextEntity: LayoutContextEntity?) -> LayoutContext? {
+        if let entity = contentContextEntity {
+            return LayoutContext.init(entity: entity, origin: LayoutVector())
+        } else {
+            return context
+        }
+    }
+    
+    
     public override var context: LayoutContext? {
         willSet(newValue) {
             let oldValue = self.context
             if oldValue != newValue {
-                let oldChildContext = self.contentContext ?? oldValue
-                let newChildContext = self.contentContext ?? newValue
+                let oldChildContext = self.makeChildContext(context: oldValue,   contentContextEntity:self.contentContextEntity)
+                let newChildContext = self.makeChildContext(context: newValue,   contentContextEntity:self.contentContextEntity)
                 if oldChildContext != newChildContext {
                     if oldChildContext != nil {
                         for child in self.childs {
@@ -587,22 +647,48 @@ public class LayoutGroup: Layout {
         didSet(oldValue) {
             let newValue = self.context
             if oldValue != newValue {
-                let oldChildContext = self.contentContext ?? oldValue
-                let newChildContext = self.contentContext ?? newValue
+                let oldChildContext = self.makeChildContext(context: oldValue,   contentContextEntity:self.contentContextEntity)
+                let newChildContext = self.makeChildContext(context: newValue,   contentContextEntity:self.contentContextEntity)
+
                 if oldChildContext != newChildContext {
-                    if newChildContext != nil {
-                        for child in self.childs {
-                            child.context = newChildContext
-                        }
+                    for child in self.childs {
+                        child.context = newChildContext
                     }
+//                    let style: ChildContextStyle
+//                    if let v = self.contentContext {
+//                        style = .parentContentContext(context: v)
+//                    } else {
+//                        if let v = self.context {
+//                            style = .parentContext(context: v)
+//                        } else {
+//                            style = .none
+//                        }
+//                    }
+//                    switch style {
+//                    case .parentContext(let ct):
+//                        for child in self.childs {
+//                            child.context = ct
+//                        }
+//                        break
+//                    case .parentContentContext(let ct):
+//                        var aContext = ct
+//                        aContext.origin = LayoutVector(x: 0, y: 0)
+//                        for child in self.childs {
+//                            child.context = ct
+//                        }
+//                        break
+//                    case .none:
+//
+//                        break
+//                    }
                 }
             }
         }
     }
         
         
-    public override var childContext: LayoutContext? {
-        return self.contentContext ?? self.context
+    fileprivate override var childContext: LayoutContext? {
+        return self.makeChildContext(context: self.context,   contentContextEntity:self.contentContextEntity)
     }
 
     internal private(set) var childs: [Layout] = []
@@ -629,8 +715,8 @@ public class LayoutGroup: Layout {
         child.willMoveToParent(self)
         self._toStore(child: child)
         child.parent = self
-        child.context = context
-        if self.contentContext != nil {
+        child.context = childContext
+        if self.contentContextEntity != nil {
             child.isDisabledByParent = false
         } else {
             child.isDisabledByParent = !self.isEnabledInContext
@@ -647,6 +733,15 @@ public class LayoutGroup: Layout {
         self.isEnabled = false
         self.isEnabled = false
 
+    }
+    
+    public func setNeedsLayoutChilds() {
+        
+    }
+    public func layoutChilds() {
+        
+        
+        
     }
 }
 

@@ -159,25 +159,103 @@ fileprivate class LayoutPool {
     fileprivate static var pools: [LayoutPool] = []
 
     fileprivate static func push() -> LayoutPool {
+        let pool = LayoutPool()
+        pools.append(pool)
+        return pool
+    }
+    fileprivate static func pop() {
+        if !pools.isEmpty {
+            let pool = pools.removeLast()
+            
+        }
+    }
+    fileprivate static func pop(_ p: LayoutPool) {
         
     }
-    fileprivate static func pop() -> LayoutPool {
-        
-    }
-
     fileprivate var items: NSPointerArray = NSPointerArray(options: NSPointerFunctions.Options.weakMemory)
 
     fileprivate func append(layout: Layout) {
-        let ptrptr = UnsafeRawPointer(&objPtr)
-        let value: UInt = ptrptr.load(as: UInt.self)
-
+        var objPtr = Unmanaged.passUnretained(self).toOpaque();
+        let _ /*ptrptr*/ = UnsafeRawPointer(&objPtr)
+//        let value: UInt = ptrptr.load(as: UInt.self)
         
         
-        self.items.addPointer(Unmanaged.passUnretained(self).toOpaque())
+        self.items.addPointer(objPtr)
+    }
+    fileprivate func layout() {
+        for idx in 0 ..< self.items.count {
+            if let p = self.items.pointer(at: idx) {
+                
+            }
+        }
     }
     
 }
 
+internal class LayoutManager {
+    internal static let shared: LayoutManager = LayoutManager()
+    private let observer: CFRunLoopObserver
+//    private let observer: CFRunLoopObserver = CFRunLoopObserverCreateWithHandler(kCFAllocatorDefault, CFRunLoopActivity.allActivities.rawValue, true, 0) { (observer, activity) in
+//
+//    }
+    func log(activity: CFRunLoopActivity) {
+        var array: [String] = []
+        if activity.contains(.entry) {
+            array.append("entry")
+        }
+        if activity.contains(.beforeTimers) {
+            array.append("beforeTimers")
+        }
+        if activity.contains(.beforeSources) {
+            array.append("beforeSources")
+        }
+        if activity.contains(.beforeWaiting) {
+            array.append("beforeWaiting")
+        }
+        if activity.contains(.afterWaiting) {
+            array.append("afterWaiting")
+        }
+        if activity.contains(.exit) {
+            array.append("exit")
+        }
+        print(array.joined(separator: " & "))
+    }
+    private init() {
+        self.observer = CFRunLoopObserverCreateWithHandler(kCFAllocatorDefault, CFRunLoopActivity.allActivities.rawValue, true, 0) { (observer, activity) in
+            LayoutManager.shared.log(activity: activity)
+        }
+        CFRunLoopAddObserver(CFRunLoopGetMain(), self.observer, CFRunLoopMode.commonModes)
+//        public static var entry: CFRunLoopActivity { get }
+//
+//        public static var beforeTimers: CFRunLoopActivity { get }
+//
+//        public static var beforeSources: CFRunLoopActivity { get }
+//
+//        public static var beforeWaiting: CFRunLoopActivity { get }
+//
+//        public static var afterWaiting: CFRunLoopActivity { get }
+//
+//        public static var exit: CFRunLoopActivity { get }
+        
+        
+    }
+    var displaylink: CADisplayLink?
+    
+    func createDisplayLink() {
+        // 创建CADisplayLink
+        displaylink = CADisplayLink(target: self,
+                                    selector: #selector(step))
+        
+        displaylink!.add(to: .current,
+                         forMode: RunLoop.Mode.default)
+    }
+    
+    @objc func step(displaylink: CADisplayLink) {
+        // 打印时间戳
+        //        print("current:\(CACurrentMediaTime()) linkInfo.current:\(displaylink.timestamp) linkInfo.target\(displaylink.targetTimestamp)")
+    }
+    
+}
 
 public class Layout: Hashable {
     

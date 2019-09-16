@@ -28,6 +28,7 @@ class ViewController: UIViewController {
         let a: [Int] = [1, 2, 3]
         
         a.enumerated()
+        LayoutManager.shared
         
     }
 

@@ -155,42 +155,7 @@ public struct LayoutContext: Equatable {
     }
 }
 
-fileprivate class LayoutPool {
-    fileprivate static var pools: [LayoutPool] = []
 
-    fileprivate static func push() -> LayoutPool {
-        let pool = LayoutPool()
-        pools.append(pool)
-        return pool
-    }
-    fileprivate static func pop() {
-        if !pools.isEmpty {
-            let pool = pools.removeLast()
-            
-        }
-    }
-    fileprivate static func pop(_ p: LayoutPool) {
-        
-    }
-    fileprivate var items: NSPointerArray = NSPointerArray(options: NSPointerFunctions.Options.weakMemory)
-
-    fileprivate func append(layout: Layout) {
-        var objPtr = Unmanaged.passUnretained(self).toOpaque();
-        let _ /*ptrptr*/ = UnsafeRawPointer(&objPtr)
-//        let value: UInt = ptrptr.load(as: UInt.self)
-        
-        
-        self.items.addPointer(objPtr)
-    }
-    fileprivate func layout() {
-        for idx in 0 ..< self.items.count {
-            if let p = self.items.pointer(at: idx) {
-                
-            }
-        }
-    }
-    
-}
 
 internal class LayoutManager {
     internal static let shared: LayoutManager = LayoutManager()
@@ -198,6 +163,70 @@ internal class LayoutManager {
 //    private let observer: CFRunLoopObserver = CFRunLoopObserverCreateWithHandler(kCFAllocatorDefault, CFRunLoopActivity.allActivities.rawValue, true, 0) { (observer, activity) in
 //
 //    }
+    
+    fileprivate var pools: [Pool] = []
+    fileprivate var cache: [LayoutContainer] = []
+
+    fileprivate func push() -> Pool {
+        let pool = Pool()
+        pools.append(pool)
+        return pool
+    }
+    fileprivate func pop() {
+        if !pools.isEmpty {
+            let pool = pools.removeLast()
+            
+        }
+    }
+    fileprivate func pop(_ p: Pool) {
+        
+    }
+    
+    fileprivate class LayoutContainer {
+        fileprivate weak var layout: Layout?
+        
+        fileprivate init(layout: Layout) {
+            self.layout = layout
+        }
+    }
+
+    fileprivate func cacheLayoutContainer(_ container: LayoutContainer) {
+        container.layout = nil
+        if (self.cache.count < 1024) {
+            self.cache.append(container)
+        }
+    }
+    fileprivate func cacheLayoutContainers(_ containers: [LayoutContainer]) {
+        for container in containers {
+            self.cacheLayoutContainer(container)
+        }
+    }
+    fileprivate func makeLayoutContainer(layout: Layout) -> LayoutContainer {
+        return LayoutContainer(layout: layout)
+    }
+    
+    fileprivate class Pool {
+
+        fileprivate var items: [LayoutContainer] = []
+        
+        fileprivate func append(layout: Layout) {
+            self.items.append(LayoutManager.shared.makeLayoutContainer(layout: layout))
+        }
+        fileprivate func layout() {
+            for item in self.items {
+                if let layout = item.layout {
+                    layout.layoutIfNeeded()
+                }
+            }
+        }
+        
+        deinit {
+            LayoutManager.shared.cacheLayoutContainers(self.items)
+            self.items.removeAll()
+        }
+        
+    }
+    
     func log(activity: CFRunLoopActivity) {
         var array: [String] = []
         if activity.contains(.entry) {
@@ -598,6 +627,10 @@ public class Layout: Hashable {
     internal func layoutChildsOriginInContext(_ originInContext: LayoutVector?) {
         print("layoutChildsOriginInContext")
     }
+    
+    internal func layoutIfNeeded() {
+        
+    }
 }
 
 public class LayoutGroup: Layout {
@@ -692,10 +725,27 @@ public class LayoutGroup: Layout {
         
     }
     
-//    private enum ChildContextStyle {
-//        case parentContext(context: LayoutContext)
-//        case parentContentContext(context: LayoutContext)
+//    private enum ContextStyle {
+//        class C {
+//            init() {
+//            }
+//        }
+//        case parentContext(context: C)
+//        case parentContentContext(context: C)
 //        case none
+//
+//        func aa() {
+//            switch self {
+//            case .parentContext(let context):
+//                print(context)
+//                break
+//            case .parentContentContext(let context):
+//                print(context)
+//                break
+//            case .none:
+//                break
+//            }
+//        }
 //    }
     
     private func makeChildContext(context: LayoutContext?, contentContextEntity: LayoutContextEntity?) -> LayoutContext? {

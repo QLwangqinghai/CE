@@ -120,6 +120,50 @@ class ViewController: UIViewController {
 
         
         
+        
+        let w: UInt32 = 256 * 6
+        let h: UInt32 = 256 * 4 * 10
+        
+        var config = DrawingContext.Config(width: w, height: h, colorSpace: .little16Xrgb)
+        config.backgroundColor = DrawingContext.Color.init(little32Argb: 0x00_ff_00_00)
+        let context: DrawingContext = DrawingContext(config: config, size: CGSize(width: CGFloat(w) / UIScreen.main.scale, height: CGFloat(h) / UIScreen.main.scale))
+        scrollView.context = context
+        
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+//            if let context = self.contentView.context {
+//                C2DLittle32ArgbPixelsSet(context.mainPtr, 0xff_ff_00_00, context.config.pixelsCount)
+//                self.contentView.layer.contents = context.makeImage()
+//                self.contentView.setNeedsDisplay()
+//            }
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+//            if let context = self.contentView.context {
+//                for _ in 1 ..< 100 {
+//                    self.array.append(context.makeImage())
+//                }
+//                C2DLittle32ArgbPixelsSet(context.mainPtr, arc4random() | 0x80_00_00_00, context.config.pixelsCount)
+//                self.contentView.layer.contents = context.makeImage()
+//                self.contentView.setNeedsDisplay()
+//            }
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
+//            if let context = self.contentView.context {
+//                C2DLittle32ArgbPixelsSet(context.mainPtr, arc4random() | 0x80_00_00_00, context.config.pixelsCount)
+//                self.contentView.layer.contents = context.makeImage()
+//                self.contentView.setNeedsDisplay()
+//            }
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 7) {
+//            if let context = self.contentView.context {
+//                C2DLittle32ArgbPixelsSet(context.mainPtr, arc4random() | 0x80_00_00_00, context.config.pixelsCount)
+//                self.contentView.layer.contents = context.makeImage()
+//                self.contentView.setNeedsDisplay()
+//            }
+//        }
+//        
+        
+        return
+        
         self.createDisplayLink()
         let _ = self.view.layer
         

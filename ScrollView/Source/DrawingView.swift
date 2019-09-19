@@ -21,7 +21,9 @@ public class DrawingContext {
         public let colorSpace: ColorSpace
         public var backgroundColor: Color = Color(little32Argb: 0)
         public let bufferSize: Int
-
+        public let bytesPerRow: Int
+        
+        
         public init(width: UInt32, height: UInt32, colorSpace: ColorSpace = .little32Argb) {
             let blockSize: UInt32 = 256
             var blockPerRow = (width + blockSize - 1) / blockSize
@@ -41,7 +43,7 @@ public class DrawingContext {
             self.pixelsCount = pixelsCount
             self.bufferSize = size
             self.colorSpace = colorSpace
-            
+            self.bytesPerRow = Int(w * colorSpace.bytesPerPixel)
             print("w:\(width), h:\(height), bufferSize:\(self.bufferSize)")
         }
     }
@@ -50,7 +52,8 @@ public class DrawingContext {
     public enum ColorSpace: UInt32 {
         case little32Argb = 1
         case little16Xrgb = 2
-        
+        public static let deviceRgb: CGColorSpace = CGColorSpaceCreateDeviceRGB()
+
         public var bytesPerPixel: UInt32 {
             switch self {
             case .little32Argb:
@@ -143,7 +146,7 @@ public class DrawingContext {
         self.config = config
         let colorSpace = config.colorSpace
         self.size = size
-        self.context = CGContext(data: mainPtr, width: Int(config.width), height: Int(config.height), bitsPerComponent: colorSpace.bitsPerComponent, bytesPerRow: Int(config.width * config.colorSpace.bytesPerPixel), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
+        self.context = CGContext(data: mainPtr, width: Int(config.width), height: Int(config.height), bitsPerComponent: colorSpace.bitsPerComponent, bytesPerRow: config.bytesPerRow, space: DrawingContext.ColorSpace.deviceRgb, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
         }, releaseInfo: nil)!
         
         self.dataProvider = CGDataProvider(dataInfo: nil, data: self.mainPtr, size: self.config.bufferSize) { (mptr, ptr, size) in
@@ -191,11 +194,24 @@ public class DrawingContext {
 //        }
     }
     
-    func makeImage() -> CGImage? {
-        let colorSpace = self.config.colorSpace
+    func makeImage(x: UInt32, y: UInt32, width: UInt32, height: UInt32) -> CGImage? {
+        let right = UInt64(x) + UInt64(width)
+        let bottom = UInt64(y) + UInt64(height)
+        if right > UInt64(self.config.width) {
+            return nil
+        }
+        if bottom > UInt64(self.config.height) {
+            return nil
+        }
+        let config = self.config
+        let colorSpace = config.colorSpace
         let bitmapInfo: UInt32 = colorSpace.bitmapInfo
 
-        return CGImage(width: Int(config.width), height: Int(config.height), bitsPerComponent: colorSpace.bitsPerComponent, bitsPerPixel: colorSpace.bitsPerPixel, bytesPerRow: Int(config.width * colorSpace.bytesPerPixel), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: self.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+        let offset = config.bytesPerRow * Int(y) + Int(colorSpace.bytesPerPixel * x)
+        let dataProvider = CGDataProvider(dataInfo: nil, data: self.mainPtr.advanced(by: offset), size: self.config.bufferSize - offset) { (mptr, ptr, size) in
+            print("de")
+            }!
+        return CGImage(width: Int(width), height: Int(height), bitsPerComponent: colorSpace.bitsPerComponent, bitsPerPixel: colorSpace.bitsPerPixel, bytesPerRow: config.bytesPerRow, space: DrawingContext.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
     }
     
 }
@@ -216,25 +232,34 @@ open class DrawingView: UIView {
         }
     }
     
-    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
-    }
-    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesMoved(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
-    }
-    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
-    }
-    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesCancelled(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
-    }
+//    public override init(frame: CGRect) {
+//        super.init(frame: frame)
+//        let layer: CALayer =
+//    }
     
-    func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
-        print("\(file) :\(line): \(function) \(item())")
+//    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesBegan(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
+//    }
+//    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesMoved(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
+//    }
+//    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesEnded(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
+//    }
+//    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesCancelled(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
+//    }
+//    
+//    func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
+//        print("\(file) :\(line): \(function) \(item())")
+//    }
+//    
+    func resetContent() {
+        
     }
     
 }
@@ -260,7 +285,28 @@ open class DrawingScrollView: UIScrollView {
         }
     }
     
-
+    open override var frame: CGRect {
+        didSet(oldValue) {
+            if self.frame.size != oldValue.size {
+                self.contentView.resetContent()
+            }
+        }
+    }
+    open override var contentSize: CGSize {
+        didSet(oldValue) {
+            if self.contentSize != oldValue {
+                self.contentView.resetContent()
+            }
+        }
+    }
+    open override var contentOffset: CGPoint {
+        didSet(oldValue) {
+            if self.contentOffset != oldValue {
+                self.contentView.resetContent()
+            }
+        }
+    }
+    
     public override init(frame: CGRect) {
         self.contentView = DrawingView(frame: CGRect())
         super.init(frame: frame)
@@ -268,8 +314,56 @@ open class DrawingScrollView: UIScrollView {
     }
     
     required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        self.contentView = DrawingView(frame: CGRect())
+        super.init(coder: aDecoder)
+        self.addSubview(self.contentView)
+    }
+    
+    
+    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        self.log(item: "\(touches) \(String(describing: event))")
+    }
+    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        self.log(item: "\(touches) \(String(describing: event))")
+    }
+    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        self.log(item: "\(touches) \(String(describing: event))")
+    }
+    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        self.log(item: "\(touches) \(String(describing: event))")
+    }
+    
+    func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
+        print("\(file) :\(line): \(function) \(item())")
+    }
+    
+    func resetContent() {
+        
+    }
+}
+
+public struct Package {
+    let x: UInt32
+    let y: UInt32
+    
+    enum ChangeCode: UInt16 {
+        case updateX = 1
+        case updateY = 2
     }
     
     
 }
+
+public struct Change {
+    let x: UInt32
+    let y: UInt32
+    
+    
+    
+}
+
+

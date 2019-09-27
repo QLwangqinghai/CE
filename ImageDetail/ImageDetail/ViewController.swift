@@ -12,6 +12,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 
     let zoomView: ZoomView = ZoomView()
     
+    let vv: UIView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,9 +26,9 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         scrollView.contentSize = CGSize(width: 2000, height: 100)
         
         
-        let imageView = UIView(frame: CGRect(origin: CGPoint(x: 400, y: 0), size: CGSize(width: 500, height: 100)))
-        scrollView.addSubview(imageView)
-        imageView.backgroundColor = UIColor.red
+        let imageView1 = UIView(frame: CGRect(origin: CGPoint(x: 400, y: 0), size: CGSize(width: 500, height: 100)))
+        scrollView.addSubview(imageView1)
+        imageView1.backgroundColor = UIColor.red
         
         let v = UIScrollView(frame: CGRect(origin: CGPoint(x: 300, y: 0), size: CGSize(width: 80, height: 100)))
         v.bounces = false
@@ -53,7 +54,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         
         self.view.addSubview(self.zoomView)
         
-        self.zoomView.frame = CGRect(origin: CGPoint(x: 50, y: 500), size: CGSize(width: 150, height: 250))
+        self.zoomView.frame = self.view.bounds // CGRect(origin: CGPoint(x: 50, y: 500), size: CGSize(width: 150, height: 250))
         self.zoomView.layer.borderColor = UIColor.red.cgColor
         self.zoomView.layer.borderWidth = 2.0
         self.zoomView.scrollView.frame = CGRect(origin: CGPoint(x: 20, y: 20), size: CGSize(width: 100, height: 160))
@@ -63,6 +64,14 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         rotateButton.backgroundColor = .gray
         rotateButton.frame = CGRect.init(x: 0, y: 600, width: 40, height: 40)
         rotateButton.addTarget(self, action: #selector(rotateButtonClicked), for: .touchUpInside)
+        
+//        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 1000, height: 600))
+        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 60))
+        imageView.image = UIImage(named: "10.jpg")
+        self.zoomView.contentView.addSubview(imageView)
+        
+        self.zoomView.originalContentSize = imageView.frame.size
+        
         
     }
     
@@ -79,9 +88,21 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
 
     @objc func rotateButtonClicked() {
-        self.zoomView.rotate90Ccw(animate: true)
+        self.zoomView.rotate90Ccw { (result) in
+            
+        }
+        UIView.animate(withDuration: 0.1, animations: {
+            self.vv.frame = CGRect(origin: CGPoint(x: 400, y: 0), size: CGSize(width: 500, height: 100))
+        }) { (result) in
+            print("rrr: \(result)")
+        }
+        UIView.animate(withDuration: 0.1, animations: {
+
+        }) { (result) in
+            print("rrr1: \(result)")
+        }
         
-        print("clicked")
+//        print("rotateButtonClicked")
     }
     
     

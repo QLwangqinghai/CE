@@ -10,6 +10,9 @@ import UIKit
 
 class ViewController: UIViewController, UIScrollViewDelegate {
 
+    let zoomView: ZoomView = ZoomView()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -35,7 +38,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 //        scrollView.panGestureRecognizer.delegate = self
 //        v.panGestureRecognizer.delegate = self
         
-        let v1 = UIView(frame: CGRect(origin: CGPoint(x: 100, y: 300), size: CGSize(width: 150, height: 250)))
+        let v1 = UIView(frame: CGRect(origin: CGPoint(x: 100, y: 200), size: CGSize(width: 150, height: 250)))
         self.view.addSubview(v1)
         v1.backgroundColor = .blue
         v1.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi/2))
@@ -46,6 +49,21 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
         
         button.addTarget(self, action: #selector(clicked), for: .touchUpInside)
+        
+        
+        self.view.addSubview(self.zoomView)
+        
+        self.zoomView.frame = CGRect(origin: CGPoint(x: 50, y: 500), size: CGSize(width: 150, height: 250))
+        self.zoomView.layer.borderColor = UIColor.red.cgColor
+        self.zoomView.layer.borderWidth = 2.0
+        self.zoomView.scrollView.frame = CGRect(origin: CGPoint(x: 20, y: 20), size: CGSize(width: 100, height: 160))
+        
+        let rotateButton: UIButton = UIButton(type: .custom)
+        self.view.addSubview(rotateButton)
+        rotateButton.backgroundColor = .gray
+        rotateButton.frame = CGRect.init(x: 0, y: 600, width: 40, height: 40)
+        rotateButton.addTarget(self, action: #selector(rotateButtonClicked), for: .touchUpInside)
+        
     }
     
 
@@ -60,6 +78,12 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         print("clicked")
     }
 
+    @objc func rotateButtonClicked() {
+        self.zoomView.rotate90Ccw(animate: true)
+        
+        print("clicked")
+    }
+    
     
 
 

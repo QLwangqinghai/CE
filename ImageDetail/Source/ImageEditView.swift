@@ -150,6 +150,15 @@ fileprivate protocol _ZoomViewDelegate: class {
     func _zoomViewDidLayoutSubviews()
 }
 open class ZoomView: UIView {
+    internal class _ZoomScrollView: UIScrollView {
+        public override init(frame: CGRect) {
+            super.init(frame: frame)
+        }
+        required public init?(coder aDecoder: NSCoder) {
+            super.init(coder: aDecoder)
+        }
+    }
+    
     fileprivate class ZoomContentView: UIView {
         public override init(frame: CGRect) {
             super.init(frame: frame)
@@ -175,7 +184,10 @@ open class ZoomView: UIView {
             super.init()
         }
     }
-    fileprivate let scrollView: UIScrollView
+    private let _scrollView: _ZoomScrollView
+    internal var scrollView: UIScrollView {
+        return self._scrollView
+    }
     public let contentView: UIView
 
     public let content: Content
@@ -186,36 +198,41 @@ open class ZoomView: UIView {
     private func resetScrollView() {
         let count = self.rotate90CcwCount
         if count != 0 {
-            self.scrollView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2 * Double(count)))
+            self._scrollView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2 * Double(count)))
         } else {
-            self.scrollView.transform = CGAffineTransform()
+            self._scrollView.transform = CGAffineTransform()
         }
     }
     
     public override init(frame: CGRect) {
         self.content = Content(containerSize: frame.size)
-        self.scrollView = UIScrollView(frame: CGRect(origin: CGPoint(), size: frame.size))
+        self._scrollView = _ZoomScrollView(frame: CGRect(origin: CGPoint(), size: frame.size))
         self.contentView = ZoomContentView()
         super.init(frame: frame)
         
-        self.addSubview(self.scrollView)
-        self.scrollView.addSubview(self.contentView)
+        self.addSubview(self._scrollView)
+        self._scrollView.addSubview(self.contentView)
+        self._scrollView.backgroundColor = UIColor.green
     }
     
     required public init?(coder aDecoder: NSCoder) {
         self.content = Content(containerSize: CGSize())
-        self.scrollView = UIScrollView()
+        self._scrollView = _ZoomScrollView()
         self.contentView = ZoomContentView()
         super.init(coder: aDecoder)
-        self.addSubview(self.scrollView)
-        self.scrollView.addSubview(self.contentView)
+        self.addSubview(self._scrollView)
+        self._scrollView.addSubview(self.contentView)
     }
     
     open override func layoutSubviews() {
-
-        
+//        var frame = self.bounds
+//        if self.rotate90CcwCount % 2 != 0 {
+//            let t = frame.size.width
+//            frame.size.width = frame.size.height
+//            frame.size.height = t
+//        }
+//        self.scrollView.frame = frame
         super.layoutSubviews()
-
     }
     
     open func rotate90Ccw(animate: Bool) {
@@ -226,12 +243,26 @@ open class ZoomView: UIView {
         let value = count % 4
         if self.rotate90CcwCount != value {
             self.rotate90CcwCount = value
-        
-        
-        
+            self._scrollView.transform = CGAffineTransform.identity
+            let bounds = self.bounds
+            var frame = CGRect()
+            if value % 2 != 0 {
+                frame.size.width = bounds.size.height
+                frame.size.height = bounds.size.width
+            } else {
+                frame.size.width = bounds.size.width
+                frame.size.height = bounds.size.height
+            }
+
+            frame.origin.x = (bounds.size.width - frame.size.width) / 2
+            frame.origin.y = (bounds.size.height - frame.size.height) / 2
+            
+            self._scrollView.frame = frame
+            if value != 0 {
+                self._scrollView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2 * Double(value)))
+            }
         }
     }
-    
 }
 
 extension ZoomView : UIScrollViewDelegate {
@@ -244,7 +275,11 @@ extension ZoomView : UIScrollViewDelegate {
     }
     
     public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return self.content.view
+        if scrollView == self._scrollView {
+            return self.content.view
+        } else {
+            return nil
+        }
     }
     
     public func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {

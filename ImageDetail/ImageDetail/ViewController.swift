@@ -71,7 +71,9 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         self.zoomView.contentView.addSubview(imageView)
         
         self.zoomView.originalContentSize = imageView.frame.size
-        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+            self.zoomView.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
+        }
         
     }
     

@@ -69,11 +69,11 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 60))
         imageView.image = UIImage(named: "10.jpg")
         self.zoomView.contentView.addSubview(imageView)
-        
+        self.zoomView.scrollView.backgroundColor = .black
         self.zoomView.originalContentSize = imageView.frame.size
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
-            self.zoomView.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
-        }
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+//            self.zoomView.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
+//        }
         
     }
     
@@ -90,20 +90,9 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
 
     @objc func rotateButtonClicked() {
-        self.zoomView.rotate90Ccw { (result) in
-            
+        self.zoomView.rotate(direction: OrientationView.Direction.anticlockwise, duration: 0.2) { (result) in
+            print("rotate result: \(result)")
         }
-        UIView.animate(withDuration: 0.1, animations: {
-            self.vv.frame = CGRect(origin: CGPoint(x: 400, y: 0), size: CGSize(width: 500, height: 100))
-        }) { (result) in
-            print("rrr: \(result)")
-        }
-        UIView.animate(withDuration: 0.1, animations: {
-
-        }) { (result) in
-            print("rrr1: \(result)")
-        }
-        
 //        print("rotateButtonClicked")
     }
     

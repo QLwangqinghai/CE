@@ -8,143 +8,6 @@
 
 import UIKit
 
-open class PanGestureRecognizer: UIPanGestureRecognizer {
-    
-    
-    
-}
-
-
-
-//open class ScrollView: UIScrollView {
-//    
-////    override var panGestureRecognizer: UIPanGestureRecognizer {
-////        var a = super.panGestureRecognizer
-////        return UIPanGestureRecognizer.init(target: a.target, action: <#T##Selector?#>)
-////
-////
-////    }
-//    
-//    public override init(frame: CGRect) {
-//        super.init(frame: frame)
-//    }
-//    
-//    required public init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//    }
-//
-//    open override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return true
-//    }
-//
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return true
-//    }
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-//        
-//        return true
-//    }
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive press: UIPress) -> Bool {
-//        
-//        
-//        return true
-//    }
-//    
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return false
-//    }
-//
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return false
-//    }
-//    
-//}
-
-
-//@objc fileprivate protocol ZoomViewContentDelegate : NSObjectProtocol {
-//    @objc optional func willSetView(content: ZoomView.Content, newView: UIView?)
-//    @objc optional func didSetView(content: ZoomView.Content, oldView: UIView?)
-//}
-
-//open class ZoomView: UIScrollView {
-//    fileprivate class _ZoomContentView: UIView {
-//        public override init(frame: CGRect) {
-//            super.init(frame: frame)
-//        }
-//
-//        required public init?(coder aDecoder: NSCoder) {
-//            self.content = Content(containerSize: CGSize())
-//            super.init(coder: aDecoder)
-//            self.content.delegate = self
-//        }
-//    }
-//
-//
-//
-//
-//    public class Content: NSObject {
-//        fileprivate var delegate: ZoomViewContentDelegate?
-//
-//        public var size: CGSize
-//        public var containerSize: CGSize
-//
-//        public var view: UIView? {
-//            willSet(newValue) {
-//                if let delegate = self.delegate {
-//                    delegate.willSetView?(content: self, newView: newValue)
-//                }
-//            }
-//            didSet(oldValue) {
-//                if let delegate = self.delegate {
-//                    delegate.didSetView?(content: self, oldView: oldValue)
-//                }
-//            }
-//        }
-//        public init(containerSize: CGSize) {
-//            self.size = CGSize()
-//            self.containerSize = containerSize
-//            super.init()
-//        }
-//    }
-//
-//    public let content: Content
-//    open override var zoomScale: CGFloat {
-//        willSet(newValue) {}
-//        didSet(oldValue) {
-//
-//
-//        }
-//    }
-//
-//
-//    public override init(frame: CGRect) {
-//        self.content = Content(containerSize: frame.size)
-//        super.init(frame: frame)
-//        self.content.delegate = self
-//    }
-//
-//    required public init?(coder aDecoder: NSCoder) {
-//        self.content = Content(containerSize: CGSize())
-//        super.init(coder: aDecoder)
-//        self.content.delegate = self
-//    }
-//
-//    open override func layoutSubviews() {
-//        super.layoutSubviews()
-//        if self.bounds.size != self.content.containerSize {
-//            self.content.containerSize = self.bounds.size
-//        }
-//
-//    }
-//
-//
-//}
-//
-//extension ZoomView : ZoomViewContentDelegate {
-//
-//
-//}
-
 fileprivate protocol _ZoomViewDelegate: class {
     func _zoomViewWillLayoutSubviews()
     func _zoomViewDidLayoutSubviews()
@@ -152,7 +15,25 @@ fileprivate protocol _ZoomViewDelegate: class {
 
 public protocol OrientationContent: class {
     var orientationContentView: UIView {get}
-    var orientationSafeAreaInsets: UIEdgeInsets { get set}
+    var orientationSafeAreaInsets: UIEdgeInsets { get }
+    
+    
+    /*
+     这个回调中 需要做4件事情，
+     1.保存orientationSafeAreaInsets； 2：设置bounds的size大小； 3： 设置center； 4：layoutSubview
+     if self.orientationSafeAreaInsets != safeAreaInsets {
+     self.orientationSafeAreaInsets = safeAreaInsets
+     }
+     var bounds = self.bounds
+     bounds.size = contentSize
+     self.bounds = bounds
+     self.center = center
+     */
+    func layout(orientation: Int, orientationSafeAreaInsets: UIEdgeInsets, center: CGPoint, contentSize: CGSize)
+
+    
+    func willMoveTo(orientationView: OrientationView?)
+    func didMoveTo(orientationView: OrientationView?)
 }
 
 open class OrientationView: UIView {
@@ -162,20 +43,36 @@ open class OrientationView: UIView {
     }
     
     public var content: OrientationContent? {
-        willSet {
-            guard let old = self.content else {
+        willSet(newValue) {
+            let oldValue = self.content
+            if oldValue === newValue {
                 return
             }
-            old.orientationSafeAreaInsets = UIEdgeInsets()
-            if old.orientationContentView.superview == self {
-                old.orientationContentView.removeFromSuperview()
+            if let value = oldValue {
+                if value.orientationContentView.superview == self {
+                    value.willMoveTo(orientationView: nil)
+                    value.orientationContentView.removeFromSuperview()
+                    value.didMoveTo(orientationView: nil)
+                }
+            }
+            if let value = newValue {
+                if value.orientationContentView.superview != nil {
+                    value.willMoveTo(orientationView: nil)
+                    value.orientationContentView.removeFromSuperview()
+                    value.didMoveTo(orientationView: nil)
+                }
             }
         }
-        didSet {
-            guard let content = self.content else {
+        didSet(oldValue) {
+            if self.content === oldValue {
                 return
             }
-            self.addSubview(content.orientationContentView)
+            guard let newValue = self.content else {
+                return
+            }
+            newValue.willMoveTo(orientationView: self)
+            self.addSubview(newValue.orientationContentView)
+            newValue.didMoveTo(orientationView: self)
             self.layoutContent()
         }
     }
@@ -190,31 +87,42 @@ open class OrientationView: UIView {
         let value = self.orientation
         let contentView: UIView  = content.orientationContentView
         let bounds = self.bounds
-        var contentViewBounds = contentView.bounds
-        let swapXY = value % 2 != 0
-        if swapXY {
-            contentViewBounds.size.width = bounds.size.height
-            contentViewBounds.size.height = bounds.size.width
+        
+        var contentSize = CGSize()
+        if value % 2 != 0 {
+            contentSize.width = bounds.size.height
+            contentSize.height = bounds.size.width
         } else {
-            contentViewBounds.size.width = bounds.size.width
-            contentViewBounds.size.height = bounds.size.height
+            contentSize.width = bounds.size.width
+            contentSize.height = bounds.size.height
         }
-        contentView.bounds = contentViewBounds
-        var center = CGPoint()
-        center.x = (bounds.size.width) / 2
-        center.y = (bounds.size.height) / 2
-        contentView.center = center
+        
+//        var contentViewBounds = contentView.bounds
+//        let swapXY = value % 2 != 0
+//        if swapXY {
+//            contentViewBounds.size.width = bounds.size.height
+//            contentViewBounds.size.height = bounds.size.width
+//        } else {
+//            contentViewBounds.size.width = bounds.size.width
+//            contentViewBounds.size.height = bounds.size.height
+//        }
+//        contentView.bounds = contentViewBounds
+        var center = self.bounds.origin
+        center.x += (bounds.size.width) / 2
+        center.y += (bounds.size.height) / 2
         contentView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2 * Double(value)))
         
         var safeAreaInsets = self.safeAreaInsets
         let array: [CGFloat] = [safeAreaInsets.top, safeAreaInsets.left, safeAreaInsets.bottom, safeAreaInsets.right]
-        safeAreaInsets.top = array[Int(value % 4)]
-        safeAreaInsets.left = array[Int((value + 1) % 4)]
-        safeAreaInsets.bottom = array[Int((value + 2) % 4)]
-        safeAreaInsets.right = array[Int((value + 3) % 4)]
-        if content.orientationSafeAreaInsets != safeAreaInsets {
-            content.orientationSafeAreaInsets = safeAreaInsets
+        var idx = (value * -1) % 4
+        if idx < 0 {
+            idx = (idx + 4) % 4
         }
+        safeAreaInsets.top = array[idx % 4]
+        safeAreaInsets.left = array[(idx + 1) % 4]
+        safeAreaInsets.bottom = array[(idx + 2) % 4]
+        safeAreaInsets.right = array[(idx + 3) % 4]
+        content.layout(orientation: self.orientation, orientationSafeAreaInsets: safeAreaInsets, center: center, contentSize: contentSize)
     }
     
     public override init(frame: CGRect) {
@@ -264,7 +172,62 @@ open class ZoomView: OrientationView {
         var orientationContentView: UIView {
             return self
         }
-        var orientationSafeAreaInsets: UIEdgeInsets = UIEdgeInsets()
+        override var contentInset: UIEdgeInsets {
+            didSet(oldValue) {
+//                print("contentInset changed from:\(oldValue) to:\(self.contentInset)")
+            }
+        }
+        func layout(orientation: Int, orientationSafeAreaInsets: UIEdgeInsets, center: CGPoint, contentSize: CGSize) {
+            if self.orientationSafeAreaInsets != orientationSafeAreaInsets {
+                self.orientationSafeAreaInsets = orientationSafeAreaInsets
+            }
+            var bounds = self.bounds
+            bounds.size = contentSize
+            self.bounds = bounds
+            self.center = center
+            
+            var safeAreaInsets = self.orientationSafeAreaInsets
+            let contentSize = self.contentSize
+            var paddingX: CGFloat = bounds.size.width - safeAreaInsets.left - safeAreaInsets.right - contentSize.width
+            var paddingY: CGFloat = bounds.size.height - safeAreaInsets.top - safeAreaInsets.bottom - contentSize.height
+            if paddingX < 0 {
+                paddingX = 0
+            }
+            if paddingY < 0 {
+                paddingY = 0
+            }
+            
+            let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
+            self.update(safeInset: safeAreaInsets, paddingInset: paddingInset)
+        }
+        func willMoveTo(orientationView: OrientationView?) {}
+        func didMoveTo(orientationView: OrientationView?) {}
+        
+        var orientationSafeAreaInsets: UIEdgeInsets = UIEdgeInsets() {
+            didSet(oldValue) {
+                let newValue = self.orientationSafeAreaInsets
+                if oldValue != newValue {
+                    let change = UIEdgeInsets(top: newValue.top - oldValue.top, left: newValue.left - oldValue.left, bottom: newValue.bottom - oldValue.bottom, right: newValue.right - oldValue.right)
+                    var contentInset = self.contentInset
+                    contentInset.top += change.top
+                    contentInset.left += change.left
+                    contentInset.bottom += change.bottom
+                    contentInset.right += change.right
+
+                    var contentOffset: CGPoint = self.contentOffset
+                    contentOffset.x += change.left
+                    contentOffset.y += change.top
+                    
+                    if contentInset != self.contentInset {
+                        self.contentInset = contentInset
+                    }
+                    if contentOffset != self.contentOffset {
+                        self.contentOffset = contentOffset
+                    }
+                    print("orientationSafeAreaInsets changed from:\(oldValue) to:\(newValue)")
+                }
+            }
+        }
         fileprivate private(set) var paddingInset: UIEdgeInsets = UIEdgeInsets()
 
         internal func update(safeInset: UIEdgeInsets, paddingInset: UIEdgeInsets) {
@@ -293,25 +256,6 @@ open class ZoomView: OrientationView {
                 self.contentInsetAdjustmentBehavior = .never
             }
         }
-//        open override var zoomScale: CGFloat {
-//            willSet(newValue) {}
-//            didSet(oldValue) {
-//                if let closure = self.onZoomScaleChanged {
-//                    closure(self, oldValue)
-//                }
-//            }
-//        }
-        
-//        @available(iOS 11.0, *)
-//        open override func adjustedContentInsetDidChange() {
-//            super.adjustedContentInsetDidChange()
-//            print("\(self) adjustedContentInset:\(self.adjustedContentInset)")
-//        }
-//        @available(iOS 11.0, *)
-//        open override func safeAreaInsetsDidChange() {
-//            super.safeAreaInsetsDidChange()
-//            print("\(self) safeAreaInsets:\(self.safeAreaInsets)")
-//        }
     }
     
     fileprivate class _ZoomContentView: UIView {
@@ -322,23 +266,7 @@ open class ZoomView: OrientationView {
             super.init(coder: aDecoder)
         }
     }
-    
-    public class Content: NSObject {
-        public var zoomScale: CGFloat
-        public var size: CGSize
-        public var containerSize: CGSize
-        public var view: UIView {
-            return self.contentView
-        }
-        fileprivate let contentView: _ZoomContentView
-        public init(containerSize: CGSize) {
-            self.size = CGSize()
-            self.containerSize = containerSize
-            self.contentView = _ZoomContentView(frame: CGRect(origin: CGPoint(), size: containerSize))
-            self.zoomScale = 1.0
-            super.init()
-        }
-    }
+
     private let _scrollView: _ZoomScrollView
     internal var scrollView: UIScrollView {
         return self._scrollView
@@ -362,57 +290,7 @@ open class ZoomView: OrientationView {
     
     public private(set) var rotate90CcwCount: UInt = 0
     private let _scrollViewHandler: _ZoomViewHandler
-    
-    
-    
-    private func resetScrollView() {
-        let value = self.rotate90CcwCount
-        let scrollView: _ZoomScrollView  = self._scrollView
-        let bounds = self.bounds
-        var scrollViewBounds = scrollView.bounds
-        let swapXY = value % 2 != 0
-        if swapXY {
-            scrollViewBounds.size.width = bounds.size.height
-            scrollViewBounds.size.height = bounds.size.width
-        } else {
-            scrollViewBounds.size.width = bounds.size.width
-            scrollViewBounds.size.height = bounds.size.height
-        }
-        scrollView.bounds = scrollViewBounds
-        var center = CGPoint()
-        center.x = (bounds.size.width) / 2
-        center.y = (bounds.size.height) / 2
-        scrollView.center = center
-        if value % 4 != 0 {
-            scrollView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2 * Double(value) * -1))
-        } else {
-            scrollView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi * 2 * -1))
-        }
-        
-        var safeAreaInsets = self.safeAreaInsets
-        let array: [CGFloat] = [safeAreaInsets.top, safeAreaInsets.left, safeAreaInsets.bottom, safeAreaInsets.right]
-        safeAreaInsets.top = array[Int(value % 4)]
-        safeAreaInsets.left = array[Int((value + 1) % 4)]
-        safeAreaInsets.bottom = array[Int((value + 2) % 4)]
-        safeAreaInsets.right = array[Int((value + 3) % 4)]
-        
-        let contentView: _ZoomContentView = self._contentView
-        let contentSize = contentView.frame.size
-        var paddingX: CGFloat = scrollViewBounds.size.width - safeAreaInsets.left - safeAreaInsets.right - contentSize.width
-        var paddingY: CGFloat = scrollViewBounds.size.height - safeAreaInsets.top - safeAreaInsets.bottom - contentSize.height
-        if paddingX < 0 {
-            paddingX = 0
-        }
-        if paddingY < 0 {
-            paddingY = 0
-        }
-        
-        let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
-        scrollView.update(safeInset: safeAreaInsets, paddingInset: paddingInset)
-        
 
-    }
-    
     public override init(frame: CGRect) {
         self._scrollView = _ZoomScrollView(frame: CGRect(origin: CGPoint(), size: frame.size))
         self._contentView = _ZoomContentView()
@@ -424,8 +302,9 @@ open class ZoomView: OrientationView {
         self._scrollViewHandler.scrollView = self._scrollView
         self._scrollViewHandler.viewForZooming = self._contentView
         self._scrollView.delegate = self._scrollViewHandler
+        
+        self.content = self._scrollView
     }
-    
     required public init?(coder aDecoder: NSCoder) {
         self._scrollView = _ZoomScrollView()
         self._contentView = _ZoomContentView()
@@ -437,8 +316,9 @@ open class ZoomView: OrientationView {
         self._scrollViewHandler.scrollView = self._scrollView
         self._scrollViewHandler.viewForZooming = self._contentView
         self._scrollView.delegate = self._scrollViewHandler
+        
+        self.content = self._scrollView
     }
-    
 }
 
 fileprivate class _ZoomViewHandler: NSObject, UIScrollViewDelegate {
@@ -476,8 +356,6 @@ fileprivate class _ZoomViewHandler: NSObject, UIScrollViewDelegate {
         }
     }
 }
-
-
 
 extension ZoomView : UIScrollViewDelegate {
 

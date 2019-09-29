@@ -10,7 +10,11 @@ import UIKit
 
 class ViewController: UIViewController, UIScrollViewDelegate {
 
-    let zoomView: ZoomView = ZoomView()
+    let zoomView: OrientationView = {
+        let view = OrientationView()
+        view.content = ZoomScrollController()
+        return view
+    }()
     
     let vv: UIView = UIView()
     
@@ -57,7 +61,6 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         self.zoomView.frame = self.view.bounds // CGRect(origin: CGPoint(x: 50, y: 500), size: CGSize(width: 150, height: 250))
         self.zoomView.layer.borderColor = UIColor.red.cgColor
         self.zoomView.layer.borderWidth = 2.0
-        self.zoomView.scrollView.frame = CGRect(origin: CGPoint(x: 20, y: 20), size: CGSize(width: 100, height: 160))
         
         let rotateButton: UIButton = UIButton(type: .custom)
         self.view.addSubview(rotateButton)
@@ -68,9 +71,10 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 //        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 1000, height: 600))
         let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 60))
         imageView.image = UIImage(named: "10.jpg")
-        self.zoomView.contentView.addSubview(imageView)
-        self.zoomView.scrollView.backgroundColor = .black
-        self.zoomView.originalContentSize = imageView.frame.size
+        if let orientationContentView = self.zoomView.content?.orientationContentView {
+            orientationContentView.addSubview(imageView)
+            orientationContentView.backgroundColor = .black            
+        }
 //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
 //            self.zoomView.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
 //        }

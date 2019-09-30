@@ -10,21 +10,21 @@ import UIKit
 
 public protocol OrientationContent: class {
     var orientationContentView: UIView {get}
-    var orientationSafeAreaInsets: UIEdgeInsets { get }
+    var orientationInsets: UIEdgeInsets { get }
     
     
     /*
      这个回调中 需要做4件事情，
-     1.保存orientationSafeAreaInsets； 2：设置bounds的size大小； 3： 设置center； 4：layoutSubview
-     if self.orientationSafeAreaInsets != safeAreaInsets {
-     self.orientationSafeAreaInsets = safeAreaInsets
+     1.保存orientationInsets； 2：设置bounds的size大小； 3： 设置center； 4：layoutSubview
+     if self.orientationInsets != safeAreaInsets {
+     self.orientationInsets = safeAreaInsets
      }
      var bounds = self.bounds
      bounds.size = contentSize
      self.bounds = bounds
      self.center = center
      */
-    func layout(orientation: Int, orientationSafeAreaInsets: UIEdgeInsets, center: CGPoint, contentSize: CGSize)
+    func updateLayout(_ layout: OrientationView.ContentLayout, option: [AnyHashable:Any])
 
     
     func willMoveTo(orientationView: OrientationView?)
@@ -73,35 +73,42 @@ open class OrientationView: UIView {
             self.didLayoutContent(newValue)
         }
     }
-
-    public private(set) var orientation: Int = 0
-    public private(set) var contentSize: CGSize = CGSize()
-    public private(set) var contentTransform: CGAffineTransform = CGAffineTransform.identity
-    public private(set) var contentSafeAreaInsets: UIEdgeInsets = UIEdgeInsets()
-    public var contentCenter: CGPoint {
-        var center = self.bounds.origin
-        center.x += (bounds.size.width) / 2
-        center.y += (bounds.size.height) / 2
-        return center
+    
+    public struct ContentLayout {
+        public var contentInsets: UIEdgeInsets = UIEdgeInsets()
+        public var orientation: Int = 0
+        public var contentSize: CGSize = CGSize()
+        public var contentTransform: CGAffineTransform {
+            return CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2 * Double(self.orientation)))
+        }
+        public var contentSafeAreaInsets: UIEdgeInsets = UIEdgeInsets()
+        public var contentCenter: CGPoint = CGPoint()
     }
+    
+
+    public private(set) var contentLayout: ContentLayout = ContentLayout()
+//    public var contentCenter: CGPoint {
+//        var center = self.bounds.origin
+//        center.x += (bounds.size.width) / 2
+//        center.y += (bounds.size.height) / 2
+//        return center
+//    }
 
     
     private func _prepare() {
-        let value = self.orientation
+        var layout = self.contentLayout
         let bounds = self.bounds
         var contentSize = CGSize()
-        if value % 2 != 0 {
+        if layout.orientation % 2 != 0 {
             contentSize.width = bounds.size.height
             contentSize.height = bounds.size.width
         } else {
             contentSize.width = bounds.size.width
             contentSize.height = bounds.size.height
         }
-        let transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2 * Double(value)))
-        
-        var safeAreaInsets = self.safeAreaInsets
+        var safeAreaInsets = layout.contentInsets
         let array: [CGFloat] = [safeAreaInsets.top, safeAreaInsets.left, safeAreaInsets.bottom, safeAreaInsets.right]
-        var idx = (value * -1) % 4
+        var idx = (layout.orientation * -1) % 4
         if idx < 0 {
             idx = (idx + 4) % 4
         }
@@ -110,46 +117,30 @@ open class OrientationView: UIView {
         safeAreaInsets.bottom = array[(idx + 2) % 4]
         safeAreaInsets.right = array[(idx + 3) % 4]
         
-        self.contentSize = contentSize
-        self.contentTransform = transform
-        self.contentSafeAreaInsets = safeAreaInsets
+        var center = bounds.origin
+        center.x += (bounds.size.width) / 2
+        center.y += (bounds.size.height) / 2
+        
+        layout.contentCenter = center
+        layout.contentSize = contentSize
+        layout.contentSafeAreaInsets = safeAreaInsets
     }
     
-    open func willLayoutContent(_ content: OrientationContent) {
+    open func willLayoutContent(_ content: OrientationContent, option: [AnyHashable:Any]) {
         
         
     }
-    open func didLayoutContent(_ content: OrientationContent) {
+    open func didLayoutContent(_ content: OrientationContent, option: [AnyHashable:Any]) {
         
         
     }
-    open func layoutContent(_ content: OrientationContent) {
-
+    open func layoutContent(_ content: OrientationContent, option: [AnyHashable:Any]) {
         let value = self.orientation
         let contentView: UIView = content.orientationContentView
-        let bounds = self.bounds
         
-        var contentSize = CGSize()
-        if value % 2 != 0 {
-            contentSize.width = bounds.size.height
-            contentSize.height = bounds.size.width
-        } else {
-            contentSize.width = bounds.size.width
-            contentSize.height = bounds.size.height
-        }
-        contentView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2 * Double(value)))
-        
-        var safeAreaInsets = self.safeAreaInsets
-        let array: [CGFloat] = [safeAreaInsets.top, safeAreaInsets.left, safeAreaInsets.bottom, safeAreaInsets.right]
-        var idx = (value * -1) % 4
-        if idx < 0 {
-            idx = (idx + 4) % 4
-        }
-        safeAreaInsets.top = array[idx % 4]
-        safeAreaInsets.left = array[(idx + 1) % 4]
-        safeAreaInsets.bottom = array[(idx + 2) % 4]
-        safeAreaInsets.right = array[(idx + 3) % 4]
-        content.layout(orientation: self.orientation, orientationSafeAreaInsets: safeAreaInsets, center: self.contentCenter, contentSize: contentSize)
+        content.updateLayout(self.contentLayout, option: option)
+
+//        content.layout(orientation: self.orientation, orientationInsets: self.contentSafeAreaInsets, center: self.contentCenter, contentSize: self.contentSize)
     }
     
     public override init(frame: CGRect) {
@@ -170,6 +161,15 @@ open class OrientationView: UIView {
         }
         super.layoutSubviews()
     }
+    open override var frame: CGRect {
+        willSet(newValue) {
+            print("willSet frame: current \(self.frame), to:\(newValue)")
+        }
+        didSet(oldValue) {
+            print("didSet frame: current \(self.frame), from:\(oldValue)")
+        }
+    }
+    
     
     @available(iOS 11.0, *)
     open override func safeAreaInsetsDidChange() {
@@ -216,7 +216,7 @@ open class OrientationView: UIView {
 internal class ZoomScrollController: NSObject, OrientationContent {
     //        open var safeContentInset: UIEdgeInsets { get }
     internal class _ZoomScrollView: UIScrollView {
-        var orientationSafeAreaInsets: UIEdgeInsets = UIEdgeInsets()
+        var orientationInsets: UIEdgeInsets = UIEdgeInsets()
         fileprivate private(set) var paddingInset: UIEdgeInsets = UIEdgeInsets()
         fileprivate var onZoomScaleChanged: ((_ view: _ZoomScrollView, _ oldValue: CGFloat) -> Void)?
         
@@ -318,15 +318,19 @@ internal class ZoomScrollController: NSObject, OrientationContent {
         return self._scrollView
     }
     
-    func layout(orientation: Int, orientationSafeAreaInsets: UIEdgeInsets, center: CGPoint, contentSize: CGSize) {
-        self.orientationSafeAreaInsets = orientationSafeAreaInsets
+    func updateLayout(_ layout: OrientationView.ContentLayout, option: [AnyHashable : Any]) {
+        
+    }
+    
+    func layout(orientation: Int, orientationInsets: UIEdgeInsets, center: CGPoint, contentSize: CGSize) {
+        self.orientationInsets = orientationInsets
         let scrollView = self._scrollView
         var bounds = scrollView.bounds
         bounds.size = contentSize
         scrollView.bounds = bounds
         scrollView.center = center
         
-        let safeInset = self.orientationSafeAreaInsets
+        let safeInset = self.orientationInsets
         let contentSize = scrollView.contentSize
         var paddingX: CGFloat = bounds.size.width - safeInset.left - safeInset.right - contentSize.width
         var paddingY: CGFloat = bounds.size.height - safeInset.top - safeInset.bottom - contentSize.height
@@ -351,16 +355,17 @@ internal class ZoomScrollController: NSObject, OrientationContent {
     }
     func willMoveTo(orientationView: OrientationView?) {
         if let parent = orientationView {
-//            self.layout(orientation: parent.orientation, orientationSafeAreaInsets: parent.contentSafeAreaInsets, center: parent.contentCenter, contentSize: parent.contentSize)
+            let layout = parent.contentLayout
+//            self.layout(orientation: parent.orientation, orientationInsets: parent.contentSafeAreaInsets, center: parent.contentCenter, contentSize: parent.contentSize)
             let scrollView = self._scrollView
-            let safeInset = self.orientationSafeAreaInsets
+            let safeInset = self.orientationInsets
             let contentSize = scrollView.contentSize
 
-            scrollView.transform = parent.contentTransform
+            scrollView.transform = layout.contentTransform
             var bounds = scrollView.bounds
-            bounds.size = contentSize
+            bounds.size = layout.contentSize
             scrollView.bounds = bounds
-            scrollView.center = parent.contentCenter
+            scrollView.center = layout.contentCenter
             var paddingX: CGFloat = bounds.size.width - safeInset.left - safeInset.right - contentSize.width
             var paddingY: CGFloat = bounds.size.height - safeInset.top - safeInset.bottom - contentSize.height
             if paddingX < 0 {
@@ -380,7 +385,7 @@ internal class ZoomScrollController: NSObject, OrientationContent {
     }
     func didMoveTo(orientationView: OrientationView?) {}
     
-    private(set) var orientationSafeAreaInsets: UIEdgeInsets = UIEdgeInsets()
+    private(set) var orientationInsets: UIEdgeInsets = UIEdgeInsets()
     fileprivate private(set) var paddingInset: UIEdgeInsets = UIEdgeInsets()
     fileprivate private(set) var anchorPoint: CGPoint = CGPoint()
 

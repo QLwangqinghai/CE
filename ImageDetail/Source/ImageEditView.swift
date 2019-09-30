@@ -185,15 +185,15 @@ open class OrientationView: UIView {
         print("\(self) safeAreaInsets:\(self.safeAreaInsets)")
     }
     
-    open func rotate(direction: Direction) {
-        self.updateOrientation(self.orientation + direction.rawValue)
+    open func rotate(direction: Direction, option: [AnyHashable:Any]) {
+        self.updateOrientation(self.orientation + direction.rawValue, option: option)
     }
     
-    open func rotate(direction: Direction, duration: CFTimeInterval, completion: ((Bool) -> Void)? = nil) {
-        self.updateOrientation(self.orientation + direction.rawValue, duration:duration, completion:completion)
+    open func rotate(direction: Direction, option: [AnyHashable:Any], duration: CFTimeInterval, completion: ((Bool) -> Void)? = nil) {
+        self.updateOrientation(self.orientation + direction.rawValue, option: option, duration:duration, completion:completion)
     }
 
-    open func updateOrientation(_ orientation: Int) {
+    open func updateOrientation(_ orientation: Int, option: [AnyHashable:Any]) {
         if self.orientation != orientation {
             self.orientation = orientation
             if let content = self.content {
@@ -206,9 +206,9 @@ open class OrientationView: UIView {
             }
         }
     }
-    open func updateOrientation(_ orientation: Int, duration: CFTimeInterval, completion: ((Bool) -> Void)? = nil) {
+    open func updateOrientation(_ orientation: Int, option: [AnyHashable:Any], duration: CFTimeInterval, completion: ((Bool) -> Void)? = nil) {
         UIView.animate(withDuration: duration, animations: {
-            self.updateOrientation(orientation)
+            self.updateOrientation(orientation, option:option)
         }, completion: completion)
     }
 }

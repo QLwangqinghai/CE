@@ -113,7 +113,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
 
     @objc func rotateButtonClicked() {
-        self.zoomView.rotate(direction: OrientationView.Direction.anticlockwise, duration: 0.2) { (result) in
+        self.zoomView.rotate(direction: OrientationView.Direction.anticlockwise, option: [:], duration: 0.2) { (result) in
             print("rotate result: \(result)")
         }
 //        print("rotateButtonClicked")

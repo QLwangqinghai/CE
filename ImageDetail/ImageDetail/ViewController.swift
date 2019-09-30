@@ -10,33 +10,21 @@ import UIKit
 
 class ViewController: UIViewController, UIScrollViewDelegate {
 
-    let zoomController: ZoomScrollController
-    let zoomView: OrientationView
+    var zoomController: ZoomScrollController?
+    var zoomView: OrientationView?
     
     let vv: UIView = UIView()
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        let zoomController = ZoomScrollController()
-        self.zoomController = zoomController
-        let zoomView = OrientationView()
-        zoomView.content = self.zoomController
-        self.zoomView = zoomView
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        let zoomController = ZoomScrollController()
-        self.zoomController = zoomController
-        let zoomView = OrientationView()
-        zoomView.content = self.zoomController
-        self.zoomView = zoomView
-        super.init(coder: aDecoder)
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
+        let zoomController = ZoomScrollController()
+        self.zoomController = zoomController
+        let zoomView = OrientationView(frame: self.view.bounds)
+        zoomView.updateContent(zoomController)
+        self.zoomView = zoomView
+
         
         
         
@@ -74,11 +62,9 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         button.addTarget(self, action: #selector(clicked), for: .touchUpInside)
         
         
-        self.view.addSubview(self.zoomView)
-        
-        self.zoomView.frame = self.view.bounds // CGRect(origin: CGPoint(x: 50, y: 500), size: CGSize(width: 150, height: 250))
-        self.zoomView.layer.borderColor = UIColor.red.cgColor
-        self.zoomView.layer.borderWidth = 2.0
+        self.view.addSubview(zoomView)
+        zoomView.layer.borderColor = UIColor.red.cgColor
+        zoomView.layer.borderWidth = 2.0
         
         let rotateButton: UIButton = UIButton(type: .custom)
         self.view.addSubview(rotateButton)
@@ -88,15 +74,40 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         
 //        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 1000, height: 600))
         let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 60))
-        self.zoomController.updateContentSize(CGSize(width: 100, height: 60))
+        zoomController.updateContentSize(CGSize(width: 100, height: 60))
         imageView.image = UIImage(named: "10.jpg")
-        if let orientationContentView = self.zoomView.content?.orientationContentView {
+        if let orientationContentView = zoomView.content?.orientationContentView {
             orientationContentView.addSubview(imageView)
             orientationContentView.backgroundColor = .black            
         }
 //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
 //            self.zoomView.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
 //        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+            let view = self.zoomView!
+            
+            UIView.animate(withDuration: 3, animations: {
+                view.frame = CGRect.init(x: 100, y: 100, width: 100, height: 100)
+            }) { (result) in
+                
+            }
+            
+
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 7) {
+            let view = self.zoomView!
+            
+            UIView.animate(withDuration: 3, animations: {
+                view .updateFrame(frame: self.view.bounds) { (layout) -> [AnyHashable : Any] in
+                    return [:]
+                }
+            }) { (result) in
+                
+            }
+
+        }
         
     }
     
@@ -113,9 +124,13 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
 
     @objc func rotateButtonClicked() {
-        self.zoomView.rotate(direction: OrientationView.Direction.anticlockwise, option: [:], duration: 0.2) { (result) in
-            print("rotate result: \(result)")
+        self.zoomView!.updateContentLayout(duration: 0.5) { (layout) -> [AnyHashable : Any] in
+            layout.rotate(direction: .anticlockwise)
+            return [:]
         }
+//        self.zoomView.rotate(direction: OrientationView.Direction.anticlockwise, option: [:], duration: 0.2) { (result) in
+//            print("rotate result: \(result)")
+//        }
 //        print("rotateButtonClicked")
     }
     

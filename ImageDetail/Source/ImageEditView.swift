@@ -81,12 +81,34 @@ open class OrientationView: UIView {
         public var contentTransform: CGAffineTransform {
             return CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2 * Double(self.orientation)))
         }
-        public var contentSafeAreaInsets: UIEdgeInsets = UIEdgeInsets()
         public var contentCenter: CGPoint = CGPoint()
     }
     
 
     public private(set) var contentLayout: ContentLayout = ContentLayout()
+    
+    
+    public func updateContentLayout(updater: (_ contentLayout: inout ContentLayout) -> [AnyHashable:Any]) {
+        var layout = self.contentLayout
+        let option = updater(&layout)
+        
+        UIView.animate(withDuration: duration, animations: {
+            self.updateOrientation(orientation, option:option)
+        }, completion: completion)
+    }
+    public func updateContentLayout(duration: CFTimeInterval, completion: ((Bool) -> Void)? = nil, updater: (_ contentLayout: inout ContentLayout) -> [AnyHashable:Any]) {
+        var layout = self.contentLayout
+        let option = updater(&layout)
+        UIView.animate(withDuration: duration, animations: {
+            self.willLayoutContent(content, layout: layout, option:option)
+            self._prepare()
+            self.layoutContent(content)
+            self.didLayoutContent(content)
+            self.updateOrientation(orientation, option:option)
+        }, completion: completion)
+    }
+    
+    
 //    public var contentCenter: CGPoint {
 //        var center = self.bounds.origin
 //        center.x += (bounds.size.width) / 2
@@ -126,21 +148,16 @@ open class OrientationView: UIView {
         layout.contentSafeAreaInsets = safeAreaInsets
     }
     
-    open func willLayoutContent(_ content: OrientationContent, option: [AnyHashable:Any]) {
+    open func willLayoutContent(_ content: OrientationContent, layout: ContentLayout, option: [AnyHashable:Any]) {
         
         
     }
-    open func didLayoutContent(_ content: OrientationContent, option: [AnyHashable:Any]) {
+    open func didLayoutContent(_ content: OrientationContent, layout: ContentLayout, option: [AnyHashable:Any]) {
         
         
     }
-    open func layoutContent(_ content: OrientationContent, option: [AnyHashable:Any]) {
-        let value = self.orientation
-        let contentView: UIView = content.orientationContentView
-        
+    open func layoutContent(_ content: OrientationContent, layout: ContentLayout, option: [AnyHashable:Any]) {
         content.updateLayout(self.contentLayout, option: option)
-
-//        content.layout(orientation: self.orientation, orientationInsets: self.contentSafeAreaInsets, center: self.contentCenter, contentSize: self.contentSize)
     }
     
     public override init(frame: CGRect) {

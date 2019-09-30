@@ -10,17 +10,35 @@ import UIKit
 
 class ViewController: UIViewController, UIScrollViewDelegate {
 
-    let zoomView: OrientationView = {
-        let view = OrientationView()
-        view.content = ZoomScrollController()
-        return view
-    }()
+    let zoomController: ZoomScrollController
+    let zoomView: OrientationView
     
     let vv: UIView = UIView()
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        let zoomController = ZoomScrollController()
+        self.zoomController = zoomController
+        let zoomView = OrientationView()
+        zoomView.content = self.zoomController
+        self.zoomView = zoomView
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        let zoomController = ZoomScrollController()
+        self.zoomController = zoomController
+        let zoomView = OrientationView()
+        zoomView.content = self.zoomController
+        self.zoomView = zoomView
+        super.init(coder: aDecoder)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        
+        
         
         let scrollView = UIScrollView(frame: CGRect(origin: CGPoint(x: 10, y: 150), size: CGSize(width: 500, height: 140)))
         scrollView.delegate = self
@@ -70,6 +88,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         
 //        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 1000, height: 600))
         let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 60))
+        self.zoomController.updateContentSize(CGSize(width: 100, height: 60))
         imageView.image = UIImage(named: "10.jpg")
         if let orientationContentView = self.zoomView.content?.orientationContentView {
             orientationContentView.addSubview(imageView)

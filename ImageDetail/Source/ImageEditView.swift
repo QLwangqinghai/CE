@@ -215,7 +215,6 @@ open class OrientationView: UIView {
 
 internal class ZoomScrollController: NSObject, OrientationContent {
     //        open var safeContentInset: UIEdgeInsets { get }
-    
     internal class _ZoomScrollView: UIScrollView {
         var orientationSafeAreaInsets: UIEdgeInsets = UIEdgeInsets()
         fileprivate private(set) var paddingInset: UIEdgeInsets = UIEdgeInsets()
@@ -243,26 +242,22 @@ internal class ZoomScrollController: NSObject, OrientationContent {
                 return
             }
         }
-        
         public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
             guard scrollView == self.scrollView else {
                 return
             }
         }
-        
         public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
             guard scrollView == self.scrollView else {
                 return nil
             }
             return self.viewForZooming
         }
-        
         public func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
             guard scrollView == self.scrollView else {
                 return
             }
         }
-        
         public func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
             guard scrollView == self.scrollView else {
                 return
@@ -281,11 +276,11 @@ internal class ZoomScrollController: NSObject, OrientationContent {
     }
 
     private let _scrollView: _ZoomScrollView
-    internal var scrollView: UIScrollView {
-        return self._scrollView
-    }
     fileprivate let _contentView: _ZoomContentView
     
+    
+    public private(set) var contentSize: CGSize
+
     public var contentView: UIView {
         return self._contentView
     }
@@ -305,6 +300,7 @@ internal class ZoomScrollController: NSObject, OrientationContent {
         self._scrollView = _ZoomScrollView()
         self._contentView = _ZoomContentView()
         self._scrollViewHandler = _ZoomViewHandler()
+        self.contentSize = CGSize()
         super.init()
         self._scrollView.addSubview(self._contentView)
         self._scrollViewHandler.scrollView = self._scrollView
@@ -312,19 +308,26 @@ internal class ZoomScrollController: NSObject, OrientationContent {
         self._scrollView.delegate = self._scrollViewHandler
     }
 
+    open func updateContentSize(_ contentSize: CGSize) {
+        self.contentSize = contentSize
+        self._scrollView.contentSize = contentSize
+    }
+    
+    
     var orientationContentView: UIView {
         return self._scrollView
     }
     
     func layout(orientation: Int, orientationSafeAreaInsets: UIEdgeInsets, center: CGPoint, contentSize: CGSize) {
         self.orientationSafeAreaInsets = orientationSafeAreaInsets
-        var bounds = self.scrollView.bounds
+        let scrollView = self._scrollView
+        var bounds = scrollView.bounds
         bounds.size = contentSize
-        self.scrollView.bounds = bounds
-        self.scrollView.center = center
+        scrollView.bounds = bounds
+        scrollView.center = center
         
         let safeInset = self.orientationSafeAreaInsets
-        let contentSize = self.scrollView.contentSize
+        let contentSize = scrollView.contentSize
         var paddingX: CGFloat = bounds.size.width - safeInset.left - safeInset.right - contentSize.width
         var paddingY: CGFloat = bounds.size.height - safeInset.top - safeInset.bottom - contentSize.height
         if paddingX < 0 {
@@ -337,9 +340,9 @@ internal class ZoomScrollController: NSObject, OrientationContent {
         let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
         self.paddingInset = paddingInset
         let newContentInset = UIEdgeInsets(top: safeInset.top + paddingInset.top, left: safeInset.left + paddingInset.left, bottom: safeInset.bottom + paddingInset.bottom, right: safeInset.right + paddingInset.right)
-        let old = self.scrollView.contentInset
+        let old = scrollView.contentInset
         if old != newContentInset {
-            self.scrollView.contentInset = newContentInset
+            scrollView.contentInset = newContentInset
 //            self.scrollView.contentOffset.x += old.left - newContentInset.left
 //            self.scrollView.contentOffset.y += old.top - newContentInset.top
             
@@ -349,15 +352,15 @@ internal class ZoomScrollController: NSObject, OrientationContent {
     func willMoveTo(orientationView: OrientationView?) {
         if let parent = orientationView {
 //            self.layout(orientation: parent.orientation, orientationSafeAreaInsets: parent.contentSafeAreaInsets, center: parent.contentCenter, contentSize: parent.contentSize)
-            
+            let scrollView = self._scrollView
             let safeInset = self.orientationSafeAreaInsets
-            let contentSize = self.scrollView.contentSize
+            let contentSize = scrollView.contentSize
 
-            self.scrollView.transform = parent.contentTransform
-            var bounds = self.scrollView.bounds
+            scrollView.transform = parent.contentTransform
+            var bounds = scrollView.bounds
             bounds.size = contentSize
-            self.scrollView.bounds = bounds
-            self.scrollView.center = parent.contentCenter
+            scrollView.bounds = bounds
+            scrollView.center = parent.contentCenter
             var paddingX: CGFloat = bounds.size.width - safeInset.left - safeInset.right - contentSize.width
             var paddingY: CGFloat = bounds.size.height - safeInset.top - safeInset.bottom - contentSize.height
             if paddingX < 0 {
@@ -370,9 +373,9 @@ internal class ZoomScrollController: NSObject, OrientationContent {
             let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
             self.paddingInset = paddingInset
             let newContentInset = UIEdgeInsets(top: safeInset.top + paddingInset.top, left: safeInset.left + paddingInset.left, bottom: safeInset.bottom + paddingInset.bottom, right: safeInset.right + paddingInset.right)
-            self.scrollView.contentInset = newContentInset
-            self.scrollView.contentOffset.x = newContentInset.left * -1
-            self.scrollView.contentOffset.y = newContentInset.top * -1
+            scrollView.contentInset = newContentInset
+            scrollView.contentOffset.x = newContentInset.left * -1
+            scrollView.contentOffset.y = newContentInset.top * -1
         }
     }
     func didMoveTo(orientationView: OrientationView?) {}

@@ -10,9 +10,9 @@ import UIKit
 
 class ViewController: UIViewController, UIScrollViewDelegate {
 
-    var zoomController: ZoomScrollController?
     var zoomView: OrientationView?
-    
+    var zoomController: ZoomScrollController?
+
     let vv: UIView = UIView()
     
     
@@ -74,12 +74,18 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         
 //        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 1000, height: 600))
         let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 60))
-        zoomController.updateContentSize(CGSize(width: 100, height: 60))
-        imageView.image = UIImage(named: "10.jpg")
-        if let orientationContentView = zoomView.content?.orientationContentView {
-            orientationContentView.addSubview(imageView)
-            orientationContentView.backgroundColor = .black            
+        
+        zoomController.updateZoomLayout { (layout) in
+            layout.contentSize = CGSize(width: 100, height: 60)
+            layout.minimumZoomScale = 1
+            layout.maximumZoomScale = 20
         }
+                
+        
+        imageView.image = UIImage(named: "10.jpg")
+        zoomController.contentView.addSubview(imageView)
+        zoomController.contentView.backgroundColor = .black
+
 //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
 //            self.zoomView.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
 //        }

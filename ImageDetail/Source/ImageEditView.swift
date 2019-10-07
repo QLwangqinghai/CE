@@ -331,10 +331,8 @@ internal class ZoomScrollController: NSObject {
         }
         override func layoutSubviews() {
             super.layoutSubviews()
-            
             print("_ZoomContentView layoutSubviews frame:\(self.frame) bounds: \(self.bounds)")
         }
-        
     }
 
     private let _scrollView: _ZoomScrollView
@@ -368,26 +366,20 @@ internal class ZoomScrollController: NSObject {
         self._scrollView.delegate = self._scrollViewHandler
     }
 
-    
-    private func updateZoomLayout(_ layout: ZoomLayout) {
-        self.zoomLayout(layout)
-    }
-    
-    
     public func updateZoomLayout(updater: (_ zoomLayout: inout ZoomLayout) -> Void) {
         var layout = self._layout.zoomLayout
         updater(&layout)
         self._layout.zoomLayout = layout
-        self.updateZoomLayout(layout)
+        self.zoomLayout(layout)
     }
     public func updateZoomLayout(duration: CFTimeInterval, completion: ((Bool) -> Void)? = nil, updater: (_ zoomLayout: inout ZoomLayout) -> Void) {
         var layout = self._layout.zoomLayout
         updater(&layout)
+        self._layout.zoomLayout = layout
         UIView.animate(withDuration: duration, animations: {
-            self.updateZoomLayout(layout)
+            self.zoomLayout(layout)
         }, completion: completion)
     }
-    
     
     func zoomLayout(_ layout: ZoomLayout) {
         let scrollView = self._scrollView
@@ -396,9 +388,25 @@ internal class ZoomScrollController: NSObject {
         scrollView.contentOffset = layout.contentOffset
         scrollView.maximumZoomScale = layout.maximumZoomScale
         scrollView.minimumZoomScale = layout.minimumZoomScale
-        self._contentView.frame = CGRect(origin: CGPoint(), size: layout.contentSize)
+        var frame = self._contentView.frame
+        frame.size = layout.contentSize
+        
+        self._contentView.frame = frame
     }
 
+    func zoomLayout2(_ layout: ZoomLayout) {
+        let scrollView = self._scrollView
+        scrollView.contentSize = layout.contentSize
+        scrollView.contentInset = layout.contentInset
+        scrollView.contentOffset = layout.contentOffset
+        scrollView.maximumZoomScale = layout.maximumZoomScale
+        scrollView.minimumZoomScale = layout.minimumZoomScale
+        var frame = self._contentView.frame
+        frame.size = layout.contentSize
+        
+        self._contentView.frame = frame
+    }
+    
     func layout(_ layout: ZoomScrollLayout) {
         let scrollView = self._scrollView
         let contentLayout = layout.contentLayout
@@ -406,13 +414,9 @@ internal class ZoomScrollController: NSObject {
         scrollView.bounds.size = contentLayout.contentSize
         scrollView.center = contentLayout.contentCenter
         scrollView.transform = contentLayout.contentTransform
-        self.zoomLayout(layout.zoomLayout)
+        self.zoomLayout2(layout.zoomLayout)
     }
 
-    
-    
-    
-    
     fileprivate var onZoomScaleChanged: ((_ view: _ZoomScrollView, _ oldValue: CGFloat) -> Void)?
     
 }
@@ -421,6 +425,251 @@ internal class ZoomScrollController: NSObject {
 extension ZoomScrollController: OrientationContent {
     var orientationContentView: UIView {
         return self._scrollView
+    }
+    
+    func updateLayout(_ contentLayout: OrientationView.ContentLayout, option: [AnyHashable : Any]) {
+        let layout = self._layout
+        layout.contentLayout = contentLayout
+        var zoomLayout = layout.zoomLayout
+
+        let size = layout.contentLayout.contentSize
+        let safeInset = layout.contentLayout.contentInsets
+        var paddingX: CGFloat = size.width - safeInset.left - safeInset.right - zoomLayout.contentSize.width
+        var paddingY: CGFloat = size.height - safeInset.top - safeInset.bottom - zoomLayout.contentSize.height
+        if paddingX < 0 {
+            paddingX = 0
+        }
+        if paddingY < 0 {
+            paddingY = 0
+        }
+        let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
+        zoomLayout.paddingInset = paddingInset
+        let old = zoomLayout.contentInset
+        let new = UIUtil.add(safeInset, paddingInset)
+        zoomLayout.contentInset = new
+        zoomLayout.contentOffset.x += old.left - new.left
+        zoomLayout.contentOffset.y += old.top - new.top
+        layout.zoomLayout = zoomLayout
+        self.layout(layout)
+    }
+    
+    func willMoveTo(orientationView: OrientationView?) {
+        if let parent = orientationView {
+            let layout = self._layout
+            layout.contentLayout = parent.contentLayout
+            var zoomLayout = layout.zoomLayout
+
+            let size = layout.contentLayout.contentSize
+            let safeInset = layout.contentLayout.contentInsets
+            var paddingX: CGFloat = size.width - safeInset.left - safeInset.right - zoomLayout.contentSize.width
+            var paddingY: CGFloat = size.height - safeInset.top - safeInset.bottom - zoomLayout.contentSize.height
+            if paddingX < 0 {
+                paddingX = 0
+            }
+            if paddingY < 0 {
+                paddingY = 0
+            }
+            let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
+            zoomLayout.paddingInset = paddingInset
+            zoomLayout.contentInset = UIUtil.add(safeInset, paddingInset)
+            zoomLayout.contentOffset.x = zoomLayout.contentInset.left * -1
+            zoomLayout.contentOffset.y = zoomLayout.contentInset.top * -1
+            self.layout(layout)
+        }
+    }
+    func didMoveTo(orientationView: OrientationView?) {}
+    
+}
+
+
+public class ZoomItem: NSObject {
+    public var frame: CGRect {
+        didSet {
+            self.resetFrame()
+        }
+    }
+    public let view: UIView
+    public var zoomScale: CGFloat {
+       didSet {
+           self.resetFrame()
+       }
+    }
+    public init(view: UIView) {
+        self.view = view
+        self.frame = view.frame
+        self.zoomScale = 1.0
+        super.init()
+    }
+    private func resetFrame() {
+        var frame = self.frame
+        let zoomScale = self.zoomScale
+        frame.origin.x *= zoomScale
+        frame.origin.y *= zoomScale
+        frame.size.width *= zoomScale
+        frame.size.height *= zoomScale
+        self.view.frame = frame
+    }
+}
+internal class ZoomController: NSObject {
+
+    internal struct ZoomLayout {
+        var paddingInset: UIEdgeInsets = UIEdgeInsets()
+        var contentInset: UIEdgeInsets = UIEdgeInsets()
+        var contentSize: CGSize = CGSize()
+        var contentOffset: CGPoint = CGPoint()
+
+        var anchorPoint: CGPoint = CGPoint()
+    
+        var maximumZoomScale: CGFloat = 1.0
+        var minimumZoomScale: CGFloat = 1.0
+        
+        
+        public var frame: CGRect {
+            var result = CGRect.init
+            let zoomScale = self.zoomScale
+            frame.origin.x *= zoomScale
+            frame.origin.y *= zoomScale
+            frame.size.width *= zoomScale
+            frame.size.height *= zoomScale
+
+        }
+        public var zoomScale: CGFloat {
+           didSet {
+               self.resetFrame()
+           }
+        }
+
+    }
+    internal class ZoomScrollLayout: NSObject {
+        var contentLayout: OrientationView.ContentLayout = OrientationView.ContentLayout()
+        var zoomLayout: ZoomLayout = ZoomLayout()
+    }
+    
+    fileprivate class _ZoomView: UIView {
+        public override init(frame: CGRect) {
+            super.init(frame: frame)
+        }
+        required public init?(coder aDecoder: NSCoder) {
+            super.init(coder: aDecoder)
+        }
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            print("_ZoomView layoutSubviews frame:\(self.frame) bounds: \(self.bounds)")
+        }
+    }
+    fileprivate class _ZoomContentView: UIImageView {
+        public override init(frame: CGRect) {
+            super.init(frame: frame)
+        }
+        required public init?(coder aDecoder: NSCoder) {
+            super.init(coder: aDecoder)
+        }
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            print("_ZoomContentView layoutSubviews frame:\(self.frame) bounds: \(self.bounds)")
+        }
+    }
+
+    private let _view: _ZoomView
+    fileprivate let _contentView: _ZoomContentView
+    private let _layout: ZoomScrollLayout
+
+    public var contentView: UIImageView {
+        return self._contentView
+    }
+    
+//    public var originalContentSize: CGSize = CGSize() {
+//        didSet(oldValue) {
+//            let newValue = self.originalContentSize
+//            if oldValue != newValue {
+//                self._contentView.frame = CGRect(origin: CGPoint(), size: newValue)
+//                self._view.contentSize = newValue
+//            }
+//        }
+//    }
+    
+    private let pinchGestureRecognizer: UIPinchGestureRecognizer
+    
+    public override init() {
+        self._view = _ZoomView()
+        self._contentView = _ZoomContentView(frame: CGRect())
+        self._layout = ZoomScrollLayout()
+        self.pinchGestureRecognizer = UIPinchGestureRecognizer()
+
+        super.init()
+        self._view.addSubview(self._contentView)
+        self._view.addGestureRecognizer(self.pinchGestureRecognizer)
+        self.pinchGestureRecognizer.addTarget(self, action: #selector(handlePinchGestureRecognizer(_:)))
+
+    }
+    
+    @objc func handlePinchGestureRecognizer(_ recognizer: UIPinchGestureRecognizer) {
+        print("state: \(recognizer.state) l0:\(recognizer.location(ofTouch: 0, in: recognizer.view)) l1:\(recognizer.location(ofTouch: 1, in: recognizer.view))")
+        
+        
+        
+        
+    }
+
+    public func updateZoomLayout(updater: (_ zoomLayout: inout ZoomLayout) -> Void) {
+        var layout = self._layout.zoomLayout
+        updater(&layout)
+        self._layout.zoomLayout = layout
+        self.zoomLayout(layout)
+    }
+    public func updateZoomLayout(duration: CFTimeInterval, completion: ((Bool) -> Void)? = nil, updater: (_ zoomLayout: inout ZoomLayout) -> Void) {
+        var layout = self._layout.zoomLayout
+        updater(&layout)
+        self._layout.zoomLayout = layout
+        UIView.animate(withDuration: duration, animations: {
+            self.zoomLayout(layout)
+        }, completion: completion)
+    }
+    
+    func zoomLayout(_ layout: ZoomLayout) {
+//        let scrollView = self._scrollView
+//        scrollView.contentSize = layout.contentSize
+//        scrollView.contentInset = layout.contentInset
+//        scrollView.contentOffset = layout.contentOffset
+//        scrollView.maximumZoomScale = layout.maximumZoomScale
+//        scrollView.minimumZoomScale = layout.minimumZoomScale
+//        var frame = self._contentView.frame
+//        frame.size = layout.contentSize
+//
+//        self._contentView.frame = frame
+    }
+
+    func zoomLayout2(_ layout: ZoomLayout) {
+//        let scrollView = self._scrollView
+//        scrollView.contentSize = layout.contentSize
+//        scrollView.contentInset = layout.contentInset
+//        scrollView.contentOffset = layout.contentOffset
+//        scrollView.maximumZoomScale = layout.maximumZoomScale
+//        scrollView.minimumZoomScale = layout.minimumZoomScale
+//        var frame = self._contentView.frame
+//        frame.size = layout.contentSize
+//
+//        self._contentView.frame = frame
+    }
+    
+    func layout(_ layout: ZoomScrollLayout) {
+        let view = self._view
+        let contentLayout = layout.contentLayout
+
+        view.bounds.size = contentLayout.contentSize
+        view.center = contentLayout.contentCenter
+        view.transform = contentLayout.contentTransform
+        self.zoomLayout2(layout.zoomLayout)
+    }
+
+//    fileprivate var onZoomScaleChanged: ((_ view: _ZoomScrollView, _ oldValue: CGFloat) -> Void)?
+    
+}
+
+
+extension ZoomController: OrientationContent {
+    var orientationContentView: UIView {
+        return self._view
     }
     
     func updateLayout(_ contentLayout: OrientationView.ContentLayout, option: [AnyHashable : Any]) {

@@ -307,18 +307,35 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
     
     internal struct ZoomLayout {
         var contentInset: UIEdgeInsets = UIEdgeInsets()
-        var paddingInset: UIEdgeInsets = UIEdgeInsets()
+        private var paddingInset: UIEdgeInsets = UIEdgeInsets()
         
-        var contentSize: CGSize = CGSize()
+        var contentSize: CGSize = CGSize() {
+            didSet {
+                self.resetSize()
+            }
+        }
         var contentOffset: CGPoint = CGPoint()
         
         var anchorPoint: CGPoint = CGPoint()
         
-        var zoomScale: CGFloat = 1.0
+        var zoomScale: CGFloat = 1.0  {
+            didSet {
+                self.resetSize()
+            }
+        }
         var maximumZoomScale: CGFloat = 1.0
         var minimumZoomScale: CGFloat = 1.0
     
-    
+        var scrollViewSize: CGSize = CGSize()
+
+        var size: CGSize = CGSize()
+        
+        private mutating func resetSize() {
+            var size = self.contentSize
+            size.width *= self.zoomScale
+            size.height *= self.zoomScale
+            self.size = size
+        }
     }
     
 //    internal struct PinchContext {

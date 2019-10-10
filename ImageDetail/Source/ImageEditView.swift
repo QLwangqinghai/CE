@@ -415,6 +415,26 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
         self._scrollView.panGestureRecognizer.isEnabled = false
     }
     
+    func goodContentOffset(of scrollView: UIScrollView, contentOffset: CGPoint) -> CGPoint {
+        let scrollSize = scrollView.bounds.size
+        var offset = contentOffset
+        let minX = 0 - scrollView.contentInset.left
+        let minY = 0 - scrollView.contentInset.top
+        let maxX = scrollView.contentSize.width - scrollSize.width + scrollView.contentInset.right
+        let maxY = scrollView.contentSize.height - scrollSize.height + scrollView.contentInset.bottom
+        if offset.x < minX {
+            offset.x = minX
+        } else if offset.x > maxX {
+            offset.x = maxX
+        }
+        if offset.y < minY {
+             offset.y = minY
+        } else if offset.y > maxY {
+             offset.y = maxY
+        }
+        return offset
+    }
+    
     
     var pinchBeginPointInContent: (CGPoint, CGPoint, CGFloat)?
     @objc func handlePinchGestureRecognizer(_ recognizer: UIPinchGestureRecognizer) {
@@ -477,12 +497,7 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
             let contentOffsetChanged = UIUtil.subtract(contentAnchorPoint, anchorPointInContent)
             
             var contentOffset = UIUtil.add(self._scrollView.contentOffset, contentOffsetChanged)
-            
-            //x、y 最小、最大值问题
-            
-            self._scrollView.contentOffset = contentOffset
-        
-                        
+            self._scrollView.contentOffset = self.goodContentOffset(of: self._scrollView, contentOffset: contentOffset)
             break
         case .ended:
             fallthrough

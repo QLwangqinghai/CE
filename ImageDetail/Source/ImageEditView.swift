@@ -445,7 +445,6 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
                 self.pinchBeginPointInContent = nil
                 return
             }
-            recognizer.scale = self._layout.zoomLayout.zoomScale
             self.pinchBeginPointInContent = (CGPoint(x: anchorPoint.x / scrollSize.width, y: anchorPoint.y / scrollSize.height), CGPoint(x: point.x / zoomSize.width, y: point.y / zoomSize.height), zoomLayout.zoomScale)
             break
         case .changed:
@@ -477,7 +476,7 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
             
             let contentOffsetChanged = UIUtil.subtract(contentAnchorPoint, anchorPointInContent)
             
-            var contentOffset = UIUtil.subtract(self._scrollView.contentOffset, contentOffsetChanged)
+            var contentOffset = UIUtil.add(self._scrollView.contentOffset, contentOffsetChanged)
             self._scrollView.contentOffset = contentOffset
         
                         

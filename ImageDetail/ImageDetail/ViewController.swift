@@ -162,7 +162,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         let imageView: UIImageView = UIImageView()
         
         zoomScrollController.updateZoomLayout { (layout) in
-            layout.contentSize = CGSize(width: 100, height: 60)
+            layout.originalSize = CGSize(width: 100, height: 60)
 //            layout.minimumZoomScale = 1
 //            layout.maximumZoomScale = 20
         }
@@ -190,10 +190,10 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 //            self.zoomView.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
 //        }
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
             let view = self.zoomView!
             
-            UIView.animate(withDuration: 1, animations: {
+            UIView.animate(withDuration: 0.25, animations: {
                 view.frame = CGRect.init(x: 100, y: 100, width: 100, height: 100)
             }) { (result) in
                 
@@ -202,10 +202,10 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 
         }
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 4) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
             let view = self.zoomView!
             
-            UIView.animate(withDuration: 1, animations: {
+            UIView.animate(withDuration: 0.25, animations: {
                 view .updateFrame(frame: self.view.bounds) { (layout) -> [AnyHashable : Any] in
                     return [:]
                 }

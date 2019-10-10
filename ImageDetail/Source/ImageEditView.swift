@@ -430,6 +430,7 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
         }
         var zoomLayout = self._layout.zoomLayout
         let scrollSize = zoomLayout.scrollSize
+        
         switch recognizer.state {
         case .possible:
             break
@@ -437,8 +438,9 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
             var center = UIUtil.add(recognizer.location(ofTouch: 0, in: recognizer.view), recognizer.location(ofTouch: 1, in: recognizer.view))
             center.x /= 2
             center.y /= 2
-            let anchorPoint = UIUtil.subtract(center, self._scrollView.bounds.origin)
             let point = self._scrollView.convert(center, to: self._contentView)
+            
+            let anchorPoint = UIUtil.subtract(center, self._scrollView.bounds.origin)
             guard zoomSize.width >= point.x && zoomSize.height >= point.y && point.x >= 0 && point.y >= 0 else {
                 self.pinchBeginPointInContent = nil
                 return
@@ -468,21 +470,17 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
             zoomLayout.paddingInset = paddingInset
             self._scrollView.contentInset = zoomLayout.scrollContentInset
 
+            let anchorPoint = UIUtil.add(CGPoint(x: anchorPointScale.x * scrollSize.width, y: anchorPointScale.y * scrollSize.height), self._scrollView.bounds.origin)
+            let anchorPointInContent = self._scrollView.convert(anchorPoint, to: self._contentView)
             
+            let contentAnchorPoint = CGPoint(x: contentAnchorPointScale.x * zoomSize.width, y: contentAnchorPointScale.y * zoomSize.height)
             
-            let p = CGPoint(x: size.width * x, y: size.height * y)
-            let contentOffset = UIUtil.subtract(self._scrollView.contentOffset, UIUtil.subtract(center, p))
+            let contentOffsetChanged = UIUtil.subtract(contentAnchorPoint, anchorPointInContent)
+            
+            var contentOffset = UIUtil.subtract(self._scrollView.contentOffset, contentOffsetChanged)
             self._scrollView.contentOffset = contentOffset
-            
-            
-            var frame = self._contentView.frame
-            frame.size.width = zoomLayout.contentSize.width * zoomLayout.zoomScale
-            frame.size.height = zoomLayout.contentSize.height * zoomLayout.zoomScale
-            self._contentView.frame = frame
-            
-            
-            print("frame:\(frame)")
-            
+        
+                        
             break
         case .ended:
             fallthrough
@@ -491,7 +489,7 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
         case .failed:
             fallthrough
         @unknown default:
-            guard let (x, y) = self.pinchBeginPointInContent else {
+            guard let (anchorPointScale, contentAnchorPointScale, scale) = self.pinchBeginPointInContent else {
                 return
             }
             self.pinchBeginPointInContent = nil

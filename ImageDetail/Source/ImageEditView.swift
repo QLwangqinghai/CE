@@ -424,33 +424,52 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
             return
         }
 
-        let size = self._contentView.bounds.size
-        guard size.width > 0 && size.height > 0 else {
+        var zoomSize = self._contentView.bounds.size
+        guard zoomSize.width > 0 && zoomSize.height > 0 else {
             return
         }
-        let zoomLayout = self._layout.zoomLayout
+        var zoomLayout = self._layout.zoomLayout
+        let scrollSize = zoomLayout.scrollSize
         switch recognizer.state {
         case .possible:
             break
         case .began:
-            
             var center = UIUtil.add(recognizer.location(ofTouch: 0, in: recognizer.view), recognizer.location(ofTouch: 1, in: recognizer.view))
             center.x /= 2
             center.y /= 2
+            let anchorPoint = UIUtil.subtract(center, self._scrollView.bounds.origin)
             let point = self._scrollView.convert(center, to: self._contentView)
-            guard size.width >= point.x && size.height >= point.y && point.x >= 0 && point.y >= 0 else {
+            guard zoomSize.width >= point.x && zoomSize.height >= point.y && point.x >= 0 && point.y >= 0 else {
                 self.pinchBeginPointInContent = nil
                 return
             }
             recognizer.scale = self._layout.zoomLayout.zoomScale
-            self.pinchBeginPointInContent = (point.x / size.width, point.y / size.height)
+            self.pinchBeginPointInContent = (CGPoint(x: anchorPoint.x / scrollSize.width, y: anchorPoint.y / scrollSize.height), CGPoint(x: point.x / zoomSize.width, y: point.y / zoomSize.height), zoomLayout.zoomScale)
             break
         case .changed:
-            guard let (x, y) = self.pinchBeginPointInContent else {
+            guard let (anchorPointScale, contentAnchorPointScale, scale) = self.pinchBeginPointInContent else {
                 return
             }
-            self._layout.zoomLayout.zoomScale = recognizer.scale
+            zoomLayout.zoomScale = recognizer.scale * scale
+            zoomSize = zoomLayout.zoomSize
+            self._contentView.frame.size = zoomSize
+            self._scrollView.contentSize = zoomSize
+            
+            let safeInset = zoomLayout.contentInset
+            var paddingX: CGFloat = scrollSize.width - safeInset.left - safeInset.right - zoomSize.width
+            var paddingY: CGFloat = scrollSize.height - safeInset.top - safeInset.bottom - zoomSize.height
+            if paddingX < 0 {
+                paddingX = 0
+            }
+            if paddingY < 0 {
+                paddingY = 0
+            }
+            let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
+            zoomLayout.paddingInset = paddingInset
+            self._scrollView.contentInset = zoomLayout.scrollContentInset
 
+            
+            
             let p = CGPoint(x: size.width * x, y: size.height * y)
             let contentOffset = UIUtil.subtract(self._scrollView.contentOffset, UIUtil.subtract(center, p))
             self._scrollView.contentOffset = contentOffset
@@ -477,7 +496,7 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
             }
             self.pinchBeginPointInContent = nil
         }
-        
+        self._layout.zoomLayout = zoomLayout
         print("state: \(recognizer.state) scale:\(recognizer.scale) l0:\(recognizer.location(ofTouch: 0, in: recognizer.view)) l1:\(recognizer.location(ofTouch: 1, in: recognizer.view))")
     }
     
@@ -530,7 +549,26 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
         scrollView.bounds.size = contentLayout.contentSize
         scrollView.center = contentLayout.contentCenter
         scrollView.transform = contentLayout.contentTransform
-        self.zoomLayout2(layout.zoomLayout)
+        
+        var zoomLayout = layout.zoomLayout
+        zoomLayout.contentInset = layout.contentLayout.contentInsets
+        zoomLayout.scrollSize = layout.contentLayout.contentSize
+        let zoomSize = zoomLayout.zoomSize
+        let scrollSize = zoomLayout.scrollSize
+        let safeInset = zoomLayout.contentInset
+        var paddingX: CGFloat = scrollSize.width - safeInset.left - safeInset.right - zoomSize.width
+        var paddingY: CGFloat = scrollSize.height - safeInset.top - safeInset.bottom - zoomSize.height
+        if paddingX < 0 {
+            paddingX = 0
+        }
+        if paddingY < 0 {
+            paddingY = 0
+        }
+        let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
+        zoomLayout.paddingInset = paddingInset
+        layout.zoomLayout = zoomLayout
+        
+        scrollView.contentInset = zoomLayout.scrollContentInset
     }
 
     fileprivate var onZoomScaleChanged: ((_ view: _ZoomScrollView, _ oldValue: CGFloat) -> Void)?
@@ -546,26 +584,6 @@ extension ZoomScrollController: OrientationContent {
     func updateLayout(_ contentLayout: OrientationView.ContentLayout, option: [AnyHashable : Any]) {
         let layout = self._layout
         layout.contentLayout = contentLayout
-        var zoomLayout = layout.zoomLayout
-
-        let size = layout.contentLayout.contentSize
-        let safeInset = layout.contentLayout.contentInsets
-        var paddingX: CGFloat = size.width - safeInset.left - safeInset.right - zoomLayout.contentSize.width
-        var paddingY: CGFloat = size.height - safeInset.top - safeInset.bottom - zoomLayout.contentSize.height
-        if paddingX < 0 {
-            paddingX = 0
-        }
-        if paddingY < 0 {
-            paddingY = 0
-        }
-        let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
-        zoomLayout.paddingInset = paddingInset
-        let old = zoomLayout.contentInset
-        let new = UIUtil.add(safeInset, paddingInset)
-        zoomLayout.contentInset = new
-        zoomLayout.contentOffset.x += old.left - new.left
-        zoomLayout.contentOffset.y += old.top - new.top
-        layout.zoomLayout = zoomLayout
         self.layout(layout)
     }
     
@@ -573,24 +591,12 @@ extension ZoomScrollController: OrientationContent {
         if let parent = orientationView {
             let layout = self._layout
             layout.contentLayout = parent.contentLayout
-            var zoomLayout = layout.zoomLayout
-
-            let size = layout.contentLayout.contentSize
-            let safeInset = layout.contentLayout.contentInsets
-            var paddingX: CGFloat = size.width - safeInset.left - safeInset.right - zoomLayout.contentSize.width
-            var paddingY: CGFloat = size.height - safeInset.top - safeInset.bottom - zoomLayout.contentSize.height
-            if paddingX < 0 {
-                paddingX = 0
-            }
-            if paddingY < 0 {
-                paddingY = 0
-            }
-            let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
-            zoomLayout.paddingInset = paddingInset
-            zoomLayout.contentInset = UIUtil.add(safeInset, paddingInset)
-            zoomLayout.contentOffset.x = zoomLayout.contentInset.left * -1
-            zoomLayout.contentOffset.y = zoomLayout.contentInset.top * -1
             self.layout(layout)
+            
+            var contentOffset = self._scrollView.contentOffset
+            contentOffset.x = 0 - layout.zoomLayout.scrollContentInset.left
+            contentOffset.y = 0 - layout.zoomLayout.scrollContentInset.top
+            self._scrollView.contentOffset = contentOffset
         }
     }
     func didMoveTo(orientationView: OrientationView?) {}

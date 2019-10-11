@@ -409,10 +409,12 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
 //        self._scrollViewHandler.viewForZooming = self._contentView
 //        self._scrollView.delegate = self._scrollViewHandler
         
-        self._scrollView.addGestureRecognizer(self.pinchGestureRecognizer)
-        self.pinchGestureRecognizer.delegate = self
-        self.pinchGestureRecognizer.addTarget(self, action: #selector(handlePinchGestureRecognizer(_:)))
-        self._scrollView.panGestureRecognizer.isEnabled = false
+//        self._scrollView.addGestureRecognizer(self.pinchGestureRecognizer)
+//        self.pinchGestureRecognizer.delegate = self
+//        self.pinchGestureRecognizer.addTarget(self, action: #selector(handlePinchGestureRecognizer(_:)))
+//        self._scrollView.pinchGestureRecognizer?.isEnabled = false
+        
+        self._scrollView.panGestureRecognizer.addObserver(self, forKeyPath: #keyPath(UIGestureRecognizer.state), options: [.old, .new], context: nil)
     }
     
     func goodContentOffset(of scrollView: UIScrollView, contentOffset: CGPoint) -> CGPoint {
@@ -587,6 +589,19 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
     }
 
     fileprivate var onZoomScaleChanged: ((_ view: _ZoomScrollView, _ oldValue: CGFloat) -> Void)?
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        guard let key = keyPath else {
+            return
+        }
+        switch key {
+        case #keyPath(UIGestureRecognizer.state):
+            print(change)
+
+        default:
+            break
+        }
+    }
     
 }
 

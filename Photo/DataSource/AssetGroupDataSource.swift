@@ -37,7 +37,7 @@ import Photos
  smartAlbumBursts //连拍模式拍摄的照片
  smartAlbumSlomoVideos //Slomo 是 slow motion 的缩写，高速摄影慢动作解析，在该模式下，iOS 设备以120帧拍摄。
  smartAlbumUserLibrary //相机相册，所有相机拍摄的照片或视频都会出现在该相册中，而且使用其他应用保存的照片也会出现在这里。
-
+ any //全部类型
 
      @available(iOS 9, *)
      case smartAlbumSelfPortraits
@@ -53,24 +53,13 @@ import Photos
 
      @available(iOS 11, *)
      case smartAlbumAnimated
-
+ 
      @available(iOS 11, *)
      case smartAlbumLongExposures
-
+ 
      @available(iOS 13, *)
      case smartAlbumUnableToUpload
 
-     
-     // Used for fetching, if you don't care about the exact subtype
-     @available(iOS 8, *)
-     case any
- 
-
-     case SmartAlbumRecentlyAdded //相机近期拍摄的照片或视频
-     case SmartAlbumBursts //连拍模式拍摄的照片，在 iPad mini 上按住快门不放就可以了，但是照片依然没有存放在这个文件夹下，而是在相机相册里。
-     case SmartAlbumSlomoVideos //Slomo 是 slow motion 的缩写，高速摄影慢动作解析，在该模式下，iOS 设备以120帧拍摄。不过我的 iPad mini 不支持，没法验证。
-     case SmartAlbumUserLibrary //这个命名最神奇了，就是相机相册，所有相机拍摄的照片或视频都会出现在该相册中，而且使用其他应用保存的照片也会出现在这里。
-     case Any //包含所有类型
  }
  */
 
@@ -78,8 +67,10 @@ import Photos
 public final class AssetGroupDataSource: NSObject {
     
     func aa() {
-
-        
+//        PHAssetCollection.fetchAssetCollections(with: <#T##PHAssetCollectionType#>, subtype: .any, options: <#T##PHFetchOptions?#>)
+////        PHAsset.fetchassets
+//        PHAsset.fetchAssets(in: PHAssetCollection, options: <#T##PHFetchOptions?#>)
+//
         
     }
 

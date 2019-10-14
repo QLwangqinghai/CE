@@ -67,7 +67,9 @@ import Photos
 public final class AssetGroupDataSource: NSObject {
     
     func aa() {
-//        PHAssetCollection.fetchAssetCollections(with: <#T##PHAssetCollectionType#>, subtype: .any, options: <#T##PHFetchOptions?#>)
+//https://www.jianshu.com/p/fb8c13d3803f
+        
+        //        PHAssetCollection.fetchAssetCollections(with: <#T##PHAssetCollectionType#>, subtype: .any, options: <#T##PHFetchOptions?#>)
 ////        PHAsset.fetchassets
 //        PHAsset.fetchAssets(in: PHAssetCollection, options: <#T##PHFetchOptions?#>)
 //

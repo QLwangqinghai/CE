@@ -37,7 +37,6 @@ open class ZoomView: UIView {
         public weak var scrollView: UIScrollView?
         public weak var viewForZooming: UIView?
         public var didZoom: ((_ handler: _ZoomHandler, _ scrollView: UIScrollView) -> Void)?
-
 //        public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
 //            guard scrollView == self.scrollView else {
 //                return

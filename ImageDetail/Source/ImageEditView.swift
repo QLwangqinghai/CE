@@ -245,30 +245,11 @@ open class OrientationView: UIView {
     }
 }
 
-internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
-    //        open var safeContentInset: UIEdgeInsets { get }
-    internal class _ZoomScrollView: UIScrollView {
-        var orientationInsets: UIEdgeInsets = UIEdgeInsets()
-        fileprivate private(set) var paddingInset: UIEdgeInsets = UIEdgeInsets()
-        fileprivate var onZoomScaleChanged: ((_ view: _ZoomScrollView, _ oldValue: CGFloat) -> Void)?
-        
-        public override init(frame: CGRect) {
-            super.init(frame: frame)
-            if #available(iOS 11.0, *) {
-                self.contentInsetAdjustmentBehavior = .never
-            }
-        }
-        required public init?(coder aDecoder: NSCoder) {
-            super.init(coder: aDecoder)
-            if #available(iOS 11.0, *) {
-                self.contentInsetAdjustmentBehavior = .never
-            }
-        }
-    }
-//    fileprivate class _ZoomViewHandler: NSObject, UIScrollViewDelegate {
-//        public weak var scrollView: UIScrollView?
-//        public weak var viewForZooming: UIView?
-//
+open class ZoomView: UIView {
+    fileprivate class _ZoomHandler: NSObject, UIScrollViewDelegate {
+        public weak var scrollView: UIScrollView?
+        public weak var viewForZooming: UIView?
+        public var didZoom: ((_ handler: _ZoomHandler, _ scrollView: UIScrollView) -> Void)?
 //        public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
 //            guard scrollView == self.scrollView else {
 //                return
@@ -279,32 +260,162 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
 //                return
 //            }
 //        }
-//        public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-//            guard scrollView == self.scrollView else {
-//                return nil
-//            }
-//            return self.viewForZooming
-//        }
-//        public func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
-//            guard scrollView == self.scrollView else {
-//                return
-//            }
-//        }
-//        public func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
-//            guard scrollView == self.scrollView else {
-//                return
-//            }
-//            guard let aview = view else {
-//                return
-//            }
-//            print("scrollViewDidEndZooming \(scrollView) at:\(aview) scale:\(scale)")
-//        }
-//
-//        public func scrollViewDidZoom(_ scrollView: UIScrollView) {
-//            print("scrollViewDidZoom \(scrollView)")
-//        }
-//    }
+        public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+            guard scrollView == self.scrollView else {
+                return nil
+            }
+            return self.viewForZooming
+        }
+        public func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
+            guard scrollView == self.scrollView else {
+                return
+            }
+            guard let aview = view else {
+                return
+            }
+            print("scrollViewWillBeginZooming \(scrollView) with:\(aview)")
+        }
+        public func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+            guard scrollView == self.scrollView else {
+                return
+            }
+            guard let aview = view else {
+                return
+            }
+            print("scrollViewDidEndZooming \(scrollView) at:\(aview) scale:\(scale)")
+        }
+        public func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            guard scrollView == self.scrollView else {
+                return
+            }
+            if let didZoom = self.didZoom {
+                didZoom(self, scrollView)
+            }
+        }
+    }
     
+    private let _scrollView: UIScrollView
+    private let _scrollZoomHandler: _ZoomHandler
+    public let contentView: UIView
+
+    private func resetContentInset() {
+        let scrollView = self._scrollView
+        let old = scrollView.contentInset
+        let new = UIUtil.add(self.orientationInset, self.paddingInset)
+        scrollView.contentInset = new
+//        var offset = scrollView.contentOffset
+//        offset.x = offset.x - (new.left - old.left)
+//        offset.y = offset.y - (new.top - old.top)
+//        scrollView.contentOffset = offset
+    }
+    
+    public var orientationInset: UIEdgeInsets = UIEdgeInsets() {
+        didSet {
+            self.resetContentInset()
+        }
+    }
+    public fileprivate(set) var paddingInset: UIEdgeInsets = UIEdgeInsets() {
+        didSet {
+            self.resetContentInset()
+        }
+    }
+    
+    private func _resetPadding(scrollView: UIScrollView) {
+        let zoomSize = scrollView.contentSize
+        let scrollSize = scrollView.bounds.size
+        let safeInset = self.orientationInset
+        var paddingH: CGFloat = scrollSize.width - safeInset.left - safeInset.right - zoomSize.width
+        var paddingV: CGFloat = scrollSize.height - safeInset.top - safeInset.bottom - zoomSize.height
+        if paddingH < 0 {
+            paddingH = 0
+        } else {
+            paddingH = paddingH / 2
+        }
+        if paddingV < 0 {
+            paddingV = 0
+        } else {
+            paddingV = paddingV / 2
+        }
+        let paddingInset = UIEdgeInsets(top: paddingV, left: paddingH, bottom: paddingV, right: paddingH)
+        self.paddingInset = paddingInset
+    }
+
+    private func _prepareBase() {
+        let scrollView = self._scrollView
+        var scrollViewFrame = self.bounds
+        scrollViewFrame.origin = CGPoint()
+        if #available(iOS 11.0, *) {
+            self._scrollView.contentInsetAdjustmentBehavior = .never
+        }
+        scrollView.frame = scrollViewFrame
+        scrollView.addSubview(self.contentView)
+        self.addSubview(scrollView)
+        self._resetPadding(scrollView: scrollView)
+        self._scrollZoomHandler.didZoom = {[weak self](handler, scrollView) in
+            guard let `self` = self else {
+                return
+            }
+            self._resetPadding(scrollView: scrollView)
+        }
+        
+        self._scrollZoomHandler.scrollView = scrollView
+        self._scrollZoomHandler.viewForZooming = self.contentView
+        self._scrollView.delegate = self._scrollZoomHandler
+    }
+    
+    public override init(frame: CGRect) {
+        self._scrollView = UIScrollView()
+        self._scrollZoomHandler = _ZoomHandler()
+        self.contentView = UIView()
+        super.init(frame: frame)
+        self._prepareBase()
+    }
+    required public init?(coder aDecoder: NSCoder) {
+        self._scrollView = UIScrollView()
+        self._scrollZoomHandler = _ZoomHandler()
+        self.contentView = UIView()
+        super.init(coder: aDecoder)
+        self._prepareBase()
+    }
+    
+    public func resetContent(size: CGSize) {
+        let scrollView = self._scrollView
+        let scrollSize = scrollView.bounds.size
+        guard scrollSize.width > 0 && scrollSize.width > 0 else {
+            self.resetContent(size: size, zoomScale: 1.0, minimumZoomScale: 1.0, maximumZoomScale: 1.0)
+            return
+        }
+        
+        let xScale = size.width / scrollSize.width
+        let yScale = size.height / scrollSize.height
+        var minimumZoomScale: CGFloat = 1.0
+        var maximumZoomScale: CGFloat = 1.0
+        var zoomScale: CGFloat = 1.0
+        if xScale > yScale {
+            minimumZoomScale = scrollSize.width / size.width / 4.0
+            maximumZoomScale = size.width / scrollSize.width * 4.0
+        } else {
+            minimumZoomScale = scrollSize.height / size.height / 4.0
+            maximumZoomScale = size.height / scrollSize.height * 4.0
+        }
+        zoomScale = CGFloat(sqrt(Double(minimumZoomScale * maximumZoomScale)))
+        self.resetContent(size: size, zoomScale: zoomScale, minimumZoomScale: minimumZoomScale, maximumZoomScale: maximumZoomScale)
+    }
+
+    public func resetContent(size: CGSize, zoomScale: CGFloat, minimumZoomScale: CGFloat, maximumZoomScale: CGFloat) {
+        let scrollView = self._scrollView
+        let contentView = self.contentView
+        scrollView.minimumZoomScale = minimumZoomScale
+        scrollView.maximumZoomScale = maximumZoomScale
+        scrollView.zoomScale = zoomScale
+        scrollView.contentSize = size
+        contentView.bounds.size = size
+        contentView.center = CGPoint(x: size.width / 2, y: size.height / 2)
+    }
+}
+
+internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
+
     internal struct ZoomLayout {
         private(set) var scrollContentInset: UIEdgeInsets = UIEdgeInsets()
         var zoomSize: CGSize = CGSize()
@@ -374,47 +485,17 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
         }
     }
 
-    private let _scrollView: _ZoomScrollView
-    fileprivate let _contentView: _ZoomContentView
+    public let zoomView: ZoomView
     private let _layout: ZoomScrollLayout
 
     public var contentView: UIView {
-        return self._contentView
+        return self.zoomView.contentView
     }
-    
-    public var originalContentSize: CGSize = CGSize() {
-        didSet(oldValue) {
-            let newValue = self.originalContentSize
-            if oldValue != newValue {
-                self._contentView.frame = CGRect(origin: CGPoint(), size: newValue)
-                self._scrollView.contentSize = newValue
-            }
-        }
-    }
-//    private let _scrollViewHandler: _ZoomViewHandler
-    
-    private let pinchGestureRecognizer: UIPinchGestureRecognizer
-    
-
-    
+        
     public override init() {
-        self._scrollView = _ZoomScrollView()
-        self._contentView = _ZoomContentView()
-//        self._scrollViewHandler = _ZoomViewHandler()
+        self.zoomView = ZoomView()
         self._layout = ZoomScrollLayout()
-        self.pinchGestureRecognizer = UIPinchGestureRecognizer()
         super.init()
-        self._scrollView.addSubview(self._contentView)
-//        self._scrollViewHandler.scrollView = self._scrollView
-//        self._scrollViewHandler.viewForZooming = self._contentView
-//        self._scrollView.delegate = self._scrollViewHandler
-        
-//        self._scrollView.addGestureRecognizer(self.pinchGestureRecognizer)
-//        self.pinchGestureRecognizer.delegate = self
-//        self.pinchGestureRecognizer.addTarget(self, action: #selector(handlePinchGestureRecognizer(_:)))
-//        self._scrollView.pinchGestureRecognizer?.isEnabled = false
-        
-        self._scrollView.panGestureRecognizer.addObserver(self, forKeyPath: #keyPath(UIGestureRecognizer.state), options: [.old, .new], context: nil)
     }
     
     func goodContentOffset(of scrollView: UIScrollView, contentOffset: CGPoint) -> CGPoint {
@@ -436,105 +517,6 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
         }
         return offset
     }
-    
-    
-    var pinchBeginPointInContent: (CGPoint, CGPoint, CGFloat)?
-    @objc func handlePinchGestureRecognizer(_ recognizer: UIPinchGestureRecognizer) {
-        guard recognizer.numberOfTouches == 2 else {
-            print("error recognizer, numberOfTouches: \(recognizer.numberOfTouches), state: \(recognizer.state) ")
-
-            return
-        }
-
-        var zoomSize = self._contentView.bounds.size
-        guard zoomSize.width > 0 && zoomSize.height > 0 else {
-            return
-        }
-        var zoomLayout = self._layout.zoomLayout
-        let scrollSize = zoomLayout.scrollSize
-        
-        switch recognizer.state {
-        case .possible:
-            break
-        case .began:
-            var center = UIUtil.add(recognizer.location(ofTouch: 0, in: recognizer.view), recognizer.location(ofTouch: 1, in: recognizer.view))
-            center.x /= 2
-            center.y /= 2
-            let point = self._scrollView.convert(center, to: self._contentView)
-            
-            let anchorPoint = UIUtil.subtract(center, self._scrollView.bounds.origin)
-            guard zoomSize.width >= point.x && zoomSize.height >= point.y && point.x >= 0 && point.y >= 0 else {
-                self.pinchBeginPointInContent = nil
-                return
-            }
-            self.pinchBeginPointInContent = (CGPoint(x: anchorPoint.x / scrollSize.width, y: anchorPoint.y / scrollSize.height), CGPoint(x: point.x / zoomSize.width, y: point.y / zoomSize.height), zoomLayout.zoomScale)
-            break
-        case .changed:
-            guard let (anchorPointScale, contentAnchorPointScale, scale) = self.pinchBeginPointInContent else {
-                return
-            }
-            zoomLayout.zoomScale = recognizer.scale * scale
-            zoomSize = zoomLayout.zoomSize
-            self._contentView.frame.size = zoomSize
-            self._scrollView.contentSize = zoomSize
-            
-            let safeInset = zoomLayout.contentInset
-            var paddingX: CGFloat = scrollSize.width - safeInset.left - safeInset.right - zoomSize.width
-            var paddingY: CGFloat = scrollSize.height - safeInset.top - safeInset.bottom - zoomSize.height
-            if paddingX < 0 {
-                paddingX = 0
-            }
-            if paddingY < 0 {
-                paddingY = 0
-            }
-            let paddingInset = UIEdgeInsets(top: paddingY / 2, left: paddingX / 2, bottom: paddingY / 2, right: paddingX / 2)
-            zoomLayout.paddingInset = paddingInset
-            self._scrollView.contentInset = zoomLayout.scrollContentInset
-
-            let anchorPoint = UIUtil.add(CGPoint(x: anchorPointScale.x * scrollSize.width, y: anchorPointScale.y * scrollSize.height), self._scrollView.bounds.origin)
-            let anchorPointInContent = self._scrollView.convert(anchorPoint, to: self._contentView)
-            
-            let contentAnchorPoint = CGPoint(x: contentAnchorPointScale.x * zoomSize.width, y: contentAnchorPointScale.y * zoomSize.height)
-            
-            let contentOffsetChanged = UIUtil.subtract(contentAnchorPoint, anchorPointInContent)
-            
-            var contentOffset = UIUtil.add(self._scrollView.contentOffset, contentOffsetChanged)
-            self._scrollView.contentOffset = self.goodContentOffset(of: self._scrollView, contentOffset: contentOffset)
-            break
-        case .ended:
-            fallthrough
-        case .cancelled:
-            fallthrough
-        case .failed:
-            fallthrough
-        @unknown default:
-            guard let (anchorPointScale, contentAnchorPointScale, scale) = self.pinchBeginPointInContent else {
-                return
-            }
-            self.pinchBeginPointInContent = nil
-        }
-        self._layout.zoomLayout = zoomLayout
-        print("state: \(recognizer.state) scale:\(recognizer.scale) l0:\(recognizer.location(ofTouch: 0, in: recognizer.view)) l1:\(recognizer.location(ofTouch: 1, in: recognizer.view))")
-    }
-    
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer == self.pinchGestureRecognizer else {
-            return true
-        }
-        guard gestureRecognizer.numberOfTouches == 2 else {
-            print("gestureRecognizerShouldBegin error recognizer, numberOfTouches: \(gestureRecognizer.numberOfTouches), state: \(gestureRecognizer.state) ")
-            return true
-        }
-        let size = self._contentView.bounds.size
-        guard size.width > 0 && size.height > 0 else {
-            return false
-        }
-        
-        var center = UIUtil.add(gestureRecognizer.location(ofTouch: 0, in: gestureRecognizer.view), gestureRecognizer.location(ofTouch: 1, in: gestureRecognizer.view))
-        center.x /= 2
-        center.y /= 2
-        return self.contentView.frame.contains(self._scrollView.convert(center, to: self._contentView))
-    }
 
     public func updateZoomLayout(updater: (_ zoomLayout: inout ZoomLayout) -> Void) {
         var layout = self._layout.zoomLayout
@@ -552,20 +534,20 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
     }
     
     func zoomLayout(_ layout: ZoomLayout) {
-        let scrollView = self._scrollView
-        scrollView.contentInset = layout.scrollContentInset
-        var frame = self._contentView.frame
-        frame.size = layout.zoomSize
-        self._contentView.frame = frame
+//        let scrollView = self._scrollView
+//        scrollView.contentInset = layout.scrollContentInset
+//        var frame = self._contentView.frame
+//        frame.size = layout.zoomSize
+//        self._contentView.frame = frame
     }
     
     func layout(_ layout: ZoomScrollLayout) {
-        let scrollView = self._scrollView
+        let zoomView = self.zoomView
         let contentLayout = layout.contentLayout
         
-        scrollView.bounds.size = contentLayout.contentSize
-        scrollView.center = contentLayout.contentCenter
-        scrollView.transform = contentLayout.contentTransform
+        zoomView.bounds.size = contentLayout.contentSize
+        zoomView.center = contentLayout.contentCenter
+        zoomView.transform = contentLayout.contentTransform
         
         var zoomLayout = layout.zoomLayout
         zoomLayout.contentInset = layout.contentLayout.contentInsets
@@ -585,30 +567,15 @@ internal class ZoomScrollController: NSObject, UIGestureRecognizerDelegate {
         zoomLayout.paddingInset = paddingInset
         layout.zoomLayout = zoomLayout
         
-        scrollView.contentInset = zoomLayout.scrollContentInset
+        zoomView.orientationInset = zoomLayout.scrollContentInset
     }
 
-    fileprivate var onZoomScaleChanged: ((_ view: _ZoomScrollView, _ oldValue: CGFloat) -> Void)?
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        guard let key = keyPath else {
-            return
-        }
-        switch key {
-        case #keyPath(UIGestureRecognizer.state):
-            print(change)
-
-        default:
-            break
-        }
-    }
-    
 }
 
 
 extension ZoomScrollController: OrientationContent {
     var orientationContentView: UIView {
-        return self._scrollView
+        return self.zoomView
     }
     
     func updateLayout(_ contentLayout: OrientationView.ContentLayout, option: [AnyHashable : Any]) {
@@ -622,11 +589,8 @@ extension ZoomScrollController: OrientationContent {
             let layout = self._layout
             layout.contentLayout = parent.contentLayout
             self.layout(layout)
-            
-            var contentOffset = self._scrollView.contentOffset
-            contentOffset.x = 0 - layout.zoomLayout.scrollContentInset.left
-            contentOffset.y = 0 - layout.zoomLayout.scrollContentInset.top
-            self._scrollView.contentOffset = contentOffset
+//            self.zoomView.resetContent(size: <#T##CGSize#>)
+
         }
     }
     func didMoveTo(orientationView: OrientationView?) {}
@@ -640,24 +604,12 @@ public class ZoomItem: NSObject {
         }
     }
     public let view: UIView
-    public var zoomScale: CGFloat {
-       didSet {
-           self.resetFrame()
-       }
-    }
     public init(view: UIView) {
         self.view = view
         self.frame = view.frame
-        self.zoomScale = 1.0
         super.init()
     }
     private func resetFrame() {
-        var frame = self.frame
-        let zoomScale = self.zoomScale
-        frame.origin.x *= zoomScale
-        frame.origin.y *= zoomScale
-        frame.size.width *= zoomScale
-        frame.size.height *= zoomScale
         self.view.frame = frame
     }
 }

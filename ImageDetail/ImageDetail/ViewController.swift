@@ -99,38 +99,50 @@ import UIKit
 
 class ViewController: UIViewController, UIScrollViewDelegate {
 
-    var zoomView: OrientationView?
+    var orientationView: OrientationView?
     var zoomScrollController: ZoomScrollController?
 
     let vv: UIView = UIView()
     
     
     override func viewDidLoad() {
+//        let c = UIScrollController
+        
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         let zoomScrollController = ZoomScrollController()
         self.zoomScrollController = zoomScrollController
-        let zoomView = OrientationView(frame: self.view.bounds)
-        zoomView.updateContent(zoomScrollController)
-        self.zoomView = zoomView
+        let orientationView = OrientationView(frame: self.view.bounds)
+        orientationView.updateContent(zoomScrollController)
+        self.orientationView = orientationView
         
-        let scrollView = UIScrollView(frame: CGRect(origin: CGPoint(x: 10, y: 150), size: CGSize(width: 500, height: 140)))
-        scrollView.delegate = self
-        scrollView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
-        scrollView.backgroundColor = UIColor.green
-        self.view.addSubview(scrollView)
-        scrollView.contentSize = CGSize(width: 2000, height: 100)
+        let image: UIImage = UIImage(named: "10.jpg")!
+        let imageSize = image.size
         
+        let imageView = UIImageView(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: imageSize))
+        imageView.image = image
+        zoomScrollController.contentView.addSubview(imageView)
+        imageView.backgroundColor = UIColor.red
+        zoomScrollController.zoomView.resetContent(size: imageSize)
         
-        let imageView1 = UIView(frame: CGRect(origin: CGPoint(x: 400, y: 0), size: CGSize(width: 500, height: 100)))
-        scrollView.addSubview(imageView1)
-        imageView1.backgroundColor = UIColor.red
-        
-        let v = UIScrollView(frame: CGRect(origin: CGPoint(x: 300, y: 0), size: CGSize(width: 80, height: 100)))
-        v.bounces = false
-        v.contentSize = CGSize(width: 700, height: 100)
-        scrollView.addSubview(v)
-        v.backgroundColor = UIColor.black
+//        return
+//        let scrollView = UIScrollView(frame: CGRect(origin: CGPoint(x: 10, y: 150), size: CGSize(width: 500, height: 140)))
+//        scrollView.delegate = self
+//        scrollView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+//        scrollView.backgroundColor = UIColor.green
+//        self.view.addSubview(scrollView)
+//        scrollView.contentSize = CGSize(width: 2000, height: 100)
+//
+//
+//        let imageView1 = UIView(frame: CGRect(origin: CGPoint(x: 400, y: 0), size: CGSize(width: 500, height: 100)))
+//        scrollView.addSubview(imageView1)
+//        imageView1.backgroundColor = UIColor.red
+//
+//        let v = UIScrollView(frame: CGRect(origin: CGPoint(x: 300, y: 0), size: CGSize(width: 80, height: 100)))
+//        v.bounces = false
+//        v.contentSize = CGSize(width: 700, height: 100)
+//        scrollView.addSubview(v)
+//        v.backgroundColor = UIColor.black
             
 //        scrollView.panGestureRecognizer.delegate = self
 //        v.panGestureRecognizer.delegate = self
@@ -148,9 +160,9 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         button.addTarget(self, action: #selector(clicked), for: .touchUpInside)
         
         
-        self.view.addSubview(zoomView)
-        zoomView.layer.borderColor = UIColor.red.cgColor
-        zoomView.layer.borderWidth = 2.0
+        self.view.addSubview(orientationView)
+        orientationView.layer.borderColor = UIColor.red.cgColor
+        orientationView.layer.borderWidth = 2.0
         
         let rotateButton: UIButton = UIButton(type: .custom)
         self.view.addSubview(rotateButton)
@@ -159,8 +171,6 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         rotateButton.addTarget(self, action: #selector(rotateButtonClicked), for: .touchUpInside)
         
 //        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 1000, height: 600))
-        let imageView: UIImageView = UIImageView()
-        
         zoomScrollController.updateZoomLayout { (layout) in
             layout.originalSize = CGSize(width: 100, height: 60)
 //            layout.minimumZoomScale = 1
@@ -171,16 +181,16 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         zoomScrollController.contentView.addSubview(imageView)
         
-        let heightConstraint = NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: zoomScrollController.contentView, attribute: NSLayoutConstraint.Attribute.height, multiplier: 1.0, constant: 0)
-        heightConstraint.priority = UILayoutPriority.required
-        zoomScrollController.contentView.addConstraint(heightConstraint)
-        
-        let widthConstraint = NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: zoomScrollController.contentView, attribute: NSLayoutConstraint.Attribute.width, multiplier: 1.0, constant: 0)
-        widthConstraint.priority = UILayoutPriority.required
-        zoomScrollController.contentView.addConstraint(widthConstraint)
-
-        zoomScrollController.contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: zoomScrollController.contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1.0, constant: 0))
-        zoomScrollController.contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.top, relatedBy: NSLayoutConstraint.Relation.equal, toItem: zoomScrollController.contentView, attribute: NSLayoutConstraint.Attribute.top, multiplier: 1.0, constant: 0))
+//        let heightConstraint = NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: zoomScrollController.contentView, attribute: NSLayoutConstraint.Attribute.height, multiplier: 1.0, constant: 0)
+//        heightConstraint.priority = UILayoutPriority.required
+//        zoomScrollController.contentView.addConstraint(heightConstraint)
+//
+//        let widthConstraint = NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: zoomScrollController.contentView, attribute: NSLayoutConstraint.Attribute.width, multiplier: 1.0, constant: 0)
+//        widthConstraint.priority = UILayoutPriority.required
+//        zoomScrollController.contentView.addConstraint(widthConstraint)
+//
+//        zoomScrollController.contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: zoomScrollController.contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1.0, constant: 0))
+//        zoomScrollController.contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.top, relatedBy: NSLayoutConstraint.Relation.equal, toItem: zoomScrollController.contentView, attribute: NSLayoutConstraint.Attribute.top, multiplier: 1.0, constant: 0))
 
         
         
@@ -190,35 +200,10 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 //            self.zoomView.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
 //        }
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
-            let view = self.zoomView!
-            
-            UIView.animate(withDuration: 0.25, animations: {
-                view.frame = CGRect.init(x: 100, y: 100, width: 100, height: 100)
-            }) { (result) in
-                
-            }
-            
-
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-            let view = self.zoomView!
-            
-            UIView.animate(withDuration: 0.25, animations: {
-                view .updateFrame(frame: self.view.bounds) { (layout) -> [AnyHashable : Any] in
-                    return [:]
-                }
-            }) { (result) in
-                
-            }
-
-        }
-        
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        self.present(ViewController2(), animated: true) {
+//        self.present(ScrollViewController(), animated: true) {
 //
 //        }
     }
@@ -235,7 +220,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
 
     @objc func rotateButtonClicked() {
-        self.zoomView!.updateContentLayout(duration: 0.5) { (layout) -> [AnyHashable : Any] in
+        self.orientationView!.updateContentLayout(duration: 0.5) { (layout) -> [AnyHashable : Any] in
             layout.rotate(direction: .anticlockwise)
             return [:]
         }

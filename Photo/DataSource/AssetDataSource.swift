@@ -71,33 +71,46 @@ public protocol AssetProtocol {
 }
 
 public final class AssetItem: NSObject {
+
     
+    
+}
+
+public struct AssetDataSourceConfig {
+    public static let `default`: AssetDataSourceConfig = AssetDataSourceConfig()
 
 }
 
 public final class AssetGroup: NSObject {
-    
+    private let fetchResult: PHFetchResult<PHAsset>
 
-}
-
-public final class AssetDataSourceConfig: NSObject {
-
-    
-    public override init() {
+    fileprivate init(fetchResult: PHFetchResult<PHAsset>) {
+        self.fetchResult = fetchResult
         super.init()
     }
-
-
+    
+    let smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
+    let albumFetchResult: PHFetchResult<PHAssetCollection>
+    private let config: AssetDataSourceConfig
+    public init(config: AssetDataSourceConfig = AssetDataSourceConfig.default) {
+        self.config = config
+        self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
+        self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
+        super.init()
+        PHPhotoLibrary.shared().register(self)
+    }
+    deinit {
+        PHPhotoLibrary.shared().unregisterChangeObserver(self)
+    }
 }
 
 
 public final class AssetDataSource: NSObject {
     let smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
     let albumFetchResult: PHFetchResult<PHAssetCollection>
-    
-    
-    
-    public override init() {
+    private let config: AssetDataSourceConfig
+    public init(config: AssetDataSourceConfig = AssetDataSourceConfig.default) {
+        self.config = config
         self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
         super.init()

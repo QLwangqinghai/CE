@@ -28,34 +28,34 @@ import Photos
  albumCloudShared //用户使用 iCloud 共享的相册
  
  smartAlbumGeneric //文档解释为非特殊类型的相册，主要包括从 iPhoto 同步过来的相册。由于本人的 iPhoto 已被 Photos 替代，无法验证。不过，在我的 iPad mini 上是无法获取的，而下面类型的相册，尽管没有包含照片或视频，但能够获取到。
- smartAlbumPanoramas //相机拍摄的全景照片
- smartAlbumVideos //相机拍摄的视频
- smartAlbumFavorites //收藏文件夹
- smartAlbumTimelapses //延时视频文件夹，同时也会出现在视频文件夹中
- smartAlbumAllHidden //包含隐藏照片或视频的文件夹
- smartAlbumRecentlyAdded //相机近期拍摄的照片或视频
- smartAlbumBursts //连拍模式拍摄的照片
- smartAlbumSlomoVideos //Slomo 是 slow motion 的缩写，高速摄影慢动作解析，在该模式下，iOS 设备以120帧拍摄。
- smartAlbumUserLibrary //相机相册，所有相机拍摄的照片或视频都会出现在该相册中，而且使用其他应用保存的照片也会出现在这里。
+ smartAlbumPanoramas //全景照片 相机拍摄的全景照片
+ smartAlbumVideos //视频 相机拍摄的视频
+ smartAlbumFavorites //个人收藏 收藏文件夹
+ smartAlbumTimelapses //延时摄影 延时视频文件夹，同时也会出现在视频文件夹中
+ smartAlbumAllHidden //已隐藏 包含隐藏照片或视频的文件夹
+ smartAlbumRecentlyAdded //最近项目 相机近期拍摄的照片或视频
+ smartAlbumBursts //连拍快照 连拍模式拍摄的照片
+ smartAlbumSlomoVideos //慢动作 Slomo 是 slow motion 的缩写，高速摄影慢动作解析，在该模式下，iOS 设备以120帧拍摄。
+ smartAlbumUserLibrary //最近项目 相机相册，所有相机拍摄的照片或视频都会出现在该相册中，而且使用其他应用保存的照片也会出现在这里。
  any //全部类型
 
      @available(iOS 9, *)
-     case smartAlbumSelfPortraits
+     case smartAlbumSelfPortraits //自拍
 
      @available(iOS 9, *)
-     case smartAlbumScreenshots
+     case smartAlbumScreenshots //截屏
 
      @available(iOS 10.2, *)
-     case smartAlbumDepthEffect
+     case smartAlbumDepthEffect //人像
 
      @available(iOS 10.3, *)
-     case smartAlbumLivePhotos
+     case smartAlbumLivePhotos //实况照片
 
      @available(iOS 11, *)
-     case smartAlbumAnimated
+     case smartAlbumAnimated //动图
  
      @available(iOS 11, *)
-     case smartAlbumLongExposures
+     case smartAlbumLongExposures //长曝光
  
      @available(iOS 13, *)
      case smartAlbumUnableToUpload
@@ -77,11 +77,41 @@ public final class AssetItem: NSObject {
 }
 
 public struct AssetDataSourceConfig {
-    public static let `default`: AssetDataSourceConfig = AssetDataSourceConfig { (item) -> PHAssetCollection? in
-        return item
-    }
+    public static let `default`: AssetDataSourceConfig = {
+        var config = AssetDataSourceConfig { (item) -> PHAssetCollection? in
+            return item
+        }
+        config.subTypeOrderConfig[.smartAlbumUserLibrary] = 0
+        config.subTypeOrderConfig[.smartAlbumTimelapses] = 1
+        config.subTypeOrderConfig[.smartAlbumBursts] = 2
+        config.subTypeOrderConfig[.smartAlbumSelfPortraits] = 3
+        config.subTypeOrderConfig[.smartAlbumScreenshots] = 4
+        config.subTypeOrderConfig[.smartAlbumSlomoVideos] = 5
+        config.subTypeOrderConfig[.smartAlbumVideos] = 6
+        config.subTypeOrderConfig[.smartAlbumPanoramas] = 7
+        config.subTypeOrderConfig[.smartAlbumFavorites] = 8
+        
+        config.subTypeOrderConfig[.smartAlbumDepthEffect] = 9
+        config.subTypeOrderConfig[.smartAlbumLivePhotos] = 10
+        config.subTypeOrderConfig[.smartAlbumAnimated] = 11
+        config.subTypeOrderConfig[.smartAlbumLongExposures] = 12
+        
+        config.subTypeOrderConfig[.albumRegular] = 0x8000
+        return config
+    } ()
 
+    public enum TypePriority: Int {
+        case smartAlbum
+        case album
+    }
+    
+    
     public var filter: (PHAssetCollection) -> PHAssetCollection?
+    public var typeOrder: TypePriority = .smartAlbum
+    
+    //
+    public var subTypeOrderConfig: [PHAssetCollectionSubtype: UInt16] = [:]
+    
     
     public init(filter: @escaping (PHAssetCollection) -> PHAssetCollection?) {
         self.filter = filter
@@ -89,12 +119,13 @@ public struct AssetDataSourceConfig {
     }
     
     
+    
 }
 
 public final class AssetGroup: NSObject {
     let dataSourceIdentifier: String
     let identifier: String
-//    let order: Int
+    internal var order: UInt64 = UInt64.max
 //    let sequence: Int
 
     private let collection: PHAssetCollection
@@ -140,16 +171,52 @@ public final class AssetDataSource: NSObject {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
     
+    
+    static let subTypeMap: [PHAssetCollectionSubtype: String] = {
+        var map:[PHAssetCollectionSubtype: String] = [:]
+        map[.albumRegular] = ".albumRegular"
+        map[.albumSyncedEvent] = ".albumSyncedEvent"
+        map[.albumSyncedFaces] = ".albumSyncedFaces"
+        map[.albumSyncedAlbum] = ".albumSyncedAlbum"
+
+        map[.albumImported] = ".albumImported"
+        map[.albumMyPhotoStream] = ".albumMyPhotoStream"
+        map[.albumCloudShared] = ".albumCloudShared"
+
+        map[.smartAlbumGeneric] = ".smartAlbumGeneric"
+        map[.smartAlbumPanoramas] = ".smartAlbumPanoramas"
+        map[.smartAlbumVideos] = ".smartAlbumVideos"
+        map[.smartAlbumFavorites] = ".smartAlbumFavorites"
+        map[.smartAlbumTimelapses] = ".smartAlbumTimelapses"
+        map[.smartAlbumAllHidden] = ".smartAlbumAllHidden"
+        map[.smartAlbumRecentlyAdded] = ".smartAlbumRecentlyAdded"
+        map[.smartAlbumBursts] = ".smartAlbumBursts"
+        map[.smartAlbumSlomoVideos] = ".smartAlbumSlomoVideos"
+        map[.smartAlbumUserLibrary] = ".smartAlbumUserLibrary"
+
+        map[.smartAlbumSelfPortraits] = ".smartAlbumSelfPortraits"
+        map[.smartAlbumScreenshots] = ".smartAlbumScreenshots"
+        map[.smartAlbumDepthEffect] = ".smartAlbumDepthEffect"
+        map[.smartAlbumLivePhotos] = ".smartAlbumLivePhotos"
+        map[.smartAlbumAnimated] = ".smartAlbumAnimated"
+        map[.smartAlbumLongExposures] = ".smartAlbumLongExposures"
+        map[.smartAlbumUnableToUpload] = ".smartAlbumUnableToUpload"
+        return map;
+    }()
+    
     static func testSmartAlbum() {
         print("\n\n\n")
         print("testSmartAlbum")
         var c : PHAssetCollection? = nil
         
-        
+        let a = CFAbsoluteTimeGetCurrent();
         let result = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
+        let b = CFAbsoluteTimeGetCurrent();
+        print("b-a \(b-a)")
+        
         result.enumerateObjects { (item, idx, stop) in
-            let subType = item.assetCollectionSubtype
-            print("idx:\(idx) itemType:\(subType.rawValue) localizedTitle:\(item.localizedTitle) item:\(item)")
+            let subType = self.subTypeMap[item.assetCollectionSubtype]
+            print("idx:\(idx) itemType:\(subType) localizedTitle:\(item.localizedTitle) item:\(item)")
         }
         print(result)
         
@@ -160,8 +227,12 @@ public final class AssetDataSource: NSObject {
         var c : PHAssetCollection? = nil
         let result = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
         result.enumerateObjects { (item, idx, stop) in
-            let subType = item.assetCollectionSubtype
-            print("idx:\(idx) itemType:\(subType.rawValue) localizedTitle:\(item.localizedTitle) item:\(item)")
+            let subType = self.subTypeMap[item.assetCollectionSubtype]
+            var date = ""
+            if let d = item.startDate {
+                date = "\(d)"
+            }
+            print("idx:\(idx) itemType:\(subType) \(date) localizedTitle:\(item.localizedTitle) item:\(item)")
         }
         print(result)
     }

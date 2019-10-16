@@ -16,16 +16,52 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         self.view.backgroundColor = .red
         
-        dataSource = AssetDataSource()
+//        dataSource = AssetDataSource()
+        
+        
+        let label = UILabel()
+        self.view.addSubview(label)
+        
+        let size0 = label.intrinsicContentSize
+        label.text = "123141\n123"
+        let size1 = label.intrinsicContentSize
+        
+        label.sizeToFit()
+        
+        let size2 = label.intrinsicContentSize
+
+        print("\(size0)  \(size1)  \(size2)")
+        
+        
+        let imageView: UIImageView = UIImageView()
+        var image = UIImage(named: "edit_button_delete")
+        
+        print("\(imageView.intrinsicContentSize)")
+        imageView.image = image
+        print("\(imageView.intrinsicContentSize)")
+
+        image = nil
+        image = UIImage(named: "edit_button_delete.png")
+        imageView.image = image
+        print("\(imageView.intrinsicContentSize)")
+
+        
+        let button = UIButton(type: UIButton.ButtonType.custom)
+        button.backgroundColor = .red
+        self.view.addSubview(button)
+        button.setTitle("ajklfjsa", for: .normal)
+        
+        button.frame = CGRect.init(x: 100, y: 100, width: 40, height: 10)
+        
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        PHPhotoLibrary.requestAuthorization { (status) in
-            if status == .authorized {
-                AssetDataSource.test()
-            }
-        }
-    }
+//    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        PHPhotoLibrary.requestAuthorization { (status) in
+//            if status == .authorized {
+//                AssetDataSource.test()
+//            }
+//        }
+//    }
     
     
 }

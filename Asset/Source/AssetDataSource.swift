@@ -77,25 +77,32 @@ public final class AssetItem: NSObject {
 }
 
 public struct AssetDataSourceConfig {
-    public static let `default`: AssetDataSourceConfig = AssetDataSourceConfig()
+    public static let `default`: AssetDataSourceConfig = AssetDataSourceConfig { (item) -> PHAssetCollection? in
+        return item
+    }
 
+    public var filter: (PHAssetCollection) -> PHAssetCollection?
+    
+    public init(filter: @escaping (PHAssetCollection) -> PHAssetCollection?) {
+        self.filter = filter
+        
+    }
+    
+    
 }
 
 public final class AssetGroup: NSObject {
-    private let fetchResult: PHFetchResult<PHAsset>
+    let dataSourceIdentifier: String
+    let identifier: String
+//    let order: Int
+//    let sequence: Int
 
-    fileprivate init(fetchResult: PHFetchResult<PHAsset>) {
-        self.fetchResult = fetchResult
-        super.init()
-    }
+    private let collection: PHAssetCollection
     
-    let smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
-    let albumFetchResult: PHFetchResult<PHAssetCollection>
-    private let config: AssetDataSourceConfig
-    public init(config: AssetDataSourceConfig = AssetDataSourceConfig.default) {
-        self.config = config
-        self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
-        self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
+    public init(dataSourceIdentifier: String, collection: PHAssetCollection) {
+        self.dataSourceIdentifier = dataSourceIdentifier
+        self.collection = collection
+        self.identifier = collection.localIdentifier
         super.init()
         PHPhotoLibrary.shared().register(self)
     }
@@ -104,13 +111,26 @@ public final class AssetGroup: NSObject {
     }
 }
 
+extension AssetGroup: PHPhotoLibraryChangeObserver {
+    public func photoLibraryDidChange(_ changeInstance: PHChange) {
+//        let fetchResultChanges = changeInstance.changeDetails(for: self.fetchResult)
+//        print("changeInstance:\(changeInstance) \(fetchResultChanges)")
+    }
+}
+
 
 public final class AssetDataSource: NSObject {
+    let identifier: String
     let smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
     let albumFetchResult: PHFetchResult<PHAssetCollection>
     private let config: AssetDataSourceConfig
+    
+    private var groupMap: [String: AssetGroup] = [:]
+    private var groups: [AssetGroup] = []
+    
     public init(config: AssetDataSourceConfig = AssetDataSourceConfig.default) {
         self.config = config
+        self.identifier = UUID().uuidString
         self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
         super.init()

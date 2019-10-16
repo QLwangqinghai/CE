@@ -1,8 +1,8 @@
 //
 //  ViewController.swift
-//  Photo
+//  Photos
 //
-//  Created by vector on 2019/10/14.
+//  Created by vector on 2019/10/16.
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
@@ -19,14 +19,15 @@ class ViewController: UIViewController {
         dataSource = AssetDataSource()
     }
     
-//    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        PHPhotoLibrary.requestAuthorization { (status) in
-//            if status == .authorized {
-//                AssetGroupDataSource.test()
-//            }
-//        }
-//    }
-
-
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        PHPhotoLibrary.requestAuthorization { (status) in
+            if status == .authorized {
+                AssetDataSource.test()
+            }
+        }
+    }
+    
+    
 }
+
 

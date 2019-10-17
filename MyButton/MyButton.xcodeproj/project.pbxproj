@@ -14,7 +14,7 @@
 		D6F4E3DC23571F0A004CD247 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6F4E3DB23571F0A004CD247 /* Assets.xcassets */; };
 		D6F4E3DF23571F0A004CD247 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6F4E3DD23571F0A004CD247 /* LaunchScreen.storyboard */; };
 		D6F4E3E223571F0A004CD247 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6F4E3E123571F0A004CD247 /* main.m */; };
-		D6F4E3EB23571F37004CD247 /* MyButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D6F4E3EA23571F37004CD247 /* MyButton.m */; };
+		D6F4E3EB23571F37004CD247 /* CustomButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D6F4E3EA23571F37004CD247 /* CustomButton.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,8 +30,8 @@
 		D6F4E3DE23571F0A004CD247 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6F4E3E023571F0A004CD247 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6F4E3E123571F0A004CD247 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D6F4E3E923571F37004CD247 /* MyButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyButton.h; sourceTree = "<group>"; };
-		D6F4E3EA23571F37004CD247 /* MyButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyButton.m; sourceTree = "<group>"; };
+		D6F4E3E923571F37004CD247 /* CustomButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomButton.h; sourceTree = "<group>"; };
+		D6F4E3EA23571F37004CD247 /* CustomButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomButton.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,8 +83,8 @@
 		D6F4E3E823571F18004CD247 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				D6F4E3E923571F37004CD247 /* MyButton.h */,
-				D6F4E3EA23571F37004CD247 /* MyButton.m */,
+				D6F4E3E923571F37004CD247 /* CustomButton.h */,
+				D6F4E3EA23571F37004CD247 /* CustomButton.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -163,7 +163,7 @@
 				D6F4E3D123571F07004CD247 /* AppDelegate.m in Sources */,
 				D6F4E3E223571F0A004CD247 /* main.m in Sources */,
 				D6F4E3D423571F07004CD247 /* SceneDelegate.m in Sources */,
-				D6F4E3EB23571F37004CD247 /* MyButton.m in Sources */,
+				D6F4E3EB23571F37004CD247 /* CustomButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +305,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = MyButton/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -321,6 +322,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = MyButton/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -51,14 +51,15 @@ typedef NS_ENUM(NSUInteger, CustomButtonAlignment) {
 @property (nonatomic, assign) UIEdgeInsets titleInsets;
 
 @property (nonatomic, copy, nullable) NSString * title;
-@property (nonatomic, copy, nullable) UIColor * titleColor;
-@property (nonatomic, copy, nullable) UIFont * titleFont;
-@property (nonatomic, copy, nullable) UIImage * image;
+@property (nonatomic, strong, nullable) UIColor * titleColor;
+@property (nonatomic, strong, nullable) UIFont * titleFont;
+@property (nonatomic, strong, nullable) UIImage * image;
 
 @property (nonatomic, assign) CGSize minSize;
 @property (nonatomic, assign) CGFloat maxWidth;//> 0.1 && > minSize.width时有效
 
 @property (nonatomic, assign) CGFloat lineSpacing;
+
 
 @end
 

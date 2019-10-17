@@ -16,6 +16,9 @@
 
 @property (nonatomic, assign) CGSize _intrinsicContentSize;
 
+@property (nonatomic, assign) BOOL isIntrinsicContentSizeInvalid;
+
+
 @end
 @implementation CustomButton
 
@@ -125,17 +128,10 @@
     }
 }
 
-- (void)set_intrinsicContentSize:(CGSize)_intrinsicContentSize {
-    if (!CGSizeEqualToSize(__intrinsicContentSize, _intrinsicContentSize)) {
-        __intrinsicContentSize = _intrinsicContentSize;
-        [self invalidateIntrinsicContentSize];
-    }
-}
-
 - (void)_onChanged {
-    [self _updateIntrinsicContentSize];
+    self.isIntrinsicContentSizeInvalid = true;
+    [self invalidateIntrinsicContentSize];
     [self setNeedsLayout];
-    [self.superview setNeedsLayout];
 }
 
 - (void)layoutSubviews {
@@ -171,21 +167,6 @@
     }
     contentFrame.size = contentSize;
 
-    
-//    CustomButtonAlignmentCenter = 0x0,
-//    CustomButtonAlignmentTop,
-//    CustomButtonAlignmentBottom,
-//    CustomButtonAlignmentLeft,
-//    CustomButtonAlignmentRight,
-//    CustomButtonAlignmentTopLeft,
-//    CustomButtonAlignmentTopRight,
-//    CustomButtonAlignmentBottomLeft,
-//    CustomButtonAlignmentBottomRight,
-//
-//    CustomButtonAlignmentBothSizes,
-//    CustomButtonAlignmentBothSizesTopOrLeft,
-//    CustomButtonAlignmentBothSizesBottomOrRight,
-    
     contentFrame.origin.x = (bounds.size.width - contentSize.width - self.contentInsets.left - self.contentInsets.right) / 2 + self.contentInsets.left;
     contentFrame.origin.y = (bounds.size.height - contentSize.height - self.contentInsets.top - self.contentInsets.bottom) / 2 + self.contentInsets.top;
     self.contentView.frame = contentFrame;
@@ -453,6 +434,9 @@
 }
 
 - (CGSize)intrinsicContentSize {
+    if (self.isIntrinsicContentSizeInvalid) {
+        [self _updateIntrinsicContentSize];
+    }
     return self._intrinsicContentSize;
 }
 

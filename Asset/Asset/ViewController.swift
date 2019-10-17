@@ -10,13 +10,13 @@ import UIKit
 import Photos
 
 class ViewController: UIViewController {
-    var dataSource: AssetDataSource?
+    var dataSource: AssetDataProvider?
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.view.backgroundColor = .red
         
-//        dataSource = AssetDataSource()
+//        dataSource = AssetDataProvider()
         
         
         let label = UILabel()
@@ -58,7 +58,7 @@ class ViewController: UIViewController {
 //    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        PHPhotoLibrary.requestAuthorization { (status) in
 //            if status == .authorized {
-//                AssetDataSource.test()
+//                AssetDataProvider.test()
 //            }
 //        }
 //    }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D6B578CD2358599D0029F1E6 /* ChooseButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D6B578CC2358599D0029F1E6 /* ChooseButton.m */; };
 		D6F4E3D123571F07004CD247 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6F4E3D023571F07004CD247 /* AppDelegate.m */; };
 		D6F4E3D423571F07004CD247 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6F4E3D323571F07004CD247 /* SceneDelegate.m */; };
 		D6F4E3D723571F07004CD247 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D6F4E3D623571F07004CD247 /* ViewController.m */; };
@@ -18,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D6B578CB2358599D0029F1E6 /* ChooseButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChooseButton.h; sourceTree = "<group>"; };
+		D6B578CC2358599D0029F1E6 /* ChooseButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChooseButton.m; sourceTree = "<group>"; };
 		D6F4E3CC23571F07004CD247 /* MyButton.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyButton.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6F4E3CF23571F07004CD247 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D6F4E3D023571F07004CD247 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -85,6 +88,8 @@
 			children = (
 				D6F4E3E923571F37004CD247 /* CustomButton.h */,
 				D6F4E3EA23571F37004CD247 /* CustomButton.m */,
+				D6B578CB2358599D0029F1E6 /* ChooseButton.h */,
+				D6B578CC2358599D0029F1E6 /* ChooseButton.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -160,6 +165,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6F4E3D723571F07004CD247 /* ViewController.m in Sources */,
+				D6B578CD2358599D0029F1E6 /* ChooseButton.m in Sources */,
 				D6F4E3D123571F07004CD247 /* AppDelegate.m in Sources */,
 				D6F4E3E223571F0A004CD247 /* main.m in Sources */,
 				D6F4E3D423571F07004CD247 /* SceneDelegate.m in Sources */,

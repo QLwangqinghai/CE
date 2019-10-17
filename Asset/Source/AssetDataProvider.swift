@@ -76,11 +76,11 @@ public final class AssetItem: NSObject {
     
 }
 
-public struct AssetDataSourceConfig {
-    public static let `default`: AssetDataSourceConfig = {
-        var config = AssetDataSourceConfig { (item) -> PHAssetCollection? in
-            return item
-        }
+
+
+public struct AssetDataProviderOptions {
+    public static let `default`: AssetDataProviderOptions = {
+        var config = AssetDataProviderOptions()
         config.subTypeOrderConfig[.smartAlbumUserLibrary] = 0
         config.subTypeOrderConfig[.smartAlbumTimelapses] = 1
         config.subTypeOrderConfig[.smartAlbumBursts] = 2
@@ -105,16 +105,39 @@ public struct AssetDataSourceConfig {
         case album
     }
     
-    
-    public var filter: (PHAssetCollection) -> PHAssetCollection?
+    public static let defaultTypeFilterSet: Set<PHAssetCollectionSubtype> = {
+        var set = Set<PHAssetCollectionSubtype>()
+        set.insert(.smartAlbumUserLibrary)
+        set.insert(.smartAlbumUserLibrary)
+        set.insert(.smartAlbumTimelapses)
+        set.insert(.smartAlbumBursts)
+        set.insert(.smartAlbumSelfPortraits)
+        set.insert(.smartAlbumScreenshots)
+        set.insert(.smartAlbumSlomoVideos)
+        set.insert(.smartAlbumVideos)
+        set.insert(.smartAlbumPanoramas)
+        set.insert(.smartAlbumFavorites)
+        set.insert(.smartAlbumDepthEffect)
+        set.insert(.smartAlbumLivePhotos)
+        set.insert(.smartAlbumAnimated)
+        set.insert(.smartAlbumLongExposures)
+        set.insert(.albumRegular)
+        return set
+    }()
+    public var filter: (PHAssetCollection) -> PHAssetCollection? = { (item) -> PHAssetCollection? in
+        if AssetDataProviderOptions.defaultTypeFilterSet.contains(item.assetCollectionSubtype) {
+            return item
+        } else {
+            return nil
+        }
+    }
     public var typeOrder: TypePriority = .smartAlbum
     
     //
     public var subTypeOrderConfig: [PHAssetCollectionSubtype: UInt16] = [:]
     
     
-    public init(filter: @escaping (PHAssetCollection) -> PHAssetCollection?) {
-        self.filter = filter
+    public init() {
         
     }
     
@@ -125,7 +148,7 @@ public struct AssetDataSourceConfig {
 public final class AssetGroup: NSObject {
     let dataSourceIdentifier: String
     let identifier: String
-    internal var order: UInt64 = UInt64.max
+    internal var order: UInt64 = 0
 //    let sequence: Int
 
     private let collection: PHAssetCollection
@@ -149,18 +172,71 @@ extension AssetGroup: PHPhotoLibraryChangeObserver {
     }
 }
 
+enum AssetChangeType: Int {
+    case insert
+    case remove
+    case update
+}
 
-public final class AssetDataSource: NSObject {
+public protocol AssetDataProviderDelegate: class {
+    
+    
+    
+}
+
+
+public final class AssetDataProvider: BaseAssetDataProvider {
+    private var groups: [AssetGroup] = []
+    
+
+}
+
+extension AssetDataProvider {
+    public override func photoLibraryDidChange(_ changeInstance: PHChange) {
+        super.photoLibraryDidChange(changeInstance)
+        let smartAlbumCollectionChanges = changeInstance.changeDetails(for: self.smartAlbumFetchResult)
+        let albumCollectionChanges = changeInstance.changeDetails(for: self.albumFetchResult)
+        print("changeInstance:\(changeInstance) \(smartAlbumCollectionChanges) \(albumCollectionChanges)")
+        
+        albumCollectionChanges?.changedIndexes
+        
+//        PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
+//        if (collectionChanges) {
+//            if ([collectionChanges hasIncrementalChanges]) {
+//                //监听相册视频的增删
+//                //增加了
+//                if (collectionChanges.insertedObjects.count > 0) {
+//                    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:collectionChanges.insertedObjects];
+//                    [self getAlbumVideoWithBehaviorType:ALBUMVIDEOBEHAVIOR_INSTER PHObjectsArr:mArr];
+//                }
+//                //删除了
+//                if (collectionChanges.removedObjects.count > 0) {
+//
+//                    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:collectionChanges.removedObjects];
+//                    [self getAlbumVideoWithBehaviorType:ALBUMVIDEOBEHAVIOR_REMOVE PHObjectsArr:mArr];
+//                }
+//                /**监听完一次更新一下监听对象*/
+//                self.assetsFetchResults = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:[self getFetchPhotosOptions]];
+//            }
+//        }
+    }
+}
+
+
+
+
+
+
+
+public class BaseAssetDataProvider: NSObject {
     let identifier: String
     let smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
     let albumFetchResult: PHFetchResult<PHAssetCollection>
-    private let config: AssetDataSourceConfig
-    
+    private let options: AssetDataProviderOptions
     private var groupMap: [String: AssetGroup] = [:]
-    private var groups: [AssetGroup] = []
     
-    public init(config: AssetDataSourceConfig = AssetDataSourceConfig.default) {
-        self.config = config
+    public init(options: AssetDataProviderOptions = AssetDataProviderOptions.default) {
+        self.options = options
         self.identifier = UUID().uuidString
         self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
@@ -170,7 +246,6 @@ public final class AssetDataSource: NSObject {
     deinit {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
-    
     
     static let subTypeMap: [PHAssetCollectionSubtype: String] = {
         var map:[PHAssetCollectionSubtype: String] = [:]
@@ -242,14 +317,18 @@ public final class AssetDataSource: NSObject {
         self.testAlbum()
     }
 
+    
+    
+    
 }
 
-extension AssetDataSource: PHPhotoLibraryChangeObserver {
+extension BaseAssetDataProvider: PHPhotoLibraryChangeObserver {
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
         let smartAlbumCollectionChanges = changeInstance.changeDetails(for: self.smartAlbumFetchResult)
         let albumCollectionChanges = changeInstance.changeDetails(for: self.albumFetchResult)
         print("changeInstance:\(changeInstance) \(smartAlbumCollectionChanges) \(albumCollectionChanges)")
         
+        albumCollectionChanges?.changedIndexes
         
 //        PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
 //        if (collectionChanges) {

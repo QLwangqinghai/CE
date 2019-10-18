@@ -124,18 +124,17 @@ public struct AssetDataProviderOptions {
         set.insert(.albumRegular)
         return set
     }()
-    public var filter: (PHAssetCollection) -> PHAssetCollection? = { (item) -> PHAssetCollection? in
+    public var filter: (PHAssetCollection) -> Bool = { (item) -> Bool in
         if AssetDataProviderOptions.defaultTypeFilterSet.contains(item.assetCollectionSubtype) {
-            return item
+            return true
         } else {
-            return nil
+            return false
         }
     }
     public var typeOrder: TypePriority = .smartAlbum
     
     //
     public var subTypeOrderConfig: [PHAssetCollectionSubtype: UInt16] = [:]
-    
     
     public init() {
         
@@ -146,17 +145,25 @@ public struct AssetDataProviderOptions {
 }
 
 public final class AssetGroup: NSObject {
+    struct Order {
+        var main: UInt64
+        var originalOrder: UInt
+        static func < (lhs: Order, rhs: Order) -> Bool {
+            return lhs.main == rhs.main ? lhs.originalOrder < rhs.originalOrder : lhs.main < rhs.main
+        }
+    }
+    
     let dataSourceIdentifier: String
     let identifier: String
-    internal var order: UInt64 = 0
-//    let sequence: Int
+    fileprivate var order: Order
 
     private let collection: PHAssetCollection
     
-    public init(dataSourceIdentifier: String, collection: PHAssetCollection) {
+    fileprivate init(dataSourceIdentifier: String, collection: PHAssetCollection, order: Order) {
         self.dataSourceIdentifier = dataSourceIdentifier
         self.collection = collection
         self.identifier = collection.localIdentifier
+        self.order = order
         super.init()
         PHPhotoLibrary.shared().register(self)
     }
@@ -172,71 +179,143 @@ extension AssetGroup: PHPhotoLibraryChangeObserver {
     }
 }
 
-enum AssetChangeType: Int {
+public enum AssetChangeType: Int {
     case insert
     case remove
     case update
 }
 
+public struct AssetChange {
+    let type: AssetChangeType
+    let groups: [(Int, AssetGroup)]
+}
+
 public protocol AssetDataProviderDelegate: class {
-    
-    
-    
+    func groupsDidReload(provider: AssetDataProvider)
+    func groupsDidChange(provider: AssetDataProvider, changes: [AssetChange])
 }
 
 
 public final class AssetDataProvider: BaseAssetDataProvider {
-    private var groups: [AssetGroup] = []
-    
-
-}
-
-extension AssetDataProvider {
-    public override func photoLibraryDidChange(_ changeInstance: PHChange) {
-        super.photoLibraryDidChange(changeInstance)
-        let smartAlbumCollectionChanges = changeInstance.changeDetails(for: self.smartAlbumFetchResult)
-        let albumCollectionChanges = changeInstance.changeDetails(for: self.albumFetchResult)
-        print("changeInstance:\(changeInstance) \(smartAlbumCollectionChanges) \(albumCollectionChanges)")
-        
-        albumCollectionChanges?.changedIndexes
-        
-//        PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
-//        if (collectionChanges) {
-//            if ([collectionChanges hasIncrementalChanges]) {
-//                //监听相册视频的增删
-//                //增加了
-//                if (collectionChanges.insertedObjects.count > 0) {
-//                    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:collectionChanges.insertedObjects];
-//                    [self getAlbumVideoWithBehaviorType:ALBUMVIDEOBEHAVIOR_INSTER PHObjectsArr:mArr];
-//                }
-//                //删除了
-//                if (collectionChanges.removedObjects.count > 0) {
-//
-//                    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:collectionChanges.removedObjects];
-//                    [self getAlbumVideoWithBehaviorType:ALBUMVIDEOBEHAVIOR_REMOVE PHObjectsArr:mArr];
-//                }
-//                /**监听完一次更新一下监听对象*/
-//                self.assetsFetchResults = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:[self getFetchPhotosOptions]];
-//            }
-//        }
-    }
-}
-
-
-
-
-
-
-
-public class BaseAssetDataProvider: NSObject {
-    let identifier: String
-    let smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
-    let albumFetchResult: PHFetchResult<PHAssetCollection>
+    public private(set) var groups: [AssetGroup] = []
     private let options: AssetDataProviderOptions
-    private var groupMap: [String: AssetGroup] = [:]
+    public weak var delegate: AssetDataProviderDelegate?
     
     public init(options: AssetDataProviderOptions = AssetDataProviderOptions.default) {
         self.options = options
+        super.init()
+    }
+    
+    private func reload() {
+        
+        
+        
+        
+        
+        
+    }
+    
+    public override func filterAssetCollection(_ collection: PHAssetCollection) -> Bool {
+        return self.options.filter(collection)
+    }
+    public override func groupsDidChange(inserted: [String: AssetGroup], removed: [String: AssetGroup]) {
+        super.groupsDidChange(inserted: inserted, removed: removed)
+        
+        func goodInsertIndex(groups: [AssetGroup], group: AssetGroup) -> Int {
+            guard !groups.isEmpty else {
+                return 0
+            }
+            for (index, item) in groups.enumerated() {
+                if item.order < group.order {
+                    return index
+                }
+            }
+            return groups.count
+        }
+        
+        func onError() {
+            self.reload()
+            if let delegate = self.delegate {
+                delegate.groupsDidReload(provider: self)
+            }
+        }
+        
+        var changes: [AssetChange] = []
+        if !removed.isEmpty {
+            var groups: [(Int, AssetGroup)] = []
+            let oldGroups = self.groups
+            for item in oldGroups {
+                if removed[item.identifier] != nil {
+                    if let index = self.groups.firstIndex(of: item) {
+                        self.groups.remove(at: index)
+                        groups.append((index, item))
+                    }
+                }
+            }
+            if !groups.isEmpty {
+                let change = AssetChange(type: .remove, groups: groups)
+                changes.append(change)
+            }
+        }
+        
+        //heath check
+        var orderError = false
+        let groupsCountAfterRemove = self.groups.count
+        if groupsCountAfterRemove >= 2 {
+            for index in 0 ..< self.groups.count - 2 {
+                if self.groups[index + 1].order < self.groups[index].order {
+                    orderError = true
+                    break
+                }
+            }
+        }
+        
+        if orderError {
+            onError()
+            return
+        }
+        
+        if !inserted.isEmpty {
+            var groups: [(Int, AssetGroup)] = []
+            for (_, item) in inserted {
+                if self.groups.firstIndex(of: item) != nil {
+                    onError()
+                    return
+                }
+                let index = goodInsertIndex(groups: self.groups, group: item)
+                self.groups.insert(item, at: index)
+                groups.append((index, item))
+            }
+            
+            if !groups.isEmpty {
+                let change = AssetChange(type: .insert, groups: groups)
+                changes.append(change)
+            }
+        }
+        if !changes.isEmpty {
+            if let delegate = self.delegate {
+                delegate.groupsDidChange(provider: self, changes: changes)
+            }
+        }
+    }
+    public override func orderOfAssetCollection(_ collection: PHAssetCollection) -> UInt64 {
+        var typeOrder: UInt64
+        if let v = self.options.subTypeOrderConfig[collection.assetCollectionSubtype] {
+            typeOrder = UInt64(v) << 48
+        } else {
+            typeOrder = 0xffff_0000_0000_0000
+        }
+        return typeOrder
+    }
+}
+
+open class BaseAssetDataProvider: NSObject {
+    let identifier: String
+    let smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
+    let albumFetchResult: PHFetchResult<PHAssetCollection>
+    private var groupMap: [String: AssetGroup] = [:]
+    
+    public override init() {
         self.identifier = UUID().uuidString
         self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
@@ -279,75 +358,60 @@ public class BaseAssetDataProvider: NSObject {
         return map;
     }()
     
-    static func testSmartAlbum() {
-        print("\n\n\n")
-        print("testSmartAlbum")
-        var c : PHAssetCollection? = nil
-        
-        let a = CFAbsoluteTimeGetCurrent();
-        let result = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
-        let b = CFAbsoluteTimeGetCurrent();
-        print("b-a \(b-a)")
-        
-        result.enumerateObjects { (item, idx, stop) in
-            let subType = self.subTypeMap[item.assetCollectionSubtype]
-            print("idx:\(idx) itemType:\(subType) localizedTitle:\(item.localizedTitle) item:\(item)")
+    public func fetchAssetCollections() -> [String: (UInt, PHAssetCollection)] {
+        var map: [String: (UInt, PHAssetCollection)] = [:]
+        self.smartAlbumFetchResult.enumerateObjects { (item, idx, stop) in
+            map[item.localIdentifier] = (UInt(idx), item)
         }
-        print(result)
-        
-    }
-    static func testAlbum() {
-        print("\n\n\n")
-        print("testAlbum")
-        var c : PHAssetCollection? = nil
-        let result = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-        result.enumerateObjects { (item, idx, stop) in
-            let subType = self.subTypeMap[item.assetCollectionSubtype]
-            var date = ""
-            if let d = item.startDate {
-                date = "\(d)"
-            }
-            print("idx:\(idx) itemType:\(subType) \(date) localizedTitle:\(item.localizedTitle) item:\(item)")
+        let base = UInt(Int.max) + 1
+        self.albumFetchResult.enumerateObjects { (item, idx, stop) in
+            map[item.localIdentifier] = (UInt(idx) + base, item)
         }
-        print(result)
-    }
-    static func test() {
-
-        self.testSmartAlbum()
-        self.testAlbum()
+        return map.filter { (arg0) -> Bool in
+            let (_, (_, item)) = arg0
+            return self.filterAssetCollection(item)
+        }
     }
 
-    
-    
-    
+    open func filterAssetCollection(_ collection: PHAssetCollection) -> Bool {
+        return true
+    }
+    open func groupsDidChange(inserted: [String: AssetGroup], removed: [String: AssetGroup]) {
+        
+    }
+    open func orderOfAssetCollection(_ collection: PHAssetCollection) -> UInt64 {
+        return 0
+    }
 }
+
 
 extension BaseAssetDataProvider: PHPhotoLibraryChangeObserver {
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
-        let smartAlbumCollectionChanges = changeInstance.changeDetails(for: self.smartAlbumFetchResult)
-        let albumCollectionChanges = changeInstance.changeDetails(for: self.albumFetchResult)
-        print("changeInstance:\(changeInstance) \(smartAlbumCollectionChanges) \(albumCollectionChanges)")
+        var new: [String: AssetGroup] = [:]
+
+        let current: [String: (UInt, PHAssetCollection)] = self.fetchAssetCollections()
+        let old: [String: AssetGroup] = self.groupMap
+        var removed: [String: AssetGroup] = [:]
+        var inserted: [String: AssetGroup] = [:]
         
-        albumCollectionChanges?.changedIndexes
-        
-//        PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
-//        if (collectionChanges) {
-//            if ([collectionChanges hasIncrementalChanges]) {
-//                //监听相册视频的增删
-//                //增加了
-//                if (collectionChanges.insertedObjects.count > 0) {
-//                    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:collectionChanges.insertedObjects];
-//                    [self getAlbumVideoWithBehaviorType:ALBUMVIDEOBEHAVIOR_INSTER PHObjectsArr:mArr];
-//                }
-//                //删除了
-//                if (collectionChanges.removedObjects.count > 0) {
-//
-//                    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:collectionChanges.removedObjects];
-//                    [self getAlbumVideoWithBehaviorType:ALBUMVIDEOBEHAVIOR_REMOVE PHObjectsArr:mArr];
-//                }
-//                /**监听完一次更新一下监听对象*/
-//                self.assetsFetchResults = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:[self getFetchPhotosOptions]];
-//            }
-//        }
+        for (key, item) in old {
+            if current[key] == nil {
+                removed[key] = item
+            } else {
+                new[key] = item
+            }
+        }
+        for (key, (originalOrder, item)) in current {
+            if let group = old[key] {
+                group.order.originalOrder = originalOrder
+            } else {
+                let order = AssetGroup.Order(main: self.orderOfAssetCollection(item), originalOrder: originalOrder)
+                let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: item, order: order)
+                new[key] = group
+                inserted[key] = group
+            }
+        }
+        self.groupMap = new
+        self.groupsDidChange(inserted: inserted, removed: removed)
     }
 }

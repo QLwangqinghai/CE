@@ -10,13 +10,17 @@ import UIKit
 import Photos
 
 class ViewController: UIViewController {
-    var dataSource: AssetDataProvider?
+    var dataSource: AssetGroupDataProvider?
+    
+    let handler: GroupTableHandler = GroupTableHandler()
+    
+    var array: [Any] = []
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.view.backgroundColor = .red
         
-//        dataSource = AssetDataProvider()
+//        dataSource = AssetGroupDataProvider()
         
         
         let label = UILabel()
@@ -53,12 +57,30 @@ class ViewController: UIViewController {
         
         button.frame = CGRect.init(x: 100, y: 100, width: 40, height: 10)
         
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+            PHPhotoLibrary.requestAuthorization { (status) in
+                if status == .authorized {
+                    self.dataSource = AssetGroupDataProvider()
+                }
+            }
+        }
+//        self.view.addSubview(self.handler.tableView)
+//        self.handler.tableView.frame = self.view.bounds
+//        self.handler.update(dataProvider: AssetGroupDataProvider())
+//
+  
+        let test = MyTableHandler()
+        self.array.append(test)
+        self.view.addSubview(test.tableView)
+        test.tableView.frame = self.view.bounds        
+        
     }
     
 //    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        PHPhotoLibrary.requestAuthorization { (status) in
 //            if status == .authorized {
-//                AssetDataProvider.test()
+//                AssetGroupDataProvider.test()
 //            }
 //        }
 //    }

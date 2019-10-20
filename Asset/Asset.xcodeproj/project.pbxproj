@@ -13,6 +13,7 @@
 		D6C074BC2356EF9200038D3C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6C074BB2356EF9200038D3C /* Assets.xcassets */; };
 		D6C074BF2356EF9200038D3C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6C074BD2356EF9200038D3C /* LaunchScreen.storyboard */; };
 		D6C074C82356EFD000038D3C /* AssetDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C074C72356EFD000038D3C /* AssetDataProvider.swift */; };
+		D6EFAECB235B36CF00D6A06E /* GroupTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */; };
 		D6F4E3ED23572B97004CD247 /* edit_button_delete.png in Resources */ = {isa = PBXBuildFile; fileRef = D6F4E3EC23572B97004CD247 /* edit_button_delete.png */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,7 @@
 		D6C074BE2356EF9200038D3C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6C074C02356EF9200038D3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6C074C72356EFD000038D3C /* AssetDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetDataProvider.swift; sourceTree = "<group>"; };
+		D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTableHandler.swift; sourceTree = "<group>"; };
 		D6F4E3EC23572B97004CD247 /* edit_button_delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit_button_delete.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				D6C074C72356EFD000038D3C /* AssetDataProvider.swift */,
+				D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6C074C82356EFD000038D3C /* AssetDataProvider.swift in Sources */,
+				D6EFAECB235B36CF00D6A06E /* GroupTableHandler.swift in Sources */,
 				D6C074B72356EF9100038D3C /* ViewController.swift in Sources */,
 				D6C074B52356EF9100038D3C /* AppDelegate.swift in Sources */,
 			);

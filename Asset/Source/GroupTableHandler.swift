@@ -36,7 +36,7 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
         didSet {
             if let dataProvider = self.dataProvider {
                 let key = String(format: "%p", self)
-                let observer = AssetGroupDataProviderObserver(groupsDidReload: {[weak self] (provider) in
+                let observer = AssetGroupDataProviderObserver(didReload: {[weak self] (provider) in
                     guard let `self` = self else {
                         return
                     }

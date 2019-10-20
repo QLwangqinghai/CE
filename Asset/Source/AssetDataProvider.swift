@@ -6,7 +6,6 @@
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
-import UIKit
 import Photos
 
 /*
@@ -306,24 +305,18 @@ public struct AssetChange {
 }
 
 public class AssetGroupDataProviderObserver: NSObject {
-    public typealias GroupsDidReloadClosure = (_ provider: AssetGroupDataProvider) -> Void
+    public typealias ObserverClosure = (_ provider: AssetGroupDataProvider) -> Void
     public typealias GroupsDidChangeClosure = (_ provider: AssetGroupDataProvider, _ changes: [AssetChange]) -> Void
 
-    public let groupsDidReload: GroupsDidReloadClosure
-    public let groupsDidChange: GroupsDidChangeClosure
+    public let didReload: ObserverClosure
+    public let didChange: GroupsDidChangeClosure
 
-    public init(groupsDidReload: @escaping GroupsDidReloadClosure, groupsDidChange: @escaping GroupsDidChangeClosure) {
-        self.groupsDidChange = groupsDidChange
-        self.groupsDidReload = groupsDidReload
+    public init(didReload: @escaping ObserverClosure, didChange: @escaping GroupsDidChangeClosure) {
+        self.didReload = didReload
+        self.didChange = didChange
         super.init()
     }
 }
-
-public protocol AssetGroupDataProviderDelegate: class {
-    func groupsDidReload(provider: AssetGroupDataProvider)
-    func groupsDidChange(provider: AssetGroupDataProvider, changes: [AssetChange])
-}
-
 
 public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
     public private(set) var groups: [AssetGroup] = []
@@ -351,8 +344,6 @@ public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
             return lhs.order < rhs.order
         }
         self.groups = groups
-        
-        print(groups)
     }
     
     public override func filterAssetCollection(_ collection: PHAssetCollection) -> Bool {
@@ -377,7 +368,7 @@ public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
             self.reload()
             let observers = self.observers
             for (_, observer) in observers {
-                observer.groupsDidReload(self)
+                observer.didReload(self)
             }
         }
         
@@ -444,7 +435,7 @@ public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
         if !changes.isEmpty {
             let observers = self.observers
             for (_, observer) in observers {
-                observer.groupsDidChange(self, changes)
+                observer.didChange(self, changes)
             }
         }
     }
@@ -475,6 +466,20 @@ public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
 //    }
 //}
 
+public class AssetGroupObserver: NSObject {
+    public typealias ObserverClosure = (_ provider: AssetGroupDataProvider) -> Void
+    public typealias ItemsDidChangeClosure = (_ provider: AssetGroupDataProvider, _ changes: [AssetChange]) -> Void
+
+    public let didReload: ObserverClosure
+    public let didChange: ItemsDidChangeClosure
+
+    public init(didReload: @escaping ObserverClosure, didChange: @escaping ItemsDidChangeClosure) {
+        self.didReload = didReload
+        self.didChange = didChange
+        super.init()
+    }
+}
+
 public final class AssetGroup: NSObject {
     struct Order {
         var main: UInt64
@@ -493,8 +498,7 @@ public final class AssetGroup: NSObject {
     var title: String? {
         return self.collection.localizedTitle
     }
-
-    private let assetFetchResult: PHFetchResult<PHAsset>
+    private var assetFetchResult: PHFetchResult<PHAsset>
     
     fileprivate init(dataSourceIdentifier: String, collection: PHAssetCollection, order: Order) {
         self.dataSourceIdentifier = dataSourceIdentifier
@@ -530,8 +534,6 @@ public final class AssetGroup: NSObject {
             self.count = self.assetFetchResult.count
         }
     }
-
-    
 }
 
 public final class AssetList: NSObject {

@@ -65,15 +65,15 @@ class ViewController: UIViewController {
                 }
             }
         }
-//        self.view.addSubview(self.handler.tableView)
-//        self.handler.tableView.frame = self.view.bounds
-//        self.handler.update(dataProvider: AssetGroupDataProvider())
-//
+        self.view.addSubview(self.handler.tableView)
+        self.handler.tableView.frame = self.view.bounds
+        self.handler.update(dataProvider: AssetGroupDataProvider())
+
   
-        let test = MyTableHandler()
-        self.array.append(test)
-        self.view.addSubview(test.tableView)
-        test.tableView.frame = self.view.bounds        
+//        let test = MyTableHandler()
+//        self.array.append(test)
+//        self.view.addSubview(test.tableView)
+//        test.tableView.frame = self.view.bounds
         
     }
     

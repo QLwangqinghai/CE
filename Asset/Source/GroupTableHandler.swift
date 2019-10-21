@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Photos
 
 open class GroupTableCell: UITableViewCell {
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -15,28 +16,23 @@ open class GroupTableCell: UITableViewCell {
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
-    
-    
-    
 }
 
 open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSource {
     public let tableView: UITableView
     
     private var items: [AssetGroup] = []
-    
+    private let observerKey: String = UUID().uuidString
     public private(set) var dataProvider: AssetGroupDataProvider? {
         willSet {
             if let dataProvider = self.dataProvider {
-                let key = String(format: "%p", self)
-                dataProvider.removeDataObserver(forKey: key)
+                dataProvider.removeDataObserver(forKey: self.observerKey)
             }
         }
         didSet {
             if let dataProvider = self.dataProvider {
-                let key = String(format: "%p", self)
-                let observer = AssetGroupDataProviderObserver(didReload: {[weak self] (provider) in
+                let key = self.observerKey
+                let observer = AssetGroupDataProvider.Observer(didReload: {[weak self] (provider) in
                     guard let `self` = self else {
                         return
                     }
@@ -46,7 +42,7 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
                     self.items = dataProvider.groups
 
                     self.tableView.reloadData()
-                }) {[weak self] (provider, changes) in
+                }, didChange: {[weak self] (provider, changes) in
                     guard let `self` = self else {
                         return
                     }
@@ -57,7 +53,7 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
 
                     self.tableView.beginUpdates()
                     for change in changes {
-                        let indexPaths = change.groups.map { (item) -> IndexPath in
+                        let indexPaths = change.items.map { (item) -> IndexPath in
                             return IndexPath(row: item.0, section: 0)
                         }
                         switch change.type {
@@ -73,6 +69,17 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
                         }
                     }
                     self.tableView.endUpdates()
+                }) {[weak self] (provider, groups) in
+                    guard let `self` = self else {
+                        return
+                    }
+                    guard self.dataProvider == provider else {
+                        return
+                    }
+                    let indexPaths = groups.map { (item) -> IndexPath in
+                        return IndexPath(row: item.0, section: 0)
+                    }
+                    self.tableView.reloadRows(at: indexPaths, with: .automatic)
                 }
                 dataProvider.addDataObserver(observer, forKey: key)
                 self.items = dataProvider.groups
@@ -96,6 +103,9 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
         tableView.delegate = self
         tableView.dataSource = self
     }
+    deinit {
+        self.dataProvider?.removeDataObserver(forKey: self.observerKey)
+    }
     
     public func update(dataProvider: AssetGroupDataProvider?) {
         if self.dataProvider != dataProvider {
@@ -118,7 +128,6 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
         cell.textLabel?.text = assetGroup.title
         return cell
     }
-    
 }
 
 
@@ -203,3 +212,9 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
 //        return cell
 //    }
 //}
+
+
+
+
+
+

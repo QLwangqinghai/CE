@@ -7,12 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D670DFE3235DB1C00057538E /* AssetList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFE2235DB1C00057538E /* AssetList.swift */; };
+		D670DFE5235DB28F0057538E /* AssetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFE4235DB28F0057538E /* AssetSelector.swift */; };
+		D670DFE7235DB3380057538E /* AssetCollectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFE6235DB3380057538E /* AssetCollectionHandler.swift */; };
+		D670DFEC235DC87F0057538E /* AssetBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFEB235DC87F0057538E /* AssetBase.swift */; };
 		D6C074B52356EF9100038D3C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C074B42356EF9100038D3C /* AppDelegate.swift */; };
 		D6C074B72356EF9100038D3C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C074B62356EF9100038D3C /* ViewController.swift */; };
 		D6C074BA2356EF9100038D3C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6C074B82356EF9100038D3C /* Main.storyboard */; };
 		D6C074BC2356EF9200038D3C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6C074BB2356EF9200038D3C /* Assets.xcassets */; };
 		D6C074BF2356EF9200038D3C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6C074BD2356EF9200038D3C /* LaunchScreen.storyboard */; };
-		D6C074C82356EFD000038D3C /* AssetDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C074C72356EFD000038D3C /* AssetDataProvider.swift */; };
+		D6C074C82356EFD000038D3C /* AssetGroupDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C074C72356EFD000038D3C /* AssetGroupDataProvider.swift */; };
 		D6EFAECB235B36CF00D6A06E /* GroupTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */; };
 		D6F4E3ED23572B97004CD247 /* edit_button_delete.png in Resources */ = {isa = PBXBuildFile; fileRef = D6F4E3EC23572B97004CD247 /* edit_button_delete.png */; };
 /* End PBXBuildFile section */
@@ -20,6 +24,10 @@
 /* Begin PBXFileReference section */
 		D6241C00235702E200DB603A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		D6241C01235702E200DB603A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		D670DFE2235DB1C00057538E /* AssetList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetList.swift; sourceTree = "<group>"; };
+		D670DFE4235DB28F0057538E /* AssetSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetSelector.swift; sourceTree = "<group>"; };
+		D670DFE6235DB3380057538E /* AssetCollectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetCollectionHandler.swift; sourceTree = "<group>"; };
+		D670DFEB235DC87F0057538E /* AssetBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetBase.swift; sourceTree = "<group>"; };
 		D6C074B12356EF9100038D3C /* Asset.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Asset.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6C074B42356EF9100038D3C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6C074B62356EF9100038D3C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -27,7 +35,7 @@
 		D6C074BB2356EF9200038D3C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D6C074BE2356EF9200038D3C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6C074C02356EF9200038D3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D6C074C72356EFD000038D3C /* AssetDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetDataProvider.swift; sourceTree = "<group>"; };
+		D6C074C72356EFD000038D3C /* AssetGroupDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetGroupDataProvider.swift; sourceTree = "<group>"; };
 		D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTableHandler.swift; sourceTree = "<group>"; };
 		D6F4E3EC23572B97004CD247 /* edit_button_delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit_button_delete.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -77,8 +85,12 @@
 		D6C074C62356EFB700038D3C /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				D6C074C72356EFD000038D3C /* AssetDataProvider.swift */,
+				D6C074C72356EFD000038D3C /* AssetGroupDataProvider.swift */,
+				D670DFE2235DB1C00057538E /* AssetList.swift */,
+				D670DFE4235DB28F0057538E /* AssetSelector.swift */,
 				D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */,
+				D670DFE6235DB3380057538E /* AssetCollectionHandler.swift */,
+				D670DFEB235DC87F0057538E /* AssetBase.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -156,8 +168,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6C074C82356EFD000038D3C /* AssetDataProvider.swift in Sources */,
+				D6C074C82356EFD000038D3C /* AssetGroupDataProvider.swift in Sources */,
 				D6EFAECB235B36CF00D6A06E /* GroupTableHandler.swift in Sources */,
+				D670DFE3235DB1C00057538E /* AssetList.swift in Sources */,
+				D670DFE7235DB3380057538E /* AssetCollectionHandler.swift in Sources */,
+				D670DFE5235DB28F0057538E /* AssetSelector.swift in Sources */,
+				D670DFEC235DC87F0057538E /* AssetBase.swift in Sources */,
 				D6C074B72356EF9100038D3C /* ViewController.swift in Sources */,
 				D6C074B52356EF9100038D3C /* AppDelegate.swift in Sources */,
 			);

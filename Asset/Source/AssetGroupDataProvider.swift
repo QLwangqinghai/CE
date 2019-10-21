@@ -62,45 +62,6 @@ import Photos
  }
  */
 
-fileprivate final class AssetContext: NSObject {
-    static let subTypeMap: [PHAssetCollectionSubtype: String] = {
-         var map:[PHAssetCollectionSubtype: String] = [:]
-         map[.albumRegular] = ".albumRegular"
-         map[.albumSyncedEvent] = ".albumSyncedEvent"
-         map[.albumSyncedFaces] = ".albumSyncedFaces"
-         map[.albumSyncedAlbum] = ".albumSyncedAlbum"
-
-         map[.albumImported] = ".albumImported"
-         map[.albumMyPhotoStream] = ".albumMyPhotoStream"
-         map[.albumCloudShared] = ".albumCloudShared"
-
-         map[.smartAlbumGeneric] = ".smartAlbumGeneric"
-         map[.smartAlbumPanoramas] = ".smartAlbumPanoramas"
-         map[.smartAlbumVideos] = ".smartAlbumVideos"
-         map[.smartAlbumFavorites] = ".smartAlbumFavorites"
-         map[.smartAlbumTimelapses] = ".smartAlbumTimelapses"
-         map[.smartAlbumAllHidden] = ".smartAlbumAllHidden"
-         map[.smartAlbumRecentlyAdded] = ".smartAlbumRecentlyAdded"
-         map[.smartAlbumBursts] = ".smartAlbumBursts"
-         map[.smartAlbumSlomoVideos] = ".smartAlbumSlomoVideos"
-         map[.smartAlbumUserLibrary] = ".smartAlbumUserLibrary"
-
-         map[.smartAlbumSelfPortraits] = ".smartAlbumSelfPortraits"
-         map[.smartAlbumScreenshots] = ".smartAlbumScreenshots"
-         map[.smartAlbumDepthEffect] = ".smartAlbumDepthEffect"
-         map[.smartAlbumLivePhotos] = ".smartAlbumLivePhotos"
-         map[.smartAlbumAnimated] = ".smartAlbumAnimated"
-         map[.smartAlbumLongExposures] = ".smartAlbumLongExposures"
-         map[.smartAlbumUnableToUpload] = ".smartAlbumUnableToUpload"
-         return map;
-     }()
-    
-    fileprivate override init() {
-
-    }
-}
-
-
 open class BaseAssetGroupDataProvider: NSObject {
     public let identifier: String
     public private(set) var smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
@@ -123,7 +84,7 @@ open class BaseAssetGroupDataProvider: NSObject {
         let current: [String: (UInt, PHAssetCollection)] = self.fetchAssetCollections()
         for (key, (originalOrder, item)) in current {
             if self.groupMap[key] == nil {
-                let order = AssetGroup.Order(main: self.orderOfAssetCollection(item), originalOrder: originalOrder)
+                let order = Order(main: self.orderOfAssetCollection(item), originalOrder: originalOrder)
                 let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: item, order: order)
                 self.groupMap[key] = group
             }
@@ -148,7 +109,7 @@ open class BaseAssetGroupDataProvider: NSObject {
     open func filterAssetCollection(_ collection: PHAssetCollection) -> Bool {
         return true
     }
-    open func groupsDidChange(inserted: [String: AssetGroup], removed: [String: AssetGroup]) {
+    open func groupsDidChange(removed: [String: AssetGroup], inserted: [String: AssetGroup], updated: [String: AssetGroup]) {
     }
     open func orderOfAssetCollection(_ collection: PHAssetCollection) -> UInt64 {
         return 0
@@ -184,7 +145,7 @@ extension BaseAssetGroupDataProvider: PHPhotoLibraryChangeObserver {
             if let group = old[key] {
                 group.order.originalOrder = originalOrder
             } else {
-                let order = AssetGroup.Order(main: self.orderOfAssetCollection(item), originalOrder: originalOrder)
+                let order = Order(main: self.orderOfAssetCollection(item), originalOrder: originalOrder)
                 let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: item, order: order)
                 new[key] = group
                 inserted[key] = group
@@ -218,14 +179,6 @@ public protocol AssetProtocol {
     }
     
 }
-
-public final class AssetItem: NSObject {
-
-    
-    
-}
-
-
 
 public struct AssetGroupDataProviderOptions {
     public static let `default`: AssetGroupDataProviderOptions = {
@@ -288,48 +241,25 @@ public struct AssetGroupDataProviderOptions {
     public init() {
         
     }
-    
-    
-    
 }
 
 
-public enum AssetChangeType: Int {
-    case insert
-    case remove
-    case update
-}
-public struct AssetChange {
-    let type: AssetChangeType
-    let groups: [(Int, AssetGroup)]
-}
-
-public class AssetGroupDataProviderObserver: NSObject {
-    public typealias ObserverClosure = (_ provider: AssetGroupDataProvider) -> Void
-    public typealias GroupsDidChangeClosure = (_ provider: AssetGroupDataProvider, _ changes: [AssetChange]) -> Void
-
-    public let didReload: ObserverClosure
-    public let didChange: GroupsDidChangeClosure
-
-    public init(didReload: @escaping ObserverClosure, didChange: @escaping GroupsDidChangeClosure) {
-        self.didReload = didReload
-        self.didChange = didChange
-        super.init()
-    }
-}
+public typealias GroupListChange = ListChange<AssetGroup>
 
 public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
+    public typealias Observer = ListObserver<AssetGroupDataProvider, AssetGroup>
+    
     public private(set) var groups: [AssetGroup] = []
     private let options: AssetGroupDataProviderOptions
     
-    public private(set) var observers: [AnyHashable: AssetGroupDataProviderObserver] = [:]
+    public private(set) var observers: [AnyHashable: Observer] = [:]
     public init(options: AssetGroupDataProviderOptions = AssetGroupDataProviderOptions.default) {
         self.options = options
         super.init()
         self.reload()
     }
     
-    public func addDataObserver(_ observer: AssetGroupDataProviderObserver, forKey: AnyHashable) {
+    public func addDataObserver(_ observer: Observer, forKey: AnyHashable) {
         self.observers[forKey] = observer
     }
     public func removeDataObserver(forKey: AnyHashable) {
@@ -349,8 +279,8 @@ public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
     public override func filterAssetCollection(_ collection: PHAssetCollection) -> Bool {
         return self.options.filter(collection)
     }
-    public override func groupsDidChange(inserted: [String: AssetGroup], removed: [String: AssetGroup]) {
-        super.groupsDidChange(inserted: inserted, removed: removed)
+    public override func groupsDidChange(removed: [String: AssetGroup], inserted: [String: AssetGroup], updated: [String: AssetGroup]) {
+        super.groupsDidChange(removed: removed, inserted: inserted, updated:updated)
         
         func goodInsertIndex(groups: [AssetGroup], group: AssetGroup) -> Int {
             guard !groups.isEmpty else {
@@ -372,7 +302,7 @@ public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
             }
         }
         
-        var changes: [AssetChange] = []
+        var changes: [GroupListChange] = []
         if !removed.isEmpty {
             var groups: [(Int, AssetGroup)] = []
             let oldGroups = self.groups
@@ -386,7 +316,7 @@ public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
             }
             self.groups = newGroups
             if !groups.isEmpty {
-                let change = AssetChange(type: .remove, groups: groups)
+                let change = GroupListChange(type: .remove, items: groups)
                 changes.append(change)
             }
         }
@@ -428,7 +358,7 @@ public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
             }
             
             if !groups.isEmpty {
-                let change = AssetChange(type: .insert, groups: groups)
+                let change = GroupListChange(type: .insert, items: groups)
                 changes.append(change)
             }
         }
@@ -466,40 +396,23 @@ public final class AssetGroupDataProvider: BaseAssetGroupDataProvider {
 //    }
 //}
 
-public class AssetGroupObserver: NSObject {
-    public typealias ObserverClosure = (_ provider: AssetGroupDataProvider) -> Void
-    public typealias ItemsDidChangeClosure = (_ provider: AssetGroupDataProvider, _ changes: [AssetChange]) -> Void
 
-    public let didReload: ObserverClosure
-    public let didChange: ItemsDidChangeClosure
-
-    public init(didReload: @escaping ObserverClosure, didChange: @escaping ItemsDidChangeClosure) {
-        self.didReload = didReload
-        self.didChange = didChange
-        super.init()
-    }
-}
 
 public final class AssetGroup: NSObject {
-    struct Order {
-        var main: UInt64
-        var originalOrder: UInt
-        static func < (lhs: Order, rhs: Order) -> Bool {
-            return lhs.main == rhs.main ? lhs.originalOrder < rhs.originalOrder : lhs.main < rhs.main
-        }
-    }
+    public typealias ObserverClosure = (_ group: AssetGroup, _ changeDetails: PHFetchResultChangeDetails<PHAsset>) -> Void
     
     let dataSourceIdentifier: String
     let identifier: String
     fileprivate var order: Order
 
     private let collection: PHAssetCollection
-    dynamic var count: Int = 0
+    public private(set) var count: Int = 0
     var title: String? {
         return self.collection.localizedTitle
     }
-    private var assetFetchResult: PHFetchResult<PHAsset>
-    
+    public private(set) var assetFetchResult: PHFetchResult<PHAsset>
+    public private(set) var observers: [AnyHashable: ObserverClosure] = [:]
+
     fileprivate init(dataSourceIdentifier: String, collection: PHAssetCollection, order: Order) {
         self.dataSourceIdentifier = dataSourceIdentifier
         self.collection = collection
@@ -511,6 +424,14 @@ public final class AssetGroup: NSObject {
         self.count = assetFetchResult.count
         super.init()
     }
+    
+    public func addDataObserver(_ observer: @escaping ObserverClosure, forKey: AnyHashable) {
+        self.observers[forKey] = observer
+    }
+    public func removeDataObserver(forKey: AnyHashable) {
+        self.observers.removeValue(forKey: forKey)
+    }
+    
     public override var debugDescription: String {
         get {
             let name: String
@@ -530,29 +451,19 @@ public final class AssetGroup: NSObject {
     }
 
     fileprivate func handlePhotoLibraryChange(_ changeInstance: PHChange) {
-        if let changeDetails = changeInstance.changeDetails(for: self.assetFetchResult) {
+        if let changeDetails: PHFetchResultChangeDetails<PHAsset> = changeInstance.changeDetails(for: self.assetFetchResult) {
+            self.assetFetchResult = changeDetails.fetchResultAfterChanges
             self.count = self.assetFetchResult.count
+            
+            let observers = self.observers
+            _ = observers.map { (item) -> Void in
+                let closure: ObserverClosure = item.value
+                closure(self, changeDetails)
+            }
         }
     }
 }
 
-public final class AssetList: NSObject {
-    public let group: AssetGroup
-    
-    public init(group: AssetGroup) {
-        self.group = group
-        super.init()
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-}
+
 
 

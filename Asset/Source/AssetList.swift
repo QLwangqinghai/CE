@@ -91,17 +91,27 @@ public final class AssetList: NSObject {
     public let group: AssetGroup
     public let selector: AssetSelector?
     public let context: AssetContext
-    
+    private let observerKey: String = UUID().uuidString
+
     public init(group: AssetGroup, context: AssetContext, selector: AssetSelector?) {
         self.group = group
         self.selector = selector
         self.context = context
         super.init()
         
-        
-        
+        self.group.addDataObserver({[weak self] (group, changeDetails) in
+            guard let `self` = self else {
+                return
+            }
+            guard self.group == group else {
+                return
+            }
+            
+        }, forKey: self.observerKey)
     }
-    
+    deinit {
+        self.group.removeDataObserver(forKey: self.observerKey)
+    }
     
     
     

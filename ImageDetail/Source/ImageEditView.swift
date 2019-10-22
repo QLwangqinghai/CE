@@ -298,7 +298,7 @@ open class ZoomView: UIView {
     private let _scrollZoomHandler: _ZoomHandler
     public let contentView: UIView
 
-    private func resetContentInset() {
+    private func _resetContentInset() {
         let scrollView = self._scrollView
         let old = scrollView.contentInset
         let new = UIUtil.add(self.orientationInset, self.paddingInset)
@@ -311,12 +311,12 @@ open class ZoomView: UIView {
     
     public var orientationInset: UIEdgeInsets = UIEdgeInsets() {
         didSet {
-            self.resetContentInset()
+            self._resetContentInset()
         }
     }
     public fileprivate(set) var paddingInset: UIEdgeInsets = UIEdgeInsets() {
         didSet {
-            self.resetContentInset()
+            self._resetContentInset()
         }
     }
     
@@ -345,7 +345,7 @@ open class ZoomView: UIView {
         var scrollViewFrame = self.bounds
         scrollViewFrame.origin = CGPoint()
         if #available(iOS 11.0, *) {
-            self._scrollView.contentInsetAdjustmentBehavior = .never
+            scrollView.contentInsetAdjustmentBehavior = .never
         }
         scrollView.frame = scrollViewFrame
         scrollView.addSubview(self.contentView)
@@ -381,7 +381,7 @@ open class ZoomView: UIView {
     public func resetContent(size: CGSize) {
         let scrollView = self._scrollView
         let scrollSize = scrollView.bounds.size
-        guard scrollSize.width > 0 && scrollSize.width > 0 else {
+        guard scrollSize.width > 0 && scrollSize.height > 0 else {
             self.resetContent(size: size, zoomScale: 1.0, minimumZoomScale: 1.0, maximumZoomScale: 1.0)
             return
         }
@@ -403,6 +403,7 @@ open class ZoomView: UIView {
     }
 
     public func resetContent(size: CGSize, zoomScale: CGFloat, minimumZoomScale: CGFloat, maximumZoomScale: CGFloat) {
+        self._resetContentInset()
         let scrollView = self._scrollView
         let contentView = self.contentView
         scrollView.minimumZoomScale = minimumZoomScale
@@ -411,6 +412,7 @@ open class ZoomView: UIView {
         scrollView.contentSize = size
         contentView.bounds.size = size
         contentView.center = CGPoint(x: size.width / 2, y: size.height / 2)
+        self._resetPadding(scrollView: scrollView)
     }
 }
 

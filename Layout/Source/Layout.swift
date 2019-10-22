@@ -110,9 +110,9 @@ public final class LayoutContextEntity: Hashable {
     //    {
     //        didSet {
     //            if let value = view {
-    //                let objPtr = Unmanaged.passUnretained(self).toOpaque()
-    //                let address: Int = objPtr.load(as:Int.self)
-    //                self.viewIdentifier = address
+//                    let objPtr = Unmanaged.passUnretained(self).toOpaque()
+//                    let address: Int = objPtr.load(as:Int.self)
+//                    self.viewIdentifier = address
     //            } else {
     //                self.viewIdentifier = 0
     //            }

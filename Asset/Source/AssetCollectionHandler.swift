@@ -36,35 +36,15 @@ open class AssetCollectionHandler: NSObject {
         }
         didSet {
             if let dataProvider = self.dataProvider {
-                let key = self.observerKey
-                let observer = AssetGroup.Observer.init(didReload: {[weak self] (provider) in
+                dataProvider.group.addDataObserver({[weak self] (group, changeDetails) in
                     guard let `self` = self else {
                         return
                     }
-                    guard self.dataProvider == provider else {
+                    guard self.dataProvider?.group == group else {
                         return
                     }
-                    
-                    
-                }, didChange: {[weak self] (provider, changes) in
-                    guard let `self` = self else {
-                        return
-                    }
-                    guard self.dataProvider == provider else {
-                        return
-                    }
-                    
-                    
-                }) {[weak self] (provider, groups) in
-                    guard let `self` = self else {
-                        return
-                    }
-                    guard self.dataProvider == provider else {
-                        return
-                    }
-                    
-                    
-                }
+                }, forKey: self.observerKey)
+                
 //                let observer = Observer(didReload: {[weak self] (provider) in
 //                    guard let `self` = self else {
 //                        return

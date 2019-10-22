@@ -9,6 +9,17 @@
 import UIKit
 import Photos
 
+class vv: UIView {
+    override init(frame: CGRect) {
+        super.init(frame:frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
 class ViewController: UIViewController {
     var dataSource: AssetGroupDataProvider?
     

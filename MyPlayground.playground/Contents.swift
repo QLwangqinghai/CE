@@ -87,10 +87,10 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
     public typealias Key = Value.UniqueIdentifier
     public typealias Order = Value.UniqueOrder
 
-    public typealias ReloadClosure = (_ entity: UniqueOrderedList<Value>, _ changes: [ListChange<Value>]) -> Void
+    public typealias ReloadClosure = (_ entity: UniqueOrderedList<Value>, _ changes: [(Int, Value)]) -> Void
     public typealias ChangeClosure = (_ entity: UniqueOrderedList<Value>, _ changes: [ListChange<Value>]) -> Void
     public typealias ReloadAllClosure = (_ entity: UniqueOrderedList<Value>) -> Void
-
+    
     private struct _Observer {
         public let didChange: ChangeClosure
         public let didReload: ReloadClosure
@@ -117,6 +117,8 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
     public private(set) var dictionary: [Key: Value] = [:]
 
     public private(set) var order: ListOrder
+    private let orderObserveKey: String = UUID().uuidString
+    private let contentObserveKey: String = UUID().uuidString
     private var observers: [AnyHashable: _Observer] = [:]
     public init(order: ListOrder = .ascending) {
         self.order = order
@@ -262,7 +264,32 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
             }
         }
         self.list = newList
+        
+        var removedDictionary = self.dictionary
+        var insertedDictionary = dictionary
+        
+        let allkey = removedDictionary.map { (item) -> Key in
+            return item.key
+        }
+        for k in allkey {
+            if insertedDictionary[k] != nil {
+                removedDictionary.removeValue(forKey: k)
+                insertedDictionary.removeValue(forKey: k)
+            }
+        }
+        for (_, value) in removedDictionary {
+            value.unobserveContent(forKey: self.contentObserveKey)
+            value.unobserveUniqueOrder(forKey: self.orderObserveKey)
+        }
         self.dictionary = dictionary
+        for (_, value) in insertedDictionary {
+            value.observeContent(onChanged: { (item) in
+                
+            }, forKey: self.contentObserveKey)
+            value.observeUniqueOrder(onChanged: { (key) in
+                
+            }, forKey: self.orderObserveKey)
+        }
         
         if !changes.isEmpty {
             let observers = self.observers
@@ -277,7 +304,10 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
     public func insert(items: [Value]) {
         self.batch(remove: [], inserts: items)
     }
-    public func update(items: [Value]) {
-        
-    }
+    
+    
+    
+    
+    
+    
 }

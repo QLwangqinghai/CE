@@ -182,38 +182,30 @@ open class AssetGroupDataProvider: NSObject {
 extension AssetGroupDataProvider: PHPhotoLibraryChangeObserver {
     
     private func handlePhotoLibraryChange(changeInstance: PHChange) {
+        var removed: [String] = []
+        var inserted: [PHAssetCollection] = []
+
         if let change = changeInstance.changeDetails(for: self.albumFetchResult) {
             self.albumFetchResult = change.fetchResultAfterChanges
+
+            for collection in change.removedObjects {
+                removed.append(collection.localIdentifier)
+            }
+            for collection in change.insertedObjects {
+                inserted.append(collection)
+            }
         }
         if let change = changeInstance.changeDetails(for: self.smartAlbumFetchResult) {
             self.smartAlbumFetchResult = change.fetchResultAfterChanges
+            for collection in change.removedObjects {
+                removed.append(collection.localIdentifier)
+            }
+            for collection in change.insertedObjects {
+                inserted.append(collection)
+            }
         }
         
-        var new: [String: AssetGroup] = [:]
-
-        let current: [String: (Int64, PHAssetCollection)] = self.fetchAssetCollections()
-        let old: [String: AssetGroup] = self.groupMap
-        var removed: [String: AssetGroup] = [:]
-        var inserted: [String: AssetGroup] = [:]
         var updated: [String: AssetGroup] = [:]
-        for (key, item) in old {
-            if current[key] == nil {
-                removed[key] = item
-            } else {
-                new[key] = item
-            }
-        }
-        for (key, (originalOrder, item)) in current {
-            if let group = old[key] {
-                group.order.sub = originalOrder
-            } else {
-                let order = AssetOrder(main: self.orderOfAssetCollection(item), sub: originalOrder, detail: "")
-                let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: item, order: order)
-                new[key] = group
-                inserted[key] = group
-            }
-        }
-        self.groupMap = new
         
         _ = self.groupMap.mapValues { (group) -> Void in
             if group.handlePhotoLibraryChange(changeInstance) {

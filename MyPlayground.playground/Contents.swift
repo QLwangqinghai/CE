@@ -311,3 +311,13 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
     
     
 }
+
+
+let label = UILabel()
+
+print(label.intrinsicContentSize)
+label.text = ""
+print(label.intrinsicContentSize)
+
+
+

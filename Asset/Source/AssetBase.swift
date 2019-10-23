@@ -24,7 +24,6 @@ public struct AssetOrder: Comparable {
     //三级维度
     public var sequence: Int64
     
-    
     public init(main: Int64, time: Int64, sequence: Int64) {
         self.main = main
         self.time = time
@@ -144,15 +143,23 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
     }
     private func didReloadAll() {
         let observers = self.observers
-        observers.map { (item) -> Void in
+        _ = observers.map { (item) -> Void in
             item.value.didReloadAll(self)
+        }
+    }
+    private func _compare(lhs: Value, rhs: Value) -> Bool {
+        switch self.order {
+        case .ascending:
+            return lhs.uniqueOrder < rhs.uniqueOrder
+        case .escending:
+            return lhs.uniqueOrder > rhs.uniqueOrder
         }
     }
     public func sort() {
         let newList: [Value] = self.dictionary.map { (item) -> Value in
             return item.value
         }.sorted { (lhs, rhs) -> Bool in
-            return true
+            return self._compare(lhs: lhs, rhs: rhs)
         }.map { (item) -> Value in
             return item
         }
@@ -173,8 +180,6 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
             self.didReloadAll()
         }
     }
-    
-    
     
     //先删除 后插入
     public func batch(filter: ((Value) -> Bool)?, inserts: [Value], reloadAll: Bool = false) {
@@ -197,13 +202,12 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
             return
         }
         
-        
         func goodInsertIndex(items: [Value], item: Value) -> Int {
             guard !items.isEmpty else {
                 return 0
             }
             for (index, v) in items.enumerated() {
-                if item.uniqueOrder < v.uniqueOrder {
+                if self._compare(lhs: item, rhs: v) {
                     return index
                 }
             }

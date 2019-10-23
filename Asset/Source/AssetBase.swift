@@ -18,9 +18,10 @@ public struct AssetOrder: Comparable {
     //主维度
     public var main: Int64
     
+    //二级维度
     public var time: Int64
     
-    //二级维度
+    //三级维度
     public var sequence: Int64
     
     
@@ -174,19 +175,17 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
     }
     
     
+    
     //先删除 后插入
-    public func batch(remove: [Key], inserts: [Value], reloadAll: Bool = false) {
+    public func batch(filter: ((Value) -> Bool)?, inserts: [Value], reloadAll: Bool = false) {
         guard !reloadAll else {
-            var removed: Set<Key> = Set<Key>()
-            _ = remove.map { (item) -> Void in
-                removed.insert(item)
-            }
-            
-            var dictionary: [Key: Value] = self.dictionary
-            if !removed.isEmpty {
-                for key in remove {
-                    dictionary.removeValue(forKey: key)
+            var dictionary: [Key: Value]
+            if let closure = filter {
+                dictionary = self.dictionary.filter { (item) -> Bool in
+                    return closure(item.value)
                 }
+            } else {
+                dictionary = self.dictionary
             }
             if !inserts.isEmpty {
                 for item in inserts {
@@ -217,25 +216,17 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
         
         var changes: [Change] = []
 
-        var removed: Set<Key> = Set<Key>()
-        _ = remove.map { (item) -> Void in
-            removed.insert(item)
-        }
-        
         var dictionary: [Key: Value] = self.dictionary
         var newList: [Value] = []
         
-        if !removed.isEmpty {
+        if let closure = filter {
             var changedItems: [(Int, Value)] = []
             for (index, item) in self.list.enumerated() {
-                if removed.contains(item.uniqueIdentifier) {
-                    guard let value = dictionary[item.uniqueIdentifier] else {
-                        fatalError("error on found value")
-                    }
-                    dictionary.removeValue(forKey: item.uniqueIdentifier)
-                    changedItems.append((index, value))
-                } else {
+                if closure(item)  {
                     newList.append(item)
+                } else {
+                    dictionary.removeValue(forKey: item.uniqueIdentifier)
+                    changedItems.append((index, item))
                 }
             }
             if !changedItems.isEmpty {
@@ -298,16 +289,19 @@ public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Eq
             }
         }
     }
-    public func remove(items: [Key]) {
-        self.batch(remove: items, inserts: [])
+    
+    public func filter(_ body: @escaping (Value) -> Bool) {
+        self.batch(filter: body, inserts: [])
     }
     public func insert(items: [Value]) {
-        self.batch(remove: [], inserts: items)
+        self.batch(filter: nil, inserts: items)
     }
     
-    
-    
-    
-    
+    public func item(at index: Int) -> Value {
+        return self.list[index]
+    }
+    public func item(forKey: Key) -> Value? {
+        return self.dictionary[forKey]
+    }
     
 }

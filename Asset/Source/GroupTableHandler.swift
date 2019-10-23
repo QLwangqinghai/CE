@@ -26,63 +26,82 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
     public private(set) var dataProvider: AssetGroupDataProvider? {
         willSet {
             if let dataProvider = self.dataProvider {
-                dataProvider.removeDataObserver(forKey: self.observerKey)
+                dataProvider.groupList.unobserveList(forKey: self.observerKey)
             }
         }
         didSet {
             if let dataProvider = self.dataProvider {
-                let key = self.observerKey
-                let observer = AssetGroupDataProvider.Observer(didReload: {[weak self] (provider) in
+                dataProvider.groupList.observeList(didChange: {[weak self]  (groupList, changes) in
+                    guard changes.count > 0 else {
+                        return
+                    }
                     guard let `self` = self else {
+                          return
+                    }
+                    guard let dataProvider = self.dataProvider else {
                         return
                     }
-                    guard self.dataProvider == provider else {
+                    guard dataProvider.groupList === groupList else {
                         return
                     }
-                    self.items = dataProvider.groups
-
-                    self.tableView.reloadData()
-                }, didChange: {[weak self] (provider, changes) in
-                    guard let `self` = self else {
-                        return
-                    }
-                    guard self.dataProvider == provider else {
-                        return
-                    }
-                    self.items = dataProvider.groups
-
+                    self.items = groupList.list
                     self.tableView.beginUpdates()
                     for change in changes {
-                        let indexPaths = change.items.map { (item) -> IndexPath in
-                            return IndexPath(row: item.0, section: 0)
-                        }
-                        switch change.type {
-                        case .insert:
+                        switch change {
+                        case .insert(let items):
+                            guard items.count > 0 else {
+                                break
+                            }
+                            let indexPaths = items.map { (item) -> IndexPath in
+                                return IndexPath(row: item.0, section: 0)
+                            }
                             self.tableView.insertRows(at: indexPaths, with: .automatic)
-                            break
-                        case .remove:
+                        case .remove(let items):
+                            guard items.count > 0 else {
+                                break
+                            }
+                            let indexPaths = items.map { (item) -> IndexPath in
+                                return IndexPath(row: item.0, section: 0)
+                            }
                             self.tableView.deleteRows(at: indexPaths, with: .automatic)
-                            break
-                        case .update:
-                            self.tableView.reloadRows(at: indexPaths, with: .automatic)
-                            break
                         }
                     }
                     self.tableView.endUpdates()
-                }) {[weak self] (provider, groups) in
+                }, didReload: {[weak self]  (groupList, changes) in
+                    guard changes.count > 0 else {
+                        return
+                    }
                     guard let `self` = self else {
+                          return
+                    }
+                    guard let dataProvider = self.dataProvider else {
                         return
                     }
-                    guard self.dataProvider == provider else {
+                    guard dataProvider.groupList === groupList else {
                         return
                     }
-                    let indexPaths = groups.map { (item) -> IndexPath in
-                        return IndexPath(row: item.0, section: 0)
+                    self.items = groupList.list
+                    let indexPaths = changes.map { (change) -> IndexPath in
+                        return IndexPath(row: change.0, section: 0)
                     }
+                    self.tableView.beginUpdates()
                     self.tableView.reloadRows(at: indexPaths, with: .automatic)
-                }
-                dataProvider.addDataObserver(observer, forKey: key)
-                self.items = dataProvider.groups
+                    self.tableView.endUpdates()
+                }, didReloadAll: {[weak self]  (groupList) in
+                    guard let `self` = self else {
+                          return
+                    }
+                    guard let dataProvider = self.dataProvider else {
+                        return
+                    }
+                    guard dataProvider.groupList === groupList else {
+                        return
+                    }
+                    self.items = groupList.list
+
+                    self.tableView.reloadData()
+                }, forKey: self.observerKey)
+                self.items = dataProvider.groupList.list
                 self.tableView.reloadData()
             } else {
                 self.items = []
@@ -104,7 +123,7 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
     }
     deinit {
-        self.dataProvider?.removeDataObserver(forKey: self.observerKey)
+        self.dataProvider?.groupList.unobserveList(forKey: self.observerKey)
     }
     
     public func update(dataProvider: AssetGroupDataProvider?) {

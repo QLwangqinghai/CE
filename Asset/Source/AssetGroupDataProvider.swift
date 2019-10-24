@@ -132,7 +132,7 @@ open class AssetGroupDataProvider: NSObject {
     public private(set) var smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
     public private(set) var albumFetchResult: PHFetchResult<PHAssetCollection>
     
-    public private(set) var groupList: UniqueOrderedList<AssetGroup>
+    public private(set) var groupList: UniqueOrderedList<AssetOrder, AssetGroup>
     private let options: AssetGroupDataProviderOptions
     
     public init(options: AssetGroupDataProviderOptions = AssetGroupDataProviderOptions.default) {
@@ -140,7 +140,7 @@ open class AssetGroupDataProvider: NSObject {
         self.identifier = UUID().uuidString
         self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-        self.groupList = UniqueOrderedList<AssetGroup>()
+        self.groupList = UniqueOrderedList<AssetOrder, AssetGroup>()
         super.init()
         PHPhotoLibrary.shared().register(self)
         self.loadCollections()
@@ -285,7 +285,7 @@ public protocol AssetProtocol {
 
 
 
-public final class AssetGroup: NSObject, UniqueOrderedListElement {
+public final class AssetGroup: NSObject, UniqueElement {
     public typealias UniqueOrder = AssetOrder
     public typealias UniqueIdentifier = String
 

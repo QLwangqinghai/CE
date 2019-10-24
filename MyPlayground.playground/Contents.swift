@@ -1,316 +1,238 @@
 import UIKit
 
-//
-//  AssetBase.swift
-//  Asset
-//
-//  Created by vector on 2019/10/21.
-//  Copyright © 2019 angfung. All rights reserved.
-//
-
-import Foundation
-
-
 public enum ListChange<Element: Any> {
     case remove([(Int, Element)])
     case insert([(Int, Element)])
 }
 
-public struct AssetOrder: Comparable {
-    //主维度
-    public var main: Int64
-    
-    //二级维度
-    public var sub: Int64
-    
-    public var detail: String
-    
-    public init(main: Int64, sub: Int64, detail: String) {
-        self.main = main
-        self.sub = sub
-        self.detail = detail
-    }
-    public static func < (lhs: AssetOrder, rhs: AssetOrder) -> Bool {
-        return self._compare(lhs: lhs, rhs: rhs) == .orderedAscending
-    }
-    public static func > (lhs: AssetOrder, rhs: AssetOrder) -> Bool {
-        return self._compare(lhs: lhs, rhs: rhs) == .orderedDescending
-    }
-    public static func <= (lhs: AssetOrder, rhs: AssetOrder) -> Bool {
-        return self._compare(lhs: lhs, rhs: rhs) != .orderedDescending
-    }
-    public static func >= (lhs: AssetOrder, rhs: AssetOrder) -> Bool {
-        return self._compare(lhs: lhs, rhs: rhs) != .orderedAscending
-    }
-    public static func == (lhs: AssetOrder, rhs: AssetOrder) -> Bool {
-        return self._compare(lhs: lhs, rhs: rhs) == .orderedSame
-    }
-    private static func _compare(lhs: AssetOrder, rhs: AssetOrder) -> ComparisonResult {
-        if lhs.main < rhs.main {
-            return .orderedAscending
-        } else if lhs.main > rhs.main {
-            return .orderedDescending
-        }
-        if lhs.sub < rhs.sub {
-            return .orderedAscending
-        } else if lhs.sub > rhs.sub {
-            return .orderedDescending
-        }
-        if lhs.detail < rhs.detail {
-            return .orderedAscending
-        } else if lhs.detail > rhs.detail {
-            return .orderedDescending
-        }
-        return .orderedSame
-    }
-}
-
-public protocol UniqueOrderedListElement {
-    associatedtype UniqueOrder: Comparable
+public protocol UniqueElement {
     associatedtype UniqueIdentifier: Hashable
-
-    var uniqueOrder: UniqueOrder {
-        get
-    }
     var uniqueIdentifier: UniqueIdentifier {
         get
     }
-    
-    func observeUniqueOrder(onChanged:(_ key: UniqueIdentifier) -> Void, forKey:String)
-    func unobserveUniqueOrder(forKey:String)
 
     func observeContent(onChanged:(_ key: UniqueIdentifier) -> Void, forKey:String)
     func unobserveContent(forKey:String)
 }
 
-public class UniqueOrderedList<Value> where Value: UniqueOrderedListElement & Equatable {
-    public typealias Key = Value.UniqueIdentifier
-    public typealias Order = Value.UniqueOrder
+public enum ListOrder {
+    case ascending
+    case escending
+}
 
-    public typealias ReloadClosure = (_ entity: UniqueOrderedList<Value>, _ changes: [(Int, Value)]) -> Void
-    public typealias ChangeClosure = (_ entity: UniqueOrderedList<Value>, _ changes: [ListChange<Value>]) -> Void
-    public typealias ReloadAllClosure = (_ entity: UniqueOrderedList<Value>) -> Void
-    
-    private struct _Observer {
-        public let didChange: ChangeClosure
-        public let didReload: ReloadClosure
-        public let didReloadAll: ReloadAllClosure
-
-        public init(didChange: @escaping ChangeClosure, didReload: @escaping ReloadClosure, didReloadAll: @escaping ReloadAllClosure) {
-            self.didReload = didReload
-            self.didChange = didChange
-            self.didReloadAll = didReloadAll
-        }
-    }
-    
-    public typealias ObserverClosure = (_ entity: UniqueOrderedList<Value>, _ changes: [ListChange<Value>]) -> Void
-    public typealias Change = ListChange<Value>
-
-    public enum ListOrder {
-        case ascending
-        case escending
-    }
-    
-    public private(set) var list: [Value] = []
-    
-    //主维度
-    public private(set) var dictionary: [Key: Value] = [:]
-
+public struct OrderedArray<Order, Value> where Order: Comparable {
+    public private(set) var array: [(Order, Value)] = []
     public private(set) var order: ListOrder
-    private let orderObserveKey: String = UUID().uuidString
-    private let contentObserveKey: String = UUID().uuidString
-    private var observers: [AnyHashable: _Observer] = [:]
     public init(order: ListOrder = .ascending) {
         self.order = order
     }
     
-    public func observeList(didChange: @escaping ChangeClosure, didReload: @escaping ReloadClosure, didReloadAll: @escaping ReloadAllClosure, forKey: AnyHashable) {
-        self.observers[forKey] = _Observer(didChange: didChange, didReload: didReload, didReloadAll: didReloadAll)
+    public func goodInsertIndex(order: Order) -> Int {
+        guard !self.array.isEmpty else {
+            return 0
+        }
+        for (index, item) in self.array.enumerated() {
+            if self._compare(lhs: order, rhs: item.0) {
+                return index
+            }
+        }
+        return array.count
+    }
+    private func _compare(lhs: Order, rhs: Order) -> Bool {
+        switch self.order {
+        case .ascending:
+            return lhs < rhs
+        case .escending:
+            return lhs > rhs
+        }
+    }
+    
+    @discardableResult public mutating func filter(_ body: (Order, Value) -> Bool) -> [(Int, Order, Value)] {
+        var array: [(Order, Value)] = []
+        var removed: [(Int, Order, Value)] = []
+        for (index, item) in self.array.enumerated() {
+            if body(item.0, item.1) {
+                array.append(item)
+            } else {
+                removed.append((index, item.0, item.1))
+            }
+        }
+        self.array = array
+        return removed
+    }
+    
+    @discardableResult public mutating func removeItems<S>(in indexs: S) -> [(Int, Order, Value)] where Int == S.Element, S : Sequence  {
+        var idxs: Set<Int> = []
+        for idx in indexs {
+            idxs.insert(idx)
+        }
+        return self.removeItems(at: idxs)
+    }
+    
+    @discardableResult public mutating func removeItems(at indexs: Set<Int>) -> [(Int, Order, Value)] {
+        var array: [(Order, Value)] = []
+        var removed: [(Int, Order, Value)] = []
+        for (index, item) in self.array.enumerated() {
+            if indexs.contains(index) {
+                removed.append((index, item.0, item.1))
+            } else {
+                array.append(item)
+            }
+        }
+        self.array = array
+        return removed
+    }
+    
+    
+    @discardableResult public mutating func insertItems<S>(_ items: S) -> [(Int, Order, Value)] where (Order, Value) == S.Element, S : Sequence {
+        var array: [(Order, Value)] = []
+        var inserted: [(Int, Order, Value)] = []
+        var ordered = items.sorted { (lhs, rhs) -> Bool in
+            return self._compare(lhs: lhs.0, rhs: rhs.0)
+        }
+        
+        for item in self.array {
+            while let insertItem = ordered.first {
+                if self._compare(lhs: insertItem.0, rhs: item.0) {
+                    //顺序不可调整
+                    inserted.append((array.count, insertItem.0, insertItem.1))
+                    array.append(insertItem)
+                    ordered.removeFirst()
+                } else {
+                    break
+                }
+            }
+            array.append(item)
+        }
+        while let insertItem = ordered.first {
+            //顺序不可调整
+            inserted.append((array.count, insertItem.0, insertItem.1))
+            array.append(insertItem)
+            ordered.removeFirst()
+        }
+        self.array = array
+        return inserted
+    }
+    
+    public mutating func replaceValues(_ body: (Order, Value) -> Value) {
+        for (index, item) in self.array.enumerated() {
+            self.array[index] = (item.0, body(item.0, item.1))
+        }
+    }
+}
+
+public struct UniqueOrderedListUpdater<Order, Value> where Value: UniqueElement, Order: Comparable {
+    public typealias Key = Value.UniqueIdentifier
+    
+    public private(set) var dictionary: [Key: (Order, Value)]
+    public init(dictionary: [Key: (Order, Value)]) {
+        self.dictionary = dictionary
+    }
+    public mutating func filter(_ body: (Order, Value) -> Bool) {
+        self.dictionary = self.dictionary.filter({ (item) -> Bool in
+            return body(item.value.0, item.value.1)
+        })
+    }
+    public mutating func replace<S>(_ items: S) where (Order, Value) == S.Element, S : Sequence {
+        for item in items {
+            self.dictionary[item.1.uniqueIdentifier] = item
+        }
+    }
+    public mutating func removeAll() {
+        self.dictionary.removeAll()
+    }
+}
+
+public class UniqueOrderedList<Order, Value> where Value: UniqueElement, Order: Comparable {
+    public typealias Key = Value.UniqueIdentifier
+
+    public typealias Change = ListChange<(Order, Value)>
+    public typealias ObserverClosure = (_ entity: UniqueOrderedList<Order, Value>, _ changes: [Change]) -> Void
+
+    private var orderedArray: OrderedArray<Order, Value>
+    private var dictionary: [Key: (Order, Value)]
+
+    private let contentObserveKey: String = UUID().uuidString
+    private var observers: [AnyHashable: ObserverClosure] = [:]
+    public init(order: ListOrder = .ascending) {
+        self.orderedArray = OrderedArray<Order, Value>(order: order)
+        self.dictionary = [:]
+    }
+    
+    public func load() -> [Value] {
+        return self.orderedArray.array.map { (item) -> Value in
+            return item.1
+        }
+    }
+    
+    
+    public func observeList(didChange: @escaping ObserverClosure, forKey: AnyHashable) {
+        self.observers[forKey] = didChange
     }
     public func unobserveList(forKey: AnyHashable) {
         self.observers.removeValue(forKey: forKey)
     }
     
-    public func reloadAll() {
-        self.list = self.dictionary.map { (item) -> Value in
+    private func _update(dictionary: [Key: (Order, Value)]) {
+        let oldDictionary = self.dictionary
+        var waitRemoved: Set<Key> = []
+        
+        var remain = dictionary
+        for (key, item) in oldDictionary {
+            if let newItem = dictionary[key] {
+                if newItem.0 != item.0 {
+                    waitRemoved.insert(key)
+                } else {
+                    remain.removeValue(forKey: key)
+                }
+            } else {
+                waitRemoved.insert(key)
+            }
+        }
+        let waitInserted: [(Order, Value)] = remain.map { (item) -> (Order, Value) in
             return item.value
-        }.sorted { (lhs, rhs) -> Bool in
-            return true
-        }.map { (item) -> Value in
-            return item
         }
-        self.didReloadAll()
-    }
-    private func didReloadAll() {
-        let observers = self.observers
-        observers.map { (item) -> Void in
-            item.value.didReloadAll(self)
+        var orderedArray = self.orderedArray
+        let removed = orderedArray.filter { (order, value) -> Bool in
+            return !waitRemoved.contains(value.uniqueIdentifier)
         }
-    }
-    public func sort() {
-        let newList: [Value] = self.dictionary.map { (item) -> Value in
-            return item.value
-        }.sorted { (lhs, rhs) -> Bool in
-            return true
-        }.map { (item) -> Value in
-            return item
+        orderedArray.replaceValues { (order, value) -> Value in
+            return dictionary[value.uniqueIdentifier]?.1 ?? value
         }
-        guard newList.count == self.list.count && newList.count > 0 else {
-            self.list = newList
-            self.didReloadAll()
-            return
-        }
-        let oldList = self.list
-        self.list = newList
-        var changed = false
-        for index in 0 ..< newList.count {
-            if newList[index] != oldList[index] {
-                changed = true
-            }
-        }
-        if changed {
-            self.didReloadAll()
-        }
-    }
-    
-    
-    //先删除 后插入
-    public func batch(remove: [Key], inserts: [Value], reloadAll: Bool = false) {
-        guard !reloadAll else {
-            var removed: Set<Key> = Set<Key>()
-            _ = remove.map { (item) -> Void in
-                removed.insert(item)
-            }
-            
-            var dictionary: [Key: Value] = self.dictionary
-            if !removed.isEmpty {
-                for key in remove {
-                    dictionary.removeValue(forKey: key)
-                }
-            }
-            if !inserts.isEmpty {
-                for item in inserts {
-                    dictionary[item.uniqueIdentifier] = item
-                }
-            }
-            self.dictionary = dictionary
-            self.reloadAll()
-            return
-        }
-        
-        
-        func goodInsertIndex(items: [Value], item: Value) -> Int {
-            guard !items.isEmpty else {
-                return 0
-            }
-            for (index, v) in items.enumerated() {
-                if item.uniqueOrder < v.uniqueOrder {
-                    return index
-                }
-            }
-            return items.count
-        }
-        
-        func onError() {
-            self.reloadAll()
-        }
+        let inserted = orderedArray.insertItems(waitInserted)
+        self.orderedArray = orderedArray
+        self.dictionary = dictionary
         
         var changes: [Change] = []
-
-        var removed: Set<Key> = Set<Key>()
-        _ = remove.map { (item) -> Void in
-            removed.insert(item)
-        }
-        
-        var dictionary: [Key: Value] = self.dictionary
-        var newList: [Value] = []
-        
         if !removed.isEmpty {
-            var changedItems: [(Int, Value)] = []
-            for (index, item) in self.list.enumerated() {
-                if removed.contains(item.uniqueIdentifier) {
-                    guard let value = dictionary[item.uniqueIdentifier] else {
-                        fatalError("error on found value")
-                    }
-                    dictionary.removeValue(forKey: item.uniqueIdentifier)
-                    changedItems.append((index, value))
-                } else {
-                    newList.append(item)
-                }
-            }
-            if !changedItems.isEmpty {
-                let change = Change.remove(changedItems)
-                changes.append(change)
-            }
+            let change = Change.remove(removed.map({ (item) -> (Int, (Order, Value)) in
+                return (item.0, (item.1, item.2))
+            }))
+            changes.append(change)
         }
-
-        if !inserts.isEmpty {
-            var changedItems: [(Int, Value)] = []
-            let items = inserts.filter({ (item) -> Bool in
-                return dictionary[item.uniqueIdentifier] == nil
-            }).sorted { (lhs, rhs) -> Bool in
-                return rhs.uniqueOrder < rhs.uniqueOrder
-            }
-            for item in items {
-                let index = goodInsertIndex(items: newList, item: item)
-                newList.insert(item, at: index)
-                dictionary[item.uniqueIdentifier] = item
-                changedItems.append((index, item))
-            }
-            
-            if !changedItems.isEmpty {
-                let change = Change.insert(changedItems)
-                changes.append(change)
-            }
+        if !inserted.isEmpty {
+            let change = Change.insert(inserted.map({ (item) -> (Int, (Order, Value)) in
+                return (item.0, (item.1, item.2))
+            }))
+            changes.append(change)
         }
-        self.list = newList
-        
-        var removedDictionary = self.dictionary
-        var insertedDictionary = dictionary
-        
-        let allkey = removedDictionary.map { (item) -> Key in
-            return item.key
-        }
-        for k in allkey {
-            if insertedDictionary[k] != nil {
-                removedDictionary.removeValue(forKey: k)
-                insertedDictionary.removeValue(forKey: k)
-            }
-        }
-        for (_, value) in removedDictionary {
-            value.unobserveContent(forKey: self.contentObserveKey)
-            value.unobserveUniqueOrder(forKey: self.orderObserveKey)
-        }
-        self.dictionary = dictionary
-        for (_, value) in insertedDictionary {
-            value.observeContent(onChanged: { (item) in
-                
-            }, forKey: self.contentObserveKey)
-            value.observeUniqueOrder(onChanged: { (key) in
-                
-            }, forKey: self.orderObserveKey)
-        }
-        
         if !changes.isEmpty {
             let observers = self.observers
-            for (_, observer) in observers {
-                observer.didChange(self, changes)
+            for (_, body) in observers {
+                body(self, changes)
             }
         }
     }
-    public func remove(items: [Key]) {
-        self.batch(remove: items, inserts: [])
+    
+    public func update(_ body: (_ updater: inout UniqueOrderedListUpdater<Order, Value>) -> Void) {
+        var updater = UniqueOrderedListUpdater<Order, Value>(dictionary: self.dictionary)
+        body(&updater)
+        self._update(dictionary: updater.dictionary)
     }
-    public func insert(items: [Value]) {
-        self.batch(remove: [], inserts: items)
-    }
-    
-    
-    
-    
-    
-    
 }
+
+
+
 
 
 let label = UILabel()

@@ -172,7 +172,7 @@ extension NSString: UniqueElement {
     public func unobserveContent(forKey:String) {}
 }
 
-public class Section: UniqueElement {
+public class Section: UniqueElement, CustomDebugStringConvertible {
     public typealias UniqueIdentifier = String
 
     public var uniqueIdentifier: UniqueIdentifier {
@@ -183,9 +183,14 @@ public class Section: UniqueElement {
     public func unobserveContent(forKey:String) {}
     
     public let identifier: String
-    public var date: Date? = nil
-    public init(identifier: String) {
+    public var date: Date
+    public init(identifier: String, date: Date) {
         self.identifier = identifier
+        self.date = date
+    }
+    
+    public var debugDescription: String {
+        return "(\(self.identifier), \(self.date))"
     }
     
 }
@@ -193,11 +198,28 @@ public class Section: UniqueElement {
 
 open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSource {
     public let tableView: UITableView
-    private let orderedList: UniqueOrderedList<Int, Section> = UniqueOrderedList<Int, Section>()
+    private let orderedList: UniqueOrderedList<Int, Section> = UniqueOrderedList<Int, Section>(order: .descending)
     private var items: [Section] = []
-        
+    private var sectionMap: [String: Section] = [:]
     private let observerKey: String = UUID().uuidString
 
+    private let dateFormatter: DateFormatter = {
+        let result = DateFormatter()
+        result.dateFormat = "HH:mm:ss SSS"
+        return result
+    }()
+    
+    func section(of: String, date: Date) -> Section {
+        if let s = self.sectionMap[of] {
+            s.date = date
+            return s
+        } else {
+            let s = Section(identifier: of, date: date)
+            self.sectionMap[of] = s
+            return s
+        }
+    }
+    
     public override init() {
         let tableView = UITableView(frame: UIScreen.main.bounds, style: .plain)
         tableView.separatorStyle = .singleLine
@@ -221,10 +243,12 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
             guard list === self.orderedList else {
                 return
             }
-            self.items = list.load()
+            self.items = list.storage.load()
+            
+            print("begin-changes")
             self.tableView.performBatchUpdates({
                 print("beginUpdates")
-
+                
                 for change in changes {
                     switch change {
                     case .insert(let items):
@@ -251,17 +275,6 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
                             return IndexPath(row: item.0, section: 0)
                         }
                         self.tableView.deleteRows(at: indexPaths, with: .automatic)
-                    case .move(let items):
-                        let log = items.map { (item) -> String in
-                            return "(\(item))"
-                        }
-                        print("observeList callback move \(log)")
-                        guard items.count > 0 else {
-                            break
-                        }
-                        for item in items {
-                            self.tableView.moveRow(at: IndexPath(row: item.0, section: 0), to: IndexPath(row: item.1, section: 0))
-                        }
                     }
                 }
 
@@ -269,40 +282,69 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
             }) { (result) in
                 print("performBatchUpdates result: \(result)")
             }
+
+            print("end-changes")
         }, forKey: self.observerKey)
         
         
         var operations: [()->()] = []
         
+        operations.append {
+            self.orderedList.update { (updater) in
+                var items: [Section] = []
+                for _ in 0 ..< 30 {
+                    
+                    let section = self.section(of: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 200) * -1, since: Date()))
+                    items.append(section)
+                }
+                updater.replace(items.map({ (section) -> (Int, Section) in
+                    return (Int(section.date.timeIntervalSince1970 * 10000), section)
+                }))
+                print("1 - replace \(items)")
+            }
+        }
+
 //        operations.append {
 //            self.orderedList.update { (updater) in
-//                var items: [NSString] = []
+//                var items: [Section] = []
 //                for _ in 0 ..< 30 {
-//                    items.append(NSString(format: "%lu", arc4random() % 800))
+//                    let section = self.section(of: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 200) * -1, since: Date()))
+//                    items.append(section)
 //                }
-//                updater.replace(items.map({ (string) -> (Int, NSString) in
-//                    return (string.integerValue, string)
+//                updater.replace(items.map({ (section) -> (Int, Section) in
+//                    return (Int(section.date.timeIntervalSince1970 * 1000), section)
 //                }))
 //                print("1 - replace \(items)")
 //            }
 //        }
-//
-//        operations.append {
-//            self.orderedList.update { (updater) in
-//                updater.filter { (_, string) -> Bool in
-//                    return string.integerValue > 300
-//                }
-//                print("2 delete all where order <= 300")
-//                var items: [NSString] = []
-//                for _ in 0 ..< 24 {
-//                    items.append(NSString(format: "%lu", 800 + arc4random() % 200))
-//                }
-//                print("2 replace \(items)")
-//                updater.replace(items.map({ (string) -> (Int, NSString) in
-//                    return (string.integerValue, string)
-//                }))
-//            }
-//        }
+        
+        func aa() {
+            self.orderedList.update { (updater) in
+                var removed: Set<String> = []
+                for _ in 0 ..< 3 {
+                    removed.insert("\(arc4random() % 50)")
+                }
+                var items: [Section] = []
+                for _ in 0 ..< 5 {
+                    let section = self.section(of: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 10000) * -1 / 10000.0, since: Date()))
+                    items.append(section)
+                }
+                updater.filter({ (_, section) -> Bool in
+                    return !removed.contains(section.identifier)
+                })
+                updater.replace(items.map({ (section) -> (Int, Section) in
+                    return (Int(section.date.timeIntervalSince1970 * 10000), section)
+                }))
+                print("aa - replace \(items)")
+            }
+        }
+        
+        for index in 0 ..< 20 {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(3 * (index + 1))) {
+                aa()
+            }
+        }
+        
 //
 //        operations.append {
 //            self.orderedList.update { (updater) in
@@ -330,22 +372,17 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        print("numberOfRowsInSection \(self.items.count)")
+        print("numberOfRowsInSection \(self.items.count)")
         return self.items.count
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        print("cellForRowAt \(indexPath)")
+        print("cellForRowAt \(indexPath)")
         let section = self.items[indexPath.row]
         guard let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "UITableViewCell") else {
             return UITableViewCell()
         }
-        cell.textLabel?.text = section.identifier
-        if let date = section.date {
-             cell.detailTextLabel?.text = "\(date)"
-        } else {
-            cell.detailTextLabel?.text = ""
-        }
+        cell.textLabel?.text = "\(section.identifier) - \(self.dateFormatter.string(from: section.date))"
         return cell
     }
 }

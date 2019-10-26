@@ -12,10 +12,20 @@ public enum ListOrder {
     case ascending
     case escending
 }
+
 public enum ListChange<Element: Any> {
+    public struct MoveInfo {
+        var old: (Int, Element)
+        var new: (Int, Element)
+        init(old: (Int, Element), new: (Int, Element)) {
+            self.old = old
+            self.new = new
+        }
+    }
+    
     case remove([(Int, Element)])
     case insert([(Int, Element)])
-    case move([(Int, Int, Element)])
+    case move([MoveInfo])
 }
 
 public protocol UniqueElement {
@@ -74,33 +84,15 @@ public class UniqueOrderedList<Order, Value> where Order: Comparable, Value: Uni
     public typealias Change = ListChange<(Order, Value)>
     public typealias ObserverClosure = (_ entity: UniqueOrderedList<Order, Value>, _ changes: [Change]) -> Void
 
-    private var array: [(Order, _Item)]
-    private var dictionary: [Key: _Item]
+    private var storage: Storage
 
     private let contentObserveKey: String = UUID().uuidString
     private var observers: [AnyHashable: ObserverClosure] = [:]
     public private(set) var order: ListOrder
-
-    private func _compare(lhs: Order, rhs: Order) -> Bool {
-        switch self.order {
-        case .ascending:
-            return lhs < rhs
-        case .escending:
-            return lhs > rhs
-        }
-    }
-
+    
     public init(order: ListOrder = .ascending) {
         self.order = order
-        self.array = []
-        self.dictionary = [:]
-    }
-    
-    public func load() -> [Value] {
-//        return self.orderedArray.array.map { (item) -> Value in
-//            return item.1
-//        }
-        return []
+        self.storage = Storage(order: order)
     }
     
     public func observeList(didChange: @escaping ObserverClosure, forKey: AnyHashable) {
@@ -110,327 +102,221 @@ public class UniqueOrderedList<Order, Value> where Order: Comparable, Value: Uni
         self.observers.removeValue(forKey: forKey)
     }
     
-    private func _update(dictionary: [Key: _Item]) {
-        let oldDictionary = self.dictionary
-        var waitRemoved: Set<Key> = []
-        var orderChanged: [Key: (Order, Value)] = [:]
-        var remain = dictionary
-        for (key, item) in oldDictionary {
-            if let newItem = dictionary[key] {
-                if newItem.0 != item.0 {
-                    orderChanged[newItem.1.uniqueIdentifier] = newItem
+    public struct Storage {
+        fileprivate struct _Cell {
+            var index: Int
+            var order: Order
+            var value: Value
+            init(index: Int, order: Order, value: Value) {
+                self.index = index
+                self.order = order
+                self.value = value
+            }
+        }
+        private var array: [(Order, Value)]
+        private var dictionary: [Key: _Cell]
+
+        public private(set) var order: ListOrder {
+            didSet {
+                let _order = self.order
+                self.compare = { (_ lhs: Order, _ rhs: Order) -> Bool in
+                    switch _order {
+                    case .ascending:
+                        return lhs < rhs
+                    case .escending:
+                        return lhs > rhs
+                    }
                 }
-                remain.removeValue(forKey: key)
-            } else {
-                waitRemoved.insert(key)
             }
         }
-        let waitInserted: [(Order, Value)] = remain.map { (item) -> (Order, Value) in
-            return item.value
-        }
-        var orderedArray = self.orderedArray
-        let removed = orderedArray.filter { (order, value) -> Bool in
-            return !waitRemoved.contains(value.uniqueIdentifier)
-        }
-        orderedArray.replaceValues { (order, value) -> Value in
-            return dictionary[value.uniqueIdentifier]?.1 ?? value
-        }
-
-        let moved = orderedArray.updateOrder { (order, value) -> Order in
-            return orderChanged[value.uniqueIdentifier]?.0 ?? order
-        }
-        print("moved: \(moved)")
-
-        let inserted = orderedArray.insertItems(waitInserted)
-        self.orderedArray = orderedArray
-        self.dictionary = dictionary
-
-        var changes: [Change] = []
-        if !removed.isEmpty {
-            let change = Change.remove(removed.map({ (item) -> (Int, (Order, Value)) in
-                return (item.0, (item.1, item.2))
-            }))
-            changes.append(change)
-        }
-        if !moved.isEmpty {
-            let change = Change.move(moved)
-            changes.append(change)
-        }
-        if !inserted.isEmpty {
-            let change = Change.insert(inserted.map({ (item) -> (Int, (Order, Value)) in
-                return (item.0, (item.1, item.2))
-            }))
-            changes.append(change)
-        }
-        if !changes.isEmpty {
-            let observers = self.observers
-            for (_, body) in observers {
-                body(self, changes)
+        private(set) var compare: (_ lhs: Order, _ rhs: Order) -> Bool
+        public init(order: ListOrder = .ascending) {
+            self.order = order
+            self.array = []
+            self.dictionary = [:]
+            
+            self.compare = { (_ lhs: Order, _ rhs: Order) -> Bool in
+                switch order {
+                case .ascending:
+                    return lhs < rhs
+                case .escending:
+                    return lhs > rhs
+                }
             }
         }
-    }
-    
-    public func update(_ body: (_ updater: inout Updater) -> Void) {
-        var updater = Updater(dictionary: self.dictionary)
-        body(&updater)
-//        self._update(dictionary: updater.dictionary)
-    }
+        
+        public func load() -> [Value] {
+            return self.array.map { (item) -> Value in
+                return item.1
+            }
+        }
+        
+        private func _updated(by content: [Key: (Order, Value)]) -> (Storage, [Change]) {
+            let list: [(Order, Value)] = self.array
+            let compare: (_ lhs: Order, _ rhs: Order) -> Bool = self.compare
 
+            let goodOrder: Bool = {
+                guard list.count >= 2 else {
+                    return true
+                }
+                let endIndex = list.count - 2
+                for index in 0 ... endIndex {
+                    if !compare(list[index].0, list[index+1].0) {
+                        return false
+                    }
+                }
+                return true
+            }()
+            
+            var removed: [(Int, (Order, Value))] = []
+            var orderChanged: [Key: (Order, Value)] = [:]
+            var remain = content
 
+            var array: [(Order, Value)] = []
+            var dictionary: [Key: _Cell] = [:]
+            var changes: [Change] = []
+            
+            //remove
+            for (index, arrayItem) in list.enumerated() {
+                let (order, value) = arrayItem
+                let key = value.uniqueIdentifier
+                if let newItem = remain[key] {
+                    if goodOrder {
+                        if order != newItem.0 {
+                            orderChanged[key] = newItem
+                        }
+                        remain.removeValue(forKey: key)
+                        array.append((order, newItem.1))
+                    } else {
+                        if order == newItem.0 {
+                            remain.removeValue(forKey: key)
+                            array.append((order, newItem.1))
+                        } else {
+                            removed.append((index, arrayItem))
+                        }
+                    }
+                } else {
+                    removed.append((index, arrayItem))
+                }
+            }
+            if !removed.isEmpty {
+                let change = Change.remove(removed)
+                changes.append(change)
+            }
+        
+            func updateOrder(at index: Int, newOrder: Order, array: inout [(Order, Value)], indexMap: inout [Key: Int]) -> (Order, Int?) {
+                func goodInsertIndex(order: Order, start: Int, end: Int) -> Int {
+                    if end - start <= 0 {
+                        return end
+                    }
+                    for index in start ... end {
+                        if compare(order, array[index].0) {
+                            return index
+                        }
+                    }
+                    return end
+                }
+                let old = array[index]
+                guard old.0 != newOrder else {
+                    return (old.0, nil)
+                }
+                array[index] = (newOrder, old.1)
+                guard array.count > 1 else {
+                    return (old.0, nil)
+                }
 
+                if index == array.startIndex {
+                    if compare(array[index].0, array[index + 1].0) {
+                        return (old.0, nil)
+                    }
+                } else if index == array.endIndex {
+                    if compare(array[index-1].0, array[index].0) {
+                        return (old.0, nil)
+                    }
+                } else {
+                    if compare(array[index-1].0, array[index].0) && compare(array[index].0, array[index + 1].0) {
+                        return (old.0, nil)
+                    }
+                }
 
+                array.remove(at: index)
+                let insertIndex: Int
+                if compare(old.0, newOrder) {//right side insert
+                    insertIndex = goodInsertIndex(order: newOrder, start: index, end: array.count - 1)
+                } else {//left side insert
+                    insertIndex = goodInsertIndex(order: newOrder, start: 0, end: index - 1)
+                }
+                array.insert((newOrder, old.1), at: insertIndex)
+                
+                if insertIndex < index {
+                    for i in insertIndex ... index {
+                        indexMap[array[i].1.uniqueIdentifier] = i
+                    }
+                } else if insertIndex > index {
+                    for i in index ... insertIndex {
+                        indexMap[array[i].1.uniqueIdentifier] = i
+                    }
+                }
+                return (old.0, insertIndex)
+            }
+            //resort
+            if !orderChanged.isEmpty {
+                var moved: [Change.MoveInfo] = []
 
-public struct OrderedArray {
-    fileprivate var array: [_Item] = []
-    public private(set) var order: ListOrder
-    public init(order: ListOrder = .ascending) {
-        self.order = order
-    }
-    
-//    public func goodInsertIndex(order: Order) -> Int {
-//        var r: Range<Int> = Range<Int>.init(uncheckedBounds: <#T##(lower: Int, upper: Int)#>)
-//        guard !self.array.isEmpty else {
-//            return 0
-//        }
-//        for (index, item) in self.array.enumerated() {
-//            if self._compare(lhs: order, rhs: item.0) {
-//                return index
-//            }
-//        }
-//        return array.count
-//    }
-//    public func goodInsertIndex(order: Order, range: Range<Int>) -> Int {
-//        var r: Range
-//        guard !self.array.isEmpty else {
-//            return 0
-//        }
-//        for (index, item) in self.array.enumerated() {
-//            if self._compare(lhs: order, rhs: item.0) {
-//                return index
-//            }
-//        }
-//        return array.count
-//    }
-    private func _compare(lhs: Order, rhs: Order) -> Bool {
-        switch self.order {
-        case .ascending:
-            return lhs < rhs
-        case .escending:
-            return lhs > rhs
+                var indexMap: [Key: Int] = [:]
+                for (index, arrayItem) in array.enumerated() {
+                    indexMap[arrayItem.1.uniqueIdentifier] = index
+                }
+                
+                for (key, item) in orderChanged {
+                    let index = indexMap[key]!
+                    
+                    let (oldOrder, newIndex) = updateOrder(at: index, newOrder: item.0, array: &array, indexMap: &indexMap)
+                    if let newIndexValue = newIndex {
+                        moved.append(Change.MoveInfo(old: (index, (oldOrder, item.1)), new: (newIndexValue, item)))
+                    }
+                }
+                if !moved.isEmpty {
+                    let change = Change.move(moved)
+                    changes.append(change)
+                }
+            }
+            
+            
+            var waitInserted: [(Order, Value)] = remain.map { (item) -> (Order, Value) in
+                return item.value
+                }.sorted { (lhs, rhs) -> Bool in
+                return compare(lhs.0, rhs.0)
+            }
+            
+            if !waitInserted.isEmpty {
+                var inserted: [(Int, (Order, Value))] = []
+                var resultArray: [(Order, Value)] = []
+                
+                for item in array {
+                    while let insertItem = waitInserted.first {
+                        if compare(insertItem.0, item.0) {
+                            resultArray.append(insertItem)
+                            inserted.append((resultArray.endIndex, insertItem))
+                            dictionary[insertItem.1.uniqueIdentifier] = _Cell(index: resultArray.endIndex, order: insertItem.0, value: insertItem.1)
+                            waitInserted.removeFirst()
+                        } else {
+                            break
+                        }
+                    }
+                    resultArray.append(item)
+                    dictionary[item.1.uniqueIdentifier] = _Cell(index: resultArray.endIndex, order: item.0, value: item.1)
+                }
+                array = resultArray
+                if !inserted.isEmpty {
+                    let change = Change.insert(inserted)
+                    changes.append(change)
+                }
+            }
+            var storage = self
+            storage.array = array
+            storage.dictionary = dictionary
+            return (storage, changes)
         }
     }
-    
-//    @discardableResult public mutating func filter(_ body: (Order, Value) -> Bool) -> [(Int, Order, Value)] {
-//        var array: [(Order, Value)] = []
-//        var removed: [(Int, Order, Value)] = []
-//        for (index, item) in self.array.enumerated() {
-//            if body(item.0, item.1) {
-//                array.append(item)
-//            } else {
-//                removed.append((index, item.0, item.1))
-//            }
-//        }
-//        self.array = array
-//        return removed
-//    }
-//
-//    @discardableResult public mutating func removeItems<S>(in indexs: S) -> [(Int, Order, Value)] where Int == S.Element, S : Sequence  {
-//        var idxs: Set<Int> = []
-//        for idx in indexs {
-//            idxs.insert(idx)
-//        }
-//        return self.removeItems(at: idxs)
-//    }
-//
-//    @discardableResult public mutating func removeItems(at indexs: Set<Int>) -> [(Int, Order, Value)] {
-//        var array: [(Order, Value)] = []
-//        var removed: [(Int, Order, Value)] = []
-//        for (index, item) in self.array.enumerated() {
-//            if indexs.contains(index) {
-//                removed.append((index, item.0, item.1))
-//            } else {
-//                array.append(item)
-//            }
-//        }
-//        self.array = array
-//        return removed
-//    }
-//
-//    @discardableResult public mutating func insertItems<S>(_ items: S) -> [(Int, Order, Value)] where (Order, Value) == S.Element, S : Sequence {
-//        var array: [(Order, Value)] = []
-//        var inserted: [(Int, Order, Value)] = []
-//        var ordered = items.sorted { (lhs, rhs) -> Bool in
-//            return self._compare(lhs: lhs.0, rhs: rhs.0)
-//        }
-//
-//        for item in self.array {
-//            while let insertItem = ordered.first {
-//                if self._compare(lhs: insertItem.0, rhs: item.0) {
-//                    //顺序不可调整
-//                    inserted.append((array.count, insertItem.0, insertItem.1))
-//                    array.append(insertItem)
-//                    ordered.removeFirst()
-//                } else {
-//                    break
-//                }
-//            }
-//            array.append(item)
-//        }
-//        while let insertItem = ordered.first {
-//            //顺序不可调整
-//            inserted.append((array.count, insertItem.0, insertItem.1))
-//            array.append(insertItem)
-//            ordered.removeFirst()
-//        }
-//        self.array = array
-//        return inserted
-//    }
-//
-//    public mutating func replaceValues(_ body: (Order, Value) -> Value) {
-//        for (index, item) in self.array.enumerated() {
-//            self.array[index] = (item.0, body(item.0, item.1))
-//        }
-//    }
-//
-    
-    public struct OrderChange {
-        public let oldOrder: Order
-        public let newOrder: Order
-        public let value: Value
-        public init(oldOrder: Order, newOrder: Order, value: Value) {
-            self.oldOrder = oldOrder
-            self.newOrder = newOrder
-            self.value = value
-        }
-    }
-    private struct _Change {
-        var changed: Bool {
-            return self.change.oldOrder != self.change.newOrder
-        }
-        let change: OrderChange
-        var oldIndex: Int
-        var newIndex: Int
-        init(change: OrderChange, oldIndex: Int, newIndex: Int) {
-            self.change = change
-            self.oldIndex = oldIndex
-            self.newIndex = newIndex
-        }
-    }
-    
-//    public func binarySearch(order: Order) -> Int? {
-//        var start = 0
-//        var end = self.array.count - 1
-//        while start <= end {
-//            let minddle = (start + end)/2
-//            let mOrder = self.array[minddle].0
-//            if order == mOrder {
-//                return minddle
-//            } else {
-//                if self._compare(lhs: order, rhs: mOrder) {
-//                    end = minddle - 1
-//                } else {
-//                    start = minddle + 1
-//                }
-//            }
-//        }
-//        return nil
-//    }
-    
-//    @discardableResult public mutating func updateOrder(at index: Int, newOrder: Order) -> Int? {
-//        func goodInsertIndex(order: Order, start: Int, end: Int) -> Int {
-//            if end - start <= 0 {
-//                return end
-//            }
-//            for index in start ... end {
-//                if self._compare(lhs: order, rhs: self.array[index].0) {
-//                    return index
-//                }
-//            }
-//            return end
-//        }
-//
-//        let old = self.array[index]
-//        guard old.0 != newOrder else {
-//            return nil
-//        }
-//        self.array[index] = (newOrder, old.1)
-//        guard self.array.count > 1 else {
-//            return nil
-//        }
-//
-//        if index == self.array.startIndex {
-//            if self._compare(lhs: self.array[index].0, rhs: self.array[index + 1].0) {
-//                return nil
-//            }
-//        } else if index == self.array.endIndex {
-//            if self._compare(lhs: self.array[index-1].0, rhs: self.array[index].0) {
-//                return nil
-//            }
-//        } else {
-//            if self._compare(lhs: self.array[index-1].0, rhs: self.array[index].0) && self._compare(lhs: self.array[index].0, rhs: self.array[index + 1].0) {
-//                return nil
-//            }
-//        }
-//
-//        self.array.remove(at: index)
-//        let insertIndex: Int
-//        if self._compare(lhs: old.0, rhs: newOrder) {//right side insert
-//            insertIndex = goodInsertIndex(order: newOrder, start: index, end: self.array.count - 1)
-//        } else {//left side insert
-//            insertIndex = goodInsertIndex(order: newOrder, start: 0, end: index - 1)
-//        }
-//        self.array.insert((newOrder, old.1), at: insertIndex)
-//        return insertIndex
-//    }
-    
-//        @discardableResult public mutating func updateOrder(_ body: (Order, Value) -> Order) -> [(Int/*old*/, Int/*to*/, OrderChange)] {
-//            let oldMap = self.array
-//            var result: [(Int/*old*/, Int/*to*/, OrderChange)] = []
-//            var array: [_Change] = []
-//            var tmpList: [Int] = []
-//            var newIndexs: [(Order, Int)] = []
-//
-//            var changeMap: [Int: OrderChange] = [:]
-//            for (k, item) in oldMap.enumerated() {
-//                let change = OrderChange(oldOrder:item.0, newOrder: body(item.0, item.1), value: item.1)
-//                tmpList.append(k)
-//                newIndexs.append((change.newOrder, k))
-//                if change.oldOrder != change.newOrder {
-//                    changeMap[k] = change
-//                }
-//            }
-//
-//
-//
-//    //        var sorted: [(Order, Int)] = newIndexs.sorted { (lhs, rhs) -> Bool in
-//    //            return self._compare(lhs: lhs.0, rhs: rhs.0)
-//    //        }
-//    //
-//    //        for (idx, item) in sorted.enumerated() {
-//    //            let k = tmpList[idx]
-//    //            if k != item.1 {
-//    //
-//    //            }
-//    //        }
-//
-//
-//
-//            for (index, item) in sorted.enumerated() {
-//                var tmp = item
-//                tmp.newIndex = index
-//                sorted[index] = tmp
-//            }
-//            for (index, item) in sorted.enumerated() {
-//                if item.1.old != item.0 {
-//                    if index != item.oldIndex {
-//                        result.append((item.oldIndex, index, item.value))
-//                    }
-//                }
-//            }
-//            return []
-//        }
-
-}
-
-
 }

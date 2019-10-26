@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D60C31802361C28100DB1173 /* UniqueOrderedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60C317F2361C28100DB1173 /* UniqueOrderedList.swift */; };
-		D60C31822361C2B700DB1173 /* OrderedArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60C31812361C2B700DB1173 /* OrderedArray.swift */; };
 		D6BD72FA2362FB9C003C7F5E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BD72F92362FB9C003C7F5E /* AppDelegate.swift */; };
 		D6BD72FC2362FB9C003C7F5E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BD72FB2362FB9C003C7F5E /* SceneDelegate.swift */; };
 		D6BD72FE2362FB9C003C7F5E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BD72FD2362FB9C003C7F5E /* ViewController.swift */; };
@@ -26,7 +25,6 @@
 
 /* Begin PBXFileReference section */
 		D60C317F2361C28100DB1173 /* UniqueOrderedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqueOrderedList.swift; sourceTree = "<group>"; };
-		D60C31812361C2B700DB1173 /* OrderedArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedArray.swift; sourceTree = "<group>"; };
 		D6BD72F72362FB9C003C7F5E /* OrderedMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrderedMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6BD72F92362FB9C003C7F5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6BD72FB2362FB9C003C7F5E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -68,7 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				D60C317F2361C28100DB1173 /* UniqueOrderedList.swift */,
-				D60C31812361C2B700DB1173 /* OrderedArray.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -236,7 +233,6 @@
 			files = (
 				D6F557352361525B00D0F333 /* ViewController.swift in Sources */,
 				D6F557312361525B00D0F333 /* AppDelegate.swift in Sources */,
-				D60C31822361C2B700DB1173 /* OrderedArray.swift in Sources */,
 				D60C31802361C28100DB1173 /* UniqueOrderedList.swift in Sources */,
 				D6F557332361525B00D0F333 /* SceneDelegate.swift in Sources */,
 			);

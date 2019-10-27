@@ -10,10 +10,10 @@ import Foundation
 
 public struct AssetOrder: Comparable {
     //主维度
-    public var main: Int64
+    public let main: Int64
     
     //二级维度
-    public var time: Int64
+    public let time: Int64
     
     //三级维度
     public let sequence: Int64

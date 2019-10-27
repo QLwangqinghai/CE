@@ -51,11 +51,11 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
             })
         }
         
-        public func oldItem(forKey: Key) -> Element? {
+        public func uniqueValue(forKey: Key) -> Element? {
+            if let result = self._dictionary[forKey] {
+                return result
+            }
             return self.collection[forKey]
-        }
-        public func item(forKey: Key) -> Element? {
-            return self._dictionary[forKey]
         }
         
         public mutating func removeItem(forKey: Key) {
@@ -81,9 +81,6 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
             }
         }
                 
-        public subscript(key: Key) -> Element? {
-            return self._dictionary[key]
-        }
         public mutating func removeAll() {
             self._dictionary.removeAll()
         }

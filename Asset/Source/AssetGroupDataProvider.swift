@@ -174,6 +174,9 @@ open class AssetGroupDataProvider: NSObject {
         updater.reset(self._fetchAllAssetCollections())
         let (storage, changes) = updater.finish()
         self.groupList = storage
+        if changes.isEmpty {
+            return
+        }
         let observers = self.observers
         for (_, closure) in observers {
             closure(self, changes)
@@ -200,17 +203,17 @@ open class AssetGroupDataProvider: NSObject {
             guard let typeOrder = self.options.order(ofSubtype: subtype) else {
                 return
             }
-            let sequence = self._nextSequence(of: subtype)
+            let key = collection.localIdentifier
             var time: Int64 = 0
             if let startDate = collection.startDate {
                 time -= Int64(startDate.timeIntervalSince1970 * 1000.0)
             }
-            let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: sequence)
-            let key = collection.localIdentifier
             if let element = self.groupList[key] {
+                let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: element.order.sequence)
                 element.value.order = order
                 result[key] = GroupElement(order: order, value: element.value)
             } else {
+                let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: self._nextSequence(of: subtype))
                 let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: collection, order: order)
                 result[key] = GroupElement(order: order, value: group)
             }
@@ -220,17 +223,17 @@ open class AssetGroupDataProvider: NSObject {
             guard let typeOrder = self.options.order(ofSubtype: subtype) else {
                 return
             }
-            let sequence = self._nextSequence(of: subtype)
+            let key = collection.localIdentifier
             var time: Int64 = 0
             if let startDate = collection.startDate {
                 time -= Int64(startDate.timeIntervalSince1970 * 1000.0)
             }
-            let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: sequence)
-            let key = collection.localIdentifier
             if let element = self.groupList[key] {
+                let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: element.order.sequence)
                 element.value.order = order
                 result[key] = GroupElement(order: order, value: element.value)
             } else {
+                let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: self._nextSequence(of: subtype))
                 let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: collection, order: order)
                 result[key] = GroupElement(order: order, value: group)
             }
@@ -243,17 +246,70 @@ open class AssetGroupDataProvider: NSObject {
 extension AssetGroupDataProvider: PHPhotoLibraryChangeObserver {
     
     private func handlePhotoLibraryChange(changeInstance: PHChange) {
-        var isChanged = false
+        var updater = self.groupList.makeUpdater()
         if let change = changeInstance.changeDetails(for: self.albumFetchResult) {
             self.albumFetchResult = change.fetchResultAfterChanges
-            isChanged = true
+            
+            for collection in change.removedObjects {
+                updater.removeItem(forKey: collection.localIdentifier)
+            }
+            for collection in change.insertedObjects {
+                let subtype = collection.assetCollectionSubtype
+                guard let typeOrder = self.options.order(ofSubtype: subtype) else {
+                    return
+                }
+                let key = collection.localIdentifier
+                var time: Int64 = 0
+                if let startDate = collection.startDate {
+                    time -= Int64(startDate.timeIntervalSince1970 * 1000.0)
+                }
+                if let element = updater.uniqueValue(forKey: key) {
+                    let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: element.order.sequence)
+                    element.value.order = order
+                    updater.replaceItem(GroupElement(order: order, value: element.value))
+                } else {
+                    let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: self._nextSequence(of: subtype))
+                    let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: collection, order: order)
+                    updater.replaceItem(GroupElement(order: order, value: group))
+                }
+            }
         }
         if let change = changeInstance.changeDetails(for: self.smartAlbumFetchResult) {
             self.smartAlbumFetchResult = change.fetchResultAfterChanges
-            isChanged = true
+
+            for collection in change.removedObjects {
+                updater.removeItem(forKey: collection.localIdentifier)
+            }
+            
+            for collection in change.insertedObjects {
+                let subtype = collection.assetCollectionSubtype
+                guard let typeOrder = self.options.order(ofSubtype: subtype) else {
+                    return
+                }
+                let sequence = self._nextSequence(of: subtype)
+                var time: Int64 = 0
+                if let startDate = collection.startDate {
+                    time -= Int64(startDate.timeIntervalSince1970 * 1000.0)
+                }
+                let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: sequence)
+                let key = collection.localIdentifier
+                if let element = updater.uniqueValue(forKey: key) {
+                    element.value.order = order
+                    updater.replaceItem(GroupElement(order: order, value: element.value))
+                } else {
+                    let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: collection, order: order)
+                    updater.replaceItem(GroupElement(order: order, value: group))
+                }
+            }
         }
-        if isChanged {
-            self.reload()
+        let (storage, changes) = updater.finish()
+        self.groupList = storage
+        if changes.isEmpty {
+            return
+        }
+        let observers = self.observers
+        for (_, closure) in observers {
+            closure(self, changes)
         }
     }
     

@@ -132,8 +132,9 @@ public struct AssetGroupDataProviderOptions {
 
 
 open class AssetGroupDataProvider: NSObject {
-    
-    public typealias Change = ListChange<(AssetOrder, AssetGroup)>
+    public typealias GroupCollection = UniqueOrderedCollection<AssetOrder, AssetGroup>
+    public typealias GroupElement = GroupCollection.Element
+    public typealias Change = ListChange<GroupElement>
     public typealias ObserverClosure = (_ entity: AssetGroupDataProvider, _ changes: [Change]) -> Void
 
     private var observers: [AnyHashable: ObserverClosure] = [:]
@@ -150,7 +151,6 @@ open class AssetGroupDataProvider: NSObject {
     public private(set) var albumFetchResult: PHFetchResult<PHAssetCollection>
     
     
-    public typealias GroupCollection = UniqueOrderedCollection<AssetOrder, AssetGroup>
     public private(set) var groupList: GroupCollection
     
     private let options: AssetGroupDataProviderOptions
@@ -193,8 +193,8 @@ open class AssetGroupDataProvider: NSObject {
         return result
     }
 
-    private func _fetchAllAssetCollections() -> [String: (AssetOrder, AssetGroup)] {
-        var result: [String: (AssetOrder, AssetGroup)] = [:]
+    private func _fetchAllAssetCollections() -> [String: GroupElement] {
+        var result: [String: GroupElement] = [:]
         self.smartAlbumFetchResult.enumerateObjects { (collection, idx, stop) in
             let subtype = collection.assetCollectionSubtype
             guard let typeOrder = self.options.order(ofSubtype: subtype) else {
@@ -207,12 +207,12 @@ open class AssetGroupDataProvider: NSObject {
             }
             let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: sequence)
             let key = collection.localIdentifier
-            if let group = self.groupList[key] {
-                group.order = order
-                result[key] = (order, group)
+            if let element = self.groupList[key] {
+                element.value.order = order
+                result[key] = GroupElement(order: order, value: element.value)
             } else {
                 let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: collection, order: order)
-                result[key] = (order, group)
+                result[key] = GroupElement(order: order, value: group)
             }
         }
         self.albumFetchResult.enumerateObjects { (collection, idx, stop) in
@@ -227,12 +227,12 @@ open class AssetGroupDataProvider: NSObject {
             }
             let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: sequence)
             let key = collection.localIdentifier
-            if let group = self.groupList[key] {
-                group.order = order
-                result[key] = (order, group)
+            if let element = self.groupList[key] {
+                element.value.order = order
+                result[key] = GroupElement(order: order, value: element.value)
             } else {
                 let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: collection, order: order)
-                result[key] = (order, group)
+                result[key] = GroupElement(order: order, value: group)
             }
         }
         return result
@@ -289,10 +289,7 @@ public final class AssetGroup: NSObject, UniqueElement {
     let dataSourceIdentifier: String
     let identifier: String
     fileprivate var order: UniqueOrder
-    
-    public var uniqueOrder: UniqueOrder {
-        return self.order
-    }
+
     public var uniqueIdentifier: UniqueIdentifier {
         return self.identifier
     }

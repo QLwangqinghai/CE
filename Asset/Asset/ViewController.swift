@@ -80,10 +80,10 @@ class ViewController: UIViewController {
 //        self.view.addSubview(test.tableView)
 //        test.tableView.frame = self.view.bounds
         
-        let test2 = OrderedListHandler()
-        self.test2 = test2
-        self.view.addSubview(test2.tableView)
-        test2.tableView.frame = self.view.bounds
+//        let test2 = OrderedListHandler()
+//        self.test2 = test2
+//        self.view.addSubview(test2.tableView)
+//        test2.tableView.frame = self.view.bounds
 
         
     }
@@ -104,7 +104,7 @@ class ViewController: UIViewController {
 
 
 
-public class Section: UniqueElement, CustomDebugStringConvertible {
+public class Section: UniqueValue, CustomDebugStringConvertible {
     public typealias UniqueIdentifier = String
 
     public var uniqueIdentifier: UniqueIdentifier {

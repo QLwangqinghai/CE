@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D60C31862361C49300DB1173 /* UniqueOrderedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60C31842361C49300DB1173 /* UniqueOrderedList.swift */; };
+		D60C31862361C49300DB1173 /* UniqueOrderedArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60C31842361C49300DB1173 /* UniqueOrderedArray.swift */; };
 		D670DFE3235DB1C00057538E /* AssetList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFE2235DB1C00057538E /* AssetList.swift */; };
 		D670DFE5235DB28F0057538E /* AssetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFE4235DB28F0057538E /* AssetSelector.swift */; };
 		D670DFE7235DB3380057538E /* AssetCollectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFE6235DB3380057538E /* AssetCollectionHandler.swift */; };
@@ -23,7 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D60C31842361C49300DB1173 /* UniqueOrderedList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueOrderedList.swift; sourceTree = "<group>"; };
+		D60C31842361C49300DB1173 /* UniqueOrderedArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueOrderedArray.swift; sourceTree = "<group>"; };
 		D6241C00235702E200DB603A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		D6241C01235702E200DB603A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		D670DFE2235DB1C00057538E /* AssetList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetList.swift; sourceTree = "<group>"; };
@@ -87,7 +87,7 @@
 		D6C074C62356EFB700038D3C /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				D60C31842361C49300DB1173 /* UniqueOrderedList.swift */,
+				D60C31842361C49300DB1173 /* UniqueOrderedArray.swift */,
 				D6C074C72356EFD000038D3C /* AssetGroupDataProvider.swift */,
 				D670DFE2235DB1C00057538E /* AssetList.swift */,
 				D670DFE4235DB28F0057538E /* AssetSelector.swift */,
@@ -171,7 +171,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D60C31862361C49300DB1173 /* UniqueOrderedList.swift in Sources */,
+				D60C31862361C49300DB1173 /* UniqueOrderedArray.swift in Sources */,
 				D6C074C82356EFD000038D3C /* AssetGroupDataProvider.swift in Sources */,
 				D6EFAECB235B36CF00D6A06E /* GroupTableHandler.swift in Sources */,
 				D670DFE3235DB1C00057538E /* AssetList.swift in Sources */,

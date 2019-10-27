@@ -111,7 +111,7 @@ public struct AssetGroupDataProviderOptions {
         return map
     } ()
     
-    public var order: ListOrder = .ascending
+    public var order: ArrayOrder = .ascending
     public init() {
         
     }
@@ -132,7 +132,7 @@ public struct AssetGroupDataProviderOptions {
 
 
 open class AssetGroupDataProvider: NSObject {
-    public typealias GroupCollection = UniqueOrderedCollection<AssetOrder, AssetGroup>
+    public typealias GroupCollection = UniqueOrderedArray<AssetOrder, AssetGroup>
     public typealias GroupElement = GroupCollection.Element
     public typealias Change = ListChange<GroupElement>
     public typealias ObserverClosure = (_ entity: AssetGroupDataProvider, _ changes: [Change]) -> Void
@@ -279,7 +279,7 @@ public protocol AssetProtocol {
 
 
 
-public final class AssetGroup: NSObject, UniqueElement {
+public final class AssetGroup: NSObject, UniqueValue {
     public typealias UniqueOrder = AssetOrder
     public typealias UniqueIdentifier = String
 

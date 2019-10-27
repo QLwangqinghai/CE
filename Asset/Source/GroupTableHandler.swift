@@ -26,25 +26,20 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
     public private(set) var dataProvider: AssetGroupDataProvider? {
         willSet {
             if let dataProvider = self.dataProvider {
-                dataProvider.groupList.unobserveList(forKey: self.observerKey)
+                dataProvider.unobserveList(forKey: self.observerKey)
             }
         }
         didSet {
             if let dataProvider = self.dataProvider {
-                dataProvider.groupList.observeList(didChange: {[weak self]  (groupList, changes) in
-                    guard changes.count > 0 else {
-                        return
-                    }
+                dataProvider.observeList(didChange: {[weak self] (provider, changes) in
                     guard let `self` = self else {
                           return
                     }
-                    guard let dataProvider = self.dataProvider else {
+                    guard let provider = self.dataProvider else {
                         return
                     }
-                    guard dataProvider.groupList === groupList else {
-                        return
-                    }
-                    self.items = groupList.list
+                    
+                    self.items = provider.groupList.load()
                     self.tableView.beginUpdates()
                     for change in changes {
                         switch change {
@@ -67,41 +62,10 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
                         }
                     }
                     self.tableView.endUpdates()
-                }, didReload: {[weak self]  (groupList, changes) in
-                    guard changes.count > 0 else {
-                        return
-                    }
-                    guard let `self` = self else {
-                          return
-                    }
-                    guard let dataProvider = self.dataProvider else {
-                        return
-                    }
-                    guard dataProvider.groupList === groupList else {
-                        return
-                    }
-                    self.items = groupList.list
-                    let indexPaths = changes.map { (change) -> IndexPath in
-                        return IndexPath(row: change.0, section: 0)
-                    }
-                    self.tableView.beginUpdates()
-                    self.tableView.reloadRows(at: indexPaths, with: .automatic)
-                    self.tableView.endUpdates()
-                }, didReloadAll: {[weak self]  (groupList) in
-                    guard let `self` = self else {
-                          return
-                    }
-                    guard let dataProvider = self.dataProvider else {
-                        return
-                    }
-                    guard dataProvider.groupList === groupList else {
-                        return
-                    }
-                    self.items = groupList.list
-
-                    self.tableView.reloadData()
+                    
                 }, forKey: self.observerKey)
-                self.items = dataProvider.groupList.list
+                
+                self.items = dataProvider.groupList.load()
                 self.tableView.reloadData()
             } else {
                 self.items = []
@@ -123,7 +87,7 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
     }
     deinit {
-        self.dataProvider?.groupList.unobserveList(forKey: self.observerKey)
+        self.dataProvider?.unobserveList(forKey: self.observerKey)
     }
     
     public func update(dataProvider: AssetGroupDataProvider?) {

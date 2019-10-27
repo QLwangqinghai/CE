@@ -321,14 +321,24 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
         func aa() {
             self.orderedList.update { (updater) in
                 var removed: Set<String> = []
-                for _ in 0 ..< 3 {
-                    removed.insert("\(arc4random() % 50)")
-                }
                 var items: [Section] = []
-                for _ in 0 ..< 5 {
-                    let section = self.section(of: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 10000) * -1 / 10000.0, since: Date()))
-                    items.append(section)
+
+                let count = Int(sqrt(Double(arc4random() % 50)) - 1)
+                if count > 0 {
+                    for _ in 0 ..< count {
+                        removed.insert("\(arc4random() % 50)")
+                    }
                 }
+                
+                
+                let mcount = Int(sqrt(Double(arc4random() % 50)) - 1)
+                if mcount > 0 {
+                    for _ in 0 ..< mcount {
+                        let section = self.section(of: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 10000) * -1 / 10000.0, since: Date()))
+                        items.append(section)
+                    }
+                }
+                
                 updater.filter({ (_, section) -> Bool in
                     return !removed.contains(section.identifier)
                 })

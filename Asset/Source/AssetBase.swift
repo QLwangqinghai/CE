@@ -16,7 +16,8 @@ public struct AssetOrder: Comparable {
     public var time: Int64
     
     //三级维度
-    public var sequence: Int64
+    public let sequence: Int64
+    
     
     public init(main: Int64, time: Int64, sequence: Int64) {
         self.main = main

@@ -62,6 +62,9 @@ import Photos
  }
  */
 
+public extension DispatchQueue {
+    static let assetQueue: DispatchQueue = DispatchQueue(label: "asset", qos: DispatchQoS.default, attributes: [], autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
+}
 
 public struct AssetGroupDataProviderOptions {
     public static let `default`: AssetGroupDataProviderOptions = {
@@ -127,12 +130,29 @@ public struct AssetGroupDataProviderOptions {
 }
 
 
+
 open class AssetGroupDataProvider: NSObject {
+    
+    public typealias Change = ListChange<(AssetOrder, AssetGroup)>
+    public typealias ObserverClosure = (_ entity: AssetGroupDataProvider, _ changes: [Change]) -> Void
+
+    private var observers: [AnyHashable: ObserverClosure] = [:]
+    public func observeList(didChange: @escaping ObserverClosure, forKey: AnyHashable) {
+        self.observers[forKey] = didChange
+    }
+    public func unobserveList(forKey: AnyHashable) {
+        self.observers.removeValue(forKey: forKey)
+    }
+    
+    
     public let identifier: String
     public private(set) var smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
     public private(set) var albumFetchResult: PHFetchResult<PHAssetCollection>
     
-    public private(set) var groupList: UniqueOrderedList<AssetOrder, AssetGroup>
+    
+    public typealias GroupCollection = UniqueOrderedCollection<AssetOrder, AssetGroup>
+    public private(set) var groupList: GroupCollection
+    
     private let options: AssetGroupDataProviderOptions
     
     public init(options: AssetGroupDataProviderOptions = AssetGroupDataProviderOptions.default) {
@@ -140,93 +160,82 @@ open class AssetGroupDataProvider: NSObject {
         self.identifier = UUID().uuidString
         self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-        self.groupList = UniqueOrderedList<AssetOrder, AssetGroup>()
+        self.groupList = GroupCollection()
         super.init()
         PHPhotoLibrary.shared().register(self)
-        self.loadCollections()
         self.reload()
     }
     deinit {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
     
-    private func loadCollections() {
-        let table: _CollectionTable = self._fetchAllAssetCollections()
-        var inserted: [AssetGroup] = []
-        var groupIdentifiers: Set<String> = []
-        for (_, section) in table.sections {
-            for (index, collection) in section.items.enumerated() {
-                let sequence = Int64(index)
-                var time: Int64 = 0
-                if let startDate = collection.startDate {
-                    time = Int64(startDate.timeIntervalSince1970 * 1000.0)
-                }
-                groupIdentifiers.insert(collection.localIdentifier)
-                if let group = self.groupList.item(forKey: collection.localIdentifier) {
-                    group.order.sequence = sequence
-                    group.order.time = time
-                } else {
-                    let order = AssetOrder(main: Int64(section.order), time: time, sequence: sequence)
-                    let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: collection, order: order)
-                    inserted.append(group)
-                }
-            }
-        }
-        self.groupList.batch(filter: { (group) -> Bool in
-            return groupIdentifiers.contains(group.identifier)
-        }, inserts: inserted)
-    }
-    
-    
-    private class _CollectionSection {
-        let order: Int32
-        var items: [PHAssetCollection] = []
-        init(order: Int32) {
-            self.order = order
-        }
-    }
-    private class _CollectionTable {
-        public let options: AssetGroupDataProviderOptions
-        var sections: [PHAssetCollectionSubtype: _CollectionSection] = [:]
-        init(options: AssetGroupDataProviderOptions) {
-            self.options = options
-        }
-        
-        func append(_ collection: PHAssetCollection) {
-            if let section = self.sections[collection.assetCollectionSubtype] {
-                section.items.append(collection)
-            } else {
-                guard let order = self.options.order(ofSubtype: collection.assetCollectionSubtype) else {
-                    return
-                }
-                
-                let section = _CollectionSection(order: order)
-                self.sections[collection.assetCollectionSubtype] = section
-                section.items.append(collection)
-            }
-        }
-    }
-    private func _fetchAllAssetCollections() -> _CollectionTable {
-        let table: _CollectionTable = _CollectionTable(options: self.options)
-        self.smartAlbumFetchResult.enumerateObjects { (item, idx, stop) in
-            table.append(item)
-        }
-        self.albumFetchResult.enumerateObjects { (item, idx, stop) in
-            table.append(item)
-        }
-        return table
-    }
     private func reload() {
-//        var groups: [AssetGroup] = self.groupMap.map { (item) -> AssetGroup in
-//            return item.value
-//        }
-//        groups.sort { (lhs, rhs) -> Bool in
-//            return lhs.order < rhs.order
-//        }
-//        self.groups = groups
+        var updater = self.groupList.makeUpdater()
+        updater.reset(self._fetchAllAssetCollections())
+        let (storage, changes) = updater.finish()
+        self.groupList = storage
+        let observers = self.observers
+        for (_, closure) in observers {
+            closure(self, changes)
+        }
     }
-    private func groupsDidChange(removed: [PHAssetCollection], inserted: [PHAssetCollection], updated: [AssetGroup]) {
-        
+    
+    
+    private var _sequenceDictionary: [PHAssetCollectionSubtype: Int64] = [:]
+
+    private func _nextSequence(of subtyle: PHAssetCollectionSubtype) -> Int64 {
+        guard var result = self._sequenceDictionary[subtyle] else {
+            self._sequenceDictionary[subtyle] = 1
+            return 1
+        }
+        result += 1
+        self._sequenceDictionary[subtyle] = result
+        return result
+    }
+
+    private func _fetchAllAssetCollections() -> [String: (AssetOrder, AssetGroup)] {
+        var result: [String: (AssetOrder, AssetGroup)] = [:]
+        self.smartAlbumFetchResult.enumerateObjects { (collection, idx, stop) in
+            let subtype = collection.assetCollectionSubtype
+            guard let typeOrder = self.options.order(ofSubtype: subtype) else {
+                return
+            }
+            let sequence = self._nextSequence(of: subtype)
+            var time: Int64 = 0
+            if let startDate = collection.startDate {
+                time -= Int64(startDate.timeIntervalSince1970 * 1000.0)
+            }
+            let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: sequence)
+            let key = collection.localIdentifier
+            if let group = self.groupList[key] {
+                group.order = order
+                result[key] = (order, group)
+            } else {
+                let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: collection, order: order)
+                result[key] = (order, group)
+            }
+        }
+        self.albumFetchResult.enumerateObjects { (collection, idx, stop) in
+            let subtype = collection.assetCollectionSubtype
+            guard let typeOrder = self.options.order(ofSubtype: subtype) else {
+                return
+            }
+            let sequence = self._nextSequence(of: subtype)
+            var time: Int64 = 0
+            if let startDate = collection.startDate {
+                time -= Int64(startDate.timeIntervalSince1970 * 1000.0)
+            }
+            let order = AssetOrder(main: Int64(typeOrder), time: time, sequence: sequence)
+            let key = collection.localIdentifier
+            if let group = self.groupList[key] {
+                group.order = order
+                result[key] = (order, group)
+            } else {
+                let group = AssetGroup(dataSourceIdentifier: self.identifier, collection: collection, order: order)
+                result[key] = (order, group)
+            }
+        }
+        return result
     }
 }
 
@@ -234,33 +243,18 @@ open class AssetGroupDataProvider: NSObject {
 extension AssetGroupDataProvider: PHPhotoLibraryChangeObserver {
     
     private func handlePhotoLibraryChange(changeInstance: PHChange) {
-        var removed: [PHAssetCollection] = []
-        var inserted: [PHAssetCollection] = []
-
+        var isChanged = false
         if let change = changeInstance.changeDetails(for: self.albumFetchResult) {
             self.albumFetchResult = change.fetchResultAfterChanges
-
-            for collection in change.removedObjects {
-                removed.append(collection)
-            }
-            for collection in change.insertedObjects {
-                inserted.append(collection)
-            }
+            isChanged = true
         }
         if let change = changeInstance.changeDetails(for: self.smartAlbumFetchResult) {
             self.smartAlbumFetchResult = change.fetchResultAfterChanges
-            for collection in change.removedObjects {
-                removed.append(collection)
-            }
-            for collection in change.insertedObjects {
-                inserted.append(collection)
-            }
+            isChanged = true
         }
-        
-        let updated = self.groupList.list.filter { (group) -> Bool in
-            return group.handlePhotoLibraryChange(changeInstance)
+        if isChanged {
+            self.reload()
         }
-        self.groupsDidChange(removed: removed, inserted: inserted, updated:updated)
     }
     
     public func photoLibraryDidChange(_ changeInstance: PHChange) {

@@ -10,37 +10,38 @@ import Photos
 
 
 public final class AssetContext: NSObject {
-    static let subTypeMap: [PHAssetCollectionSubtype: String] = {
-         var map:[PHAssetCollectionSubtype: String] = [:]
-         map[.albumRegular] = ".albumRegular"
-         map[.albumSyncedEvent] = ".albumSyncedEvent"
-         map[.albumSyncedFaces] = ".albumSyncedFaces"
-         map[.albumSyncedAlbum] = ".albumSyncedAlbum"
+//    static let subTypeMap: [PHAssetCollectionSubtype: String] = {
+//         var map:[PHAssetCollectionSubtype: String] = [:]
+//         map[.albumRegular] = ".albumRegular"
+//         map[.albumSyncedEvent] = ".albumSyncedEvent"
+//         map[.albumSyncedFaces] = ".albumSyncedFaces"
+//         map[.albumSyncedAlbum] = ".albumSyncedAlbum"
+//
+//         map[.albumImported] = ".albumImported"
+//         map[.albumMyPhotoStream] = ".albumMyPhotoStream"
+//         map[.albumCloudShared] = ".albumCloudShared"
+//
+//         map[.smartAlbumGeneric] = ".smartAlbumGeneric"
+//         map[.smartAlbumPanoramas] = ".smartAlbumPanoramas"
+//         map[.smartAlbumVideos] = ".smartAlbumVideos"
+//         map[.smartAlbumFavorites] = ".smartAlbumFavorites"
+//         map[.smartAlbumTimelapses] = ".smartAlbumTimelapses"
+//         map[.smartAlbumAllHidden] = ".smartAlbumAllHidden"
+//         map[.smartAlbumRecentlyAdded] = ".smartAlbumRecentlyAdded"
+//         map[.smartAlbumBursts] = ".smartAlbumBursts"
+//         map[.smartAlbumSlomoVideos] = ".smartAlbumSlomoVideos"
+//         map[.smartAlbumUserLibrary] = ".smartAlbumUserLibrary"
+//
+//         map[.smartAlbumSelfPortraits] = ".smartAlbumSelfPortraits"
+//         map[.smartAlbumScreenshots] = ".smartAlbumScreenshots"
+//         map[.smartAlbumDepthEffect] = ".smartAlbumDepthEffect"
+//         map[.smartAlbumLivePhotos] = ".smartAlbumLivePhotos"
+//         map[.smartAlbumAnimated] = ".smartAlbumAnimated"
+//         map[.smartAlbumLongExposures] = ".smartAlbumLongExposures"
+//         map[.smartAlbumUnableToUpload] = ".smartAlbumUnableToUpload"
+//         return map;
+//     }()
 
-         map[.albumImported] = ".albumImported"
-         map[.albumMyPhotoStream] = ".albumMyPhotoStream"
-         map[.albumCloudShared] = ".albumCloudShared"
-
-         map[.smartAlbumGeneric] = ".smartAlbumGeneric"
-         map[.smartAlbumPanoramas] = ".smartAlbumPanoramas"
-         map[.smartAlbumVideos] = ".smartAlbumVideos"
-         map[.smartAlbumFavorites] = ".smartAlbumFavorites"
-         map[.smartAlbumTimelapses] = ".smartAlbumTimelapses"
-         map[.smartAlbumAllHidden] = ".smartAlbumAllHidden"
-         map[.smartAlbumRecentlyAdded] = ".smartAlbumRecentlyAdded"
-         map[.smartAlbumBursts] = ".smartAlbumBursts"
-         map[.smartAlbumSlomoVideos] = ".smartAlbumSlomoVideos"
-         map[.smartAlbumUserLibrary] = ".smartAlbumUserLibrary"
-
-         map[.smartAlbumSelfPortraits] = ".smartAlbumSelfPortraits"
-         map[.smartAlbumScreenshots] = ".smartAlbumScreenshots"
-         map[.smartAlbumDepthEffect] = ".smartAlbumDepthEffect"
-         map[.smartAlbumLivePhotos] = ".smartAlbumLivePhotos"
-         map[.smartAlbumAnimated] = ".smartAlbumAnimated"
-         map[.smartAlbumLongExposures] = ".smartAlbumLongExposures"
-         map[.smartAlbumUnableToUpload] = ".smartAlbumUnableToUpload"
-         return map;
-     }()
     
     public private(set) var assetMap: [String: AssetItem] = [:]
     
@@ -112,14 +113,5 @@ public final class AssetList: NSObject {
     deinit {
         self.group.removeDataObserver(forKey: self.observerKey)
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
 

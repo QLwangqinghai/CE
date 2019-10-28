@@ -66,23 +66,86 @@ public extension DispatchQueue {
     static let assetQueue: DispatchQueue = DispatchQueue(label: "asset", qos: DispatchQoS.default, attributes: [], autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
 }
 
+
+/*
+ public enum PHAssetMediaType : Int {
+
+     
+     @available(iOS 8, *)
+     case unknown
+
+     @available(iOS 8, *)
+     case image
+
+     @available(iOS 8, *)
+     case video
+
+     @available(iOS 8, *)
+     case audio
+ }
+
+ @available(iOS 8, iOS 8, *)
+ public struct PHAssetMediaSubtype : OptionSet {
+
+     public init(rawValue: UInt)
+
+     
+     // Photo subtypes
+     @available(iOS 8, *)
+     public static var photoPanorama: PHAssetMediaSubtype { get }
+
+     @available(iOS 8, *)
+     public static var photoHDR: PHAssetMediaSubtype { get }
+
+     @available(iOS 9, *)
+     public static var photoScreenshot: PHAssetMediaSubtype { get }
+
+     @available(iOS 9.1, *)
+     public static var photoLive: PHAssetMediaSubtype { get }
+
+     @available(iOS 10.2, *)
+     public static var photoDepthEffect: PHAssetMediaSubtype { get }
+
+     
+     // Video subtypes
+     @available(iOS 8, *)
+     public static var videoStreamed: PHAssetMediaSubtype { get }
+
+     @available(iOS 8, *)
+     public static var videoHighFrameRate: PHAssetMediaSubtype { get }
+
+     @available(iOS 8, *)
+     public static var videoTimelapse: PHAssetMediaSubtype { get }
+ }
+
+ */
+
+
 public struct AssetGroupDataProviderOptions {
     public static let `default`: AssetGroupDataProviderOptions = {
         var config = AssetGroupDataProviderOptions()
         config.allowedAssetCollectionSubtypes[.smartAlbumUserLibrary] = 0
         config.allowedAssetCollectionSubtypes[.smartAlbumTimelapses] = 1
         config.allowedAssetCollectionSubtypes[.smartAlbumBursts] = 2
-        config.allowedAssetCollectionSubtypes[.smartAlbumSelfPortraits] = 3
-        config.allowedAssetCollectionSubtypes[.smartAlbumScreenshots] = 4
+        if #available(iOS 9, *) {
+            config.allowedAssetCollectionSubtypes[.smartAlbumSelfPortraits] = 3
+            config.allowedAssetCollectionSubtypes[.smartAlbumScreenshots] = 4
+        }
         config.allowedAssetCollectionSubtypes[.smartAlbumSlomoVideos] = 5
         config.allowedAssetCollectionSubtypes[.smartAlbumVideos] = 6
         config.allowedAssetCollectionSubtypes[.smartAlbumPanoramas] = 7
         config.allowedAssetCollectionSubtypes[.smartAlbumFavorites] = 8
         
-        config.allowedAssetCollectionSubtypes[.smartAlbumDepthEffect] = 9
-        config.allowedAssetCollectionSubtypes[.smartAlbumLivePhotos] = 10
-        config.allowedAssetCollectionSubtypes[.smartAlbumAnimated] = 11
-        config.allowedAssetCollectionSubtypes[.smartAlbumLongExposures] = 12
+        if #available(iOS 10.2, *) {
+            config.allowedAssetCollectionSubtypes[.smartAlbumDepthEffect] = 9
+        }
+        if #available(iOS 10.3, *) {
+            config.allowedAssetCollectionSubtypes[.smartAlbumLivePhotos] = 10
+        }
+        if #available(iOS 11, *) {
+            config.allowedAssetCollectionSubtypes[.smartAlbumAnimated] = 11
+            config.allowedAssetCollectionSubtypes[.smartAlbumLongExposures] = 12
+        }
         config.allowedAssetCollectionSubtypes[.albumRegular] = 0x8000
         return config
     }()
@@ -91,27 +154,40 @@ public struct AssetGroupDataProviderOptions {
     public var allowedAssetCollectionSubtypes: [PHAssetCollectionSubtype: UInt16] = [:]
     
     //value < 0x8000, use15bit
-    fileprivate let defaultOrder: [PHAssetCollectionSubtype: UInt16] = {
+    fileprivate static let defaultOrder: [PHAssetCollectionSubtype: UInt16] = {
         var map = [PHAssetCollectionSubtype: UInt16]()
         map[.smartAlbumUserLibrary] = 0
         map[.smartAlbumTimelapses] = 1
         map[.smartAlbumBursts] = 2
-        map[.smartAlbumSelfPortraits] = 3
-        map[.smartAlbumScreenshots] = 4
+        if #available(iOS 9, *) {
+            map[.smartAlbumSelfPortraits] = 3
+            map[.smartAlbumScreenshots] = 4
+        }
         map[.smartAlbumSlomoVideos] = 5
         map[.smartAlbumVideos] = 6
         map[.smartAlbumPanoramas] = 7
         map[.smartAlbumFavorites] = 8
         
-        map[.smartAlbumDepthEffect] = 9
-        map[.smartAlbumLivePhotos] = 10
-        map[.smartAlbumAnimated] = 11
-        map[.smartAlbumLongExposures] = 12
+        if #available(iOS 10.2, *) {
+            map[.smartAlbumDepthEffect] = 9
+        }
+        if #available(iOS 10.3, *) {
+            map[.smartAlbumLivePhotos] = 10
+        }
+        if #available(iOS 11, *) {
+            map[.smartAlbumAnimated] = 11
+            map[.smartAlbumLongExposures] = 12
+        }
         map[.albumRegular] = 0x4000
         return map
     } ()
     
     public var order: ArrayOrder = .ascending
+    
+    
+    public var allowVideo: Bool = true
+    public var allowImage: Bool = true
+    
     public init() {
         
     }
@@ -119,7 +195,7 @@ public struct AssetGroupDataProviderOptions {
     fileprivate func order(ofSubtype: PHAssetCollectionSubtype) -> Int32? {
         if let v = self.allowedAssetCollectionSubtypes[ofSubtype] {
             var order: Int32 = (Int32(v) << 15)
-            if let sv = self.defaultOrder[ofSubtype] {
+            if let sv = AssetGroupDataProviderOptions.defaultOrder[ofSubtype] {
                 order += Int32(sv)
             }
             return order
@@ -158,7 +234,12 @@ open class AssetGroupDataProvider: NSObject {
     public init(options: AssetGroupDataProviderOptions = AssetGroupDataProviderOptions.default) {
         self.options = options
         self.identifier = UUID().uuidString
-        self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
+        
+        let options = PHFetchOptions()
+//        options.predicate = NSPredicate(format: "", argumentArray: <#T##[Any]?#>)
+//            [NSPredicate predicateWithFormat:@"SELF IN %@", @[@"Stig", @"Shaffiq", @"Chris"]];
+        
+        self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: options)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
         self.groupList = GroupCollection()
         super.init()
@@ -376,6 +457,10 @@ public final class AssetGroup: NSObject, UniqueValue {
         self.assetFetchResult = assetFetchResult
         self.count = assetFetchResult.count
         super.init()
+        
+        
+        
+        
     }
     
     public func addDataObserver(_ observer: @escaping ObserverClosure, forKey: AnyHashable) {

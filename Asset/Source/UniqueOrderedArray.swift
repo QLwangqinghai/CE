@@ -1,5 +1,5 @@
 //
-//  UniqueOrderedList.swift
+//  UniqueOrderedArray.swift
 //  TTable
 //
 //  Created by vector on 2019/10/24.
@@ -29,6 +29,10 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
     public typealias Key = Value.UniqueIdentifier
     
     public struct Element {
+        public var identifier: Key {
+            return self.value.uniqueIdentifier
+        }
+        
         public let order: Order
         public let value: Value
         public init(order: Order, value: Value) {
@@ -37,12 +41,16 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
         }
     }
     
+    public typealias Change = ListChange<Element>
+    
     public struct Updater {
-        fileprivate let collection: UniqueOrderedArray<Order, Value>
+        public typealias Collection = UniqueOrderedArray<Order, Value>
+        
+        fileprivate let collection: Collection
         fileprivate var _dictionary: [Key: Element]
         private(set) var compare: (_ lhs: Order, _ rhs: Order) -> Bool
 
-        fileprivate init(collection: UniqueOrderedArray<Order, Value>, compare: @escaping (_ lhs: Order, _ rhs: Order) -> Bool) {
+        fileprivate init(collection: Collection, compare: @escaping (_ lhs: Order, _ rhs: Order) -> Bool) {
             self.compare = compare
             self.collection = collection
             self._dictionary = collection.dictionary.mapValues({ (index) -> Element in
@@ -62,8 +70,7 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
             self._dictionary.removeValue(forKey: forKey)
         }
         public mutating func replaceItem(_ item: Element) {
-            let key = item.value.uniqueIdentifier
-            self._dictionary[key] = item
+            self._dictionary[item.identifier] = item
         }
         
         public mutating func filter(_ body: (Element) -> Bool) {
@@ -76,8 +83,7 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
         }
         public mutating func replace<S>(_ items: S) where Element == S.Element, S : Sequence {
             for item in items {
-                let key = item.value.uniqueIdentifier
-                self._dictionary[key] = item
+                self._dictionary[item.identifier] = item
             }
         }
                 
@@ -85,23 +91,23 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
             self._dictionary.removeAll()
         }
         
-        public mutating func finish() -> (UniqueOrderedArray<Order, Value>, [ListChange<Element>]) {
+        public mutating func finish() -> (Collection, [Change]) {
             let list: [Element] = self.collection.array
             let compare: (_ lhs: Order, _ rhs: Order) -> Bool = self.compare
             
             var removed: [(Int, Element)] = []
             var remain: [Key: Element] = [:]
             _ = self._dictionary.map { (item) -> Void in
-                remain[item.value.value.uniqueIdentifier] = item.value
+                remain[item.value.identifier] = item.value
             }
             
             var array: [Element] = []
             var dictionary: [Key: Int] = [:]
-            var changes: [ListChange<Element>] = []
+            var changes: [Change] = []
             
             //remove
             for (index, arrayItem) in list.enumerated() {
-                let key = arrayItem.value.uniqueIdentifier
+                let key = arrayItem.identifier
                 if let newItem = remain[key] {
                     if arrayItem.order == newItem.order {
                         remain.removeValue(forKey: key)
@@ -114,7 +120,7 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
                 }
             }
             if !removed.isEmpty {
-                let change = ListChange<Element>.remove(removed)
+                let change = Change.remove(removed)
                 changes.append(change)
             }
                     
@@ -134,7 +140,7 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
                             let insertIndex = resultArray.endIndex
                             resultArray.append(insertItem)
                             inserted.append((insertIndex, insertItem))
-                            dictionary[insertItem.value.uniqueIdentifier] = insertIndex
+                            dictionary[insertItem.identifier] = insertIndex
                             waitInserted.removeFirst()
                         } else {
                             break
@@ -142,20 +148,20 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
                     }
                     let insertIndex = resultArray.endIndex
                     resultArray.append(item)
-                    dictionary[item.value.uniqueIdentifier] = insertIndex
+                    dictionary[item.identifier] = insertIndex
                 }
                 
                 while let insertItem = waitInserted.first {
                     let insertIndex = resultArray.endIndex
                     resultArray.append(insertItem)
                     inserted.append((insertIndex, insertItem))
-                    dictionary[insertItem.value.uniqueIdentifier] = insertIndex
+                    dictionary[insertItem.identifier] = insertIndex
                     waitInserted.removeFirst()
                 }
                 
                 array = resultArray
                 if !inserted.isEmpty {
-                    let change = ListChange<Element>.insert(inserted)
+                    let change = Change.insert(inserted)
                     changes.append(change)
                 }
             }

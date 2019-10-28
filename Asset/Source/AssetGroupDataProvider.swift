@@ -58,7 +58,8 @@ import Photos
  
      @available(iOS 13, *)
      case smartAlbumUnableToUpload
-
+//图库： 照片 回忆 个人收藏 任务 地点 导入
+ //媒体类型： 视频 自拍 实况照片 延时摄影 连拍快照 屏幕快照 动图
  }
  */
 
@@ -245,6 +246,44 @@ open class AssetGroupDataProvider: NSObject {
         super.init()
         PHPhotoLibrary.shared().register(self)
         self.reload()
+        
+        self.smartAlbumFetchResult.enumerateObjects { (collection, idx, stop) in
+            var title = collection.localizedTitle ?? "title"
+            let sdate: String
+            let edate: String
+
+            if let d = collection.startDate {
+                sdate = "\(d)"
+            } else {
+                sdate = ""
+            }
+            if let d = collection.endDate {
+                edate = "\(d)"
+            } else {
+                edate = ""
+            }
+            print("title:\(title), \(sdate) \(edate)")
+        }
+        self.albumFetchResult.enumerateObjects { (collection, idx, stop) in
+            var title = collection.localizedTitle ?? "title"
+            let sdate: String
+            let edate: String
+
+            if let d = collection.startDate {
+                sdate = "\(d)"
+            } else {
+                sdate = ""
+            }
+            if let d = collection.endDate {
+                edate = "\(d)"
+            } else {
+                edate = ""
+            }
+            print("title:\(title), \(sdate) \(edate)")
+        }
+        
+        
+        
     }
     deinit {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)

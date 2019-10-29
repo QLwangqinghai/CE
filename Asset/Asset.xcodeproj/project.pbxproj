@@ -17,7 +17,7 @@
 		D6C074BA2356EF9100038D3C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6C074B82356EF9100038D3C /* Main.storyboard */; };
 		D6C074BC2356EF9200038D3C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6C074BB2356EF9200038D3C /* Assets.xcassets */; };
 		D6C074BF2356EF9200038D3C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6C074BD2356EF9200038D3C /* LaunchScreen.storyboard */; };
-		D6C074C82356EFD000038D3C /* AssetGroupDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C074C72356EFD000038D3C /* AssetGroupDataProvider.swift */; };
+		D6C074C82356EFD000038D3C /* AssetDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C074C72356EFD000038D3C /* AssetDataProvider.swift */; };
 		D6EFAECB235B36CF00D6A06E /* GroupTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */; };
 		D6F4E3ED23572B97004CD247 /* edit_button_delete.png in Resources */ = {isa = PBXBuildFile; fileRef = D6F4E3EC23572B97004CD247 /* edit_button_delete.png */; };
 /* End PBXBuildFile section */
@@ -37,7 +37,7 @@
 		D6C074BB2356EF9200038D3C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D6C074BE2356EF9200038D3C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6C074C02356EF9200038D3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D6C074C72356EFD000038D3C /* AssetGroupDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetGroupDataProvider.swift; sourceTree = "<group>"; };
+		D6C074C72356EFD000038D3C /* AssetDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetDataProvider.swift; sourceTree = "<group>"; };
 		D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTableHandler.swift; sourceTree = "<group>"; };
 		D6F4E3EC23572B97004CD247 /* edit_button_delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit_button_delete.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,7 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				D60C31842361C49300DB1173 /* UniqueOrderedArray.swift */,
-				D6C074C72356EFD000038D3C /* AssetGroupDataProvider.swift */,
+				D6C074C72356EFD000038D3C /* AssetDataProvider.swift */,
 				D670DFE2235DB1C00057538E /* AssetList.swift */,
 				D670DFE4235DB28F0057538E /* AssetSelector.swift */,
 				D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */,
@@ -172,7 +172,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D60C31862361C49300DB1173 /* UniqueOrderedArray.swift in Sources */,
-				D6C074C82356EFD000038D3C /* AssetGroupDataProvider.swift in Sources */,
+				D6C074C82356EFD000038D3C /* AssetDataProvider.swift in Sources */,
 				D6EFAECB235B36CF00D6A06E /* GroupTableHandler.swift in Sources */,
 				D670DFE3235DB1C00057538E /* AssetList.swift in Sources */,
 				D670DFE7235DB3380057538E /* AssetCollectionHandler.swift in Sources */,

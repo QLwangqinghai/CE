@@ -10,7 +10,6 @@ import UIKit
 import Photos
 
 class ViewController: UIViewController {
-    var dataSource: AssetGroupDataProvider?
 
 //    var aa: UniqueOrderedArray2<UniqueElement<Int, Section>>?
 
@@ -25,7 +24,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         self.view.backgroundColor = .red
         
-//        dataSource = AssetGroupDataProvider()
+//        dataSource = AssetDataProvider()
         
         
         let label = UILabel()
@@ -62,17 +61,17 @@ class ViewController: UIViewController {
         
         button.frame = CGRect.init(x: 100, y: 100, width: 40, height: 10)
         
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
             PHPhotoLibrary.requestAuthorization { (status) in
                 if status == .authorized {
-                    self.dataSource = AssetGroupDataProvider()
+                    DispatchQueue.main.async {
+                        self.handler.update(dataProvider: AssetDataProvider(mode: .video))
+                    }
                 }
             }
         }
         self.view.addSubview(self.handler.tableView)
         self.handler.tableView.frame = self.view.bounds
-        self.handler.update(dataProvider: AssetGroupDataProvider())
 
   
 //        let test = MyTableHandler()
@@ -91,7 +90,7 @@ class ViewController: UIViewController {
 //    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        PHPhotoLibrary.requestAuthorization { (status) in
 //            if status == .authorized {
-//                AssetGroupDataProvider.test()
+//                AssetDataProvider.test()
 //            }
 //        }
 //    }

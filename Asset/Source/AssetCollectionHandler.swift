@@ -106,7 +106,7 @@ open class AssetCollectionHandler: NSObject {
 //        tableView.dataSource = self
 //    }
     
-//    public func update(dataProvider: AssetGroupDataProvider?) {
+//    public func update(dataProvider: AssetDataProvider?) {
 //        if self.dataProvider != dataProvider {
 //            self.dataProvider = dataProvider
 //            self.tableView.reloadData()

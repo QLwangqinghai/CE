@@ -89,12 +89,12 @@ public final class AssetItem: NSObject {
 }
 
 public final class AssetList: NSObject {
-    public let group: AssetGroup
+    public let group: Group
     public let selector: AssetSelector?
     public let context: AssetContext
     private let observerKey: String = UUID().uuidString
 
-    public init(group: AssetGroup, context: AssetContext, selector: AssetSelector?) {
+    public init(group: Group, context: AssetContext, selector: AssetSelector?) {
         self.group = group
         self.selector = selector
         self.context = context

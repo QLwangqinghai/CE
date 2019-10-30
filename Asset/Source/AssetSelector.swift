@@ -20,7 +20,7 @@ public final class AssetSelector: NSObject {
     private var itemIdentifierSet: Set<String> = []
     public private(set) var items: [SelectedAssetItem] = []
     
-    public init(group: AssetGroup) {
+    public init(group: Group) {
         super.init()
     }
     

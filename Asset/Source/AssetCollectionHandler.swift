@@ -120,11 +120,11 @@ open class AssetCollectionHandler: NSObject {
 //
 //    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        print("cellForRowAt \(indexPath)")
-//        let assetGroup = self.items[indexPath.row]
+//        let Group = self.items[indexPath.row]
 //        guard let cell: GroupTableCell = tableView.dequeueReusableCell(withIdentifier: "GroupTableCell") as? GroupTableCell else {
 //            return UITableViewCell()
 //        }
-//        cell.textLabel?.text = assetGroup.title
+//        cell.textLabel?.text = Group.title
 //        return cell
 //    }
 

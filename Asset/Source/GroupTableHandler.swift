@@ -9,14 +9,15 @@
 import UIKit
 import Photos
 
-
-public class AssetImageView: UIImageView {
-    public var assetIdentifier: String = ""
+public class ThumbnailImageView: UIImageView {
+    public var assetIdentifier: ThumbnailIdentifier?
     
 }
 
 open class GroupTableCell: UITableViewCell {
     public struct Default {
+        public static let thumbnailImageSize: CGSize = CGSize(width: 56, height: 56)
+
         public static var titleColor: UIColor = {
             if #available(iOS 13, *) {
                 return UIColor(dynamicProvider: { (collection) -> UIColor in
@@ -33,17 +34,17 @@ open class GroupTableCell: UITableViewCell {
         public static var titleFont: UIFont = UIFont.boldSystemFont(ofSize: 16)
     }
 
-    public let thumbnailImageView: AssetImageView
+    public let thumbnailImageView: ThumbnailImageView
     public let titleLabel: UILabel
 
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        self.thumbnailImageView = AssetImageView()
+        self.thumbnailImageView = ThumbnailImageView()
         self.titleLabel = UILabel()
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self._compareBase()
     }
     required public init?(coder: NSCoder) {
-        self.thumbnailImageView = AssetImageView()
+        self.thumbnailImageView = ThumbnailImageView()
         self.titleLabel = UILabel()
         super.init(coder: coder)
         self._compareBase()
@@ -52,8 +53,8 @@ open class GroupTableCell: UITableViewCell {
     private func _compareBase() {
         self.contentView.addSubview(self.thumbnailImageView)
         self.thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
-        self.thumbnailImageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
-        self.thumbnailImageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        self.thumbnailImageView.widthAnchor.constraint(equalToConstant: Default.thumbnailImageSize.width).isActive = true
+        self.thumbnailImageView.heightAnchor.constraint(equalToConstant: Default.thumbnailImageSize.height).isActive = true
         self.thumbnailImageView.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: 16).isActive = true
         self.thumbnailImageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor).isActive = true
         
@@ -73,11 +74,16 @@ open class GroupTableCell: UITableViewCell {
 }
 
 open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSource {
+    
+    public static let thumbnailOptions: ThumbnailOptions = ThumbnailOptions(size: GroupTableCell.Default.thumbnailImageSize, contentMode: .aspectFill)
+
+    let cachingImageManager: CachingImageManager = CachingImageManager()
+    
     public let tableView: UITableView
     
-    public private(set) var items: [AssetGroup] = []
+    public private(set) var items: [Group] = []
     private let observerKey: String = UUID().uuidString
-    public private(set) var dataProvider: AssetDataProvider? {
+    public private(set) var dataProvider: GroupProvider? {
         didSet {
             if let dataProvider = self.dataProvider {
                 self.items = dataProvider.groupArray
@@ -103,7 +109,7 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
     }
     
-    public func update(dataProvider: AssetDataProvider?) {
+    public func update(dataProvider: GroupProvider?) {
         if self.dataProvider != dataProvider {
             self.dataProvider = dataProvider
         }
@@ -116,11 +122,50 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         print("cellForRowAt \(indexPath)")
-        let assetGroup = self.items[indexPath.row]
+        let group = self.items[indexPath.row]
         guard let cell: GroupTableCell = tableView.dequeueReusableCell(withIdentifier: "GroupTableCell") as? GroupTableCell else {
             return UITableViewCell()
         }
-        cell.titleLabel.text = "\(assetGroup.title ?? "title") \(assetGroup.count)"
+        cell.titleLabel.text = "\(group.title ?? "") (\(group.count))"
+        let placeholder: UIImage? = nil
+        if let asset = group.lastAsset {
+            let option = GroupTableHandler.thumbnailOptions
+            var changed = false
+            if let old = cell.thumbnailImageView.assetIdentifier {
+                if old.identifier != asset.localIdentifier || old.options != option {
+                    changed = true
+                }
+            } else {
+                changed = true
+            }
+            if changed {
+                let identifier = ThumbnailIdentifier(identifier: asset.localIdentifier, options: option)
+                cell.thumbnailImageView.assetIdentifier = identifier
+
+                if let image = self.cachingImageManager.image(forKey: identifier) {
+                    cell.thumbnailImageView.image = image
+                } else {
+                    cell.thumbnailImageView.image = placeholder
+                    
+                    self.cachingImageManager.requestThumbnailImage(asset: asset, options: option) { (_, image, error) in
+                        if let e = error {
+                            print(e)
+                        }
+                        if cell.thumbnailImageView.assetIdentifier == identifier {
+                            if let v = image {
+                                cell.thumbnailImageView.image = v
+                            }
+                        }
+                    }
+                    
+                }
+            }
+        } else {
+            cell.thumbnailImageView.assetIdentifier = nil
+            cell.thumbnailImageView.image = placeholder
+        }
+        
+        
         return cell
     }
 }

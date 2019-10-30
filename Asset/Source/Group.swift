@@ -1,5 +1,5 @@
 //
-//  AssetGroup.swift
+//  Group.swift
 //  Asset
 //
 //  Created by vector on 2019/10/30.
@@ -8,8 +8,8 @@
 
 import Photos
 
-public final class AssetGroup: NSObject, ObservableObject {
-    public typealias ObserverClosure = (_ group: AssetGroup, _ changeDetails: PHFetchResultChangeDetails<PHAsset>) -> Void
+public final class Group: NSObject, ObservableObject {
+    public typealias ObserverClosure = (_ group: Group, _ changeDetails: PHFetchResultChangeDetails<PHAsset>) -> Void
     
     public let identifier: String
 
@@ -20,9 +20,9 @@ public final class AssetGroup: NSObject, ObservableObject {
     public private(set) var assetFetchResult: PHFetchResult<PHAsset>
     public private(set) var observers: [AnyHashable: ObserverClosure] = [:]
     
-    public let option: AssetDataOptions
+    public let option: DataOptions
     private var thumbnailImageRequestId: PHImageRequestID?
-    public init(context: AssetDataOptions, collection: PHAssetCollection) {
+    public init(context: DataOptions, collection: PHAssetCollection) {
         self.option = context
         self.collection = collection
         self.identifier = collection.localIdentifier
@@ -65,7 +65,7 @@ public final class AssetGroup: NSObject, ObservableObject {
             } else {
                 dateString = "nil"
             }
-            return "<AssetGroup: \(String(format: "%p", self)), name: \(name), startDate:\(dateString), count:\(self.count)>"
+            return "<Group: \(String(format: "%p", self)), name: \(name), startDate:\(dateString), count:\(self.count)>"
         }
     }
 

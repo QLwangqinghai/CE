@@ -15,7 +15,6 @@ class ViewController: UIViewController {
 
     var test2: OrderedListHandler? = nil
 
-    
     let handler: GroupTableHandler = GroupTableHandler()
     
     var array: [Any] = []
@@ -66,8 +65,8 @@ class ViewController: UIViewController {
             PHPhotoLibrary.requestAuthorization { (status) in
                 if status == .authorized {
                     DispatchQueue.main.async {
-                        let option = AssetDataOptions(mode: .video)
-                        self.handler.update(dataProvider: AssetDataProvider(option: option))
+                        let option = DataOptions(mode: .video)
+                        self.handler.update(dataProvider: GroupProvider(option: option))
                     }
                 }
             }

@@ -1,5 +1,5 @@
 //
-//  AssetGroupDataSource.swift
+//  GroupDataSource.swift
 //  Photo
 //
 //  Created by vector on 2019/10/14.
@@ -120,7 +120,7 @@ import UIKit
 
 
 
-open class AssetDataProvider: NSObject {
+open class GroupProvider: NSObject {
     public var mode: PhotoMode {
         return self.option.mode
     }
@@ -130,12 +130,12 @@ open class AssetDataProvider: NSObject {
     public private(set) var smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
     public private(set) var albumFetchResult: PHFetchResult<PHAssetCollection>
     
-    public private(set) var groupArray: [AssetGroup] = []
-    public private(set) var groupDictionary: [String: AssetGroup] = [:]
+    public private(set) var groupArray: [Group] = []
+    public private(set) var groupDictionary: [String: Group] = [:]
     
-    public let option: AssetDataOptions
+    public let option: DataOptions
     
-    public init(option: AssetDataOptions) {
+    public init(option: DataOptions) {
         self.option = option
         self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
@@ -175,10 +175,10 @@ open class AssetDataProvider: NSObject {
             return false
         }
         if self.mode == .image {
-            return !AssetDataProvider._videoOnlyAssetCollectionSubtypes.contains(subtype)
+            return !GroupProvider._videoOnlyAssetCollectionSubtypes.contains(subtype)
         }
         if self.mode == .video {
-            return !AssetDataProvider._imageOnlyAssetCollectionSubtypes.contains(subtype)
+            return !GroupProvider._imageOnlyAssetCollectionSubtypes.contains(subtype)
         }
         return true
     }
@@ -191,7 +191,7 @@ open class AssetDataProvider: NSObject {
             
             let key = collection.localIdentifier
             if nil == self.groupDictionary[key] {
-                let group = AssetGroup(context: self.option, collection: collection)
+                let group = Group(context: self.option, collection: collection)
                 self.groupDictionary[key] = group
                 if collection.assetCollectionSubtype == .smartAlbumUserLibrary {
                     self.groupArray.insert(group, at: 0)
@@ -207,7 +207,7 @@ open class AssetDataProvider: NSObject {
 
             let key = collection.localIdentifier
             if nil == self.groupDictionary[key] {
-                let group = AssetGroup(context: self.option, collection: collection)
+                let group = Group(context: self.option, collection: collection)
                 self.groupDictionary[key] = group
                 self.groupArray.append(group)
             }
@@ -215,7 +215,7 @@ open class AssetDataProvider: NSObject {
     }
 }
 
-extension AssetDataProvider: PHPhotoLibraryChangeObserver {
+extension GroupProvider: PHPhotoLibraryChangeObserver {
     private func handlePhotoLibraryChange(changeInstance: PHChange) {
         for group in self.groupArray {
             group.handlePhotoLibraryChange(changeInstance)

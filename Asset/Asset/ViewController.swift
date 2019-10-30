@@ -22,8 +22,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        self.view.backgroundColor = .red
         
+        self.view.backgroundColor = .red
+
 //        dataSource = AssetDataProvider()
         
         
@@ -65,7 +66,8 @@ class ViewController: UIViewController {
             PHPhotoLibrary.requestAuthorization { (status) in
                 if status == .authorized {
                     DispatchQueue.main.async {
-                        self.handler.update(dataProvider: AssetDataProvider(mode: .video))
+                        let option = AssetDataOptions(mode: .video)
+                        self.handler.update(dataProvider: AssetDataProvider(option: option))
                     }
                 }
             }

@@ -119,54 +119,9 @@ import UIKit
  */
 
 
-open class AssetDataProvider: NSObject {
-    public final class Options {
-        //Thumbnail
-        public let identifier: String
-        public let mode: Mode
 
-        fileprivate init(mode: Mode) {
-            self.mode = mode
-            self.identifier = UUID().uuidString
-        }
-        
-//        lazy var cachingImageManager: PHCachingImageManager = {
-//            return PHCachingImageManager()
-//        }()
-//        @discardableResult public func requestThumbnailImage(asset: PHAsset, size: CGSize, resultHandler: @escaping (_ requestId: PHImageRequestID, _ image: UIImage?, _ error: NSError?) -> Void) -> PHImageRequestID? {
-//            let options = PHImageRequestOptions()
-//            options.isNetworkAccessAllowed = true
-//            options.resizeMode = .exact
-//            options.isSynchronous = true
-//            let id = self.cachingImageManager.requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: options) { (image, info) in
-//                DispatchQueue.main.async {
-//                    var rid = PHInvalidImageRequestID
-//                    if let number = info?[PHImageResultRequestIDKey] as? NSNumber {
-//                        rid = PHImageRequestID(truncating: number)
-//                    }
-//
-//                    if let error = info?[PHImageErrorKey] as? NSError {
-//                        resultHandler(rid, image, error)
-//                    } else {
-//                        resultHandler(rid, image, nil)
-//                    }
-//                }
-//            }
-//            if id == PHInvalidImageRequestID {
-//                return nil
-//            } else {
-//                return id
-//            }
-//        }
-    }
-    
-    public enum Mode {
-        case image
-        case video
-        case imageAndVideo
-    }
-    
-    public var mode: Mode {
+open class AssetDataProvider: NSObject {
+    public var mode: PhotoMode {
         return self.option.mode
     }
     public var identifier: String {
@@ -178,10 +133,10 @@ open class AssetDataProvider: NSObject {
     public private(set) var groupArray: [AssetGroup] = []
     public private(set) var groupDictionary: [String: AssetGroup] = [:]
     
-    public let option: Options
+    public let option: AssetDataOptions
     
-    public init(mode: Mode = .imageAndVideo) {
-        self.option = Options(mode: mode)
+    public init(option: AssetDataOptions) {
+        self.option = option
         self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
         super.init()
@@ -278,84 +233,6 @@ extension AssetDataProvider: PHPhotoLibraryChangeObserver {
     }
 }
 
-public final class AssetGroup: NSObject, ObservableObject {
-    public typealias ObserverClosure = (_ group: AssetGroup, _ changeDetails: PHFetchResultChangeDetails<PHAsset>) -> Void
-    
-    public let identifier: String
-
-    private let collection: PHAssetCollection
-    public dynamic private(set) var title: String?
-    public dynamic private(set) var lastAsset: PHAsset?
-    public dynamic private(set) var count: Int = 0
-    public private(set) var assetFetchResult: PHFetchResult<PHAsset>
-    public private(set) var observers: [AnyHashable: ObserverClosure] = [:]
-    
-    public let option: AssetDataProvider.Options
-    private var thumbnailImageRequestId: PHImageRequestID?
-    fileprivate init(context: AssetDataProvider.Options, collection: PHAssetCollection) {
-        self.option = context
-        self.collection = collection
-        self.identifier = collection.localIdentifier
-        let options: PHFetchOptions = PHFetchOptions()
-        switch context.mode {
-        case .image:
-            options.predicate = NSPredicate(format: "mediaType == \(PHAssetMediaType.image.rawValue)", argumentArray: nil)
-        case .video:
-            options.predicate = NSPredicate(format: "mediaType == \(PHAssetMediaType.video.rawValue)", argumentArray: nil)
-        case .imageAndVideo:
-            options.predicate = NSPredicate(format: "mediaType == \(PHAssetMediaType.image.rawValue) || mediaType == \(PHAssetMediaType.video.rawValue)", argumentArray: nil)
-        }
-
-        let assetFetchResult: PHFetchResult<PHAsset> = PHAsset.fetchAssets(in: self.collection, options: options)
-        self.assetFetchResult = assetFetchResult
-        self.count = assetFetchResult.count
-        self.title = collection.localizedTitle
-        self.lastAsset = self.assetFetchResult.lastObject
-        super.init()
-    }
-    
-    public func addDataObserver(_ observer: @escaping ObserverClosure, forKey: AnyHashable) {
-        self.observers[forKey] = observer
-    }
-    public func removeDataObserver(forKey: AnyHashable) {
-        self.observers.removeValue(forKey: forKey)
-    }
-    
-    public override var debugDescription: String {
-        get {
-            let name: String
-            if let localizedTitle = self.collection.localizedTitle {
-                name = localizedTitle
-            } else {
-                name = "nil"
-            }
-            let dateString: String
-            if let startDate = self.collection.startDate {
-                dateString = "\(startDate)"
-            } else {
-                dateString = "nil"
-            }
-            return "<AssetGroup: \(String(format: "%p", self)), name: \(name), startDate:\(dateString), count:\(self.count)>"
-        }
-    }
-
-    @discardableResult fileprivate func handlePhotoLibraryChange(_ changeInstance: PHChange) -> Bool {
-        if let changeDetails: PHFetchResultChangeDetails<PHAsset> = changeInstance.changeDetails(for: self.assetFetchResult) {
-            self.assetFetchResult = changeDetails.fetchResultAfterChanges
-            self.count = self.assetFetchResult.count
-            
-            let observers = self.observers
-            _ = observers.map { (item) -> Void in
-                let closure: ObserverClosure = item.value
-                closure(self, changeDetails)
-            }
-            return true
-        } else {
-            return false
-        }
-    }
-    
-}
 
 
 

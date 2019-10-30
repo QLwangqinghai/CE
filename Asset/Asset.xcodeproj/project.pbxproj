@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		D60C31862361C49300DB1173 /* UniqueOrderedArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60C31842361C49300DB1173 /* UniqueOrderedArray.swift */; };
+		D63CB4F62369CBFD00B005E7 /* AssetDataOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63CB4F52369CBFD00B005E7 /* AssetDataOptions.swift */; };
+		D63CB4F82369CC9800B005E7 /* AssetGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63CB4F72369CC9800B005E7 /* AssetGroup.swift */; };
 		D670DFE3235DB1C00057538E /* AssetList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFE2235DB1C00057538E /* AssetList.swift */; };
 		D670DFE5235DB28F0057538E /* AssetSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFE4235DB28F0057538E /* AssetSelector.swift */; };
 		D670DFE7235DB3380057538E /* AssetCollectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D670DFE6235DB3380057538E /* AssetCollectionHandler.swift */; };
@@ -26,6 +28,8 @@
 		D60C31842361C49300DB1173 /* UniqueOrderedArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueOrderedArray.swift; sourceTree = "<group>"; };
 		D6241C00235702E200DB603A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		D6241C01235702E200DB603A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		D63CB4F52369CBFD00B005E7 /* AssetDataOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDataOptions.swift; sourceTree = "<group>"; };
+		D63CB4F72369CC9800B005E7 /* AssetGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetGroup.swift; sourceTree = "<group>"; };
 		D670DFE2235DB1C00057538E /* AssetList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetList.swift; sourceTree = "<group>"; };
 		D670DFE4235DB28F0057538E /* AssetSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetSelector.swift; sourceTree = "<group>"; };
 		D670DFE6235DB3380057538E /* AssetCollectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetCollectionHandler.swift; sourceTree = "<group>"; };
@@ -88,7 +92,9 @@
 			isa = PBXGroup;
 			children = (
 				D60C31842361C49300DB1173 /* UniqueOrderedArray.swift */,
+				D63CB4F52369CBFD00B005E7 /* AssetDataOptions.swift */,
 				D6C074C72356EFD000038D3C /* AssetDataProvider.swift */,
+				D63CB4F72369CC9800B005E7 /* AssetGroup.swift */,
 				D670DFE2235DB1C00057538E /* AssetList.swift */,
 				D670DFE4235DB28F0057538E /* AssetSelector.swift */,
 				D6EFAECA235B36CF00D6A06E /* GroupTableHandler.swift */,
@@ -174,11 +180,13 @@
 				D60C31862361C49300DB1173 /* UniqueOrderedArray.swift in Sources */,
 				D6C074C82356EFD000038D3C /* AssetDataProvider.swift in Sources */,
 				D6EFAECB235B36CF00D6A06E /* GroupTableHandler.swift in Sources */,
+				D63CB4F62369CBFD00B005E7 /* AssetDataOptions.swift in Sources */,
 				D670DFE3235DB1C00057538E /* AssetList.swift in Sources */,
 				D670DFE7235DB3380057538E /* AssetCollectionHandler.swift in Sources */,
 				D670DFE5235DB28F0057538E /* AssetSelector.swift in Sources */,
 				D670DFEC235DC87F0057538E /* AssetBase.swift in Sources */,
 				D6C074B72356EF9100038D3C /* ViewController.swift in Sources */,
+				D63CB4F82369CC9800B005E7 /* AssetGroup.swift in Sources */,
 				D6C074B52356EF9100038D3C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

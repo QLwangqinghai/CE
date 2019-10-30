@@ -7,6 +7,7 @@
 //
 
 import Photos
+import UIKit
 
 /*
  PHAssetCollectionType
@@ -19,10 +20,10 @@ import Photos
 /*
  PHAssetCollectionSubtype
  albumRegular //用户在 Photos 中创建的相册，也就是我所谓的逻辑相册
- albumSyncedEvent //使用 iTunes 从 Photos 照片库或者 iPhoto 照片库同步过来的事件。然而，在iTunes 12 以及iOS 9.0 beta4上，选用该类型没法获取同步的事件相册，而必须使用AlbumSyncedAlbum。
+ albumSyncedEvent //使用 iTunes 从 Photos 照片库或者 iPhoto 照片库同步过来的事件。
  albumSyncedFaces //使用 iTunes 从 Photos 照片库或者 iPhoto 照片库同步的人物相册。
  albumSyncedAlbum //做了 AlbumSyncedEvent 应该做的事
- albumImported //从相机或是外部存储导入的相册，完全没有这方面的使用经验，没法验证。
+ albumImported //从相机或是外部存储导入的相册。
  albumMyPhotoStream //用户的 iCloud 照片流
  albumCloudShared //用户使用 iCloud 共享的相册
  
@@ -119,30 +120,68 @@ import Photos
 
 
 open class AssetDataProvider: NSObject {
+    public final class Options {
+        //Thumbnail
+        public let identifier: String
+        public let mode: Mode
+
+        fileprivate init(mode: Mode) {
+            self.mode = mode
+            self.identifier = UUID().uuidString
+        }
+        
+//        lazy var cachingImageManager: PHCachingImageManager = {
+//            return PHCachingImageManager()
+//        }()
+//        @discardableResult public func requestThumbnailImage(asset: PHAsset, size: CGSize, resultHandler: @escaping (_ requestId: PHImageRequestID, _ image: UIImage?, _ error: NSError?) -> Void) -> PHImageRequestID? {
+//            let options = PHImageRequestOptions()
+//            options.isNetworkAccessAllowed = true
+//            options.resizeMode = .exact
+//            options.isSynchronous = true
+//            let id = self.cachingImageManager.requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: options) { (image, info) in
+//                DispatchQueue.main.async {
+//                    var rid = PHInvalidImageRequestID
+//                    if let number = info?[PHImageResultRequestIDKey] as? NSNumber {
+//                        rid = PHImageRequestID(truncating: number)
+//                    }
+//
+//                    if let error = info?[PHImageErrorKey] as? NSError {
+//                        resultHandler(rid, image, error)
+//                    } else {
+//                        resultHandler(rid, image, nil)
+//                    }
+//                }
+//            }
+//            if id == PHInvalidImageRequestID {
+//                return nil
+//            } else {
+//                return id
+//            }
+//        }
+    }
+    
     public enum Mode {
         case image
         case video
         case imageAndVideo
     }
     
-    public let mode: Mode
-    
-    public let identifier: String
+    public var mode: Mode {
+        return self.option.mode
+    }
+    public var identifier: String {
+        return self.option.identifier
+    }
     public private(set) var smartAlbumFetchResult: PHFetchResult<PHAssetCollection>
     public private(set) var albumFetchResult: PHFetchResult<PHAssetCollection>
     
     public private(set) var groupArray: [AssetGroup] = []
     public private(set) var groupDictionary: [String: AssetGroup] = [:]
     
-    //Thumbnail
-    public lazy var cachingImageManager: PHCachingImageManager = {
-        return PHCachingImageManager()
-    }()
-    
+    public let option: Options
     
     public init(mode: Mode = .imageAndVideo) {
-        self.mode = mode
-        self.identifier = UUID().uuidString
+        self.option = Options(mode: mode)
         self.smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         self.albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
         super.init()
@@ -197,7 +236,7 @@ open class AssetDataProvider: NSObject {
             
             let key = collection.localIdentifier
             if nil == self.groupDictionary[key] {
-                let group = AssetGroup(dataSourceIdentifier: self.identifier, mode: self.mode, collection: collection)
+                let group = AssetGroup(context: self.option, collection: collection)
                 self.groupDictionary[key] = group
                 if collection.assetCollectionSubtype == .smartAlbumUserLibrary {
                     self.groupArray.insert(group, at: 0)
@@ -213,106 +252,13 @@ open class AssetDataProvider: NSObject {
 
             let key = collection.localIdentifier
             if nil == self.groupDictionary[key] {
-                let group = AssetGroup(dataSourceIdentifier: self.identifier, mode: self.mode, collection: collection)
+                let group = AssetGroup(context: self.option, collection: collection)
                 self.groupDictionary[key] = group
                 self.groupArray.append(group)
-                
-                
-//                group.publisher(for: KeyPath<AssetGroup, String?>.)
-                
-//                let a = group.publisher
-                group.objectWillChange.sink { () in
-                    
-                }
-                
             }
         }
     }
 }
-
-//@propertyWrapper public struct Published<Value> {
-//
-//    /// Initialize the storage of the Published
-//    /// property as well as the corresponding `Publisher`.
-//    public init(initialValue: Value) {
-//        value = initialValue
-//    }
-//
-//    @available(*, unavailable)
-//    public init(wrappedValue: Value) {
-//        value = wrappedValue
-//    }
-//
-//    /// A publisher for properties marked with the `@Published` attribute.
-//    public struct Publisher: OpenCombine.Publisher {
-//
-//        /// The kind of values published by this publisher.
-//        public typealias Output = Value
-//
-//        /// The kind of errors this publisher might publish.
-//        ///
-//        /// Use `Never` if this `Publisher` does not publish errors.
-//        public typealias Failure = Never
-//
-//        /// This function is called to attach the specified
-//        /// `Subscriber` to this `Publisher` by `subscribe(_:)`
-//        ///
-//        /// - SeeAlso: `subscribe(_:)`
-//        /// - Parameters:
-//        ///     - subscriber: The subscriber to attach to this `Publisher`.
-//        ///                   once attached it can begin to receive values.
-//        public func receive<Downstream: Subscriber>(subscriber: Downstream)
-//            where Downstream.Input == Value, Downstream.Failure == Never
-//        {
-//            subject.subscribe(subscriber)
-//        }
-//
-//        fileprivate let subject: OpenCombine.CurrentValueSubject<Value, Never>
-//
-//        fileprivate init(_ output: Output) {
-//            subject = .init(output)
-//        }
-//    }
-//
-//    private var value: Value
-//
-//    /// The property that can be accessed with the
-//    /// `$` syntax and allows access to the `Publisher`
-//    public var projectedValue: Publisher {
-//        mutating get {
-//            if let publisher = publisher {
-//                return publisher
-//            }
-//            let publisher = Publisher(value)
-//            self.publisher = publisher
-//            return publisher
-//        }
-//    }
-//
-//    @available(*, unavailable, message:
-//        "@Published is only available on properties of classes")
-//
-//    public var wrappedValue: Value {
-//        get { value }
-//        set {
-//            value = newValue
-//            publisher?.subject.value = newValue
-//        }
-//    }
-//
-//    private var publisher: Publisher?
-//
-//    @available(*, unavailable, message:
-//        "This subscript is unavailable in OpenCombine yet")
-//    public static subscript<EnclosingSelf: AnyObject>(
-//        _enclosingInstance object: EnclosingSelf,
-//        wrapped wrappedKeyPath: ReferenceWritableKeyPath<EnclosingSelf, Value>,
-//        storage storageKeyPath: ReferenceWritableKeyPath<EnclosingSelf, Published<Value>>
-//    ) -> Value {
-//        get { fatalError() }
-//        set { fatalError() }
-//    }
-//}
 
 extension AssetDataProvider: PHPhotoLibraryChangeObserver {
     private func handlePhotoLibraryChange(changeInstance: PHChange) {
@@ -332,62 +278,26 @@ extension AssetDataProvider: PHPhotoLibraryChangeObserver {
     }
 }
 
-extension AssetDataProvider {
-    
-    public func requestThumbnailImage(asset: PHAsset, size: CGSize) {
-        let options = PHImageRequestOptions()
-        self.cachingImageManager.requestImage(for: asset, targetSize: CGSize(), contentMode: .aspectFill, options: options) { (image, info) in
-            
-        }
-    }
-    
-//    - (NSInteger)requestThumbnailImageWithSize:(CGSize)size completion:(void (^)(UIImage *result, NSDictionary<NSString *, id> *info))completion {
-//
-//    PHImageRequestOptions *imageRequestOptions = [[PHImageRequestOptions alloc] init];
-//    imageRequestOptions.resizeMode = PHImageRequestOptionsResizeModeFast;
-//    imageRequestOptions.networkAccessAllowed = YES;
-//    // 在 PHImageManager 中，targetSize 等 size 都是使用 px 作为单位，因此需要对targetSize 中对传入的 Size 进行处理，宽高各自乘以 ScreenScale，从而得到正确的图片
-//    return [[[SCAssetsManager sharedInstance] phCachingImageManager] requestImageForAsset:_phAsset targetSize:CGSizeMake(size.width * ScreenScale, size.height * ScreenScale) contentMode:PHImageContentModeAspectFill options:imageRequestOptions resultHandler:^(UIImage *result, NSDictionary *info) {
-//        if (completion) {
-//            SC_DISPATCH_MAIN_QUEUE(^{
-//                completion([self imageWithRotation:result], info);
-//            });
-//        }
-//    }];
-    
-}
-
-
 public final class AssetGroup: NSObject, ObservableObject {
-    public let mode: AssetDataProvider.Mode
-
     public typealias ObserverClosure = (_ group: AssetGroup, _ changeDetails: PHFetchResultChangeDetails<PHAsset>) -> Void
     
-    let dataSourceIdentifier: String
-    let identifier: String
+    public let identifier: String
 
     private let collection: PHAssetCollection
-    public private(set) var count: Int = 0
-    @Published var title: String?
-    
-//    {
-//        return self.collection.localizedTitle ?? ""
-//    }
+    public dynamic private(set) var title: String?
+    public dynamic private(set) var lastAsset: PHAsset?
+    public dynamic private(set) var count: Int = 0
     public private(set) var assetFetchResult: PHFetchResult<PHAsset>
     public private(set) var observers: [AnyHashable: ObserverClosure] = [:]
     
-    public private(set) var last: AssetItem?
-
-    
-    
-
-    fileprivate init(dataSourceIdentifier: String, mode: AssetDataProvider.Mode, collection: PHAssetCollection) {
-        self.dataSourceIdentifier = dataSourceIdentifier
-        self.mode = mode
+    public let option: AssetDataProvider.Options
+    private var thumbnailImageRequestId: PHImageRequestID?
+    fileprivate init(context: AssetDataProvider.Options, collection: PHAssetCollection) {
+        self.option = context
         self.collection = collection
         self.identifier = collection.localIdentifier
         let options: PHFetchOptions = PHFetchOptions()
-        switch mode {
+        switch context.mode {
         case .image:
             options.predicate = NSPredicate(format: "mediaType == \(PHAssetMediaType.image.rawValue)", argumentArray: nil)
         case .video:
@@ -400,8 +310,8 @@ public final class AssetGroup: NSObject, ObservableObject {
         self.assetFetchResult = assetFetchResult
         self.count = assetFetchResult.count
         self.title = collection.localizedTitle
+        self.lastAsset = self.assetFetchResult.lastObject
         super.init()
-
     }
     
     public func addDataObserver(_ observer: @escaping ObserverClosure, forKey: AnyHashable) {
@@ -444,10 +354,6 @@ public final class AssetGroup: NSObject, ObservableObject {
             return false
         }
     }
-    
-//    public func publisher<Value>(for keyPath: KeyPath<AssetGroup, Value>, options: NSKeyValueObservingOptions = [.initial, .new]) -> NSObject.KeyValueObservingPublisher<AssetGroup, Value> {
-//
-//    }
     
 }
 

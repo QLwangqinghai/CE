@@ -27,35 +27,35 @@ import UIKit
  albumMyPhotoStream //用户的 iCloud 照片流
  albumCloudShared //用户使用 iCloud 共享的相册
  
- smartAlbumGeneric //文档解释为非特殊类型的相册，主要包括从 iPhoto 同步过来的相册。由于本人的 iPhoto 已被 Photos 替代，无法验证。不过，在我的 iPad mini 上是无法获取的，而下面类型的相册，尽管没有包含照片或视频，但能够获取到。
- smartAlbumPanoramas //全景照片 相机拍摄的全景照片
- smartAlbumVideos //视频 相机拍摄的视频
- smartAlbumFavorites //个人收藏 收藏文件夹
- smartAlbumTimelapses //延时摄影 延时视频文件夹，同时也会出现在视频文件夹中
+ smartAlbumGeneric //文档解释为非特殊类型的相册，主要包括从 iPhoto 同步过来的相册。
+ smartAlbumPanoramas //全景照片[图片] 相机拍摄的全景照片
+ smartAlbumVideos //视频[视频] 相机拍摄的视频
+ smartAlbumFavorites //个人收藏[视频 + 图片] 收藏文件夹
+ smartAlbumTimelapses //延时摄影[视频] 延时视频文件夹，同时也会出现在视频文件夹中
  smartAlbumAllHidden //已隐藏 包含隐藏照片或视频的文件夹
- smartAlbumRecentlyAdded //  最近项目 相机近期拍摄的照片或视频
- smartAlbumBursts //连拍快照 连拍模式拍摄的照片
- smartAlbumSlomoVideos //慢动作 Slomo 是 slow motion 的缩写，高速摄影慢动作解析，在该模式下，iOS 设备以120帧拍摄。
- smartAlbumUserLibrary //最近项目 相机相册，所有相机拍摄的照片或视频都会出现在该相册中，而且使用其他应用保存的照片也会出现在这里。
+ smartAlbumRecentlyAdded //  最近项目[视频 + 图片] 相机近期拍摄的照片或视频
+ smartAlbumBursts //连拍快照[图片] 连拍模式拍摄的照片
+ smartAlbumSlomoVideos //慢动作[视频] Slomo 是 slow motion 的缩写，高速摄影慢动作解析，在该模式下，iOS 设备以120帧拍摄。
+ smartAlbumUserLibrary //最近项目[视频 + 图片] 相机相册，所有相机拍摄的照片或视频都会出现在该相册中，而且使用其他应用保存的照片也会出现在这里。
  any //全部类型
 
      @available(iOS 9, *)
-     case smartAlbumSelfPortraits //自拍 视频 + 图片
+     case smartAlbumSelfPortraits //自拍[视频 + 图片]
 
      @available(iOS 9, *)
-     case smartAlbumScreenshots //截屏
+     case smartAlbumScreenshots //截屏[?]
 
      @available(iOS 10.2, *)
-     case smartAlbumDepthEffect //人像
+     case smartAlbumDepthEffect //人像[图片]
 
      @available(iOS 10.3, *)
-     case smartAlbumLivePhotos //实况照片
+     case smartAlbumLivePhotos //实况照片[图片]
 
      @available(iOS 11, *)
-     case smartAlbumAnimated //动图
+     case smartAlbumAnimated //动图[图片]
  
      @available(iOS 11, *)
-     case smartAlbumLongExposures //长曝光
+     case smartAlbumLongExposures //长曝光[图片]
  
      @available(iOS 13, *)
      case smartAlbumUnableToUpload

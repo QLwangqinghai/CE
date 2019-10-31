@@ -124,7 +124,6 @@ public class CachingImageManager {
                 if let number = info?[PHImageResultRequestIDKey] as? NSNumber {
                     rid = PHImageRequestID(truncating: number)
                 }
-
                 if let error = info?[PHImageErrorKey] as? NSError {
                     resultHandler(rid, image, error)
                 } else {

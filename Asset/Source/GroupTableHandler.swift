@@ -12,9 +12,12 @@ import Photos
 public class ThumbnailImageView: UIImageView {
     public var assetIdentifier: ThumbnailIdentifier?
     
+
+    
 }
 
-open class GroupTableCell: UITableViewCell {
+
+open class GroupCell: UICollectionViewCell {
     public struct Default {
         public static let thumbnailImageSize: CGSize = CGSize(width: 56, height: 56)
 
@@ -37,10 +40,10 @@ open class GroupTableCell: UITableViewCell {
     public let thumbnailImageView: ThumbnailImageView
     public let titleLabel: UILabel
 
-    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    public override init(frame: CGRect) {
         self.thumbnailImageView = ThumbnailImageView()
         self.titleLabel = UILabel()
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        super.init(frame: frame)
         self._compareBase()
     }
     required public init?(coder: NSCoder) {
@@ -68,18 +71,16 @@ open class GroupTableCell: UITableViewCell {
         self.titleLabel.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: 92).isActive = true
         self.titleLabel.rightAnchor.constraint(lessThanOrEqualTo: self.contentView.rightAnchor, constant: -16).isActive = true
         self.titleLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor).isActive = true
-        
     }
     public static var cellHeight: CGFloat = 60
 }
 
-open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSource {
-    
-    public static let thumbnailOptions: ThumbnailOptions = ThumbnailOptions(size: GroupTableCell.Default.thumbnailImageSize, contentMode: .aspectFill)
+open class GroupTableHandler: NSObject, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+    public static let thumbnailOptions: ThumbnailOptions = ThumbnailOptions(size: GroupCell.Default.thumbnailImageSize, contentMode: .aspectFill)
 
     let cachingImageManager: CachingImageManager = CachingImageManager()
     
-    public let tableView: UITableView
+    public let collectionView: UICollectionView
     
     public private(set) var items: [Group] = []
     private let observerKey: String = UUID().uuidString
@@ -87,26 +88,23 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
         didSet {
             if let dataProvider = self.dataProvider {
                 self.items = dataProvider.groupArray
-                self.tableView.reloadData()
+                self.collectionView.reloadData()
             } else {
                 self.items = []
-                self.tableView.reloadData()
+                self.collectionView.reloadData()
             }
         }
     }
     
     public override init() {
-        let tableView = UITableView(frame: UIScreen.main.bounds, style: .plain)
-        tableView.separatorStyle = .singleLine
-        tableView.estimatedRowHeight = 0
-        tableView.rowHeight = GroupTableCell.cellHeight
-        tableView.estimatedSectionHeaderHeight = 0
-        tableView.estimatedSectionFooterHeight = 0
-        tableView.register(GroupTableCell.classForCoder(), forCellReuseIdentifier: "GroupTableCell")
-        self.tableView = tableView
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.itemSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: 80.0);
+        let collectionView = UICollectionView(frame: UIScreen.main.bounds, collectionViewLayout: flowLayout)
+        collectionView.register(GroupCell.classForCoder(), forCellWithReuseIdentifier: "GroupCell")
+        self.collectionView = collectionView
         super.init()
-        tableView.delegate = self
-        tableView.dataSource = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
     
     public func update(dataProvider: GroupProvider?) {
@@ -115,23 +113,28 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
         }
     }
     
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("numberOfRowsInSection \(self.items.count)")
+    
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.items.count
     }
     
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("cellForRowAt \(indexPath)")
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let group = self.items[indexPath.row]
-        guard let cell: GroupTableCell = tableView.dequeueReusableCell(withIdentifier: "GroupTableCell") as? GroupTableCell else {
-            return UITableViewCell()
+        guard let cell: GroupCell = collectionView.dequeueReusableCell(withReuseIdentifier: "GroupCell", for: indexPath) as? GroupCell else {
+            return UICollectionViewCell()
         }
         cell.titleLabel.text = "\(group.title ?? "") (\(group.count))"
         let placeholder: UIImage? = nil
-        if let asset = group.lastAsset {
+        
+        self.setImage(thumbnailImageView: cell.thumbnailImageView, asset: group.lastAsset, placeholder: placeholder)
+        return cell
+    }
+
+    public func setImage(thumbnailImageView: ThumbnailImageView, asset: PHAsset?, placeholder: UIImage?) {
+        if let asset = asset {
             let option = GroupTableHandler.thumbnailOptions
             var changed = false
-            if let old = cell.thumbnailImageView.assetIdentifier {
+            if let old = thumbnailImageView.assetIdentifier {
                 if old.identifier != asset.localIdentifier || old.options != option {
                     changed = true
                 }
@@ -140,33 +143,29 @@ open class GroupTableHandler: NSObject, UITableViewDelegate, UITableViewDataSour
             }
             if changed {
                 let identifier = ThumbnailIdentifier(identifier: asset.localIdentifier, options: option)
-                cell.thumbnailImageView.assetIdentifier = identifier
+                thumbnailImageView.assetIdentifier = identifier
 
                 if let image = self.cachingImageManager.image(forKey: identifier) {
-                    cell.thumbnailImageView.image = image
+                    thumbnailImageView.image = image
                 } else {
-                    cell.thumbnailImageView.image = placeholder
+                    thumbnailImageView.image = placeholder
                     
                     self.cachingImageManager.requestThumbnailImage(asset: asset, options: option) { (_, image, error) in
                         if let e = error {
                             print(e)
                         }
-                        if cell.thumbnailImageView.assetIdentifier == identifier {
+                        if thumbnailImageView.assetIdentifier == identifier {
                             if let v = image {
-                                cell.thumbnailImageView.image = v
+                                thumbnailImageView.image = v
                             }
                         }
                     }
-                    
                 }
             }
         } else {
-            cell.thumbnailImageView.assetIdentifier = nil
-            cell.thumbnailImageView.image = placeholder
+            thumbnailImageView.assetIdentifier = nil
+            thumbnailImageView.image = placeholder
         }
-        
-        
-        return cell
     }
 }
 

@@ -65,14 +65,14 @@ class ViewController: UIViewController {
             PHPhotoLibrary.requestAuthorization { (status) in
                 if status == .authorized {
                     DispatchQueue.main.async {
-                        let option = DataOptions(mode: .video)
+                        let option = DataOptions(mode: .imageAndVideo)
                         self.handler.update(dataProvider: GroupProvider(option: option))
                     }
                 }
             }
         }
-        self.view.addSubview(self.handler.tableView)
-        self.handler.tableView.frame = self.view.bounds
+        self.view.addSubview(self.handler.collectionView)
+        self.handler.collectionView.frame = self.view.bounds
 
   
 //        let test = MyTableHandler()

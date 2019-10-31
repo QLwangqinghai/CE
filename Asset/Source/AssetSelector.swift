@@ -8,76 +8,66 @@
 
 import Photos
 
-public protocol AssetSelectorDelegate: NSObject {
-    func selector(_ selector: AssetSelector, shouldSelect: AssetItem, onResult:@escaping (SelectedAssetItem?) -> Void)
+public final class AssetSelector<ContextType, ResultType> {
+    public typealias Item = AssetItem<ContextType>
     
-    //删除成功返回true
-    func selector(_ selector: AssetSelector, shouldDeselect: SelectedAssetItem, onResult:@escaping (Bool) -> Void)
-}
-public final class AssetSelector: NSObject {
-    public weak var delegate: AssetSelectorDelegate?
+    public typealias ShouldSelect = (_ selector: AssetSelector<ContextType, ResultType>, _ item: Item, _ onResult:@escaping (ResultType?) -> Void) -> Void
+    public typealias ShouldDeselect = (_ selector: AssetSelector<ContextType, ResultType>, _ item: Item, _ onResult:@escaping (Bool) -> Void) -> Void
+
     
-    private var itemIdentifierSet: Set<String> = []
-    public private(set) var items: [SelectedAssetItem] = []
-    
-    public init(group: Group) {
-        super.init()
+    public struct SelectedItem {
+        public let sequence: Int
+        public let asset: Item
+        public let result: ResultType
     }
     
-    private func _append(selectedItem: SelectedAssetItem) {
-        self.items.append(selectedItem)
-        self.itemIdentifierSet.insert(selectedItem.asset.identifier)
-    }
-    private func _remove(forIdentifier: String) {
-        self.items = self.items.filter { (item) -> Bool in
-            return item.asset.identifier != forIdentifier
-        }
-        self.itemIdentifierSet.remove(forIdentifier)
+    private var sequence: Int = 1
+    public private(set) var items: [String: SelectedItem] = [:]
+    
+    public var shouldSelect: ShouldSelect
+    public var shouldDeselect: ShouldDeselect
+
+    public init(group: Group, shouldSelect: @escaping ShouldSelect, shouldDeselect: @escaping ShouldDeselect) {
+        self.shouldSelect = shouldSelect
+        self.shouldDeselect = shouldDeselect
     }
     
-    public func select(item: AssetItem) {
-        guard !self.itemIdentifierSet.contains(item.identifier) else {
+    private func _append(_ asset: Item, result: ResultType, forKey key: String) {
+        self.sequence += 1
+        let item = SelectedItem(sequence: self.sequence, asset: asset, result: result)
+        self.items[key] = item
+    }
+    private func _remove(forKey key: String) {
+        self.items[key] = nil
+    }
+    
+    public func select(asset: Item) {
+        guard nil == self.items[asset.identifier] else {
             return
         }
-        guard let delegate = self.delegate else {
-            return
-        }
-        delegate.selector(self, shouldSelect: item) {[weak self] (selectedItem) in
-            guard let item = selectedItem else {
-                return
-            }
+        let key = asset.identifier
+        self.shouldSelect(self, asset, {[weak self] (result) -> Void in
             guard let `self` = self else {
                 return
             }
-            self._append(selectedItem: item)
-        }
-    }
-    public func deselect(item: AssetItem) {
-        guard self.itemIdentifierSet.contains(item.identifier) else {
-            return
-        }
-        guard let delegate = self.delegate else {
-            return
-        }
-        
-        var selected: SelectedAssetItem? = nil
-        for selectedItem in self.items {
-            if selectedItem.asset.identifier == item.identifier {
-                selected = selectedItem
-                break
+            guard let value = result else {
+                return
             }
-        }
-        guard let selectedItem = selected else {
+            self._append(asset, result: value, forKey: key)
+        })
+    }
+    public func deselect(forKey key: String) {
+        guard let item = self.items[key] else {
             return
         }
-        delegate.selector(self, shouldDeselect: selectedItem) {[weak self] (result) in
+        self.shouldDeselect(self, item.asset, {[weak self] (result) -> Void in
             guard let `self` = self else {
                 return
             }
             if result {
-                self._remove(forIdentifier: selectedItem.asset.identifier)
+                self._remove(forKey: key)
             }
-        }
+        })
     }
 }
 

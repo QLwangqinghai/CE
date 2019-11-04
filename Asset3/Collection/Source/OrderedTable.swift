@@ -15,6 +15,31 @@ public enum TableChange<Element: Any> {
     case update([(Int, Element)])//(index, (order, value))
 }
 
+public struct Table<Value> {
+    public typealias Change = CollectionChange<Int, Value>
+    
+    fileprivate var array: [Value]
+    public var count: Int {
+        return self.array.count
+    }
+    
+    public init() {
+        self.array = []
+    }
+    public func load() -> [Value] {
+        return self.array
+    }
+    public subscript(index: Int) -> Value {
+        return self.array[index]
+    }
+
+    public func append(_ items: [Value]) {
+        
+    }
+    public func append(_ item: Value) {
+        
+    }
+}
 
 
 public struct OrderedTable<Key, Priority, Value> where Key: Hashable, Priority: Comparable, Value: Equatable {

@@ -15,7 +15,70 @@ public enum TableChange<Element: Any> {
     case update([(Int, Element)])//(index, (order, value))
 }
 
-public struct Table<Value> {
+public class ChangeCollection<Value> {
+    public typealias Change = CollectionChange<Int, Value>
+    
+//    fileprivate var array: [Value]
+//    public var count: Int {
+//        return self.array.count
+//    }
+//
+//    public init() {
+//        self.array = []
+//    }
+//    public func load() -> [Value] {
+//        return self.array
+//    }
+//    public subscript(index: Int) -> Value {
+//        return self.array[index]
+//    }
+//
+//    public func removeAll() -> Change {
+//        let result: [(Int, Value)] = self.array.enumerated().map { (index, value) -> (Int, Value) in
+//            return (index, value)
+//        }
+//        self.array.removeAll()
+//        return .remove(result)
+//    }
+//
+//    public func filter(_ body: (Value) -> Bool) -> Change {
+//        var array: [Value] = []
+//        var result: [(Int, Value)] = []
+//        for (index, value) in self.array.enumerated() {
+//            if body(value) {
+//                array.append(value)
+//            } else {
+//                result.append((index, value))
+//            }
+//        }
+//        self.array = array
+//        return .remove(result)
+//    }
+//    public func append(_ items: [Value]) -> Change {
+//        let count = self.array.count
+//        self.array.append(contentsOf: items)
+//        return .insert(items.enumerated().map { (index, value) -> (Int, Value) in
+//            return (index + count, value)
+//        })
+//    }
+//    public func append(_ item: Value) -> Change {
+//        let count = self.array.count
+//        self.array.append(item)
+//        return .insert([(count, item)])
+//    }
+//    public func prepend(_ items: [Value]) -> Change {
+//        self.array.insert(contentsOf: items, at: 0)
+//        return .insert(items.enumerated().map { (index, value) -> (Int, Value) in
+//            return (index, value)
+//        })
+//    }
+//    public func prepend(_ item: Value) -> Change {
+//        self.array.insert(item, at: 0)
+//        return .insert([(0, item)])
+//    }
+}
+
+public class Table<Value> {
     public typealias Change = CollectionChange<Int, Value>
     
     fileprivate var array: [Value]
@@ -33,11 +96,48 @@ public struct Table<Value> {
         return self.array[index]
     }
 
-    public func append(_ items: [Value]) {
-        
+    public func removeAll() -> Change {
+        let result: [(Int, Value)] = self.array.enumerated().map { (index, value) -> (Int, Value) in
+            return (index, value)
+        }
+        self.array.removeAll()
+        return .remove(result)
     }
-    public func append(_ item: Value) {
-        
+    
+    public func filter(_ body: (Value) -> Bool) -> Change {
+        var array: [Value] = []
+        var result: [(Int, Value)] = []
+        for (index, value) in self.array.enumerated() {
+            if body(value) {
+                array.append(value)
+            } else {
+                result.append((index, value))
+            }
+        }
+        self.array = array
+        return .remove(result)
+    }
+    public func append(_ items: [Value]) -> Change {
+        let count = self.array.count
+        self.array.append(contentsOf: items)
+        return .insert(items.enumerated().map { (index, value) -> (Int, Value) in
+            return (index + count, value)
+        })
+    }
+    public func append(_ item: Value) -> Change {
+        let count = self.array.count
+        self.array.append(item)
+        return .insert([(count, item)])
+    }
+    public func prepend(_ items: [Value]) -> Change {
+        self.array.insert(contentsOf: items, at: 0)
+        return .insert(items.enumerated().map { (index, value) -> (Int, Value) in
+            return (index, value)
+        })
+    }
+    public func prepend(_ item: Value) -> Change {
+        self.array.insert(item, at: 0)
+        return .insert([(0, item)])
     }
 }
 

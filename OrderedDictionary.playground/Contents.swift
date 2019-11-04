@@ -1,62 +1,43 @@
-//
-//  UniqueOrderedArray.swift
-//  TTable
-//
-//  Created by vector on 2019/10/24.
-//  Copyright © 2019 angfung. All rights reserved.
-//
 
 import Foundation
 
-public enum ArrayOrder {
+public enum Order {
     case ascending
     case descending
 }
 
-public enum ListChange<Element: Any> {
-    case remove([(Int, Element)])//(oldIndex, (oldOrder, value))
-    case insert([(Int, Element)])//(index, (order, value))
-    case update([(Int, Element)])//(index, (order, value))
+public enum CollectionChange<Key: Any, Element: Any> {
+    case remove([(Key, Element)])//(oldIndex, (oldOrder, value))
+    case insert([(Key, Element)])//(index, (order, value))
 }
 
-public protocol UniqueValue {
-    associatedtype UniqueIdentifier: Hashable
-    var uniqueIdentifier: UniqueIdentifier {
-        get
-    }
-}
-
-public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: UniqueValue {
-    public typealias Key = Value.UniqueIdentifier
-    
+public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Priority: Comparable {
     public struct Element {
-        public var identifier: Key {
-            return self.value.uniqueIdentifier
-        }
-        
-        public let order: Order
+        public let key: Key
+        public let priority: Priority
         public let value: Value
-        public init(order: Order, value: Value) {
-            self.order = order
+        public init(key: Key, priority: Priority, value: Value) {
+            self.key = key
+            self.priority = priority
             self.value = value
         }
     }
     
-    public typealias Change = ListChange<Element>
+    public typealias Compare = (_ lhs: Priority, _ rhs: Priority) -> Bool
+    public typealias Change = CollectionChange<Int, Element>
     
     public struct Updater {
-        public typealias Collection = UniqueOrderedArray<Order, Value>
+        public typealias Collection = PriorityDictionary<Key, Priority, Value>
         
         fileprivate let collection: Collection
         fileprivate var _dictionary: [Key: Element]
-        private(set) var compare: (_ lhs: Order, _ rhs: Order) -> Bool
+        private(set) var compare: Compare
 
-        fileprivate init(collection: Collection, compare: @escaping (_ lhs: Order, _ rhs: Order) -> Bool) {
+        fileprivate init(collection: Collection, compare: @escaping Compare) {
             self.compare = compare
             self.collection = collection
             self._dictionary = collection.dictionary.mapValues({ (index) -> Element in
-                let item = collection.array[index]
-                return Element(order: item.order, value: item.value)
+                return collection.array[index]
             })
         }
         
@@ -70,8 +51,8 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
         public mutating func removeItem(forKey: Key) {
             self._dictionary.removeValue(forKey: forKey)
         }
-        public mutating func replaceItem(_ item: Element) {
-            self._dictionary[item.identifier] = item
+        public mutating func replaceItem(_ item: Element, forKey key: Key) {
+            self._dictionary[key] = item
         }
         
         public mutating func filter(_ body: (Element) -> Bool) {
@@ -82,23 +63,24 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
         public mutating func reset(_ dictionary: [Key: Element]) {
             self._dictionary = dictionary
         }
-        public mutating func replace<S>(_ items: S) where Element == S.Element, S : Sequence {
+        public mutating func replace(_ items: [Key: Element]) {
             for item in items {
-                self._dictionary[item.identifier] = item
+                self._dictionary[item.key] = item.value
             }
         }
+                
         public mutating func removeAll() {
             self._dictionary.removeAll()
         }
         
         public mutating func finish() -> (Collection, [Change]) {
             let list: [Element] = self.collection.array
-            let compare: (_ lhs: Order, _ rhs: Order) -> Bool = self.compare
+            let compare: Compare = self.compare
             
             var removed: [(Int, Element)] = []
             var remain: [Key: Element] = [:]
             _ = self._dictionary.map { (item) -> Void in
-                remain[item.value.identifier] = item.value
+                remain[item.key] = item.value
             }
             
             var array: [Element] = []
@@ -107,9 +89,9 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
             
             //remove
             for (index, arrayItem) in list.enumerated() {
-                let key = arrayItem.identifier
+                let key = arrayItem.key
                 if let newItem = remain[key] {
-                    if arrayItem.order == newItem.order {
+                    if arrayItem.priority == newItem.priority {
                         remain.removeValue(forKey: key)
                         array.append(newItem)
                     } else {
@@ -127,7 +109,7 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
             var waitInserted: [Element] = remain.map { (item) -> Element in
                 return item.value
             }.sorted { (lhs, rhs) -> Bool in
-                return compare(lhs.order, rhs.order)
+                return compare(lhs.priority, rhs.priority)
             }
             
             if !waitInserted.isEmpty {
@@ -136,11 +118,11 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
                 
                 for item in array {
                     while let insertItem = waitInserted.first {
-                        if compare(insertItem.order, item.order) {
+                        if compare(insertItem.priority, item.priority) {
                             let insertIndex = resultArray.endIndex
                             resultArray.append(insertItem)
                             inserted.append((insertIndex, insertItem))
-                            dictionary[insertItem.identifier] = insertIndex
+                            dictionary[insertItem.key] = insertIndex
                             waitInserted.removeFirst()
                         } else {
                             break
@@ -148,14 +130,14 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
                     }
                     let insertIndex = resultArray.endIndex
                     resultArray.append(item)
-                    dictionary[item.identifier] = insertIndex
+                    dictionary[item.key] = insertIndex
                 }
                 
                 while let insertItem = waitInserted.first {
                     let insertIndex = resultArray.endIndex
                     resultArray.append(insertItem)
                     inserted.append((insertIndex, insertItem))
-                    dictionary[insertItem.identifier] = insertIndex
+                    dictionary[insertItem.key] = insertIndex
                     waitInserted.removeFirst()
                 }
                 
@@ -183,10 +165,10 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
         return self.array.count
     }
     
-    public private(set) var order: ArrayOrder {
+    public private(set) var order: Order {
         didSet {
             let _order = self.order
-            self.compare = { (_ lhs: Order, _ rhs: Order) -> Bool in
+            self.compare = { (_ lhs: Priority, _ rhs: Priority) -> Bool in
                 switch _order {
                 case .ascending:
                     return lhs < rhs
@@ -196,13 +178,13 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
             }
         }
     }
-    private(set) var compare: (_ lhs: Order, _ rhs: Order) -> Bool
-    public init(order: ArrayOrder = .ascending) {
+    private(set) var compare: (_ lhs: Priority, _ rhs: Priority) -> Bool
+    public init(order: Order = .ascending) {
         self.order = order
         self.array = []
         self.dictionary = [:]
         
-        self.compare = { (_ lhs: Order, _ rhs: Order) -> Bool in
+        self.compare = { (_ lhs: Priority, _ rhs: Priority) -> Bool in
             switch order {
             case .ascending:
                 return lhs < rhs
@@ -220,6 +202,9 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
     public func object(at index: Int) -> Value {
         return self.array[index].value
     }
+    public subscript(index: Int) -> Element {
+        return self.array[index]
+    }
     public subscript(key: Key) -> Element? {
         guard let index = self.dictionary[key] else {
             return nil
@@ -231,26 +216,25 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
     }
 }
 
-public class UniqueOrderedList<Order, Value> where Order: Comparable, Value: UniqueValue {
-    public typealias Key = Value.UniqueIdentifier
-    
-    public typealias Updater = UniqueOrderedArray<Order, Value>.Updater
 
-    public typealias Storage = UniqueOrderedArray<Order, Value>
-    public typealias Change = ListChange<Storage.Element>
-    public typealias ObserverClosure = (_ entity: UniqueOrderedList<Order, Value>, _ changes: [Change]) -> Void
+public class PriorityCollection<Key, Priority, Value> where Key: Hashable, Priority: Comparable {
+
+    public typealias Storage = PriorityDictionary<Key, Priority, Value>
+    public typealias Updater = Storage.Updater
+    public typealias Change = CollectionChange<Int, Storage.Element>
+    public typealias ObserverClosure = (_ entity: PriorityCollection<Key, Priority, Value>, _ changes: [Change]) -> Void
 
     public private(set) var storage: Storage
 
     private let contentObserveKey: String = UUID().uuidString
     private var observers: [AnyHashable: ObserverClosure] = [:]
-    public private(set) var order: ArrayOrder
-    
-    public init(order: ArrayOrder = .ascending) {
+    public private(set) var order: Order
+
+    public init(order: Order = .ascending) {
         self.order = order
         self.storage = Storage(order: order)
     }
-    
+
     public func observeList(didChange: @escaping ObserverClosure, forKey: AnyHashable) {
         self.observers[forKey] = didChange
     }

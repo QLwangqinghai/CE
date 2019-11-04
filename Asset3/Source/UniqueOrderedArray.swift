@@ -16,7 +16,6 @@ public enum ArrayOrder {
 public enum ListChange<Element: Any> {
     case remove([(Int, Element)])//(oldIndex, (oldOrder, value))
     case insert([(Int, Element)])//(index, (order, value))
-    case update([(Int, Element)])//(index, (order, value))
 }
 
 public protocol UniqueValue {
@@ -87,6 +86,7 @@ public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: U
                 self._dictionary[item.identifier] = item
             }
         }
+                
         public mutating func removeAll() {
             self._dictionary.removeAll()
         }

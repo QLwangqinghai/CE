@@ -14,6 +14,9 @@ class ViewController: UIViewController {
 //    var aa: UniqueOrderedArray2<UniqueElement<Int, Section>>?
 
     var test2: OrderedListHandler? = nil
+
+    let handler: GroupTableHandler = GroupTableHandler()
+    
     var array: [Any] = []
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,7 +60,19 @@ class ViewController: UIViewController {
         button.setTitle("ajklfjsa", for: .normal)
         
         button.frame = CGRect.init(x: 100, y: 100, width: 40, height: 10)
-
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            PHPhotoLibrary.requestAuthorization { (status) in
+                if status == .authorized {
+                    DispatchQueue.main.async {
+                        let option = ProviderOptions(mode: .imageAndVideo)
+                        self.handler.update(dataProvider: GroupProvider(option: option))
+                    }
+                }
+            }
+        }
+        self.view.addSubview(self.handler.collectionView)
+        self.handler.collectionView.frame = self.view.bounds
 
   
 //        let test = MyTableHandler()
@@ -65,10 +80,10 @@ class ViewController: UIViewController {
 //        self.view.addSubview(test.tableView)
 //        test.tableView.frame = self.view.bounds
         
-        let test2 = OrderedListHandler()
-        self.test2 = test2
-        self.view.addSubview(test2.tableView)
-        test2.tableView.frame = self.view.bounds
+//        let test2 = OrderedListHandler()
+//        self.test2 = test2
+//        self.view.addSubview(test2.tableView)
+//        test2.tableView.frame = self.view.bounds
 
         
     }
@@ -84,7 +99,21 @@ class ViewController: UIViewController {
     
 }
 
-public class Section: CustomDebugStringConvertible, Equatable {
+
+
+
+
+
+public class Section: UniqueValue, CustomDebugStringConvertible {
+    public typealias UniqueIdentifier = String
+
+    public var uniqueIdentifier: UniqueIdentifier {
+        return self.identifier
+    }
+
+    public func observeContent(onChanged:(_ key: UniqueIdentifier) -> Void, forKey:String) {}
+    public func unobserveContent(forKey:String) {}
+    
     public let identifier: String
     public var date: Date
     public init(identifier: String, date: Date) {
@@ -95,15 +124,13 @@ public class Section: CustomDebugStringConvertible, Equatable {
     public var debugDescription: String {
         return "(\(self.identifier), \(self.date))"
     }
-    public static func == (lhs: Section, rhs: Section) -> Bool {
-        return lhs === rhs
-    }
+    
 }
 
 
 open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSource {
     public let tableView: UITableView
-    private let orderedList: PriorityCollection<String, Int, Section> = PriorityCollection<String, Int, Section>(order: .descending)
+    private let orderedList: UniqueOrderedList<Int, Section> = UniqueOrderedList<Int, Section>(order: .descending)
     private var items: [Section] = []
     private var sectionMap: [String: Section] = [:]
     private let observerKey: String = UUID().uuidString
@@ -148,16 +175,7 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
             guard list === self.orderedList else {
                 return
             }
-            let count = self.items.count
             self.items = list.storage.load()
-            
-            var updateIndexs: Set<Int> = []
-
-            if count > 0 {
-                for _ in 0 ..< 100 {
-                    updateIndexs.insert(Int(arc4random()) % count)
-                }
-            }
             
 //            print("begin-changes")
             self.tableView.performBatchUpdates({
@@ -180,27 +198,12 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
                             break
                         }
                         let indexPaths = items.map { (item) -> IndexPath in
-                            updateIndexs.remove(item.0)
                             return IndexPath(row: item.0, section: 0)
                         }
                         self.tableView.deleteRows(at: indexPaths, with: .automatic)
-                    case .update(let items):
-                        guard items.count > 0 else {
-                            break
-                        }
-                        let indexPaths = items.map { (item) -> IndexPath in
-                            return IndexPath(row: item.0, section: 0)
-                        }
-
-                        self.tableView.reloadRows(at: indexPaths, with: UITableView.RowAnimation.automatic)
                     }
                 }
 
-                let indexPaths = updateIndexs.map { (item) -> IndexPath in
-                    return IndexPath(row: item, section: 0)
-                }
-                self.tableView.reloadRows(at: indexPaths, with: UITableView.RowAnimation.automatic)
-                
 //                print("endUpdates")
             }) { (result) in
 //                print("performBatchUpdates result: \(result)")
@@ -216,11 +219,13 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
             self.orderedList.update { (updater) in
                 var items: [Section] = []
                 for _ in 0 ..< 30 {
-                    let section = Section(identifier: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 200) * -1, since: Date()))
+                    
+                    let section = self.section(of: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 200) * -1, since: Date()))
                     items.append(section)
                 }
-                updater.replace(items.map({ (section) -> PriorityCollection<String, Int, Section>.Storage.Element in
-                    return PriorityCollection<String, Int, Section>.Storage.Element(key: section.identifier, priority: Int(section.date.timeIntervalSince1970 * 10000), value: section)
+                
+                updater.replace(items.map({ (section) -> UniqueOrderedList<Int, Section>.Storage.Element in
+                    return UniqueOrderedList<Int, Section>.Storage.Element(order: Int(section.date.timeIntervalSince1970 * 10000), value: section)
                 }))
                 print("1 - replace \(items)")
             }
@@ -256,7 +261,7 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
                 let mcount = Int(sqrt(Double(arc4random() % 50)) - 1)
                 if mcount > 0 {
                     for _ in 0 ..< mcount {
-                        let section = Section(identifier: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 10000) * -1 / 10000.0, since: Date()))
+                        let section = self.section(of: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 10000) * -1 / 10000.0, since: Date()))
                         items.append(section)
                     }
                 }
@@ -265,8 +270,8 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
                     return !removed.contains(item.value.identifier)
                 })
 
-                updater.replace(items.map({ (section) -> PriorityCollection<String, Int, Section>.Storage.Element in
-                    return PriorityCollection<String, Int, Section>.Storage.Element(key: section.identifier, priority: Int(section.date.timeIntervalSince1970 * 10000), value: section)
+                updater.replace(items.map({ (section) -> UniqueOrderedList<Int, Section>.Storage.Element in
+                    return UniqueOrderedList<Int, Section>.Storage.Element(order: Int(section.date.timeIntervalSince1970 * 10000), value: section)
                 }))
                 print("aa - replace \(items)")
             }
@@ -277,26 +282,26 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
                 var removed: Set<String> = []
                 var items: [Section] = []
 
-                for _ in 0 ..< 50 {
+                for _ in 0 ..< 500 {
                     removed.insert("\(arc4random() % 3000)")
                 }
                 
-                for _ in 0 ..< 100 {
-                    let section = Section(identifier: "\(arc4random() % 3000)", date: Date(timeInterval: TimeInterval(arc4random() % 10000) * -1 / 10000.0, since: Date()))
+                for _ in 0 ..< 1000 {
+                    let section = self.section(of: "\(arc4random() % 3000)", date: Date(timeInterval: TimeInterval(arc4random() % 10000) * -1 / 10000.0, since: Date()))
                     items.append(section)
                 }
                 
                 updater.filter({ item -> Bool in
                     return !removed.contains(item.value.identifier)
                 })
-                updater.replace(items.map({ (section) -> PriorityCollection<String, Int, Section>.Storage.Element in
-                    return PriorityCollection<String, Int, Section>.Storage.Element(key: section.identifier, priority: Int(section.date.timeIntervalSince1970 * 10000), value: section)
+                updater.replace(items.map({ (section) -> UniqueOrderedList<Int, Section>.Storage.Element in
+                    return UniqueOrderedList<Int, Section>.Storage.Element(order: Int(section.date.timeIntervalSince1970 * 10000), value: section)
                 }))
             }
         }
         
         for index in 0 ..< 20 {
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(5 * (index + 1))) {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(3 * (index + 1))) {
                 bb()
             }
         }

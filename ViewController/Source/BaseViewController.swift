@@ -8,6 +8,18 @@
 
 import UIKit
 
+public class Controler: NSObject {
+    
+    
+    
+}
+public class ControlerA<Value>: Controler {
+    var array: [Value] = []
+    
+    
+}
+
+
 class BaseViewController: UIViewController {
 
     override func viewDidLoad() {

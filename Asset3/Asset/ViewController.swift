@@ -104,7 +104,7 @@ class ViewController: UIViewController {
 
 
 
-public class Section: UniqueValue, CustomDebugStringConvertible {
+public class Session: UniqueValue, CustomDebugStringConvertible {
     public typealias UniqueIdentifier = String
 
     public var uniqueIdentifier: UniqueIdentifier {
@@ -130,9 +130,9 @@ public class Section: UniqueValue, CustomDebugStringConvertible {
 
 open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSource {
     public let tableView: UITableView
-    private let orderedList: UniqueOrderedList<Int, Section> = UniqueOrderedList<Int, Section>(order: .descending)
-    private var items: [Section] = []
-    private var sectionMap: [String: Section] = [:]
+    private let orderedList: UniqueOrderedList<Int, Session> = UniqueOrderedList<Int, Session>(order: .descending)
+    private var items: [Session] = []
+    private var sectionMap: [String: Session] = [:]
     private let observerKey: String = UUID().uuidString
 
     private let dateFormatter: DateFormatter = {
@@ -141,12 +141,12 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
         return result
     }()
     
-    func section(of: String, date: Date) -> Section {
+    func section(of: String, date: Date) -> Session {
         if let s = self.sectionMap[of] {
             s.date = date
             return s
         } else {
-            let s = Section(identifier: of, date: date)
+            let s = Session(identifier: of, date: date)
             self.sectionMap[of] = s
             return s
         }
@@ -217,15 +217,15 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
         
         operations.append {
             self.orderedList.update { (updater) in
-                var items: [Section] = []
+                var items: [Session] = []
                 for _ in 0 ..< 30 {
                     
                     let section = self.section(of: "\(arc4random() % 50)", date: Date(timeInterval: TimeInterval(arc4random() % 200) * -1, since: Date()))
                     items.append(section)
                 }
                 
-                updater.replace(items.map({ (section) -> UniqueOrderedList<Int, Section>.Storage.Element in
-                    return UniqueOrderedList<Int, Section>.Storage.Element(order: Int(section.date.timeIntervalSince1970 * 10000), value: section)
+                updater.replace(items.map({ (section) -> UniqueOrderedList<Int, Session>.Storage.Element in
+                    return UniqueOrderedList<Int, Session>.Storage.Element(order: Int(section.date.timeIntervalSince1970 * 10000), value: section)
                 }))
                 print("1 - replace \(items)")
             }
@@ -248,7 +248,7 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
         func aa() {
             self.orderedList.update { (updater) in
                 var removed: Set<String> = []
-                var items: [Section] = []
+                var items: [Session] = []
 
                 let count = Int(sqrt(Double(arc4random() % 50)) - 1)
                 if count > 0 {
@@ -270,8 +270,8 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
                     return !removed.contains(item.value.identifier)
                 })
 
-                updater.replace(items.map({ (section) -> UniqueOrderedList<Int, Section>.Storage.Element in
-                    return UniqueOrderedList<Int, Section>.Storage.Element(order: Int(section.date.timeIntervalSince1970 * 10000), value: section)
+                updater.replace(items.map({ (section) -> UniqueOrderedList<Int, Session>.Storage.Element in
+                    return UniqueOrderedList<Int, Session>.Storage.Element(order: Int(section.date.timeIntervalSince1970 * 10000), value: section)
                 }))
                 print("aa - replace \(items)")
             }
@@ -280,7 +280,7 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
         func bb() {
             self.orderedList.update { (updater) in
                 var removed: Set<String> = []
-                var items: [Section] = []
+                var items: [Session] = []
 
                 for _ in 0 ..< 500 {
                     removed.insert("\(arc4random() % 3000)")
@@ -294,8 +294,8 @@ open class OrderedListHandler: NSObject, UITableViewDelegate, UITableViewDataSou
                 updater.filter({ item -> Bool in
                     return !removed.contains(item.value.identifier)
                 })
-                updater.replace(items.map({ (section) -> UniqueOrderedList<Int, Section>.Storage.Element in
-                    return UniqueOrderedList<Int, Section>.Storage.Element(order: Int(section.date.timeIntervalSince1970 * 10000), value: section)
+                updater.replace(items.map({ (section) -> UniqueOrderedList<Int, Session>.Storage.Element in
+                    return UniqueOrderedList<Int, Session>.Storage.Element(order: Int(section.date.timeIntervalSince1970 * 10000), value: section)
                 }))
             }
         }

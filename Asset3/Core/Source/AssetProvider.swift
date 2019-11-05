@@ -9,10 +9,9 @@
 import Photos
 import UIKit
 
-public protocol AssetItemBuilder {
-    associatedtype ItemContext
-    associatedtype ItemContent
-    func item(asset: PHAsset) -> AssetItem<ItemContext>
+public protocol AssetBuilder {
+    associatedtype ItemType: AssetItem
+    func item(asset: ItemType.ContentType) -> ItemType
 }
 
 public protocol Request: AnyObject {
@@ -27,23 +26,74 @@ public protocol Request: AnyObject {
 
 public typealias ImageRequestResult = RequestResult<UIImage, NSError>
 
-public protocol AssetManager {
-    associatedtype ItemContext
-    associatedtype ItemContent
+public protocol AssetDataSource: class {
+    associatedtype ItemType: AssetItem
+    associatedtype SessionType: AssetSession
 
-    func cachedThumbnailImage(_ identfier: ThumbnailIdentifier) -> UIImage?
-    @discardableResult func requestThumbnailImage(asset: AssetItem<ItemContext>, options: ThumbnailOptions, resultHandler: @escaping (_ result: ImageRequestResult) -> Void) -> Request
+    var sessions: [SessionType] {
+        get
+    }
+    
 }
 
-open class AssetProvider<BuilderType, ManagerType, ItemContent, ItemContext> where BuilderType: AssetItemBuilder, BuilderType.ItemContext == ItemContext, BuilderType.ItemContent == ItemContent, ManagerType: AssetManager, ManagerType.ItemContext == ItemContext, ManagerType.ItemContent == ItemContent {
+
+public protocol AssetItem: class {
+    associatedtype ContentType
+    associatedtype ContextType
     
-    public typealias Provider = AssetProvider<BuilderType, ManagerType, ItemContent, ItemContext>
-    public typealias Group = AssetGroup<BuilderType, ManagerType, ItemContext>
-    public enum GroupArrayChange {
-        case remove([(Int, Group)])
-        case insert([(Int, Group)])
+    init(asset: ContentType, context: ContextType)
+    
+}
+
+public protocol AssetSession: class {
+    associatedtype ItemType: AssetItem
+
+    var title: String? {
+        get
     }
-    public typealias GroupArrayObserverClosure = (_ entity: Provider, _ changes: [GroupArrayChange]) -> Void
+    var lastAsset: ItemType? {
+        get
+    }
+    var count: Int {
+        get
+    }
+}
+
+//public final class AssetItem<ContentType, ContextType> {
+//    associatedtype ItemContent
+//    associatedtype ItemContext
+//
+//    public let asset: ContentType
+//    public var context: ContextType
+//    public var identifier: String {
+//        return ""
+////        return self.asset.localIdentifier
+//    }
+//    public init(asset: ContentType, context: ContextType) {
+//        self.asset = asset
+//        self.context = context
+//    }
+//}
+
+
+public protocol AssetManager {
+    associatedtype ItemType: AssetItem
+
+    func cachedThumbnailImage(_ identfier: ThumbnailIdentifier) -> UIImage?
+    @discardableResult func requestThumbnailImage(asset: ItemType, options: ThumbnailOptions, resultHandler: @escaping (_ result: ImageRequestResult) -> Void) -> Request
+}
+
+open class AssetProvider<DataSource, Manager, ItemType>
+where DataSource: AssetDataSource, DataSource.ItemType == ItemType,
+Manager: AssetManager, Manager.ItemType == ItemType {
+    
+    public typealias Provider = AssetProvider<DataSource, Manager, ItemType>
+    public typealias Session = DataSource.SessionType
+    public enum SessionArrayChange {
+        case remove([(Int, Session)])
+        case insert([(Int, Session)])
+    }
+    public typealias GroupArrayObserverClosure = (_ entity: Provider, _ changes: [SessionArrayChange]) -> Void
 
     public let collectionProvider: AssetChangeObserver
     private var groupArrayObservers: [AnyHashable: GroupArrayObserverClosure] = [:]
@@ -57,10 +107,10 @@ open class AssetProvider<BuilderType, ManagerType, ItemContent, ItemContext> whe
     public private(set) var groupDictionary: [String: Group] = [:]
     
     public let option: ProviderOptions
-    public let builder: BuilderType
-    public let manager: ManagerType
+    public let builder: Builder
+    public let manager: Manager
     
-    public init(option: ProviderOptions, builder: BuilderType, manager: ManagerType) {
+    public init(option: ProviderOptions, builder: Builder, manager: Manager) {
         self.option = option
         self.builder = builder
         self.manager = manager
@@ -167,7 +217,7 @@ public final class ProviderContext {
 //    public func asset(asset: PHAsset) -> AssetItem<>
 }
 
-extension ProviderContext: AssetItemBuilder {
+extension ProviderContext: AssetBuilder {
     public typealias ItemContext = AssetContext
     public func item(asset: PHAsset) -> AssetItem<AssetContext> {
         if let result = self.dictionary[asset.localIdentifier] {
@@ -178,19 +228,19 @@ extension ProviderContext: AssetItemBuilder {
     }
 }
 
-public final class AssetItem<ContextType> {
-    public let asset: PHAsset
-    public var context: ContextType
-    public var identifier: String {
-        return self.asset.localIdentifier
-    }
-    public init(asset: PHAsset, context: ContextType) {
-        self.asset = asset
-        self.context = context
-    }
-}
+//public final class AssetItem<ContextType> {
+//    public let asset: PHAsset
+//    public var context: ContextType
+//    public var identifier: String {
+//        return self.asset.localIdentifier
+//    }
+//    public init(asset: PHAsset, context: ContextType) {
+//        self.asset = asset
+//        self.context = context
+//    }
+//}
 
-public final class AssetGroup<BuilderType, ManagerType, ItemContext> where BuilderType: AssetItemBuilder, BuilderType.ItemContext == ItemContext {
+public final class AssetGroup<BuilderType, ManagerType, ItemContext> where BuilderType: AssetBuilder, BuilderType.ItemContext == ItemContext {
     public typealias ObserverClosure = (_ group: AssetGroup, _ changeDetails: PHFetchResultChangeDetails<PHAsset>) -> Void
     
     public let identifier: String

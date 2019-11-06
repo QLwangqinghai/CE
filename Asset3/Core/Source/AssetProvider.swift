@@ -83,11 +83,11 @@ public protocol AssetManager {
     @discardableResult func requestThumbnailImage(asset: ItemType, options: ThumbnailOptions, resultHandler: @escaping (_ result: ImageRequestResult) -> Void) -> Request
 }
 
-open class AssetProvider<DataSource, Manager, ItemType>
-where DataSource: AssetDataSource, DataSource.ItemType == ItemType,
-Manager: AssetManager, Manager.ItemType == ItemType {
+open class AssetProvider<DataSource, Manager, Item>
+where DataSource: AssetDataSource, DataSource.ItemType == Item,
+Manager: AssetManager, Manager.ItemType == Item {
     
-    public typealias Provider = AssetProvider<DataSource, Manager, ItemType>
+    public typealias Provider = AssetProvider<DataSource, Manager, Item>
     public typealias Session = DataSource.SessionType
     public enum SessionArrayChange {
         case remove([(Int, Session)])
@@ -103,14 +103,14 @@ Manager: AssetManager, Manager.ItemType == ItemType {
     public var identifier: String {
         return self.option.identifier
     }
-    public private(set) var groupArray: [Group] = []
-    public private(set) var groupDictionary: [String: Group] = [:]
+    public private(set) var groupArray: [Session] = []
+    public private(set) var groupDictionary: [String: Session] = [:]
     
     public let option: ProviderOptions
     public let builder: Builder
     public let manager: Manager
     
-    public init(option: ProviderOptions, builder: Builder, manager: Manager) {
+    public init(option: ProviderOptions, dataSource: DataSource, manager: Manager) {
         self.option = option
         self.builder = builder
         self.manager = manager

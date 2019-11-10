@@ -226,17 +226,15 @@ public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Compara
     public func object(at index: Int) -> Value {
         return self.array[index].value
     }
-    public subscript(index: Int) -> Row {
-        return self.array[index]
+    public func index(of key: Key) -> Int? {
+        return self.dictionary[key]
     }
+    
     public subscript(key: Key) -> Row? {
         guard let index = self.dictionary[key] else {
             return nil
         }
         return self.array[index]
-    }
-    public func index(of key: Key) -> Int? {
-        return self.dictionary[key]
     }
 }
 

@@ -19,7 +19,29 @@ public enum TableChange<Element: Any> {
     case update([(Int, Element)])
 }
 
-public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Comparable, Value: Equatable {
+public protocol TableCollection {
+    associatedtype Row
+    
+    var rows: [Row] {
+        get
+    }
+    
+    typealias ObserveClosure = (_ entity: Self, _ changes: [TableChange<Row>]) -> Void
+
+    func observeTable(didChange: @escaping ObserveClosure, forKey: AnyHashable)
+    func unobserveTable(forKey: AnyHashable)
+}
+
+
+public class Table<Key, Priority, Value>/*: TableCollection*/ where Key: Hashable, Priority: Comparable, Value: Equatable {
+//    public func observeList(didChange: @escaping (TableStorage<Key, Priority, Value>, [TableChange<TableStorage<Key, Priority, Value>.Row>]) -> Void, forKey: AnyHashable) {
+//
+//    }
+//
+//    public func unobserveList(forKey: AnyHashable) {
+//
+//    }
+    
     public struct Row {
         public let key: Key
         public let priority: Priority
@@ -45,7 +67,7 @@ public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Compara
             self.compare = compare
             self.collection = collection
             self._dictionary = collection.dictionary.mapValues({ (index) -> Row in
-                return collection.array[index]
+                return collection.rows[index]
             })
         }
         
@@ -87,7 +109,7 @@ public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Compara
         }
         
         public mutating func finish() -> (Collection, [Change]) {
-            let list: [Row] = self.collection.array
+            let list: [Row] = self.collection.rows
             let compare: Compare = self.compare
             
             var updated: [(Int, Row)] = []
@@ -172,7 +194,7 @@ public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Compara
                 }
             }
             var storage = self.collection
-            storage.array = array
+            storage.rows = array
             storage.dictionary = dictionary
             return (storage, changes)
         }
@@ -182,11 +204,12 @@ public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Compara
         return Updater(collection: self, compare: self.compare)
     }
 
-    fileprivate var array: [Row]
+    public fileprivate(set) var rows: [Row]
     fileprivate var dictionary: [Key: Int]
+//    private var observers: [AnyHashable: ObserverClosure] = [:]
 
     public var count: Int {
-        return self.array.count
+        return self.rows.count
     }
     
     public private(set) var order: TableOrder {
@@ -205,9 +228,8 @@ public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Compara
     private(set) var compare: (_ lhs: Priority, _ rhs: Priority) -> Bool
     public init(order: TableOrder = .ascending) {
         self.order = order
-        self.array = []
+        self.rows = []
         self.dictionary = [:]
-        
         self.compare = { (_ lhs: Priority, _ rhs: Priority) -> Bool in
             switch order {
             case .ascending:
@@ -218,13 +240,20 @@ public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Compara
         }
     }
     
+    public init(table: Table<Key, Priority, Value>) {
+        self.order = table.order
+        self.rows = table.rows
+        self.dictionary = table.dictionary
+        self.compare = table.compare
+    }
+    
     public func load() -> [Value] {
-        return self.array.map { (item) -> Value in
+        return self.rows.map { (item) -> Value in
             return item.value
         }
     }
     public func object(at index: Int) -> Value {
-        return self.array[index].value
+        return self.rows[index].value
     }
     public func index(of key: Key) -> Int? {
         return self.dictionary[key]
@@ -234,7 +263,7 @@ public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Compara
         guard let index = self.dictionary[key] else {
             return nil
         }
-        return self.array[index]
+        return self.rows[index]
     }
 }
 

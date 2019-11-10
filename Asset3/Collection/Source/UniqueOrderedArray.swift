@@ -14,9 +14,9 @@ public enum ArrayOrder {
 }
 
 public enum ListChange<Element: Any> {
-    case remove([(Int, Element)])//(oldIndex, (oldOrder, value))
-    case insert([(Int, Element)])//(index, (order, value))
-    case update([(Int, Element)])//(index, (order, value))
+    case remove([(Int, Element)])
+    case insert([(Int, Element)])
+    case update([(Int, Element)])
 }
 
 public protocol UniqueValue {

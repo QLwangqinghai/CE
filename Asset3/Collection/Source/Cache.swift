@@ -199,7 +199,6 @@ open class MemoryCache<KeyType : AnyObject & Hashable, ObjectType : AnyObject> {
             }
         }
         _totalCost = 0
-                
         
         self.weakDictionary = self.weakDictionary.compactMapValues { (entry) -> WeakContainer<ObjectType>? in
             if nil == entry.value {

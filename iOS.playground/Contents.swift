@@ -1,7 +1,6 @@
-import UIKit
 
 import Photos
-import UIKit
+//import UIKit
 
 public enum PhotoMode {
     case image
@@ -20,17 +19,8 @@ public final class ProviderOptions {
     }
 }
 
-
-//
-//  Base.swift
-//  Core
-//
-//  Created by vector on 2019/11/4.
-//  Copyright © 2019 angfung. All rights reserved.
-//
-
 import Foundation
-import UIKit
+//import UIKit
 
 public enum RequestResult<SuccessType, ErrorType> {
     case success(SuccessType)
@@ -136,7 +126,11 @@ public protocol AssetDataSource: class {
 public protocol AssetItem: class {
     associatedtype ContentType
     associatedtype ContextType
-    
+    associatedtype Identifier: Hashable
+
+    var identifier: Identifier {
+        get
+    }
     init(asset: ContentType, context: ContextType)
     
 }
@@ -158,6 +152,12 @@ public protocol AssetSession: class {
     var count: Int {
         get
     }
+    
+    
+    
+    
+    
+    
 }
 
 //public final class AssetItem<ContentType, ContextType> {
@@ -190,6 +190,8 @@ Manager: AssetManager, Manager.ItemType == Item {
     
     public typealias Provider = AssetProvider<DataSource, Manager, Item>
     public typealias Session = DataSource.SessionType
+    public typealias SessionKey = DataSource.SessionType.Identifier
+
     public enum SessionArrayChange {
         case remove([(Int, Session)])
         case insert([(Int, Session)])
@@ -214,7 +216,7 @@ Manager: AssetManager, Manager.ItemType == Item {
         self.option = option
         self.dataSource = dataSource
         self.manager = manager
-        self._loadAllGroups()
+        self.loadAllSessions()
     }
     
     public func observeGroupArray(didChange: @escaping GroupArrayObserverClosure, forKey: AnyHashable) {
@@ -224,51 +226,51 @@ Manager: AssetManager, Manager.ItemType == Item {
         self.groupArrayObservers.removeValue(forKey: forKey)
     }
     
-//    private func _reloadAllGroups() -> [GroupArrayChange] {
-//        let collections = AssetCollectionProvider.fetchAssetCollections(mode: self.option.mode)
-//        var identifiers: Set<String> = []
-//        for group in self.groupArray {
-//            identifiers.insert(group.identifier)
-//        }
-//        var removed: [(Int, Group)] = []
-//        var inserted: [(Int, Group)] = []
-//        var groups: [Group] = []
-//        var results: [Group] = []
-//
-//        for collection in collections {
-//            let key = collection.localIdentifier
-//            if identifiers.contains(key) {
-//                identifiers.remove(key)
-//            } else {
-//                let group = AssetGroup(option: self.option, builder: self.builder, manager: self.manager, collection: collection)
-//                self.groupDictionary[key] = group
-//                groups.append(group)
-//            }
-//        }
-//        for (index, group) in self.groupArray.enumerated() {
-//            let key = group.identifier
-//            if identifiers.contains(key) {
-//                removed.append((index, group))
-//            } else {
-//                results.append(group)
-//            }
-//        }
-//        for group in groups {
-//            inserted.append((results.count, group))
-//            results.append(group)
-//        }
-//        self.groupArray = results
-//        var changes: [GroupArrayChange] = []
-//        if !removed.isEmpty {
-//            changes.append(.remove(removed))
-//        }
-//        if !inserted.isEmpty {
-//            changes.append(.insert(inserted))
-//        }
-//        return changes
-//    }
-//
-    private func _loadAllGroups() {
+    private func reloadAllSessions() -> [SessionArrayChange] {
+        var identifiers: Set<SessionKey> = []
+        for session in self.sessionArray {
+            identifiers.insert(session.identifier)
+        }
+        var removed: [(Int, Session)] = []
+        var inserted: [(Int, Session)] = []
+        var remainSessions: [Session] = []
+        var results: [Session] = []
+
+        let sessions = self.dataSource.sessions
+
+        for session in sessions {
+            let key = session.identifier
+            if identifiers.contains(key) {
+                identifiers.remove(key)
+            } else {
+                self.sessionDictionary[key] = session
+                remainSessions.append(session)
+            }
+        }
+        for (index, session) in self.sessionArray.enumerated() {
+            let key = session.identifier
+            if identifiers.contains(key) {
+                removed.append((index, session))
+            } else {
+                results.append(session)
+            }
+        }
+        for session in remainSessions {
+            inserted.append((results.count, session))
+            results.append(session)
+        }
+        self.sessionArray = results
+        var changes: [SessionArrayChange] = []
+        if !removed.isEmpty {
+            changes.append(.remove(removed))
+        }
+        if !inserted.isEmpty {
+            changes.append(.insert(inserted))
+        }
+        return changes
+    }
+
+    private func loadAllSessions() {
         let sessions = self.dataSource.sessions
         for session in sessions {
             let key = session.identifier
@@ -289,23 +291,23 @@ public final class AssetContext: NSObject {
 
 
 
-public final class ProviderContext {
-    public private(set) var dictionary: [String: AssetItem<AssetContext>] = [:]
-    public init() {
-
-    }
-}
-
-extension ProviderContext: AssetBuilder {
-    public typealias ItemContext = AssetContext
-    public func item(asset: PHAsset) -> AssetItem<AssetContext> {
-        if let result = self.dictionary[asset.localIdentifier] {
-            return result
-        } else {
-            return AssetItem<AssetContext>.init(asset: asset, context: ItemContext())
-        }
-    }
-}
+//public final class ProviderContext {
+//    public private(set) var dictionary: [String: AssetItem<AssetContext>] = [:]
+//    public init() {
+//
+//    }
+//}
+//
+//extension ProviderContext: AssetBuilder {
+//    public typealias ItemContext = AssetContext
+//    public func item(asset: PHAsset) -> AssetItem<AssetContext> {
+//        if let result = self.dictionary[asset.localIdentifier] {
+//            return result
+//        } else {
+//            return AssetItem<AssetContext>.init(asset: asset, context: ItemContext())
+//        }
+//    }
+//}
 
 //public final class AssetItem<ContextType> {
 //    public let asset: PHAsset

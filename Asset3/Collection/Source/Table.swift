@@ -6,22 +6,21 @@
 //  Copyright © 2019 angfung. All rights reserved.
 //
 
-
 import Foundation
 
-public enum Order {
+public enum TableOrder {
     case ascending
     case descending
 }
 
-public enum CollectionChange<Key: Any, Element: Any> {
-    case remove([(Key, Element)])//(oldIndex, (oldOrder, value))
-    case insert([(Key, Element)])//(index, (order, value))
-    case update([(Key, Element)])//(index, (order, value))
+public enum TableChange<Element: Any> {
+    case remove([(Int, Element)])
+    case insert([(Int, Element)])
+    case update([(Int, Element)])
 }
 
-public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Priority: Comparable, Value: Equatable {
-    public struct Element {
+public struct Table<Key, Priority, Value> where Key: Hashable, Priority: Comparable, Value: Equatable {
+    public struct Row {
         public let key: Key
         public let priority: Priority
         public let value: Value
@@ -33,24 +32,24 @@ public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Prio
     }
     
     public typealias Compare = (_ lhs: Priority, _ rhs: Priority) -> Bool
-    public typealias Change = CollectionChange<Int, Element>
+    public typealias Change = TableChange<Row>
     
     public struct Updater {
-        public typealias Collection = PriorityDictionary<Key, Priority, Value>
+        public typealias Collection = Table<Key, Priority, Value>
         
         fileprivate let collection: Collection
-        fileprivate var _dictionary: [Key: Element]
+        fileprivate var _dictionary: [Key: Row]
         private(set) var compare: Compare
 
         fileprivate init(collection: Collection, compare: @escaping Compare) {
             self.compare = compare
             self.collection = collection
-            self._dictionary = collection.dictionary.mapValues({ (index) -> Element in
+            self._dictionary = collection.dictionary.mapValues({ (index) -> Row in
                 return collection.array[index]
             })
         }
         
-        public func uniqueValue(forKey: Key) -> Element? {
+        public func uniqueValue(forKey: Key) -> Row? {
             if let result = self._dictionary[forKey] {
                 return result
             }
@@ -60,24 +59,24 @@ public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Prio
         public mutating func removeItem(forKey: Key) {
             self._dictionary.removeValue(forKey: forKey)
         }
-        public mutating func replaceItem(_ item: Element, forKey key: Key) {
+        public mutating func replaceItem(_ item: Row, forKey key: Key) {
             self._dictionary[key] = item
         }
         
-        public mutating func filter(_ body: (Element) -> Bool) {
+        public mutating func filter(_ body: (Row) -> Bool) {
             self._dictionary = self._dictionary.filter({ (item) -> Bool in
                 return body(item.value)
             })
         }
-        public mutating func reset(_ dictionary: [Key: Element]) {
+        public mutating func reset(_ dictionary: [Key: Row]) {
             self._dictionary = dictionary
         }
-        public mutating func replace(_ items: [Key: Element]) {
+        public mutating func replace(_ items: [Key: Row]) {
             for item in items {
                 self._dictionary[item.key] = item.value
             }
         }
-        public mutating func replace<S>(_ items: S) where Element == S.Element, S : Sequence {
+        public mutating func replace<S>(_ items: S) where Row == S.Element, S : Sequence {
             for item in items {
                 self._dictionary[item.key] = item
             }
@@ -88,17 +87,17 @@ public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Prio
         }
         
         public mutating func finish() -> (Collection, [Change]) {
-            let list: [Element] = self.collection.array
+            let list: [Row] = self.collection.array
             let compare: Compare = self.compare
             
-            var updated: [(Int, Element)] = []
-            var removed: [(Int, Element)] = []
-            var remain: [Key: Element] = [:]
+            var updated: [(Int, Row)] = []
+            var removed: [(Int, Row)] = []
+            var remain: [Key: Row] = [:]
             _ = self._dictionary.map { (item) -> Void in
                 remain[item.key] = item.value
             }
             
-            var array: [Element] = []
+            var array: [Row] = []
             var dictionary: [Key: Int] = [:]
             var changes: [Change] = []
             
@@ -131,15 +130,15 @@ public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Prio
                 changes.append(change)
             }
                     
-            var waitInserted: [Element] = remain.map { (item) -> Element in
+            var waitInserted: [Row] = remain.map { (item) -> Row in
                 return item.value
             }.sorted { (lhs, rhs) -> Bool in
                 return compare(lhs.priority, rhs.priority)
             }
             
             if !waitInserted.isEmpty {
-                var inserted: [(Int, Element)] = []
-                var resultArray: [Element] = []
+                var inserted: [(Int, Row)] = []
+                var resultArray: [Row] = []
                 
                 for item in array {
                     while let insertItem = waitInserted.first {
@@ -183,14 +182,14 @@ public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Prio
         return Updater(collection: self, compare: self.compare)
     }
 
-    fileprivate var array: [Element]
+    fileprivate var array: [Row]
     fileprivate var dictionary: [Key: Int]
 
     public var count: Int {
         return self.array.count
     }
     
-    public private(set) var order: Order {
+    public private(set) var order: TableOrder {
         didSet {
             let _order = self.order
             self.compare = { (_ lhs: Priority, _ rhs: Priority) -> Bool in
@@ -204,7 +203,7 @@ public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Prio
         }
     }
     private(set) var compare: (_ lhs: Priority, _ rhs: Priority) -> Bool
-    public init(order: Order = .ascending) {
+    public init(order: TableOrder = .ascending) {
         self.order = order
         self.array = []
         self.dictionary = [:]
@@ -227,10 +226,10 @@ public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Prio
     public func object(at index: Int) -> Value {
         return self.array[index].value
     }
-    public subscript(index: Int) -> Element {
+    public subscript(index: Int) -> Row {
         return self.array[index]
     }
-    public subscript(key: Key) -> Element? {
+    public subscript(key: Key) -> Row? {
         guard let index = self.dictionary[key] else {
             return nil
         }
@@ -244,18 +243,18 @@ public struct PriorityDictionary<Key, Priority, Value> where Key: Hashable, Prio
 
 public class PriorityCollection<Key, Priority, Value> where Key: Hashable, Priority: Comparable, Value: Equatable {
 
-    public typealias Storage = PriorityDictionary<Key, Priority, Value>
+    public typealias Storage = Table<Key, Priority, Value>
     public typealias Updater = Storage.Updater
-    public typealias Change = CollectionChange<Int, Storage.Element>
+    public typealias Change = TableChange<Storage.Row>
     public typealias ObserverClosure = (_ entity: PriorityCollection<Key, Priority, Value>, _ changes: [Change]) -> Void
 
     public private(set) var storage: Storage
 
     private let contentObserveKey: String = UUID().uuidString
     private var observers: [AnyHashable: ObserverClosure] = [:]
-    public private(set) var order: Order
+    public private(set) var order: TableOrder
 
-    public init(order: Order = .ascending) {
+    public init(order: TableOrder = .ascending) {
         self.order = order
         self.storage = Storage(order: order)
     }

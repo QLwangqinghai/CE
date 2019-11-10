@@ -37,9 +37,8 @@
 		D6B30C382370394D000EBB8E /* Collection.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B30C312370394D000EBB8E /* Collection.framework */; };
 		D6B30C392370394D000EBB8E /* Collection.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6B30C312370394D000EBB8E /* Collection.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D6B30C42237039E1000EBB8E /* UniqueOrderedArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B30C3E237039E1000EBB8E /* UniqueOrderedArray.swift */; };
-		D6B30C43237039E1000EBB8E /* PriorityDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B30C3F237039E1000EBB8E /* PriorityDictionary.swift */; };
+		D6B30C43237039E1000EBB8E /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B30C3F237039E1000EBB8E /* Table.swift */; };
 		D6B30C44237039E1000EBB8E /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B30C40237039E1000EBB8E /* Cache.swift */; };
-		D6B30C45237039E1000EBB8E /* OrderedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B30C41237039E1000EBB8E /* OrderedDictionary.swift */; };
 		D6B30C4723703DDA000EBB8E /* OrderedTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B30C4623703DDA000EBB8E /* OrderedTable.swift */; };
 		D6C074B52356EF9100038D3C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C074B42356EF9100038D3C /* AppDelegate.swift */; };
 		D6C074B72356EF9100038D3C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C074B62356EF9100038D3C /* ViewController.swift */; };
@@ -126,9 +125,8 @@
 		D6B30C332370394D000EBB8E /* Collection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Collection.h; sourceTree = "<group>"; };
 		D6B30C342370394D000EBB8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6B30C3E237039E1000EBB8E /* UniqueOrderedArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueOrderedArray.swift; sourceTree = "<group>"; };
-		D6B30C3F237039E1000EBB8E /* PriorityDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityDictionary.swift; sourceTree = "<group>"; };
+		D6B30C3F237039E1000EBB8E /* Table.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Table.swift; sourceTree = "<group>"; };
 		D6B30C40237039E1000EBB8E /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
-		D6B30C41237039E1000EBB8E /* OrderedDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderedDictionary.swift; sourceTree = "<group>"; };
 		D6B30C4623703DDA000EBB8E /* OrderedTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedTable.swift; sourceTree = "<group>"; };
 		D6C074B12356EF9100038D3C /* Asset.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Asset.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6C074B42356EF9100038D3C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -257,8 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				D6B30C40237039E1000EBB8E /* Cache.swift */,
-				D6B30C41237039E1000EBB8E /* OrderedDictionary.swift */,
-				D6B30C3F237039E1000EBB8E /* PriorityDictionary.swift */,
+				D6B30C3F237039E1000EBB8E /* Table.swift */,
 				D6B30C3E237039E1000EBB8E /* UniqueOrderedArray.swift */,
 				D6B30C4623703DDA000EBB8E /* OrderedTable.swift */,
 			);
@@ -577,9 +574,8 @@
 			files = (
 				D6B30C42237039E1000EBB8E /* UniqueOrderedArray.swift in Sources */,
 				D6B30C4723703DDA000EBB8E /* OrderedTable.swift in Sources */,
-				D6B30C45237039E1000EBB8E /* OrderedDictionary.swift in Sources */,
 				D6B30C44237039E1000EBB8E /* Cache.swift in Sources */,
-				D6B30C43237039E1000EBB8E /* PriorityDictionary.swift in Sources */,
+				D6B30C43237039E1000EBB8E /* Table.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

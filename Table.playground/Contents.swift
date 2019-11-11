@@ -304,3 +304,18 @@ public class PriorityCollection<Key, Priority, Value> where Key: Hashable, Prior
 }
 
 
+import Darwin
+
+for a in 0 ..< 255 {
+    let char: Int32 = Int32(a)
+    
+    print(a)
+    if isprint(char) != 0 {
+        let str = String(format: "%C", char)
+        print(str)
+    }
+    
+}
+
+
+

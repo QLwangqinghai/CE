@@ -1,35 +1,14 @@
+//
+//  Test.swift
+//  T
+//
+//  Created by vector on 2019/11/12.
+//  Copyright © 2019 vector. All rights reserved.
+//
+
 import Cocoa
 
-//
-//var string = ""
-//var codes = [Int32]()
-//
-//var items = [(Int32, String)]()
-//for a in 0 ..< 255 {
-//    let char: Int32 = Int32(a)
-//    if isprint(char) != 0 {
-//        let str = String(format: "%C", a, char)
-//        string += str
-//        codes.append(char)
-//        items.append((char, str))
-//    }
-//}
-//
-//print(codes.count)
-//
-//
-//print(string)
-//print(codes)
-//
-//for (index, item) in items.enumerated() {
-//    print("\(index): \(item)")
-//}
-//
-//for i in (0 ..< 5).reversed() {
-//    print(i)
-//}
-//
-//print(items)
+
 public struct TableKey: Comparable, CustomDebugStringConvertible {
     public struct Generator {
         public static let median: UInt32 = UInt32(Int32.max)
@@ -201,30 +180,36 @@ public struct TableKey: Comparable, CustomDebugStringConvertible {
     }
 }
 
-var keys: [TableKey] = []
-keys.append(TableKey.Generator.generate())
 
-for i in 0 ... 10000 {
-    let a = Int(arc4random()) % (keys.count + 1)
-    
-    if a == 0 {
-        keys.insert(TableKey.Generator.before(keys[0]), at: 0)
-    } else if a >= keys.count {
-        keys.append(TableKey.Generator.after(keys[keys.count - 1]))
-    } else {
-        keys.insert(TableKey.Generator.between(keys[a-1], keys[a]), at: a)
-    }
-    print(keys)
-    
-    for idx in 0 ..< keys.count - 1 {
-        if keys[idx] > keys[idx+1] {
-            print("error \(idx) \n")
+class Test: NSObject {
+    static func test() {
+        var keys: [TableKey] = []
+        keys.append(TableKey.Generator.generate())
+
+        for i in 0 ... 10000 {
+            let a = Int(arc4random()) % (keys.count + 1)
+            
+            if a == 0 {
+                keys.insert(TableKey.Generator.before(keys[0]), at: 0)
+            } else if a >= keys.count {
+                keys.append(TableKey.Generator.after(keys[keys.count - 1]))
+            } else {
+                keys.insert(TableKey.Generator.between(keys[a-1], keys[a]), at: a)
+            }
+            print(keys)
+            
+            for idx in 0 ..< keys.count - 1 {
+                if keys[idx] > keys[idx+1] {
+                    print("error \(idx) \n")
+                }
+            }
+            
+            var length = 0
+            for idx in 0 ..< keys.count {
+                length += keys[idx].content.count
+            }
+            let vvv = Double(length) / Double(keys.count)
+            print("[count:\(keys.count) length: \(vvv) ]\n")            
         }
     }
-    
-    
-    
-    sleep(0.5)
 }
-
-

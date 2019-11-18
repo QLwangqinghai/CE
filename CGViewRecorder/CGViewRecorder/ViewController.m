@@ -59,6 +59,12 @@ dispatch_queue_t MyQueue() {
     [self.view addSubview:v];
     self.recordView = v;
     
+    UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(300, 0, 500, 300)];
+    [self.view addSubview:imageView];
+    imageView.layer.borderColor = [UIColor blueColor].CGColor;
+    imageView.layer.borderWidth = 2;
+
+    
     NSInteger maxCount = 2;//10
     for (NSInteger i=0; i<maxCount; i++) {
         NSString * url = nil;
@@ -71,24 +77,21 @@ dispatch_queue_t MyQueue() {
         }
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(i * 3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             AFVideoPlayView * videoView = [[AFVideoPlayView alloc] initWithFrame:CGRectMake(i % 4 * 250, i / 4 * 150, size.width, size.height)];
+            videoView.backgroundColor = UIColor.greenColor;
             [v addSubview:videoView];
             
             [videoView play:url];
             
             if (nil == self.recorder) {
-                self.recorder = [[AFRecorder alloc] initWithView:videoView];
+                self.recorder = [[AFRecorder alloc] initWithView:v];
+            
+                self.recorder.onImage = ^(UIImage * image, CFTimeInterval time) {
+                    imageView.image = image;
+                };
             }
         });
     }
-    
-    
-    UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(300, 0, 500, 300)];
-    [self.view addSubview:imageView];
-    imageView.layer.borderColor = [UIColor blueColor].CGColor;
-    imageView.layer.borderWidth = 2;
-    v.onImage = ^(UIImage * image, CFTimeInterval time) {
-        imageView.image = image;
-    };
+
 //
 //    NSTimer * timer = [NSTimer timerWithTimeInterval:1.0/30 repeats:true block:^(NSTimer * _Nonnull timer) {
 //        [v setNeedsDisplay];
@@ -99,8 +102,8 @@ dispatch_queue_t MyQueue() {
 
     // 1.初始化
     self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLink:)];
-    // 2. 设置 - 2桢回调一次，这里非时间，而是以桢为单位
-    self.displayLink.preferredFramesPerSecond = 30;
+    // 2. 设置 - 1s 10桢回调，这里非时间，而是以桢为单位
+    self.displayLink.preferredFramesPerSecond = 10;
     
     // 3.加入RunLoop
     [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];

@@ -311,7 +311,7 @@
                                           );
     CGAffineTransform flipVertical = CGAffineTransformMake(1, 0, 0, -1, 0, _viewSize.height);
     CGContextConcatCTM(bitmapContext, flipVertical);
-    
+    assert(bitmapContext);
     return bitmapContext;
 }
 
@@ -320,6 +320,7 @@
     
     CVPixelBufferRef pixelBuffer = nil;
     CGContextRef bitmapContext = [self creatBitmapContextWithPixelBuffer:&pixelBuffer];
+    assert(pixelBuffer);
     UIGraphicsPushContext(bitmapContext);
     
     CFTimeInterval bt = CACurrentMediaTime();

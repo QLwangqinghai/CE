@@ -1,4 +1,5 @@
 import Cocoa
+import CoreFoundation
 
 //
 //var string = ""
@@ -227,4 +228,7 @@ for i in 0 ... 10000 {
     sleep(0.5)
 }
 
+
+CFStorageCreate
+//let a: CFStorageRef = CFStorageCreate
 

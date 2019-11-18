@@ -47,10 +47,7 @@
 //    [self.layer addSublayer:avLayer];
     
     ((AVPlayerLayer *)self.layer).player = self.player;
-    
-    
     [self.player play];
-
 }
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx {
     [super drawLayer:layer inContext:ctx];

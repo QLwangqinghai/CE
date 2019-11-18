@@ -120,7 +120,7 @@ static inline void * _Nonnull __CCImmutableBufferGetItemAtIndex(CCImmutableBuffe
 }
 
 //range 必须是有效的，方法没有校验range的有效性
-static inline void __CCImmutableBufferGetItemsInRange(CCImmutableBuffer_s * _Nonnull buffer, CCRange_s range, CCVector_s * _Nonnull vectorPtr) {
+static inline void __CCImmutableBufferGetItemsInRange(CCImmutableBuffer_s * _Nonnull buffer, CCRange range, CCVector_s * _Nonnull vectorPtr) {
     vectorPtr->base = __CCImmutableBufferGetItemAtIndex(buffer, range.location);
     vectorPtr->count = range.length;
 }

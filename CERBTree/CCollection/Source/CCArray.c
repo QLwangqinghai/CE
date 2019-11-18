@@ -14,17 +14,27 @@
 #include "CCCircularBuffer.h"
 
 
-static const uint32_t __CCArrayImmutable = 0;
+static const CCType __CCArraySmall = 1;
+static const CCType __CCArrayLarge = 2;
+//static const uint32_t __CCArrayImmutable = 0;
+
 static const uint32_t __CCArrayMutable = 1;
 
+#pragma pack(push)
+#pragma pack(4)
+
+//8 + 3W
 typedef struct {
-//    CFRuntimeBase _base;
+    CCRefBase_s _base;
     CCBaseCallBacks _callBacks;
+    
     uint32_t _elementSize;//
     uint32_t _mutable;
-
     void * _Nonnull _store;           /* can be NULL when CCArrayMutable */
 } CCArray_s;
+#pragma pack(pop)
+
+
 typedef CCArray_s * _Nonnull CCArrayNonnullPtr;
 
 //not retain buffer
@@ -139,7 +149,7 @@ static inline CCEqualCallBack_f _Nonnull __CCArrayGetEqualCallBack(CCArrayNonnul
     return array->_callBacks.equal;
 }
 
-static inline int32_t __CCArrayGetVectorsInRange(CCArrayNonnullPtr array, CCRange_s range, CCVector_s * _Nonnull vec) {
+static inline int32_t __CCArrayGetVectorsInRange(CCArrayNonnullPtr array, CCRange range, CCVector_s * _Nonnull vec) {
     int32_t vecCount = 0;
     switch (__CCArrayGetType(array)) {
         case __CCArrayImmutable: {
@@ -160,7 +170,7 @@ static inline int32_t __CCArrayGetVectorsInRange(CCArrayNonnullPtr array, CCRang
     return vecCount;
 }
 
-static inline CCArrayNonnullPtr __CCArraySubarrayInRange(CCArrayNonnullPtr array, CCRange_s range, _Bool retainStorageIfPossible) {
+static inline CCArrayNonnullPtr __CCArraySubarrayInRange(CCArrayNonnullPtr array, CCRange range, _Bool retainStorageIfPossible) {
     CCRetainCallBack_f retainFunc = __CCArrayGetRetainCallBack(array);
 
     CCImmutableBuffer_s * buffer = __CCImmutableBufferAllocate(range.length, array->_elementSize);
@@ -186,7 +196,7 @@ static inline CCArrayNonnullPtr __CCArraySubarrayInRange(CCArrayNonnullPtr array
 }
 
 
-static void __CCArrayReleaseValues(CCArrayNonnullPtr array, CCRange_s range) {
+static void __CCArrayReleaseValues(CCArrayNonnullPtr array, CCRange range) {
     CCReleaseCallBack_f releaseFunc = __CCArrayGetReleaseCallBack(array);
     if (NULL == releaseFunc) {
         return;
@@ -208,7 +218,7 @@ static void __CCArrayReleaseValues(CCArrayNonnullPtr array, CCRange_s range) {
     }
 }
 
-static inline void __CCArrayValidateRange(CCArrayNonnullPtr array, CCRange_s range, const char * _Nullable func) {
+static inline void __CCArrayValidateRange(CCArrayNonnullPtr array, CCRange range, const char * _Nullable func) {
     uint32_t count = __CCArrayGetCount(array);
     if (range.location + range.length <= count) {
     } else {
@@ -416,7 +426,7 @@ uint32_t CCArrayGetCount(CCArrayNonnullPtr array) {
     return __CCArrayGetCount(array);
 }
 
-//uint32_t CCArrayGetCountOfValue(CCArrayNonnullPtr array, CCRange_s range, const void *value) {
+//uint32_t CCArrayGetCountOfValue(CCArrayNonnullPtr array, CCRange range, const void *value) {
 //    uint32_t idx, count = 0;
 //    __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
 //
@@ -442,7 +452,7 @@ uint32_t CCArrayGetCount(CCArrayNonnullPtr array) {
 //    return count;
 //}
 
-_Bool CCArrayContainsValue(CCArrayNonnullPtr array, CCRange_s range, const void * _Nonnull value) {
+_Bool CCArrayContainsValue(CCArrayNonnullPtr array, CCRange range, const void * _Nonnull value) {
     assert(array);
     assert(value);
     __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
@@ -479,7 +489,7 @@ void CCArrayGetValueAtIndex(CCArrayNonnullPtr array, uint32_t idx, void * _Nonnu
     }
 }
 
-void CCArrayGetValues(CCArrayNonnullPtr array, CCRange_s range, void * _Nonnull values) {
+void CCArrayGetValues(CCArrayNonnullPtr array, CCRange range, void * _Nonnull values) {
     assert(array);
     assert(values);
     __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
@@ -524,7 +534,7 @@ void CCArrayGetValues(CCArrayNonnullPtr array, CCRange_s range, void * _Nonnull 
 //}
 
 
-//void CCArrayApplyFunction(CCArrayNonnullPtr array, CCRange_s range, CCArrayApplierFunction applier, void *context) {
+//void CCArrayApplyFunction(CCArrayNonnullPtr array, CCRange range, CCArrayApplierFunction applier, void *context) {
 //    uint32_t idx;
 //    FAULT_CALLBACK((void **)&(applier));
 //    __CFGenericValidateType(array, CCArrayGetTypeID());
@@ -537,7 +547,7 @@ void CCArrayGetValues(CCArrayNonnullPtr array, CCRange_s range, void * _Nonnull 
 //    }
 //}
 
-uint32_t CCArrayGetFirstIndexOfValue(CCArrayNonnullPtr array, CCRange_s range, const void * _Nonnull value) {
+uint32_t CCArrayGetFirstIndexOfValue(CCArrayNonnullPtr array, CCRange range, const void * _Nonnull value) {
     assert(array);
     assert(value);
     __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
@@ -563,7 +573,7 @@ uint32_t CCArrayGetFirstIndexOfValue(CCArrayNonnullPtr array, CCRange_s range, c
     return CCIndexNotFound;
 }
 
-uint32_t CCArrayGetLastIndexOfValue(CCArrayNonnullPtr array, CCRange_s range, const void * _Nonnull value) {
+uint32_t CCArrayGetLastIndexOfValue(CCArrayNonnullPtr array, CCRange range, const void * _Nonnull value) {
     assert(array);
     assert(value);
     __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
@@ -592,9 +602,9 @@ uint32_t CCArrayGetLastIndexOfValue(CCArrayNonnullPtr array, CCRange_s range, co
     return CCIndexNotFound;
 }
 
-void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount, const char * _Nullable func);
+void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange range, const void * _Nullable newValues, uint32_t newCount, const char * _Nullable func);
 
-void __CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount, void * _Nullable oldValues, const char * _Nullable func) {
+void __CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange range, const void * _Nullable newValues, uint32_t newCount, void * _Nullable oldValues, const char * _Nullable func) {
     assert(array);
     __CCArrayMutableValidate(array, func);
     __CCArrayValidateRange(array, range, func);
@@ -656,7 +666,7 @@ void CCArrayPopLast(CCArrayNonnullPtr array, void * _Nonnull itemPtr) {
     assert(count > 0);
     __CCArrayReplaceValues(array, CCRangeMake(__CCArrayGetCount(array) - 1, 1), NULL, 0, itemPtr, __func__);
 }
-void CCArrayPopItemsInRange(CCArrayNonnullPtr array, CCRange_s range, void * _Nonnull itemPtr) {
+void CCArrayPopItemsInRange(CCArrayNonnullPtr array, CCRange range, void * _Nonnull itemPtr) {
     assert(range.length > 0);
     assert(itemPtr);
     __CCArrayReplaceValues(array, range, NULL, 0, itemPtr, __func__);
@@ -675,7 +685,7 @@ void CCArrayRemoveItemAtIndex(CCArrayNonnullPtr array, uint32_t index) {
     assert(index < count);
     _CCArrayReplaceValues(array, CCRangeMake(index, 1), NULL, 0, __func__);
 }
-void CCArrayRemoveItemsInRange(CCArrayNonnullPtr array, CCRange_s range) {
+void CCArrayRemoveItemsInRange(CCArrayNonnullPtr array, CCRange range) {
     _CCArrayReplaceValues(array, range, NULL, 0, __func__);
 }
 
@@ -728,7 +738,7 @@ void CCArrayRemoveAllItems(CCArrayNonnullPtr array) {
 }
 //
 //// may move deque storage, as it may need to grow deque
-//static void __CCArrayRepositionDequeRegions(CFMutableArrayRef array, CCRange_s range, uint32_t newCount) {
+//static void __CCArrayRepositionDequeRegions(CFMutableArrayRef array, CCRange range, uint32_t newCount) {
 //    // newCount elements are going to replace the range, and the result will fit in the deque
 //    struct __CCArrayDeque *deque = (struct __CCArrayDeque *)array->_store;
 //    struct __CCArrayBucket *buckets;
@@ -855,13 +865,13 @@ void CCArrayRemoveAllItems(CCArrayNonnullPtr array) {
 //}
 
 
-void CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount) {
+void CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange range, const void * _Nullable newValues, uint32_t newCount) {
     return _CCArrayReplaceValues(array, range, newValues, newCount, __func__);
 }
 
 // This function does no ObjC dispatch or argument checking;
 // It should only be called from places where that dispatch and check has already been done, or NSCCArray
-void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void * _Nullable newValues, uint32_t newCount, const char * _Nullable func) {
+void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange range, const void * _Nullable newValues, uint32_t newCount, const char * _Nullable func) {
     __CCArrayReplaceValues(array, range, newValues, newCount, NULL, func);
 }
 
@@ -876,7 +886,7 @@ void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void 
 //    return (CFComparisonResult)(INVOKE_CALLBACK3(context->func, *val1, *val2, context->context));
 //}
 //
-//static inline void __CFZSort(CFMutableArrayRef array, CCRange_s range, CFComparatorFunction comparator, void *context) {
+//static inline void __CFZSort(CFMutableArrayRef array, CCRange range, CFComparatorFunction comparator, void *context) {
 //    uint32_t cnt = range.length;
 //    while (1 < cnt) {
 //        for (uint32_t idx = range.location; idx < range.location + cnt - 1; idx++) {
@@ -891,7 +901,7 @@ void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void 
 //}
 //
 //void _CCArraySortValues(CFMutableArrayRef array, CFComparatorFunction comparator, void *context) {
-//    CCRange_s range = {0, CCArrayGetCount(array)};
+//    CCRange range = {0, CCArrayGetCount(array)};
 //    if (range.length < 2) {
 //        return;
 //    }
@@ -907,7 +917,7 @@ void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void 
 //    if (values != buffer) CFAllocatorDeallocate(kCFAllocatorSystemDefault, values);
 //}
 //
-//void CCArraySortValues(CFMutableArrayRef array, CCRange_s range, CFComparatorFunction comparator, void *context) {
+//void CCArraySortValues(CFMutableArrayRef array, CCRange range, CFComparatorFunction comparator, void *context) {
 //    FAULT_CALLBACK((void **)&(comparator));
 //    __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
 //    CFAssert1(NULL != comparator, __kCFLogAssertion, "%s(): pointer to comparator function may not be NULL", __PRETTY_FUNCTION__);
@@ -944,7 +954,7 @@ void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void 
 //    if (values != buffer) CFAllocatorDeallocate(kCFAllocatorSystemDefault, values);
 //}
 
-//uint32_t CCArrayBSearchValues(CCArrayNonnullPtr array, CCRange_s range, const void *value, CFComparatorFunction comparator, void *context) {
+//uint32_t CCArrayBSearchValues(CCArrayNonnullPtr array, CCRange range, const void *value, CFComparatorFunction comparator, void *context) {
 //    FAULT_CALLBACK((void **)&(comparator));
 //    __CCArrayValidateRange(array, range, __PRETTY_FUNCTION__);
 //    CFAssert1(NULL != comparator, __kCFLogAssertion, "%s(): pointer to comparator function may not be NULL", __PRETTY_FUNCTION__);
@@ -972,7 +982,7 @@ void _CCArrayReplaceValues(CCArrayNonnullPtr array, CCRange_s range, const void 
 //    return idx + range.location;
 //}
 
-//void CCArrayAppendArray(CFMutableArrayRef array, CCArrayNonnullPtr otherArray, CCRange_s otherRange) {
+//void CCArrayAppendArray(CFMutableArrayRef array, CCArrayNonnullPtr otherArray, CCRange otherRange) {
 //    __CCArrayValidateRange(otherArray, otherRange, __PRETTY_FUNCTION__);
 //    // implemented abstractly, careful!
 //    for (uint32_t idx = otherRange.location; idx < otherRange.location + otherRange.length; idx++) {

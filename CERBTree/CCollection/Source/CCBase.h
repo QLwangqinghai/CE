@@ -40,21 +40,17 @@ fflush(stderr);\
     typedef uint32_t CCType;
 #define CCDefineIndexNotFound UINT64_MAX
 #define CCTypeMutableMask 0x80000000UL
-#define CCBufferMaxSize 0x200000
-#define CCPageMaxCountPerGroup 0x40000
-#define CCPageMaxCountPerGroupShift 18
-#define CCPageIndexInGroupMask 0x3FFFF
-
-#define CCPageMaxCount 0x40000
+#define CCBufferMaxSize 0x800000
+#define CCPageMaxCountPerGroup 0x100000
+#define CCPageMaxCountPerGroupShift 20
+#define CCPageIndexInGroupMask 0xFFFFF
 #else
     typedef uint32_t CCIndex;
     typedef uint16_t CCType;
 #define CCDefineIndexNotFound UINT32_MAX
 #define CCTypeMutableMask 0x8000
-#define CCBufferMaxSize 0x10000
-
+#define CCBufferMaxSize 0x20000
 #define CCPageMaxCountPerGroup UINT32_MAX
-#define CCPageMaxCount UINT32_MAX
 #endif
 
 extern const CCIndex CCIndexNotFound;

@@ -34,12 +34,14 @@
 #endif
 
 #if CBuild64Bit
-#define __CCCircularBufferSizeCount 23
-static const uint32_t __CCCircularBufferSizes[__CCCircularBufferSizeCount] = {0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000, 0x200000};
+#define __CCCircularBufferSizeCount 21
 #else
-#define __CCCircularBufferSizeCount 18
-static const uint32_t __CCCircularBufferSizes[__CCCircularBufferSizeCount] = {0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000, 0x8000, 0x10000};
+#define __CCCircularBufferSizeCount 16
 #endif
+
+extern const uint32_t __CCCircularBufferSizes[__CCCircularBufferSizeCount];
+
+
 
 static const uint32_t __CCCircularBufferCapacitys[35] = {0, 0x4uL, 0x8uL, 0x10uL, 0x20uL, 0x40uL, 0x80uL, 0x100uL, 0x1c0uL, 0x310uL, 0x55cuL, 0x960uL, 0x1068uL, 0x1cb4uL, 0x3238uL, 0x57e0uL, 0x99c8uL, 0x10d1cuL, 0x1d6f0uL, 0x33824uL, 0x5a23cuL, 0x9dbe8uL, 0x1140d4uL, 0x1e3170uL, 0x34d684uL, 0x5c7764uL, 0xa1d0ecuL, 0x11b2d9cuL, 0x1ef8fd0uL, 0x3633bacuL, 0x5eda86cuL, 0xa5fe6bcuL, 0x1227d3c8uL, 0x1fc5b29cuL, 0x20000000uL};
 
@@ -65,6 +67,12 @@ static inline uint32_t __CCCircularBufferGoodCapacity(uint32_t capacity) {
     return __CCCircularBufferCapacitys[34];
 }
 
+typedef struct __CCCircularBufferPageTable {
+    CCIndex _offset;
+    CCIndex _capacity;
+    CCIndex _count;
+    void * _Nonnull _content;
+} CCCircularBufferPageTable_s;
 
 typedef struct __CCCircularBufferApi {
     uint32_t _elementSize;
@@ -79,7 +87,6 @@ typedef struct __CCCircularBuffer {
     uint32_t _elementSize: 26;
     uint32_t _quicklyElementSizeShift: 6;
     uint32_t _bufferElementCapacity;
-    CCIndex _pageCount;
     CCIndex _capacity; //当_capacity <= _bufferElementCapacity 时， _storage 为一维， _capacity > _bufferElementCapacity && _capacity < _bufferElementCapacity * CCPageMaxBufferCount 时 为二维， 其他情况为3维
     CCIndex _indexOffset;// <= _capacity
     CCIndex _count;
@@ -518,38 +525,56 @@ static inline CCIndex __CCCircularBufferAlignCapacity(CCCircularBuffer_s * _Nonn
     }
 }
 
-static inline void __CCCircularBufferResetStorage(CCCircularBuffer_s * _Nonnull buffer, void * _Nullable storage, CCIndex capacity, CCIndex indexOffset, uint32_t pageCount) {
+static inline void __CCCircularBufferResetStorage(CCCircularBuffer_s * _Nonnull buffer, void * _Nullable storage, CCIndex capacity, CCIndex indexOffset) {
     buffer->_storage = storage;
     buffer->_capacity = capacity;
     buffer->_indexOffset = indexOffset;
-    buffer->_pageCount = pageCount;
+}
+static inline uint8_t * _Nonnull __CCCircularBufferPageTableGetPage(CCCircularBufferPageTable_s * _Nonnull table, CCIndex pageIndex) {
+    assert(pageIndex < table->_count);
+
+    CCIndex location = (pageIndex + table->_offset);
+    if (location >= table->_capacity) {
+        location -= table->_capacity;
+    }
+    if (table->_capacity <= CCPageMaxCountPerGroup) {
+        //2维
+        uint8_t * * storage = table->_content;
+        return storage[location];
+    } else {
+        //3维
+        uint8_t * * * storage = table->_content;
+        return storage[location >> CCPageMaxCountPerGroupShift][location & CCPageIndexInGroupMask];
+    }
+}
+static inline void __CCCircularBufferPageTableAppendPage(CCCircularBufferPageTable_s * _Nonnull table, void * _Nonnull page) {
+
+}
+static inline void __CCCircularBufferPageTablePrependPage(CCCircularBufferPageTable_s * _Nonnull table, void * _Nonnull page) {
+
+    
+}
+static inline uint8_t * _Nonnull __CCCircularBufferPageTableRemoveFirst(CCCircularBufferPageTable_s * _Nonnull table) {
+
+    return NULL;
+}
+static inline uint8_t * _Nonnull __CCCircularBufferPageTableRemoveLast(CCCircularBufferPageTable_s * _Nonnull table) {
+
+    return NULL;
 }
 
+
 static inline uint8_t * _Nonnull __CCCircularBufferGetPage(CCCircularBuffer_s * _Nonnull buffer, CCIndex pageIndex) {
-    if (buffer->_pageCount <= 0) {
+    if (buffer->_capacity <= buffer->_bufferElementCapacity) {
         //1维
         assert(pageIndex == 0);
         return buffer->_storage;
     } else {
-        assert(pageIndex < buffer->_pageCount);
-        
-#if CBuild64Bit
-        if (buffer->_pageCount <= CCPageMaxCountPerGroup) {
-            //2维
-            uint8_t * * storage = buffer->_storage;
-            return storage[pageIndex];
-        } else {
-            //3维
-            uint8_t * * * storage = buffer->_storage;
-            return storage[pageIndex >> CCPageMaxCountPerGroupShift][pageIndex & CCPageIndexInGroupMask];
-
-        }
-#else
-        uint8_t * * storage = buffer->_storage;
-        return storage[pageIndex];
-#endif
+        CCCircularBufferPageTable_s * table = (CCCircularBufferPageTable_s *)(buffer->_storage);
+        return __CCCircularBufferPageTableGetPage(table, pageIndex);
     }
 }
+
 
 typedef void (*CCCircularBufferEnumerateCallBack_f)(void * _Nullable context, CCRange range, size_t elementSize, const void * _Nonnull values);
 
@@ -564,7 +589,10 @@ static inline void __CCCircularBufferEnumerate(CCCircularBuffer_s * _Nonnull buf
     CCIndex bufferElementCapacity = buffer->_bufferElementCapacity;
     
     CCRange remain = range;
-    if (buffer->_pageCount > 0) {
+    
+    if (buffer->_capacity > buffer->_bufferElementCapacity) {
+        CCCircularBufferPageTable_s * table = (CCCircularBufferPageTable_s *)(buffer->_storage);
+
         CCIndex pageIndex = 0;
         
         do {
@@ -582,7 +610,7 @@ static inline void __CCCircularBufferEnumerate(CCCircularBuffer_s * _Nonnull buf
             remain.location += rLength;
             remain.length -= rLength;
             pageIndex += 1;
-            if (pageIndex >= buffer->_pageCount) {
+            if (pageIndex >= table->_count) {
                 pageIndex = 0;
             }
         } while (0);
@@ -597,7 +625,7 @@ static inline void __CCCircularBufferEnumerate(CCCircularBuffer_s * _Nonnull buf
             remain.location += rLength;
             remain.length -= rLength;
             pageIndex += 1;
-            if (pageIndex >= buffer->_pageCount) {
+            if (pageIndex >= table->_count) {
                 pageIndex = 0;
             }
         }
@@ -620,59 +648,156 @@ static inline void __CCCircularBufferEnumerate(CCCircularBuffer_s * _Nonnull buf
 }
 
 void CCCircularBufferEnumerateCopyToBuffer(void * _Nullable context, CCRange range, size_t elementSize, const void * _Nonnull values);
+static inline void __CCCircularBufferPageTableDealloc(CCCircularBufferPageTable_s * _Nonnull table) {
+    if (table->_capacity <= CCPageMaxCountPerGroup) {
+        //2维
+        CCDeallocate(table->_content);
+        CCDeallocate(table);
+    } else {
+        //3维
+        uint8_t * * * storage = table->_content;
+        CCIndex max = table->_capacity / CCPageMaxCountPerGroup;
+        for (CCIndex si=0; si<max; si++) {
+            CCDeallocate(storage[si]);
+        }
+        CCDeallocate(table->_content);
+        CCDeallocate(table);
+    }
+}
+static inline CCCircularBufferPageTable_s * _Nonnull __CCCircularBufferPageTableAlloc(CCIndex capacity) {
+    CCCircularBufferPageTable_s * table = CCAllocate(sizeof(CCCircularBufferPageTable_s));
+    table->_capacity = capacity;
+    table->_count = 0;
+    table->_offset = 0;
+    if (capacity <= CCPageMaxCountPerGroup) {
+        //2维
+        table->_content = CCAllocate(sizeof(void *) * capacity);
+    } else {
+        assert(capacity % CCPageMaxCountPerGroup == 0);
+        //3维
+        CCIndex sctionCount = table->_capacity / CCPageMaxCountPerGroup;
+        uint8_t * * * storage = CCAllocate(sizeof(void *) * sctionCount);
+        for (CCIndex si=0; si<sctionCount; si++) {
+            storage[si] = CCAllocate(sizeof(void *) * CCPageMaxCountPerGroup);
+        }
+        table->_content = storage;
+    }
+    return table;
+}
 
-static inline void __CCCircularBufferResize(CCCircularBuffer_s * _Nonnull buffer, CCIndex size) {
+static inline void __CCCircularBufferResize(CCCircularBuffer_s * _Nonnull buffer, CCIndex capacity) {
     assert(buffer);
     size_t elementSize = buffer->_elementSize;
     CCIndex bufferElementCapacity = buffer->_bufferElementCapacity;
-    if (size < buffer->_count) {
-        size = buffer->_count;
-        CCLogError("__CCCircularBufferResize error size < buffer->_count");
+    if (capacity < buffer->_count) {
+        capacity = buffer->_count;
+        CCLogError("__CCCircularBufferResize error capacity < buffer->_count");
     }
-    //尝试缩容
-    if (buffer->_pageCount > 0) {
 
-    } else {
-        size_t size = buffer->_count * elementSize;
+    if (capacity == 0) {
+        if (capacity == buffer->_capacity) {
+            return;
+        }
+        if (buffer->_capacity == 0) {
+            __CCCircularBufferResetStorage(buffer, NULL, capacity, 0);
+        } else if (buffer->_capacity <= bufferElementCapacity) {
+            void * old = buffer->_storage;
+            __CCCircularBufferResetStorage(buffer, NULL, capacity, 0);
+            CCDeallocate(old);
+        } else {
+            CCCircularBufferPageTable_s * table = (CCCircularBufferPageTable_s *)(buffer->_storage);
+            __CCCircularBufferResetStorage(buffer, NULL, capacity, 0);
+            for (CCIndex i=0; i<table->_count; i++) {
+                CCDeallocate(__CCCircularBufferPageTableGetPage(table, i));
+            }
+            __CCCircularBufferPageTableDealloc(table);
+        }
+    } else if (capacity <= bufferElementCapacity) {
+        size_t bufferSize = capacity * elementSize;
         int itr = 0;
-        CCIndex capacity = 0;
         for (itr = 0; itr<__CCCircularBufferSizeCount; itr++) {
-            if (size <= __CCCircularBufferSizes[itr]) {
-                size = __CCCircularBufferSizes[itr];
+            if (bufferSize <= __CCCircularBufferSizes[itr]) {
+                bufferSize = __CCCircularBufferSizes[itr];
                 capacity = __CCCircularBufferSizes[itr] / buffer->_elementSize;
                 break;
             }
         }
-        if (buffer->_capacity < buffer->_bufferElementCapacity) {
-            uint8_t * old = buffer->_storage;
-            if (capacity != 0) {
-                assert(old);
-                uint8_t * ptr = CCAllocate(size);
-                if (buffer->_capacity <= bufferElementCapacity) {
-                    CCIndex rLength = buffer->_capacity - buffer->_indexOffset;
-                    if (rLength > buffer->_count) {
-                        rLength = buffer->_count;
-                    }
-                    size_t rSize = elementSize * rLength;
-                    memcpy(ptr, old + buffer->_indexOffset * elementSize, rSize);
-                    if (rLength < buffer->_count) {
-                        memcpy(ptr + rSize, old, elementSize * (buffer->_count - rLength));
-                    }
-                    __CCCircularBufferResetStorage(buffer, ptr, capacity, 0, 0, 0);
+        if (capacity == buffer->_capacity) {
+            return;
+        }
+        uint8_t * ptr = CCAllocate(bufferSize);
+        __CCCircularBufferEnumerate(buffer, CCRangeMake(0, buffer->_count), ptr, CCCircularBufferEnumerateCopyToBuffer);
+        
+        //替换旧数据
+        if (buffer->_capacity == 0) {
+            __CCCircularBufferResetStorage(buffer, ptr, capacity, 0);
+        } else if (buffer->_capacity <= bufferElementCapacity) {
+            void * old = buffer->_storage;
+            __CCCircularBufferResetStorage(buffer, ptr, capacity, 0);
+            CCDeallocate(old);
+        } else {
+            CCCircularBufferPageTable_s * table = (CCCircularBufferPageTable_s *)(buffer->_storage);
+            __CCCircularBufferResetStorage(buffer, ptr, capacity, 0);
+
+            for (CCIndex i=0; i<table->_count; i++) {
+                CCDeallocate(__CCCircularBufferPageTableGetPage(table, i));
+            }
+            __CCCircularBufferPageTableDealloc(table);
+        }
+    } else {
+        CCIndex pageCapacity = (capacity + bufferElementCapacity - 1) / bufferElementCapacity;
+        capacity = pageCapacity * bufferElementCapacity;
+        if (capacity == buffer->_capacity) {
+            return;
+        }
+        if (buffer->_capacity == 0) {
+            CCCircularBufferPageTable_s * table = __CCCircularBufferPageTableAlloc(pageCapacity);
+            for (CCIndex i=0; i<pageCapacity; i++) {
+                uint8_t * page = CCAllocate(CCBufferMaxSize);
+                __CCCircularBufferPageTableAppendPage(table, page);
+            }
+            __CCCircularBufferResetStorage(buffer, table, capacity, 0);
+        } else if (buffer->_capacity <= buffer->_bufferElementCapacity) {
+            void * old = buffer->_storage;
+            
+            uint8_t * ptr = CCAllocate(CCBufferMaxSize);
+            __CCCircularBufferEnumerate(buffer, CCRangeMake(0, buffer->_count), ptr, CCCircularBufferEnumerateCopyToBuffer);
+            CCCircularBufferPageTable_s * table = __CCCircularBufferPageTableAlloc(pageCapacity);
+            __CCCircularBufferPageTableAppendPage(table, ptr);
+            
+            for (CCIndex i=1; i<pageCapacity; i++) {
+                uint8_t * page = CCAllocate(CCBufferMaxSize);
+                __CCCircularBufferPageTableAppendPage(table, page);
+            }
+            __CCCircularBufferResetStorage(buffer, table, capacity, 0);
+            CCDeallocate(old);
+        } else {
+            //去掉多余的
+            CCCircularBufferPageTable_s * oldTable = (CCCircularBufferPageTable_s *)(buffer->_storage);
+
+            if (oldTable->_capacity <= CCPageMaxCountPerGroup) {
+                //2维
+                if (pageCapacity <= CCPageMaxCountPerGroup) {
+                    //2维
+
                 } else {
+                    //3维
+                    //扩容
+                    
+                }
+            } else {
+                //3维
+                if (pageCapacity <= CCPageMaxCountPerGroup) {
+                    //2维
+                    //缩容
+
+                } else {
+                    //3维
                     
                     
                 }
             }
-            CCDeallocate(old);
-
-        } else {
-            
-            
         }
-        void * old = buffer->_storage;
-        assert(old);
-        uint8_t * ptr = CCAllocate(size);
     }
 }
 

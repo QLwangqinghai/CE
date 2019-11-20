@@ -236,6 +236,21 @@ static inline _Bool __CCRefRelease(void * _Nonnull ref) {
     return (newRcInfo == 1);
 }
 
+static inline CCIndex CCPowerAlign2(CCIndex capacity) {
+    CCIndex initialCapacity = capacity >> 1;
+    initialCapacity |= (initialCapacity >> 1);
+    initialCapacity |= (initialCapacity >> 2);
+    initialCapacity |= (initialCapacity >> 4);
+    initialCapacity |= (initialCapacity >> 8);
+    initialCapacity |= (initialCapacity >> 16);
+    
+#if CBuild64Bit
+    initialCapacity |= (initialCapacity >> 32);
+#endif
+    initialCapacity += 1;
+    return initialCapacity;
+}
+
 
 
 #endif /* CCBase_h */

@@ -1,9 +1,9 @@
 //
 //  ViewController.m
-//  TC
+//  Page
 //
-//  Created by vector on 2019/11/15.
-//  Copyright © 2019 vector. All rights reserved.
+//  Created by vector on 2019/11/20.
+//  Copyright © 2019 angfung. All rights reserved.
 //
 
 #import "ViewController.h"
@@ -22,8 +22,6 @@
 
     // Update the view, if already loaded.
 }
-
-
 
 
 @end

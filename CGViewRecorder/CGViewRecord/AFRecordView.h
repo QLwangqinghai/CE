@@ -23,10 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-@interface AFRecorder : NSObject
-
 @property (nonatomic, copy) void(^onImage)(UIImage * image, CFTimeInterval time);
 
+
+@interface AFRecorder : NSObject
 - (instancetype)initWithView:(UIView *)view;
 
 - (UIImage *)screenShot;

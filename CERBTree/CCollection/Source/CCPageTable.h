@@ -13,59 +13,24 @@
 #include "CType.h"
 #include "CCBase.h"
 #include "CCAtomic.h"
+#include "CCPageSectionCollection.h"
+
 
 
 #pragma mark - Base
 
 
-#pragma mark - CCPageSectionCollection
 
-typedef struct {
-    CCPagePtr _Nonnull * _Nonnull content[3];
-} CCPageSection_s;
-
-typedef struct {
-    CCIndex count;
-    CCPagePtr _Nonnull * _Nonnull content[2];
-} CCPageSectionCollection0_s;
-
-typedef struct {
-    CCIndex count;
-    CCIndex offset;
-    CCPagePtr _Nonnull * _Nonnull * _Nonnull content;
-} CCPageSectionCollection_s;
-
-typedef struct {
-    CCIndex count;
-    uintptr_t _load0;
-    uintptr_t _load1;
-} CCPageSectionCollection2_s;
-
-typedef struct {
-    CCPageSectionCollection0_s sections0;
-    CCPageSectionCollection_s sections;
-} CCPageSectionCollection_u;
-
-
-
-typedef CCPageSectionCollection_s * CCPageSectionCollectionPtr;
-
-typedef struct {
-    CCPageSectionCollection0_s sections0;
-    CCPageSectionCollection_s sections;
-} CCPageTableContent_u;
-
-
-static inline CCPagePtr _Nullable * _Nonnull __CCPageSectionCollectionRemoveEmptySection(CCPageSectionCollectionPtr _Nonnull sections) {
-//    assert(table->sections.capacity >= 2);
-    
-    
-    return NULL;
-}
-static inline void __CCPageSectionCollectionInsertEmptySection(CCPageSectionCollectionPtr _Nonnull sections, CCPagePtr _Nullable * _Nonnull page) {
-
-
-}
+//static inline CCPagePtr _Nullable * _Nonnull __CCPageSectionCollectionRemoveEmptySection(CCPageSectionCollectionPtr _Nonnull sections) {
+////    assert(table->sections.capacity >= 2);
+//
+//
+//    return NULL;
+//}
+//static inline void __CCPageSectionCollectionInsertEmptySection(CCPageSectionCollectionPtr _Nonnull sections, CCPagePtr _Nullable * _Nonnull page) {
+//
+//
+//}
 
 //static inline CCIndex __CCPageSectionCollectionIndexToLoaction(CCPageSectionCollectionPtr _Nonnull sections, CCIndex index) {
 //    CCIndex r = sections->capacity - sections->offset;
@@ -99,23 +64,12 @@ typedef struct {
     CCIndex count;
     CCIndex capacity;
 
-    CCPageTableContent_u content;
-//    CCPageSectionCollection_s sections;
+    CCPageSectionCollection_s sections;
 } CCPageTable_s;
 
 
 
 typedef CCPageTable_s * CCPageTablePtr;
-
-static inline CCIndex __CCPageTableGetSectionCount(CCPageTablePtr _Nonnull table) {
-    if (table->capacity == 0) {
-        return 0;
-    } else if (table->capacity <= 3 << table->_sectionIndexShift) {
-        return table->capacity >> table->_sectionIndexShift;
-    } else {
-        return table->content.sections.count;
-    }
-}
 
 static inline CCIndex __CCPageTableGetCapacity(CCPageTablePtr _Nonnull table) {
     return table->capacity;
@@ -140,27 +94,11 @@ static inline CCIndex __CCPageTableLoactionToIndex(CCPageTablePtr _Nonnull table
     }
 }
 
-static inline CCPagePtr _Nullable * _Nonnull __CCPageTableGetSection(CCPageTablePtr _Nonnull table, CCIndex sectionIndex) {
-    CCIndex sectionCount = __CCPageTableGetSectionCount(table);
-    assert(sectionIndex < sectionCount);
-    if (0 == table->isSections) {
-        CCPageSection_s section = table->content.section;
-        assert(section.content);
-        return section.content;
-    } else {
-        CCPageSectionCollectionPtr sections = &(table->content.sections);
-        CCIndex location = __CCPageSectionCollectionIndexToLoaction(sections, sectionIndex);
-        //2维
-        CCPagePtr * * storage = sections->content;
-        CCPagePtr * result = storage[location];
-        assert(result);
-        return result;
-    }
-}
 static inline CCPagePtr _Nonnull __CCPageTableGetPage(CCPageTablePtr _Nonnull table, CCIndex pageIndex) {
     assert(pageIndex < table->count);
     CCIndex location = __CCPageTableIndexToLoaction(table, pageIndex);
-    CCPagePtr * section = __CCPageTableGetSection(table, location >> table->_sectionIndexShift);
+    CCPageSectionCollection_s * sections = &(table->sections);
+    CCPagePtr * section = __CCPageSectionCollectionGetSection(sections, location >> table->_sectionIndexShift);
     CCPagePtr page = section[location & table->_indexInSectionMask];
     assert(page);
     return page;
@@ -173,7 +111,8 @@ static inline CCPagePtr _Nonnull * _Nonnull __CCPageTableGetPages(CCPageTablePtr
     CCIndex rLength = table->count - beginIndex;
     CCIndex location = __CCPageTableIndexToLoaction(table, beginIndex);
     
-    CCPagePtr * section = __CCPageTableGetSection(table, location >> table->_sectionIndexShift);
+    CCPageSectionCollection_s * sections = &(table->sections);
+    CCPagePtr * section = __CCPageSectionCollectionGetSection(sections, location >> table->_sectionIndexShift);
     CCIndex offset = location & table->_indexInSectionMask;
     section += offset;
 #warning "out bounds sectionCount == 1"
@@ -218,14 +157,15 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
     assert(table);
     capacity = __CCPageTableAlignCapacity(capacity);
     CCIndex oldCapacity = __CCPageTableGetCapacity(table);
-
+    assert(table->count <= capacity);
+    
     if (oldCapacity == capacity) {
         return;
     }
-    assert(table->count <= capacity);
+    CCPageSectionCollection_s * sections = &(table->sections);
+
     
-    CCPageSectionCollection_s * oldSections = &(table->content.sections);
-    CCIndex oldIsSections = table->isSections;
+
     /*
      0->0
      0->1
@@ -240,185 +180,139 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
     if (oldCapacity == 0) {
         if (capacity == 0) {
             //0->0
-            memset(&(table->content), 0, sizeof(CCPageTableContent_u));
+            memset(sections, 0, sizeof(CCPageSectionCollection_s));
             table->offset = 0;
         } else if (capacity <= table->pageCountPerSection) {
             //0->1
-            table->sections.capacity = 0;
-            table->sections.offset = 0;
-            table->sections.content = CCAllocate(sizeof(CCPagePtr) * capacity);
-            
+            __CCPageSectionCollectionResize(sections, 1);
+            CCPagePtr * section = CCAllocate(sizeof(CCPagePtr *) * capacity);
+            __CCPageSectionCollectionAppend(sections, section);
             table->capacity = capacity;
             table->offset = 0;
         } else {
             //0-2
             CCIndex sectionCount = capacity >> table->_sectionIndexShift;
-            CCIndex sectionCapacity = CCPowerAlign2(sectionCount);
-            CCPagePtr * * content = CCAllocate(sizeof(CCPagePtr *) * sectionCapacity);
+            __CCPageSectionCollectionResize(sections, sectionCount);
             for (CCIndex idx=0; idx<sectionCount; idx++) {
-                content[idx] = CCAllocate(sizeof(CCPagePtr) * table->pageCountPerSection);
+                CCPagePtr * section = CCAllocate(sizeof(CCPagePtr *) * table->pageCountPerSection);
+                __CCPageSectionCollectionAppend(sections, section);
             }
-            
-            table->sections.capacity = sectionCapacity;
-            table->sections.offset = 0;
-            table->sections.content = content;
-            
             table->capacity = capacity;
             table->offset = 0;
         }
     } else if (table->capacity <= table->pageCountPerSection) {
         //1->0
         if (capacity == 0) {
-            //缩容
-            CCPagePtr * old = table->sections.content;
-
-            table->sections.capacity = 0;
-            table->sections.offset = 0;
-            table->sections.content = NULL;
-
-            table->capacity = capacity;
-            table->offset = 0;
-            
-            CCDeallocate(old);
+            CCPagePtr * oldSection = __CCPageSectionCollectionRemoveLast(sections);
+            CCDeallocate(oldSection);
         } else if (capacity <= table->pageCountPerSection) {
             //1->1
-            CCPagePtr * content = CCAllocate(sizeof(CCPagePtr) * capacity);
-            CCPagePtr * old = table->sections.content;
+            CCPagePtr * oldSection = __CCPageSectionCollectionRemoveLast(sections);
+            CCPagePtr * section = CCAllocate(sizeof(CCPagePtr) * capacity);
             CCIndex iter = 0;
             for (CCIndex idx=table->offset; idx<table->capacity && iter<table->count; idx++, iter++) {
-                content[iter] = old[idx];
+                section[iter] = oldSection[idx];
             }
             for (CCIndex idx=0; idx<table->offset && iter<table->count; idx++, iter++) {
-                content[iter] = old[idx];
+                section[iter] = oldSection[idx];
             }
-            
-            table->sections.capacity = 0;
-            table->sections.offset = 0;
-            table->sections.content = content;
+            __CCPageSectionCollectionAppend(sections, section);
             table->capacity = capacity;
             table->offset = 0;
-            
-            CCDeallocate(old);
+            CCDeallocate(oldSection);
         } else {
             //1->2
-            
+            CCPagePtr * oldSection = __CCPageSectionCollectionRemoveLast(sections);
+
             CCIndex sectionCount = capacity >> table->_sectionIndexShift;
-            CCIndex sectionCapacity = CCPowerAlign2(sectionCount);
-            CCPagePtr * * content = CCAllocate(sizeof(CCPagePtr *) * sectionCapacity);
-            for (CCIndex idx=0; idx<sectionCount; idx++) {
-                content[idx] = CCAllocate(sizeof(CCPagePtr) * table->pageCountPerSection);
+            __CCPageSectionCollectionResize(sections, sectionCount);
+
+            if (1) {
+                CCPagePtr * section = CCAllocate(sizeof(CCPagePtr) * table->pageCountPerSection);
+                CCIndex iter = 0;
+                for (CCIndex idx=table->offset; idx<table->capacity && iter<table->count; idx++, iter++) {
+                    section[iter] = oldSection[idx];
+                }
+                for (CCIndex idx=0; idx<table->offset && iter<table->count; idx++, iter++) {
+                    section[iter] = oldSection[idx];
+                }
+                __CCPageSectionCollectionAppend(sections, section);
             }
-            
-            CCPagePtr * target = content[0];
-            CCPagePtr * old = table->sections.content;
-            CCIndex iter = 0;
-            for (CCIndex idx=table->offset; idx<table->capacity && iter<table->count; idx++, iter++) {
-                target[iter] = old[idx];
+
+            while (sections->count < sectionCount) {
+                CCPagePtr * section = CCAllocate(sizeof(CCPagePtr) * table->pageCountPerSection);
+                __CCPageSectionCollectionAppend(sections, section);
             }
-            for (CCIndex idx=0; idx<table->offset && iter<table->count; idx++, iter++) {
-                target[iter] = old[idx];
-            }
-            
-            table->sections.capacity = sectionCapacity;
-            table->sections.offset = 0;
-            table->sections.content = content;
             
             table->capacity = capacity;
             table->offset = 0;
-            
-            CCDeallocate(old);
+            CCDeallocate(oldSection);
         }
     } else {
         //2维
-        CCIndex oldSectionCount = __CCPageTableGetSectionCount(table);
-        CCPageSectionCollection_s sections = table->sections;
-
         if (capacity == 0) {
             //2->0
-            CCPagePtr **  old = sections.content;
-
-            table->sections.capacity = 0;
-            table->sections.offset = 0;
-            table->sections.content = NULL;
-
-            table->capacity = capacity;
-            table->offset = 0;
-            
-            CCIndex iter = 0;
-            for (CCIndex idx=sections.offset; idx<sections.capacity && iter<oldSectionCount; idx++, iter++) {
-                CCDeallocate(old[idx]);
+            while (sections->count > 0) {
+                CCPagePtr * oldSection = __CCPageSectionCollectionRemoveLast(sections);
+                CCDeallocate(oldSection);
             }
-            for (CCIndex idx=0; idx<sections.offset && iter<oldSectionCount; idx++, iter++) {
-                CCDeallocate(old[idx]);
-            }
-            CCDeallocate(old);
         } else if (capacity <= table->pageCountPerSection) {
             //2->1
-            CCPagePtr **  old = sections.content;
-            
-            CCPagePtr * content = CCAllocate(sizeof(CCPagePtr) * capacity);
-
+            CCPagePtr * section = CCAllocate(sizeof(CCPagePtr) * capacity);
             CCIndex idx = 0;
             CCIndex length = 0;
             if (1) {
                 CCPagePtr * pages = __CCPageTableGetPages(table, idx, &length);
-                memcpy(content, pages, sizeof(CCPagePtr) * length);
+                memcpy(section, pages, sizeof(CCPagePtr) * length);
                 idx += length;
             }
-            
             if (idx < table->count) {
                 CCPagePtr * pages = __CCPageTableGetPages(table, idx, &length);
-                memcpy(content + idx, pages, sizeof(CCPagePtr) * length);
+                memcpy(section + idx, pages, sizeof(CCPagePtr) * length);
                 idx += length;
             }
             assert(idx == table->count);
-            
-            table->sections.capacity = 0;
-            table->sections.offset = 0;
-            table->sections.content = content;
+            while (sections->count > 0) {
+                CCPagePtr * oldSection = __CCPageSectionCollectionRemoveLast(sections);
+                CCDeallocate(oldSection);
+            }
+            __CCPageSectionCollectionAppend(sections, section);
             
             table->capacity = capacity;
             table->offset = 0;
-            
-            CCIndex iter = 0;
-            for (CCIndex idx=sections.offset; idx<sections.capacity && iter<oldSectionCount; idx++, iter++) {
-                CCDeallocate(old[idx]);
-            }
-            for (CCIndex idx=0; idx<sections.offset && iter<oldSectionCount; idx++, iter++) {
-                CCDeallocate(old[idx]);
-            }
-            CCDeallocate(old);
         } else {
             //2->2
-            CCPagePtr **  old = sections.content;
-
-            CCIndex sectionCount = capacity >> table->_sectionIndexShift;
-            CCIndex sectionCapacity = CCPowerAlign2(sectionCount);
-            CCPagePtr * * content = CCAllocate(sizeof(CCPagePtr *) * sectionCapacity);
-            CCIndex iter = 0;
-            for (CCIndex idx=sections.offset; idx<sections.capacity && iter<oldSectionCount; idx++, iter++) {
-                if (iter < sectionCount) {
-                    content[iter] = old[idx];
-                } else {
-                    CCDeallocate(old[idx]);
-                    //剩余数据
-                }
-            }
-            for (CCIndex idx=0; idx<sections.offset && iter<oldSectionCount; idx++, iter++) {
-                if (iter < sectionCount) {
-                    content[iter] = old[idx];
-                } else {
-                    CCDeallocate(old[idx]);
-                    //剩余数据
-                }
-            }
-            table->sections.capacity = sectionCapacity;
-            table->sections.offset = 0;
-            table->sections.content = content;
-            
-            table->capacity = capacity;
-            //不修改offset
-            CCDeallocate(old);
+//            CCIndex sectionCount = capacity >> table->_sectionIndexShift;
+//            if (sectionCount == sections->count) {
+//                abort();
+//            } else if (sectionCount > sections->count) {
+//                //拓容
+//                __CCPageSectionCollectionResize(sections, sectionCount);
+//                if ((table->offset & table->_indexInSectionMask) != 0 &&  table->capacity - table->count < table->pageCountPerSection) {
+//                    //page首尾分离
+//
+//
+//                }
+//                while (sections->count < sectionCount) {
+            //应该是插入空白页
+//                    CCPagePtr * section = CCAllocate(sizeof(CCPagePtr) * table->pageCountPerSection);
+//                    __CCPageSectionCollectionAppend(sections, section);
+//                }
+//
+//            } else {
+//                //缩容
+//                while (sections->count > sectionCount) {
+            //应该是删除空白页
+//                    CCPagePtr * oldSection = __CCPageSectionCollectionRemoveLast(sections);
+//                    CCDeallocate(oldSection);
+//                }
+//                if ((table->offset & table->_indexInSectionMask) != 0 &&  table->capacity - table->count < table->pageCountPerSection) {
+//                    //首尾合并
+//
+//
+//                }
+//
+//            }
         }
     }
 }
@@ -451,14 +345,6 @@ static inline void __CCPageTableDeallocate(CCPageTablePtr _Nonnull table) {
 
 static inline CCPageTablePtr _Nonnull __CCPageTableAllocate(CCIndex capacity) {
     CCPageTablePtr table = CCAllocate(sizeof(CCPageTable_s));
-    table->capacity = capacity;
-    table->count = 0;
-    table->offset = 0;
-    
-    table->sections.capacity = 0;
-    table->sections.offset = 0;
-    table->sections.content = NULL;
-
     __CCPageTableResize(table, capacity);
     return table;
 }

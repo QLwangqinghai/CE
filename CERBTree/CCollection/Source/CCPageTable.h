@@ -14,150 +14,172 @@
 #include "CCBase.h"
 #include "CCAtomic.h"
 
-typedef uint8_t * CCPagePtr;
+
+#pragma mark - Base
 
 
+#pragma mark - CCPageSectionCollection
 
 typedef struct {
-    void * _Nonnull _section;
+    CCPagePtr _Nonnull * _Nonnull content[3];
 } CCPageSection_s;
 
 typedef struct {
-    CCIndex offset: 32;
-    CCIndex capacity: 32;
-//    CCPagePtr _Nonnull * _Nonnull content;
-    void * _Nonnull content;
-} CCPageSectionBuffer_s;
+    CCIndex count;
+    CCPagePtr _Nonnull * _Nonnull content[2];
+} CCPageSectionCollection0_s;
 
 typedef struct {
-    CCPagePtr _Nullable section;
-    CCPageSectionBuffer_s sections;
+    CCIndex count;
+    CCIndex offset;
+    CCPagePtr _Nonnull * _Nonnull * _Nonnull content;
+} CCPageSectionCollection_s;
+
+typedef struct {
+    CCIndex count;
+    uintptr_t _load0;
+    uintptr_t _load1;
+} CCPageSectionCollection2_s;
+
+typedef struct {
+    CCPageSectionCollection0_s sections0;
+    CCPageSectionCollection_s sections;
+} CCPageSectionCollection_u;
+
+
+
+typedef CCPageSectionCollection_s * CCPageSectionCollectionPtr;
+
+typedef struct {
+    CCPageSectionCollection0_s sections0;
+    CCPageSectionCollection_s sections;
 } CCPageTableContent_u;
+
+
+static inline CCPagePtr _Nullable * _Nonnull __CCPageSectionCollectionRemoveEmptySection(CCPageSectionCollectionPtr _Nonnull sections) {
+//    assert(table->sections.capacity >= 2);
+    
+    
+    return NULL;
+}
+static inline void __CCPageSectionCollectionInsertEmptySection(CCPageSectionCollectionPtr _Nonnull sections, CCPagePtr _Nullable * _Nonnull page) {
+
+
+}
+
+//static inline CCIndex __CCPageSectionCollectionIndexToLoaction(CCPageSectionCollectionPtr _Nonnull sections, CCIndex index) {
+//    CCIndex r = sections->capacity - sections->offset;
+//    if (index >= r) {
+//        return index - r;
+//    } else {
+//        return index + sections->capacity;
+//    }
+//}
+//static inline CCIndex __CCPageSectionCollectionLoactionToIndex(CCPageSectionCollectionPtr _Nonnull sections, CCIndex location) {
+//    if (location >= sections->offset) {
+//        return location - sections->offset;
+//    } else {
+//        return sections->capacity - (sections->offset - location);
+//    }
+//}
+
+
+#pragma mark - CCPageTable
 
 typedef struct {
     CCIndex _mutable: 1;
-    CCIndex _capacityMutable: 1;
+    CCIndex capacityMutable: 1;
     CCIndex __: 24;
     CCIndex _sectionIndexShift: 6;
     
     CCIndex _indexInSectionMask: 32;
-    CCIndex _pageCountPerSection: 32;
+    CCIndex pageCountPerSection: 32;
     
-    CCIndex _offset;
-    CCIndex _capacity;
-    CCIndex _count;
+    CCIndex offset;
+    CCIndex count;
+    CCIndex capacity;
 
-    CCPageSectionBuffer_s sections;
+    CCPageTableContent_u content;
+//    CCPageSectionCollection_s sections;
 } CCPageTable_s;
-
-
-
-
 
 
 
 typedef CCPageTable_s * CCPageTablePtr;
 
 static inline CCIndex __CCPageTableGetSectionCount(CCPageTablePtr _Nonnull table) {
-    if (table->_capacity == 0) {
+    if (table->capacity == 0) {
         return 0;
-    } else if (table->_capacity <= table->_pageCountPerSection) {
-        return 1;
+    } else if (table->capacity <= 3 << table->_sectionIndexShift) {
+        return table->capacity >> table->_sectionIndexShift;
     } else {
-        return table->_capacity >> table->_sectionIndexShift;
+        return table->content.sections.count;
     }
 }
 
-static inline CCIndex __CCPageTableSectionIndexToLoaction(CCPageTablePtr _Nonnull table, CCIndex index) {
-    CCIndex r = table->sections.capacity - table->sections.offset;
-    if (index >= r) {
-        return index - r;
-    } else {
-        return index + table->sections.capacity;
-    }
-}
-
-static inline CCIndex __CCPageTableSectionLoactionToIndex(CCPageTablePtr _Nonnull table, CCIndex location) {
-    if (location >= table->sections.offset) {
-        return location - table->sections.offset;
-    } else {
-        return table->sections.capacity - (table->sections.offset - location);
-    }
+static inline CCIndex __CCPageTableGetCapacity(CCPageTablePtr _Nonnull table) {
+    return table->capacity;
 }
 
 static inline CCIndex __CCPageTableIndexToLoaction(CCPageTablePtr _Nonnull table, CCIndex index) {
-    CCIndex r = table->_capacity - table->_offset;
+    CCIndex capacity = __CCPageTableGetCapacity(table);
+    CCIndex r = capacity - table->offset;
     if (index >= r) {
         return index - r;
     } else {
-        return index + table->_offset;
+        return index + table->offset;
     }
 }
 
 static inline CCIndex __CCPageTableLoactionToIndex(CCPageTablePtr _Nonnull table, CCIndex location) {
-    if (location >= table->_offset) {
-        return location - table->_offset;
+    CCIndex capacity = __CCPageTableGetCapacity(table);
+    if (location >= table->offset) {
+        return location - table->offset;
     } else {
-        return table->_capacity - (table->_offset - location);
+        return capacity - (table->offset - location);
     }
 }
 
 static inline CCPagePtr _Nullable * _Nonnull __CCPageTableGetSection(CCPageTablePtr _Nonnull table, CCIndex sectionIndex) {
     CCIndex sectionCount = __CCPageTableGetSectionCount(table);
     assert(sectionIndex < sectionCount);
-    if (sectionCount <= 1) {
-        //1维
-        CCPagePtr * storage = table->sections.content;
-        assert(storage);
-        return storage;
+    if (0 == table->isSections) {
+        CCPageSection_s section = table->content.section;
+        assert(section.content);
+        return section.content;
     } else {
-        CCIndex location = __CCPageTableSectionIndexToLoaction(table, sectionIndex);
+        CCPageSectionCollectionPtr sections = &(table->content.sections);
+        CCIndex location = __CCPageSectionCollectionIndexToLoaction(sections, sectionIndex);
         //2维
-        CCPagePtr * * storage = table->sections.content;
+        CCPagePtr * * storage = sections->content;
         CCPagePtr * result = storage[location];
         assert(result);
         return result;
     }
 }
 static inline CCPagePtr _Nonnull __CCPageTableGetPage(CCPageTablePtr _Nonnull table, CCIndex pageIndex) {
-    assert(pageIndex < table->_count);
+    assert(pageIndex < table->count);
     CCIndex location = __CCPageTableIndexToLoaction(table, pageIndex);
-    CCPagePtr * section = __CCPageTableGetSection(table, location >> CCPageMaxCountPerGroupShift);
-    CCPagePtr page = section[location & CCPageIndexInGroupMask];
+    CCPagePtr * section = __CCPageTableGetSection(table, location >> table->_sectionIndexShift);
+    CCPagePtr page = section[location & table->_indexInSectionMask];
     assert(page);
     return page;
 }
 
 static inline CCPagePtr _Nonnull * _Nonnull __CCPageTableGetPages(CCPageTablePtr _Nonnull table, CCIndex beginIndex, CCIndex * _Nonnull lengthPtr) {
-    assert(beginIndex < table->_count);
+    assert(beginIndex < table->count);
     assert(table);
     assert(lengthPtr);
-    CCIndex rLength = table->_count - beginIndex;
+    CCIndex rLength = table->count - beginIndex;
     CCIndex location = __CCPageTableIndexToLoaction(table, beginIndex);
     
-    CCPagePtr * section = __CCPageTableGetSection(table, location >> CCPageMaxCountPerGroupShift);
-    CCIndex offset = location & CCPageIndexInGroupMask;
+    CCPagePtr * section = __CCPageTableGetSection(table, location >> table->_sectionIndexShift);
+    CCIndex offset = location & table->_indexInSectionMask;
     section += offset;
-    *lengthPtr = CCPageMaxCountPerGroup - offset < rLength ? CCPageMaxCountPerGroup - offset : rLength;
+#warning "out bounds sectionCount == 1"
+    *lengthPtr = table->pageCountPerSection - offset < rLength ? table->pageCountPerSection - offset : rLength;
     return section;
 }
-
-//static inline void __CCPageTableAppendPage(CCPageTablePtr _Nonnull table, CCPagePtr _Nullable page) {
-//
-//}
-//static inline void __CCPageTablePrependPage(CCPageTablePtr _Nonnull table, CCPagePtr _Nullable page) {
-//
-//
-//}
-//static inline CCPagePtr _Nullable __CCPageTableRemoveFirst(CCPageTablePtr _Nonnull table) {
-//
-//    return NULL;
-//}
-//static inline CCPagePtr _Nullable __CCPageTableRemoveLast(CCPageTablePtr _Nonnull table) {
-//
-//    return NULL;
-//}
-
 
 static inline CCIndex __CCPageTableAlignCapacity(CCIndex capacity) {
     if (capacity == 0) {
@@ -176,6 +198,16 @@ static inline CCIndex __CCPageTableAlignCapacity(CCIndex capacity) {
     }
 }
 
+//static inline CCPagePtr _Nullable __CCPageTableRemoveFirst(CCPageTablePtr _Nonnull table) {
+//
+//    return NULL;
+//}
+//static inline CCPagePtr _Nullable __CCPageTableRemoveLast(CCPageTablePtr _Nonnull table) {
+//
+//    return NULL;
+//}
+
+
 /*
  remove empty section
  
@@ -185,11 +217,15 @@ static inline CCIndex __CCPageTableAlignCapacity(CCIndex capacity) {
 static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex capacity) {
     assert(table);
     capacity = __CCPageTableAlignCapacity(capacity);
-    if (table->_capacity == capacity) {
+    CCIndex oldCapacity = __CCPageTableGetCapacity(table);
+
+    if (oldCapacity == capacity) {
         return;
     }
-    assert(table->_count <= capacity);
+    assert(table->count <= capacity);
     
+    CCPageSectionCollection_s * oldSections = &(table->content.sections);
+    CCIndex oldIsSections = table->isSections;
     /*
      0->0
      0->1
@@ -201,46 +237,36 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
      2->1
      2->2
      */
-    //去掉多余的
-    
-    
-    
-    
-    
-    if (table->_capacity == 0) {
+    if (oldCapacity == 0) {
         if (capacity == 0) {
             //0->0
-            table->sections.capacity = 0;
-            table->sections.offset = 0;
-            table->sections.content = NULL;
-            
-            table->_capacity = capacity;
-            table->_offset = 0;
-        } else if (capacity <= CCPageMaxCountPerGroup) {
+            memset(&(table->content), 0, sizeof(CCPageTableContent_u));
+            table->offset = 0;
+        } else if (capacity <= table->pageCountPerSection) {
             //0->1
             table->sections.capacity = 0;
             table->sections.offset = 0;
             table->sections.content = CCAllocate(sizeof(CCPagePtr) * capacity);
             
-            table->_capacity = capacity;
-            table->_offset = 0;
+            table->capacity = capacity;
+            table->offset = 0;
         } else {
             //0-2
-            CCIndex sectionCount = capacity / CCPageMaxCountPerGroup;
+            CCIndex sectionCount = capacity >> table->_sectionIndexShift;
             CCIndex sectionCapacity = CCPowerAlign2(sectionCount);
             CCPagePtr * * content = CCAllocate(sizeof(CCPagePtr *) * sectionCapacity);
             for (CCIndex idx=0; idx<sectionCount; idx++) {
-                content[idx] = CCAllocate(sizeof(CCPagePtr) * CCPageMaxCountPerGroup);
+                content[idx] = CCAllocate(sizeof(CCPagePtr) * table->pageCountPerSection);
             }
             
             table->sections.capacity = sectionCapacity;
             table->sections.offset = 0;
             table->sections.content = content;
             
-            table->_capacity = capacity;
-            table->_offset = 0;
+            table->capacity = capacity;
+            table->offset = 0;
         }
-    } else if (table->_capacity <= CCPageMaxCountPerGroup) {
+    } else if (table->capacity <= table->pageCountPerSection) {
         //1->0
         if (capacity == 0) {
             //缩容
@@ -250,46 +276,46 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
             table->sections.offset = 0;
             table->sections.content = NULL;
 
-            table->_capacity = capacity;
-            table->_offset = 0;
+            table->capacity = capacity;
+            table->offset = 0;
             
             CCDeallocate(old);
-        } else if (capacity <= CCPageMaxCountPerGroup) {
+        } else if (capacity <= table->pageCountPerSection) {
             //1->1
             CCPagePtr * content = CCAllocate(sizeof(CCPagePtr) * capacity);
             CCPagePtr * old = table->sections.content;
             CCIndex iter = 0;
-            for (CCIndex idx=table->_offset; idx<table->_capacity && iter<table->_count; idx++, iter++) {
+            for (CCIndex idx=table->offset; idx<table->capacity && iter<table->count; idx++, iter++) {
                 content[iter] = old[idx];
             }
-            for (CCIndex idx=0; idx<table->_offset && iter<table->_count; idx++, iter++) {
+            for (CCIndex idx=0; idx<table->offset && iter<table->count; idx++, iter++) {
                 content[iter] = old[idx];
             }
             
             table->sections.capacity = 0;
             table->sections.offset = 0;
             table->sections.content = content;
-            table->_capacity = capacity;
-            table->_offset = 0;
+            table->capacity = capacity;
+            table->offset = 0;
             
             CCDeallocate(old);
         } else {
             //1->2
             
-            CCIndex sectionCount = capacity / CCPageMaxCountPerGroup;
+            CCIndex sectionCount = capacity >> table->_sectionIndexShift;
             CCIndex sectionCapacity = CCPowerAlign2(sectionCount);
             CCPagePtr * * content = CCAllocate(sizeof(CCPagePtr *) * sectionCapacity);
             for (CCIndex idx=0; idx<sectionCount; idx++) {
-                content[idx] = CCAllocate(sizeof(CCPagePtr) * CCPageMaxCountPerGroup);
+                content[idx] = CCAllocate(sizeof(CCPagePtr) * table->pageCountPerSection);
             }
             
             CCPagePtr * target = content[0];
             CCPagePtr * old = table->sections.content;
             CCIndex iter = 0;
-            for (CCIndex idx=table->_offset; idx<table->_capacity && iter<table->_count; idx++, iter++) {
+            for (CCIndex idx=table->offset; idx<table->capacity && iter<table->count; idx++, iter++) {
                 target[iter] = old[idx];
             }
-            for (CCIndex idx=0; idx<table->_offset && iter<table->_count; idx++, iter++) {
+            for (CCIndex idx=0; idx<table->offset && iter<table->count; idx++, iter++) {
                 target[iter] = old[idx];
             }
             
@@ -297,15 +323,15 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
             table->sections.offset = 0;
             table->sections.content = content;
             
-            table->_capacity = capacity;
-            table->_offset = 0;
+            table->capacity = capacity;
+            table->offset = 0;
             
             CCDeallocate(old);
         }
     } else {
         //2维
         CCIndex oldSectionCount = __CCPageTableGetSectionCount(table);
-        CCPageSectionBuffer_s sections = table->sections;
+        CCPageSectionCollection_s sections = table->sections;
 
         if (capacity == 0) {
             //2->0
@@ -315,8 +341,8 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
             table->sections.offset = 0;
             table->sections.content = NULL;
 
-            table->_capacity = capacity;
-            table->_offset = 0;
+            table->capacity = capacity;
+            table->offset = 0;
             
             CCIndex iter = 0;
             for (CCIndex idx=sections.offset; idx<sections.capacity && iter<oldSectionCount; idx++, iter++) {
@@ -326,7 +352,7 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
                 CCDeallocate(old[idx]);
             }
             CCDeallocate(old);
-        } else if (capacity <= CCPageMaxCountPerGroup) {
+        } else if (capacity <= table->pageCountPerSection) {
             //2->1
             CCPagePtr **  old = sections.content;
             
@@ -340,19 +366,19 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
                 idx += length;
             }
             
-            if (idx < table->_count) {
+            if (idx < table->count) {
                 CCPagePtr * pages = __CCPageTableGetPages(table, idx, &length);
                 memcpy(content + idx, pages, sizeof(CCPagePtr) * length);
                 idx += length;
             }
-            assert(idx == table->_count);
-
+            assert(idx == table->count);
             
             table->sections.capacity = 0;
             table->sections.offset = 0;
             table->sections.content = content;
-            table->_capacity = capacity;
-            table->_offset = 0;
+            
+            table->capacity = capacity;
+            table->offset = 0;
             
             CCIndex iter = 0;
             for (CCIndex idx=sections.offset; idx<sections.capacity && iter<oldSectionCount; idx++, iter++) {
@@ -364,8 +390,35 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
             CCDeallocate(old);
         } else {
             //2->2
+            CCPagePtr **  old = sections.content;
+
+            CCIndex sectionCount = capacity >> table->_sectionIndexShift;
+            CCIndex sectionCapacity = CCPowerAlign2(sectionCount);
+            CCPagePtr * * content = CCAllocate(sizeof(CCPagePtr *) * sectionCapacity);
+            CCIndex iter = 0;
+            for (CCIndex idx=sections.offset; idx<sections.capacity && iter<oldSectionCount; idx++, iter++) {
+                if (iter < sectionCount) {
+                    content[iter] = old[idx];
+                } else {
+                    CCDeallocate(old[idx]);
+                    //剩余数据
+                }
+            }
+            for (CCIndex idx=0; idx<sections.offset && iter<oldSectionCount; idx++, iter++) {
+                if (iter < sectionCount) {
+                    content[iter] = old[idx];
+                } else {
+                    CCDeallocate(old[idx]);
+                    //剩余数据
+                }
+            }
+            table->sections.capacity = sectionCapacity;
+            table->sections.offset = 0;
+            table->sections.content = content;
             
-            
+            table->capacity = capacity;
+            //不修改offset
+            CCDeallocate(old);
         }
     }
 }
@@ -380,16 +433,16 @@ static inline void __CCPageTableDeallocate(CCPageTablePtr _Nonnull table) {
 /*
  typedef struct {
      CCIndex _mutable: 1;
-     CCIndex _capacityMutable: 1;
+     CCIndex capacityMutable: 1;
      CCIndex __: 24;
      CCIndex _sectionIndexShift: 6;
-     CCIndex _pageCountPerSection: 32;
+     CCIndex pageCountPerSection: 32;
      CCIndex _sectionOffset: 32;
      CCIndex _sectionCapacity: 32;
      
-     CCIndex _offset;
-     CCIndex _capacity;
-     CCIndex _count;
+     CCIndex offset;
+     CCIndex capacity;
+     CCIndex count;
 
      void * _Nonnull _content;
  } CCPageTable_s;
@@ -398,9 +451,9 @@ static inline void __CCPageTableDeallocate(CCPageTablePtr _Nonnull table) {
 
 static inline CCPageTablePtr _Nonnull __CCPageTableAllocate(CCIndex capacity) {
     CCPageTablePtr table = CCAllocate(sizeof(CCPageTable_s));
-    table->_capacity = capacity;
-    table->_count = 0;
-    table->_offset = 0;
+    table->capacity = capacity;
+    table->count = 0;
+    table->offset = 0;
     
     table->sections.capacity = 0;
     table->sections.offset = 0;
@@ -410,71 +463,69 @@ static inline CCPageTablePtr _Nonnull __CCPageTableAllocate(CCIndex capacity) {
     return table;
 }
 
-
-typedef void (*CCCircularBufferEnumerateCallBack_f)(void * _Nullable context, CCRange range, size_t elementSize, const void * _Nonnull values);
-
-static inline void __CCPageTableEnumerate(CCPageTablePtr _Nonnull table, CCRange range, void * _Nullable context, CCCircularBufferEnumerateCallBack_f _Nonnull func) {
-    assert(table);
-    assert(func);
-    if (range.length == 0) {
-        return;
-    }
-    assert(range.location + range.length >= range.location);
-    assert(range.location + range.length <= table->_count);
-    CCRange remain = range;
-    
-    if (table->_sectionCapacity > 0) {
-        CCIndex pageIndex = 0;
-        do {
-            CCIndex location = __CCPageTableLoactionToIndex(table, remain.location);
-            CCPagePtr * storage = __CCPageTableGetPage(table, pageIndex);
-            CCIndex rLength = bufferElementCapacity - path.index;
-            if (rLength > remain.length) {
-                rLength = remain.length;
-            }
-            assert(rLength > 0);
-            func(context, CCRangeMake(remain.location, rLength), elementSize, storage + buffer->_indexOffset * elementSize);
-            remain.location += rLength;
-            remain.length -= rLength;
-            pageIndex += 1;
-            if (pageIndex >= table->_count) {
-                pageIndex = 0;
-            }
-        } while (0);
-        while (remain.length > 0) {
-            uint8_t * storage = __CCCircularBufferGetPage(buffer, pageIndex);
-            CCIndex rLength = bufferElementCapacity;
-            if (rLength > remain.length) {
-                rLength = remain.length;
-            }
-            assert(rLength > 0);
-            func(context, CCRangeMake(remain.location, rLength), elementSize, storage + buffer->_indexOffset * elementSize);
-            remain.location += rLength;
-            remain.length -= rLength;
-            pageIndex += 1;
-            if (pageIndex >= table->_count) {
-                pageIndex = 0;
-            }
-        }
-    } else {
-        CCIndex location = __CCCircularBufferIndexToLoaction(buffer, remain.location);
-        CCCircularBufferLocationPath path = __CCCircularBufferGetLocationPath(buffer, location);
-        uint8_t * storage = __CCCircularBufferGetPage(buffer, path.pageIndex);
-        CCIndex rLength = buffer->_capacity - location;
-        if (rLength > range.length) {
-            rLength = range.length;
-        }
-        assert(rLength > 0);
-        func(context, CCRangeMake(remain.location, rLength), elementSize, storage + location * elementSize);
-        remain.location += rLength;
-        remain.length -= rLength;
-        if (rLength < range.length) {
-            func(context, remain, elementSize, storage);
-        }
-    }
-}
-
-
+//
+//typedef void (*CCCircularBufferEnumerateCallBack_f)(void * _Nullable context, CCRange range, size_t elementSize, const void * _Nonnull values);
+//
+//static inline void __CCPageTableEnumerate(CCPageTablePtr _Nonnull table, CCRange range, void * _Nullable context, CCCircularBufferEnumerateCallBack_f _Nonnull func) {
+//    assert(table);
+//    assert(func);
+//    if (range.length == 0) {
+//        return;
+//    }
+//    assert(range.location + range.length >= range.location);
+//    assert(range.location + range.length <= table->count);
+//    CCRange remain = range;
+//
+//    if (table->_sectionCapacity > 0) {
+//        CCIndex pageIndex = 0;
+//        do {
+//            CCIndex location = __CCPageTableLoactionToIndex(table, remain.location);
+//            CCPagePtr * storage = __CCPageTableGetPage(table, pageIndex);
+//            CCIndex rLength = bufferElementCapacity - path.index;
+//            if (rLength > remain.length) {
+//                rLength = remain.length;
+//            }
+//            assert(rLength > 0);
+//            func(context, CCRangeMake(remain.location, rLength), elementSize, storage + buffer->_indexOffset * elementSize);
+//            remain.location += rLength;
+//            remain.length -= rLength;
+//            pageIndex += 1;
+//            if (pageIndex >= table->count) {
+//                pageIndex = 0;
+//            }
+//        } while (0);
+//        while (remain.length > 0) {
+//            uint8_t * storage = __CCCircularBufferGetPage(buffer, pageIndex);
+//            CCIndex rLength = bufferElementCapacity;
+//            if (rLength > remain.length) {
+//                rLength = remain.length;
+//            }
+//            assert(rLength > 0);
+//            func(context, CCRangeMake(remain.location, rLength), elementSize, storage + buffer->_indexOffset * elementSize);
+//            remain.location += rLength;
+//            remain.length -= rLength;
+//            pageIndex += 1;
+//            if (pageIndex >= table->count) {
+//                pageIndex = 0;
+//            }
+//        }
+//    } else {
+//        CCIndex location = __CCCircularBufferIndexToLoaction(buffer, remain.location);
+//        CCCircularBufferLocationPath path = __CCCircularBufferGetLocationPath(buffer, location);
+//        uint8_t * storage = __CCCircularBufferGetPage(buffer, path.pageIndex);
+//        CCIndex rLength = buffer->capacity - location;
+//        if (rLength > range.length) {
+//            rLength = range.length;
+//        }
+//        assert(rLength > 0);
+//        func(context, CCRangeMake(remain.location, rLength), elementSize, storage + location * elementSize);
+//        remain.location += rLength;
+//        remain.length -= rLength;
+//        if (rLength < range.length) {
+//            func(context, remain, elementSize, storage);
+//        }
+//    }
+//}
 
 
 

@@ -14,6 +14,7 @@
 		D6315E0223854C08002ADD5E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6315E0023854C08002ADD5E /* Main.storyboard */; };
 		D6315E0523854C08002ADD5E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6315E0423854C08002ADD5E /* main.m */; };
 		D6315E0D23854C3A002ADD5E /* CCPagingCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = D6315E0C23854C3A002ADD5E /* CCPagingCircularBuffer.c */; };
+		D6315E102386A6CE002ADD5E /* CCPageSectionCollection.c in Sources */ = {isa = PBXBuildFile; fileRef = D6315E0F2386A6CE002ADD5E /* CCPageSectionCollection.c */; };
 		D68DDFB222CDAC5D00DBF644 /* CCImmutableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = D68DDFB122CDAC5D00DBF644 /* CCImmutableBuffer.c */; };
 		D68DDFB622CDCE5B00DBF644 /* CCString.c in Sources */ = {isa = PBXBuildFile; fileRef = D68DDFB522CDCE5B00DBF644 /* CCString.c */; };
 		D6B55F8D237D4E340090BCC3 /* CFStorage.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B55F8B237D4E340090BCC3 /* CFStorage.c */; };
@@ -79,6 +80,8 @@
 		D6315E0623854C08002ADD5E /* Page.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Page.entitlements; sourceTree = "<group>"; };
 		D6315E0B23854C3A002ADD5E /* CCPagingCircularBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPagingCircularBuffer.h; sourceTree = "<group>"; };
 		D6315E0C23854C3A002ADD5E /* CCPagingCircularBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCPagingCircularBuffer.c; sourceTree = "<group>"; };
+		D6315E0E2386A6CE002ADD5E /* CCPageSectionCollection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPageSectionCollection.h; sourceTree = "<group>"; };
+		D6315E0F2386A6CE002ADD5E /* CCPageSectionCollection.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCPageSectionCollection.c; sourceTree = "<group>"; };
 		D68DDFB022CDAC5D00DBF644 /* CCImmutableBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCImmutableBuffer.h; sourceTree = "<group>"; };
 		D68DDFB122CDAC5D00DBF644 /* CCImmutableBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCImmutableBuffer.c; sourceTree = "<group>"; };
 		D68DDFB322CDAE8300DBF644 /* CCAtomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCAtomic.h; sourceTree = "<group>"; };
@@ -294,6 +297,8 @@
 				D68DDFB522CDCE5B00DBF644 /* CCString.c */,
 				D62F3A7423851974004EA195 /* CCPageTable.h */,
 				D62F3A7523851974004EA195 /* CCPageTable.c */,
+				D6315E0E2386A6CE002ADD5E /* CCPageSectionCollection.h */,
+				D6315E0F2386A6CE002ADD5E /* CCPageSectionCollection.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -508,6 +513,7 @@
 				D68DDFB222CDAC5D00DBF644 /* CCImmutableBuffer.c in Sources */,
 				D6C17AED22D5E8FC00B080BA /* CCCircularBuffer.c in Sources */,
 				D6B55FAA237E70EA0090BCC3 /* CCBase.c in Sources */,
+				D6315E102386A6CE002ADD5E /* CCPageSectionCollection.c in Sources */,
 				D62F3A7623851974004EA195 /* CCPageTable.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

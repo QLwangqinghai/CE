@@ -27,3 +27,11 @@
 
 
 @end
+
+
+
+
+typedef uint64_t CCIndex;
+typedef uint8_t * CCPagePtr;
+
+

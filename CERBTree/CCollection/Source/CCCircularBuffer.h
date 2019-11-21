@@ -13,6 +13,7 @@
 #include "CType.h"
 #include "CCBase.h"
 #include "CCAtomic.h"
+#include "CCPageTable.h"
 
 
 /*
@@ -50,13 +51,13 @@ static inline uint32_t __CCCircularBufferGoodCapacity(uint32_t capacity) {
     return __CCCircularBufferCapacitys[34];
 }
 
-typedef struct __CCCircularBufferPageTable {
-    CCIndex _offset;
-    CCIndex _capacity;
-    CCIndex _count;
-    CCIndex _sectionCapacity;
-    void * _Nonnull _content;
-} CCCircularBufferPageTable_s;
+//typedef struct __CCCircularBufferPageTable {
+//    CCIndex _offset;
+//    CCIndex _capacity;
+//    CCIndex _count;
+//    CCIndex _sectionCapacity;
+//    void * _Nonnull _content;
+//} CCCircularBufferPageTable_s;
 
 typedef struct __CCCircularBufferApi {
     uint32_t _elementSize;
@@ -93,14 +94,6 @@ static inline CCIndex __CCCircularBufferLoactionToIndex(CCCircularBuffer_s * _No
         return buffer->_capacity - (buffer->_indexOffset - location);
     }
 }
-
-typedef struct __CCCircularBufferPageTable {
-    CCIndex _offset;
-    CCIndex _capacity;
-    CCIndex _count;
-    CCIndex _sectionCapacity;
-    void * _Nonnull _content;
-} CCCircularBufferPageTable_s;
 
 #if CBuild64Bit
 typedef struct {
@@ -518,38 +511,6 @@ static inline void __CCCircularBufferResetStorage(CCCircularBuffer_s * _Nonnull 
     buffer->_capacity = capacity;
     buffer->_indexOffset = indexOffset;
 }
-static inline uint8_t * _Nonnull __CCCircularBufferPageTableGetPage(CCCircularBufferPageTable_s * _Nonnull table, CCIndex pageIndex) {
-    assert(pageIndex < table->_count);
-
-    CCIndex location = (pageIndex + table->_offset);
-    if (location >= table->_capacity) {
-        location -= table->_capacity;
-    }
-    if (table->_capacity <= CCPageMaxCountPerGroup) {
-        //2维
-        uint8_t * * storage = table->_content;
-        return storage[location];
-    } else {
-        //3维
-        uint8_t * * * storage = table->_content;
-        return storage[location >> CCPageMaxCountPerGroupShift][location & CCPageIndexInGroupMask];
-    }
-}
-static inline void __CCCircularBufferPageTableAppendPage(CCCircularBufferPageTable_s * _Nonnull table, void * _Nonnull page) {
-
-}
-static inline void __CCCircularBufferPageTablePrependPage(CCCircularBufferPageTable_s * _Nonnull table, void * _Nonnull page) {
-
-    
-}
-static inline uint8_t * _Nonnull __CCCircularBufferPageTableRemoveFirst(CCCircularBufferPageTable_s * _Nonnull table) {
-
-    return NULL;
-}
-static inline uint8_t * _Nonnull __CCCircularBufferPageTableRemoveLast(CCCircularBufferPageTable_s * _Nonnull table) {
-
-    return NULL;
-}
 
 
 static inline uint8_t * _Nonnull __CCCircularBufferGetPage(CCCircularBuffer_s * _Nonnull buffer, CCIndex pageIndex) {
@@ -558,8 +519,8 @@ static inline uint8_t * _Nonnull __CCCircularBufferGetPage(CCCircularBuffer_s * 
         assert(pageIndex == 0);
         return buffer->_storage;
     } else {
-        CCCircularBufferPageTable_s * table = (CCCircularBufferPageTable_s *)(buffer->_storage);
-        return __CCCircularBufferPageTableGetPage(table, pageIndex);
+        CCPageTablePtr table = (CCPageTablePtr)(buffer->_storage);
+        return __CCPageTableGetPage(table, pageIndex);
     }
 }
 
@@ -581,7 +542,7 @@ static inline void __CCCircularBufferEnumerate(CCCircularBuffer_s * _Nonnull buf
     CCRange remain = range;
     
     if (buffer->_capacity > buffer->_bufferElementCapacity) {
-        CCCircularBufferPageTable_s * table = (CCCircularBufferPageTable_s *)(buffer->_storage);
+        CCPageTablePtr table = (CCPageTablePtr)(buffer->_storage);
 
         CCIndex pageIndex = 0;
         

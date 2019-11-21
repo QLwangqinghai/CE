@@ -53,6 +53,9 @@ fflush(stderr);\
 #define CCPageMaxCountPerGroup UINT32_MAX
 #endif
 
+typedef uint8_t * CCPagePtr;
+
+
 extern const CCIndex CCIndexNotFound;
 
 //count 的最大值

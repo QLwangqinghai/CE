@@ -282,37 +282,46 @@ static inline void __CCPageTableResize(CCPageTablePtr _Nonnull table, CCIndex ca
             table->offset = 0;
         } else {
             //2->2
-//            CCIndex sectionCount = capacity >> table->_sectionIndexShift;
-//            if (sectionCount == sections->count) {
-//                abort();
-//            } else if (sectionCount > sections->count) {
-//                //拓容
-//                __CCPageSectionCollectionResize(sections, sectionCount);
-//                if ((table->offset & table->_indexInSectionMask) != 0 &&  table->capacity - table->count < table->pageCountPerSection) {
-//                    //page首尾分离
-//
-//
-//                }
-//                while (sections->count < sectionCount) {
-            //应该是插入空白页
-//                    CCPagePtr * section = CCAllocate(sizeof(CCPagePtr) * table->pageCountPerSection);
-//                    __CCPageSectionCollectionAppend(sections, section);
-//                }
-//
-//            } else {
-//                //缩容
-//                while (sections->count > sectionCount) {
-            //应该是删除空白页
-//                    CCPagePtr * oldSection = __CCPageSectionCollectionRemoveLast(sections);
-//                    CCDeallocate(oldSection);
-//                }
-//                if ((table->offset & table->_indexInSectionMask) != 0 &&  table->capacity - table->count < table->pageCountPerSection) {
-//                    //首尾合并
-//
-//
-//                }
-//
-//            }
+            CCIndex sectionCount = capacity >> table->_sectionIndexShift;
+            if (sectionCount == sections->count) {
+                abort();
+            } else if (sectionCount > sections->count) {
+                //拓容
+                __CCPageSectionCollectionResize(sections, sectionCount);
+                CCIndex offset2 = (table->offset & table->_indexInSectionMask);
+
+                if (offset2 != 0 &&  table->capacity - table->count < table->pageCountPerSection) {
+                    //section首尾分离
+                    CCPagePtr * section = __CCPageSectionCollectionGetSection(sections, location >> table->_sectionIndexShift);
+
+                    CCIndex length = 0;
+                    if (1) {
+                        
+                        CCPagePtr * pages = __CCPageTableGetPages(table, idx, &length);
+
+                    __CCPageSectionCollectionGetSection(sections, table->count - 1);
+
+                }
+                while (sections->count < sectionCount) {
+//            应该插入空白页
+                    CCPagePtr * section = CCAllocate(sizeof(CCPagePtr) * table->pageCountPerSection);
+                    __CCPageSectionCollectionAppend(sections, section);
+                }
+
+            } else {
+                //缩容
+                while (sections->count > sectionCount) {
+//            应该删除空白页
+                    CCPagePtr * oldSection = __CCPageSectionCollectionRemoveLast(sections);
+                    CCDeallocate(oldSection);
+                }
+                if ((table->offset & table->_indexInSectionMask) != 0 &&  table->capacity - table->count < table->pageCountPerSection) {
+                    //section首尾合并
+
+
+                }
+                __CCPageSectionCollectionResize(sections, sectionCount);
+            }
         }
     }
 }

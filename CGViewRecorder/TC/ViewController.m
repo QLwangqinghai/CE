@@ -14,6 +14,11 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
+    
+    
+    void * p = malloc(UINT32_MAX);
+    //success
+    NSLog(@"p", p);
 }
 
 

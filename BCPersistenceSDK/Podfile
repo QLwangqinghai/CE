@@ -1,0 +1,9 @@
+platform :ios, '8.0'
+source 'http://192.168.1.18/bichan_coms/pod_specs’
+inhibit_all_warnings!
+target 'BCPersistenceSDK' do
+    
+pod 'FMDB/SQLCipher'
+pod 'SQLCipher'
+
+end

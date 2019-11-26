@@ -1,0 +1,17 @@
+//
+//  BCCustomAlertController.h
+//  BichanWallet
+//
+//  Created by 王青海 on 2018/8/8.
+//  Copyright © 2018年 陈少楠. All rights reserved.
+//
+
+#import "BCBaseViewController.h"
+
+
+/**
+ 自定义的alertController
+ */
+@interface BCCustomAlertController : BCBaseViewController
+
+@end

@@ -27,6 +27,198 @@ public protocol TableCollection {
 }
 
 
+public class TableArray<Key, Value>/*: TableCollection*/ where Key: Hashable, Value: Equatable {
+    public struct Row {
+        public let key: Key
+        public let value: Value
+        public init(key: Key, value: Value) {
+            self.key = key
+            self.value = value
+        }
+    }
+    
+    public typealias Change = TableChange<Row>
+    
+    public struct Updater {
+        public typealias Collection = TableArray<Key, Value>
+        
+        fileprivate let collection: Collection
+        fileprivate var rows: [Row]
+        fileprivate var dictionary: [Key: Row]
+        fileprivate init(collection: Collection) {
+            self.collection = collection
+            self.rows = collection.rows
+            self.dictionary = collection.dictionary.mapValues({ (index) -> Row in
+                return collection.rows[index]
+            })
+        }
+        
+        public func uniqueValue(forKey: Key) -> Row? {
+            if let result = self.dictionary[forKey] {
+                return result
+            }
+            return self.collection[forKey]
+        }
+        
+        public mutating func removeItem(forKey: Key) {
+            self.dictionary.removeValue(forKey: forKey)
+        }
+        public mutating func replaceItem(_ item: Row, forKey key: Key) {
+            self.dictionary[key] = item
+        }
+        
+        public mutating func filter(_ body: (Row) -> Bool) {
+            self.dictionary = self.dictionary.filter({ (item) -> Bool in
+                return body(item.value)
+            })
+        }
+        public mutating func reset(_ dictionary: [Key: Row]) {
+            self.dictionary = dictionary
+        }
+        public mutating func replace(_ items: [Key: Row]) {
+            for item in items {
+                self.dictionary[item.key] = item.value
+            }
+        }
+        public mutating func replace<S>(_ items: S) where Row == S.Element, S : Sequence {
+            for item in items {
+                self.dictionary[item.key] = item
+            }
+        }
+                
+        public mutating func removeAll() {
+            self.dictionary.removeAll()
+        }
+        
+        public mutating func finish() -> (Collection, [Change]) {
+            let list: [Row] = self.collection.rows            
+            var updated: [(Int, Row)] = []
+            var removed: [(Int, Row)] = []
+            var remain: [Key: Row] = [:]
+            _ = self.dictionary.map { (item) -> Void in
+                remain[item.key] = item.value
+            }
+            
+            var array: [Row] = []
+            var dictionary: [Key: Int] = [:]
+            var changes: [Change] = []
+            
+            //update & remove
+            for (index, arrayItem) in list.enumerated() {
+                let key = arrayItem.key
+                if let newItem = remain[key] {
+                    if arrayItem.priority == newItem.priority {
+                        remain.removeValue(forKey: key)
+                        array.append(newItem)
+                        
+                        if (newItem.value != arrayItem.value) {
+                            updated.append((index, arrayItem))
+                        }
+                    } else {
+                        removed.append((index, arrayItem))
+                    }
+                } else {
+                    removed.append((index, arrayItem))
+                }
+            }
+            
+            if !updated.isEmpty {
+                 let change = Change.update(updated)
+                 changes.append(change)
+             }
+            
+            if !removed.isEmpty {
+                let change = Change.remove(removed)
+                changes.append(change)
+            }
+                    
+            var waitInserted: [Row] = remain.map { (item) -> Row in
+                return item.value
+            }.sorted { (lhs, rhs) -> Bool in
+                return compare(lhs.priority, rhs.priority)
+            }
+            
+            if !waitInserted.isEmpty {
+                var inserted: [(Int, Row)] = []
+                var resultArray: [Row] = []
+                
+                for item in array {
+                    while let insertItem = waitInserted.first {
+                        if compare(insertItem.priority, item.priority) {
+                            let insertIndex = resultArray.endIndex
+                            resultArray.append(insertItem)
+                            inserted.append((insertIndex, insertItem))
+                            dictionary[insertItem.key] = insertIndex
+                            waitInserted.removeFirst()
+                        } else {
+                            break
+                        }
+                    }
+                    let insertIndex = resultArray.endIndex
+                    resultArray.append(item)
+                    dictionary[item.key] = insertIndex
+                }
+                
+                while let insertItem = waitInserted.first {
+                    let insertIndex = resultArray.endIndex
+                    resultArray.append(insertItem)
+                    inserted.append((insertIndex, insertItem))
+                    dictionary[insertItem.key] = insertIndex
+                    waitInserted.removeFirst()
+                }
+                
+                array = resultArray
+                if !inserted.isEmpty {
+                    let change = Change.insert(inserted)
+                    changes.append(change)
+                }
+            }
+            let storage = self.collection
+            storage.rows = array
+            storage.dictionary = dictionary
+            return (storage, changes)
+        }
+    }
+    
+    public func makeUpdater() -> Updater {
+        return Updater(collection: self)
+    }
+
+    public fileprivate(set) var rows: [Row]
+    fileprivate var dictionary: [Key: Int]
+//    private var observers: [AnyHashable: ObserverClosure] = [:]
+
+    public var count: Int {
+        return self.rows.count
+    }
+    
+    public init() {
+        self.rows = []
+        self.dictionary = [:]
+    }
+
+    public func load() -> [Value] {
+        return self.rows.map { (item) -> Value in
+            return item.value
+        }
+    }
+    public func object(at index: Int) -> Value {
+        return self.rows[index].value
+    }
+    public func index(of key: Key) -> Int? {
+        return self.dictionary[key]
+    }
+    
+    public subscript(key: Key) -> Row? {
+        guard let index = self.dictionary[key] else {
+            return nil
+        }
+        return self.rows[index]
+    }
+}
+
+
+
 public class Table<Key, Priority, Value>/*: TableCollection*/ where Key: Hashable, Priority: Comparable, Value: Equatable {
 //    public func observeList(didChange: @escaping (TableStorage<Key, Priority, Value>, [TableChange<TableStorage<Key, Priority, Value>.Row>]) -> Void, forKey: AnyHashable) {
 //
@@ -54,52 +246,52 @@ public class Table<Key, Priority, Value>/*: TableCollection*/ where Key: Hashabl
         public typealias Collection = Table<Key, Priority, Value>
         
         fileprivate let collection: Collection
-        fileprivate var _dictionary: [Key: Row]
+        fileprivate var dictionary: [Key: Row]
         private(set) var compare: Compare
 
         fileprivate init(collection: Collection, compare: @escaping Compare) {
             self.compare = compare
             self.collection = collection
-            self._dictionary = collection.dictionary.mapValues({ (index) -> Row in
+            self.dictionary = collection.dictionary.mapValues({ (index) -> Row in
                 return collection.rows[index]
             })
         }
         
         public func uniqueValue(forKey: Key) -> Row? {
-            if let result = self._dictionary[forKey] {
+            if let result = self.dictionary[forKey] {
                 return result
             }
             return self.collection[forKey]
         }
         
         public mutating func removeItem(forKey: Key) {
-            self._dictionary.removeValue(forKey: forKey)
+            self.dictionary.removeValue(forKey: forKey)
         }
         public mutating func replaceItem(_ item: Row, forKey key: Key) {
-            self._dictionary[key] = item
+            self.dictionary[key] = item
         }
         
         public mutating func filter(_ body: (Row) -> Bool) {
-            self._dictionary = self._dictionary.filter({ (item) -> Bool in
+            self.dictionary = self.dictionary.filter({ (item) -> Bool in
                 return body(item.value)
             })
         }
         public mutating func reset(_ dictionary: [Key: Row]) {
-            self._dictionary = dictionary
+            self.dictionary = dictionary
         }
         public mutating func replace(_ items: [Key: Row]) {
             for item in items {
-                self._dictionary[item.key] = item.value
+                self.dictionary[item.key] = item.value
             }
         }
         public mutating func replace<S>(_ items: S) where Row == S.Element, S : Sequence {
             for item in items {
-                self._dictionary[item.key] = item
+                self.dictionary[item.key] = item
             }
         }
                 
         public mutating func removeAll() {
-            self._dictionary.removeAll()
+            self.dictionary.removeAll()
         }
         
         public mutating func finish() -> (Collection, [Change]) {
@@ -109,7 +301,7 @@ public class Table<Key, Priority, Value>/*: TableCollection*/ where Key: Hashabl
             var updated: [(Int, Row)] = []
             var removed: [(Int, Row)] = []
             var remain: [Key: Row] = [:]
-            _ = self._dictionary.map { (item) -> Void in
+            _ = self.dictionary.map { (item) -> Void in
                 remain[item.key] = item.value
             }
             

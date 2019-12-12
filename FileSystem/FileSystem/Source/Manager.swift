@@ -9,6 +9,26 @@
 import Foundation
 
 /*
+ 证书数据格式
+ cer = {
+ info = {
+ version = Int64
+ demain = ""
+ isFinal = Bool
+ ownerEmail = ""
+ publicKey = ""
+ group = ""
+ rw = ["xxx/xxx", "xxxx/xxxx"],
+ r = ["xxx/xxx", "xxxx/xxxx"],
+ endTime = 123234
+ }
+ check = "sha2"
+ sign = ""
+ parent = cer?
+ }
+ */
+
+/*
 文件系统结构
  fs = {
  box = [

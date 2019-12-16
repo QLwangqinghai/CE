@@ -11,20 +11,22 @@ import Foundation
 /*
  证书数据格式
  cer = {
- info = {
- version = Int64
- demain = ""
- isFinal = Bool
- ownerEmail = ""
- publicKey = ""
- group = ""
- rw = ["xxx/xxx", "xxxx/xxxx"],
- r = ["xxx/xxx", "xxxx/xxxx"],
- endTime = 123234
- }
- check = "sha2"
- sign = ""
- parent = cer?
+     info = {
+         version = Int32
+         demain = ""
+         isFinal = Bool
+         user = ""
+         publicKey = ""
+         group = ""
+         parent = Byte
+         level = Int
+         rw = ["xxx/xxx", "xxxx/xxxx"],
+         r = ["xxx/xxx", "xxxx/xxxx"],
+         endTime = 123234
+     }
+    parent = cer?
+    identifier = "sha2"
+    sign = ""
  }
  */
 

@@ -14,6 +14,7 @@
 		D6978F7623A89EC5001F8B3F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6978F7523A89EC5001F8B3F /* main.m */; };
 		D6978F8023A89EF8001F8B3F /* SITPType.c in Sources */ = {isa = PBXBuildFile; fileRef = D6978F7F23A89EF8001F8B3F /* SITPType.c */; };
 		D6978F8323A8A5F8001F8B3F /* SITPIndexShift.c in Sources */ = {isa = PBXBuildFile; fileRef = D6978F8223A8A5F8001F8B3F /* SITPIndexShift.c */; };
+		D6E9F97823A92AE0002E747E /* SITPParser.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E9F97723A92AE0002E747E /* SITPParser.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,8 @@
 		D6978F7F23A89EF8001F8B3F /* SITPType.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SITPType.c; sourceTree = "<group>"; };
 		D6978F8123A8A5F8001F8B3F /* SITPIndexShift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SITPIndexShift.h; sourceTree = "<group>"; };
 		D6978F8223A8A5F8001F8B3F /* SITPIndexShift.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SITPIndexShift.c; sourceTree = "<group>"; };
+		D6E9F97623A92AE0002E747E /* SITPParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SITPParser.h; sourceTree = "<group>"; };
+		D6E9F97723A92AE0002E747E /* SITPParser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SITPParser.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +87,8 @@
 				D6978F7F23A89EF8001F8B3F /* SITPType.c */,
 				D6978F8123A8A5F8001F8B3F /* SITPIndexShift.h */,
 				D6978F8223A8A5F8001F8B3F /* SITPIndexShift.c */,
+				D6E9F97623A92AE0002E747E /* SITPParser.h */,
+				D6E9F97723A92AE0002E747E /* SITPParser.c */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -159,6 +164,7 @@
 			files = (
 				D6978F8323A8A5F8001F8B3F /* SITPIndexShift.c in Sources */,
 				D6978F6E23A89EC3001F8B3F /* ViewController.m in Sources */,
+				D6E9F97823A92AE0002E747E /* SITPParser.c in Sources */,
 				D6978F8023A89EF8001F8B3F /* SITPType.c in Sources */,
 				D6978F7623A89EC5001F8B3F /* main.m in Sources */,
 				D6978F6B23A89EC3001F8B3F /* AppDelegate.m in Sources */,

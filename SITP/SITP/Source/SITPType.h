@@ -12,9 +12,10 @@
 #include <stdio.h>
 
 typedef uint32_t SITPIndex;
-typedef uint32_t SITPByteLength;
+typedef uint32_t SITPByteSize;
 
 #define SITPIndexNotFound UINT32_MAX
+#define SITPByteSizeNotFound UINT32_MAX
 
 typedef enum {
     SITPTypeCodeSInt = 0x0,
@@ -36,6 +37,39 @@ typedef enum {
     SITPTypeCodeMessageArray = 0xf,
 } SITPTypeCode_e;
 
+typedef enum {
+    SITPDataSubtypeCodeNormal = 0x0,
+    SITPDataSubtypeCodeJsonMap = 0x1,
+    SITPDataSubtypeCodeByte16 = 0x2,
+    SITPDataSubtypeCodeByte32 = 0x3,
+    SITPDataSubtypeCodeByte48 = 0x4,
+    SITPDataSubtypeCodeByte64 = 0x5,
+} SITPDataSubtypeCode_e;
+
+typedef enum {
+    SITPStringSubtypeCodeUtf8String = 0x0,
+} SITPStringSubtypeCode_e;
+
+
+/*
+ 4b(type) 4b(control) SITPTypeCodeSInt、SITPTypeCodeUInt
+ 4b(type) 4b(0) SITPTypeCodeFloat32、SITPTypeCodeFloat64
+ 4b(type) 4b(content) SITPTypeCodeBool
+ 4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeData
+ 4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeString
+ 4b(type) 2b(0) 2b(length control) SITPTypeCodeMessage
+
+ 4b(type) 2b(0) 2b(length control) SITPTypeCodeSIntArray、SITPTypeCodeUIntArray、SITPTypeCodeFloat32Array、SITPTypeCodeFloat64Array、SITPTypeCodeMessageArray
+ 4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeDataArray
+ 4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeStringArray
+
+ 
+ 4b(type) 2b(control) 2b(length control) SITPTypeCodeBoolArray
+
+ 
+ */
+
+
 typedef struct {
     SITPIndex offset;
     SITPIndex length;
@@ -45,8 +79,31 @@ typedef struct {
 //    SITPIndex index;
     SITPTypeCode_e typeCode;
     
-    SITPByteLength byteLength;
+    SITPByteSize byteLength;
 } SITPFieldHeader_t;
+
+typedef struct {
+    SITPIndex location;
+    SITPIndex length;
+} SITPIndexRange;
+
+typedef struct {
+    SITPByteSize location;
+    SITPByteSize length;
+} SITPByteRange;
+
+
+typedef struct {
+    SITPIndex index;
+    uint32_t type: 8;
+    uint32_t subtype: 8;//data 时有用
+    uint32_t contentControl: 16;
+    SITPByteRange contentRange;
+} SITPField_t;
+
+
+
+
 
 /*
  Message

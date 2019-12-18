@@ -21,6 +21,14 @@ extern SITPParserCode const SITPParserCodeSuccess;
 extern SITPParserCode const SITPParserCodeNeedMoreData;
 extern SITPParserCode const SITPParserCodeParamError;
 extern SITPParserCode const SITPParserCodeReadError;
+
+extern SITPParserCode const SITPParserCodeUnknownDataSubType;
+extern SITPParserCode const SITPParserCodeCustomStringEncodeNotSupport;
+extern SITPParserCode const SITPParserCodeMessageSubTypeError;
+
+extern SITPParserCode const SITPParserCodeLengthByteCountError;
+
+
 extern SITPParserCode const SITPParserCodeUnknownError;
 
 
@@ -44,10 +52,10 @@ typedef struct {
     uint32_t lastReadBufferIndex;
 } SITPByteReaderMemoryContext_t;
 
-typedef SITPParserCode (*SITPParserRead_f)(SITPParserPtr _Nonnull parser, const SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteSize length);
+typedef SITPParserCode (*SITPParserRead_f)(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
 
 typedef struct {
-    uint32_t control;
+    SITPParserRead_f _Nonnull func;
     SITPByteSize length;
 } SITPParserFieldControl_t;
 
@@ -59,8 +67,9 @@ struct _SITPParser {
     //读取的数据长度
     SITPByteSize readLength;
 
-    uint32_t stackSize;
-    SITPParserFieldControl_t controlStack[20];
+    uint32_t controlOffset: 16;
+    uint32_t controlCount: 16;
+    SITPParserFieldControl_t controls[20];
     
     SITPField_t readingField;
 };
@@ -79,10 +88,10 @@ typedef enum {
     SITPParserControlCodeFieldContent = 0x4,
 } SITPParserControlCode_e;
 
-typedef SITPParserCode (*SITPParserParseCallback_f)(void * _Nullable context, SITPParserCode code, SITPField_t field);
+typedef SITPParserCode (*SITPParserParseCallback_f)(void * _Nullable context, SITPField_t field);
 
 
-void SITPParserParseData(void * _Nullable context, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserParseCallback_f _Nonnull callback);
+SITPParserCode SITPParserParseData(void * _Nullable context, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserParseCallback_f _Nonnull callback);
 
 
 

@@ -39,13 +39,29 @@ typedef enum {
 } SITPTypeCode_e;
 
 typedef enum {
-    SITPDataSubtypeCodeNormal = 0x0,
-    SITPDataSubtypeCodeJsonMap = 0x1,
-    SITPDataSubtypeCodeByte16 = 0x2,
-    SITPDataSubtypeCodeByte32 = 0x3,
-    SITPDataSubtypeCodeByte48 = 0x4,
-    SITPDataSubtypeCodeByte64 = 0x5,
+    SITPDataSubtypeCodeByte16 = 0x0,
+    SITPDataSubtypeCodeByte32 = 0x1,
+    SITPDataSubtypeCodeByte48 = 0x2,
+    SITPDataSubtypeCodeByte64 = 0x3,
+    
+    SITPDataSubtypeCodeNormal = 0x16,
+    SITPDataSubtypeCodeJsonMap = 0x17,
 } SITPDataSubtypeCode_e;
+
+static inline SITPByteSize SITPDataSubtypeGetLength(SITPDataSubtypeCode_e code) {
+    if (SITPDataSubtypeCodeByte16 == code) {
+        return 16;
+    } else if (SITPDataSubtypeCodeByte32 == code) {
+        return 32;
+    } else if (SITPDataSubtypeCodeByte48 == code) {
+        return 48;
+    } else if (SITPDataSubtypeCodeByte64 == code) {
+        return 64;
+    } else {
+        return 0;
+    }
+}
+
 
 typedef enum {
     SITPStringSubtypeCodeUtf8String = 0x0,
@@ -56,15 +72,13 @@ typedef enum {
  4b(type) 0b(0 subtypeControl) 4b(control) SITPTypeCodeSInt、SITPTypeCodeUInt
  4b(type) 4b(0 subtypeControl control) SITPTypeCodeFloat32、SITPTypeCodeFloat64
  4b(type) 4b(content) SITPTypeCodeBool
- 4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeData
- 4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeString
- 4b(type) 2b(0) 2b(length control) SITPTypeCodeMessage
+ 4b(type) 4b(subtypeControl) 0b(length control) 6b(subtype) 2b(length control) SITPTypeCodeData
+ 4b(type) [(1b(notUtf8) 3b(length control)), ] SITPTypeCodeString
+ 4b(type) 1b(0) 3b(length control) SITPTypeCodeMessage
 
- 4b(type) 2b(0) 2b(length control) SITPTypeCodeSIntArray、SITPTypeCodeUIntArray、SITPTypeCodeFloat32Array、SITPTypeCodeFloat64Array、SITPTypeCodeMessageArray
+ 4b(type) 1b(0) 3b(length control) SITPTypeCodeSIntArray、SITPTypeCodeUIntArray、SITPTypeCodeFloat32Array、SITPTypeCodeFloat64Array、SITPTypeCodeMessageArray
  4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeDataArray
  4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeStringArray
-
- 
  4b(type) 2b(control) 2b(length control) SITPTypeCodeBoolArray
 
  
@@ -86,11 +100,19 @@ typedef struct {
     SITPByteSize length;
 } SITPByteRange;
 
+static inline SITPByteRange SITPByteRangeMake(SITPByteSize location, SITPByteSize length) {
+    SITPByteRange range = {
+        .location = location,
+        .length = length,
+    };
+    return range;
+}
+
 typedef struct {
     SITPIndex index;
     uint32_t type: 8;
-    uint32_t subtype: 8;//data、 string 时有用
-    uint32_t contentControl: 16;
+    uint32_t subtype: 12;//data、 string 时有用
+    uint32_t contentControl: 12;
     SITPByteRange contentRange;
 } SITPField_t;
 

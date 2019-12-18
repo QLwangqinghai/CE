@@ -7,3 +7,11 @@
 //
 
 #include "SITPType.h"
+#include <string.h>
+#include<memory.h>
+
+SITPField_t const SITPFieldInvalid = {};
+
+_Bool SITPFieldIsInvalid(SITPField_t field) {
+    return memcmp(&field, &SITPFieldInvalid, sizeof(SITPField_t)) == 0;
+}

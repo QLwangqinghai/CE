@@ -17,13 +17,34 @@ typedef SITPParser_t * SITPParserPtr;
 
 typedef uint32_t SITPParserCode;
 
+extern SITPParserCode const SITPParserCodeSuccess;
+extern SITPParserCode const SITPParserCodeNeedMoreData;
+extern SITPParserCode const SITPParserCodeParamError;
+extern SITPParserCode const SITPParserCodeReadError;
+extern SITPParserCode const SITPParserCodeUnknownError;
+
+
 typedef struct {
     uint8_t * _Nonnull content;
-    SITPByteSize location;
-    SITPByteSize length;
+    SITPByteRange range;
 } SITPByteBuffer_t;
 
-typedef SITPParserCode (*SITPParserRead_f)(SITPParserPtr _Nonnull parser, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteSize length);
+
+typedef SITPParserCode (*SITPByteReader_f)(void * _Nonnull context, uint8_t * _Nonnull buffer, SITPByteRange range);
+
+typedef struct {
+    void * _Nonnull context;
+    SITPByteReader_f _Nonnull read;
+} SITPByteReader_t;
+
+typedef struct {
+    SITPByteRange range;
+    SITPByteBuffer_t * _Nonnull buffers;
+    uint32_t bufferCount;
+    uint32_t lastReadBufferIndex;
+} SITPByteReaderMemoryContext_t;
+
+typedef SITPParserCode (*SITPParserRead_f)(SITPParserPtr _Nonnull parser, const SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteSize length);
 
 typedef struct {
     uint32_t control;
@@ -31,31 +52,24 @@ typedef struct {
 } SITPParserFieldControl_t;
 
 struct _SITPParser {
-    SITPIndexRange index;
+    SITPIndexRange readingIndexs;
     SITPByteSize lengthByteCount;
-    SITPByteSize location;
-    SITPByteSize length;
+    SITPByteRange byteRange;
     
+    //读取的数据长度
+    SITPByteSize readLength;
+
     uint32_t stackSize;
-    uint32_t fieldCount;
     SITPParserFieldControl_t controlStack[20];
     
-    SITPField_t fields[16];
     SITPField_t readingField;
 };
-struct _SITPParserContext {
-    SITPIndexRange index;
-    SITPByteSize lengthByteCount;
-    SITPByteSize location;
-    SITPByteSize length;
-    
-    uint32_t stackSize;
-    uint32_t fieldCount;
-    SITPParserFieldControl_t controlStack[20];
-    
-    SITPField_t fields[16];
-    SITPField_t readingField;
-};
+//typedef struct {
+//    SITPByteRange range;
+//    SITPByteBuffer_t * _Nonnull buffers;
+//    uint32_t bufferCount;
+//    uint32_t lastBufferIndex;
+//} SITPParserDataContext_t;
 
 
 typedef enum {
@@ -65,17 +79,15 @@ typedef enum {
     SITPParserControlCodeFieldContent = 0x4,
 } SITPParserControlCode_e;
 
-SITPParserCode SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteSize length);
+typedef SITPParserCode (*SITPParserParseCallback_f)(void * _Nullable context, SITPParserCode code, SITPField_t field);
 
-SITPParserCode SITPParserReadFieldSubtype(SITPParserPtr _Nonnull parser, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteSize length);
 
-SITPParserCode SITPParserReadFieldContentLength(SITPParserPtr _Nonnull parser, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteSize length);
-
-SITPParserCode SITPParserReadFieldContent(SITPParserPtr _Nonnull parser, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteSize length);
+void SITPParserParseData(void * _Nullable context, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserParseCallback_f _Nonnull callback);
 
 
 
 
+//SITPParserCode SITPParserReadFinishField(SITPParserPtr _Nonnull parser, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteSize length);
 
 
 

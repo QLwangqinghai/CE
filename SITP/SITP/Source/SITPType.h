@@ -12,10 +12,11 @@
 #include <stdio.h>
 
 typedef uint32_t SITPIndex;
-typedef uint32_t SITPByteSize;
+typedef uint32_t SITPLength;
+typedef uint64_t SITPByteSize;
 
 #define SITPIndexNotFound UINT32_MAX
-#define SITPByteSizeNotFound UINT32_MAX
+#define SITPByteSizeNotFound UINT64_MAX
 
 typedef enum {
     SITPTypeCodeSInt = 0x0,
@@ -52,8 +53,8 @@ typedef enum {
 
 
 /*
- 4b(type) 4b(control) SITPTypeCodeSInt、SITPTypeCodeUInt
- 4b(type) 4b(0) SITPTypeCodeFloat32、SITPTypeCodeFloat64
+ 4b(type) 0b(0 subtypeControl) 4b(control) SITPTypeCodeSInt、SITPTypeCodeUInt
+ 4b(type) 4b(0 subtypeControl control) SITPTypeCodeFloat32、SITPTypeCodeFloat64
  4b(type) 4b(content) SITPTypeCodeBool
  4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeData
  4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeString
@@ -76,13 +77,6 @@ typedef struct {
 } SITPIndexShift_t;
 
 typedef struct {
-//    SITPIndex index;
-    SITPTypeCode_e typeCode;
-    
-    SITPByteSize byteLength;
-} SITPFieldHeader_t;
-
-typedef struct {
     SITPIndex location;
     SITPIndex length;
 } SITPIndexRange;
@@ -92,17 +86,17 @@ typedef struct {
     SITPByteSize length;
 } SITPByteRange;
 
-
 typedef struct {
     SITPIndex index;
     uint32_t type: 8;
-    uint32_t subtype: 8;//data 时有用
+    uint32_t subtype: 8;//data、 string 时有用
     uint32_t contentControl: 16;
     SITPByteRange contentRange;
 } SITPField_t;
 
+extern SITPField_t const SITPFieldInvalid;
 
-
+_Bool SITPFieldIsInvalid(SITPField_t field);
 
 
 /*

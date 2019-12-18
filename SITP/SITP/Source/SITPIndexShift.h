@@ -13,6 +13,7 @@
 
 
 SITPIndexShift_t SITPIndexShiftMake(uint8_t byte);
+void SITPIndexShiftUpdate(SITPIndexShift_t * _Nonnull shift, uint8_t byte);
 
 
 #endif /* SITPIndexShift_t_h */

@@ -19,7 +19,7 @@ SITPParserCode const SITPParserCodeParamError = 2;
 SITPParserCode const SITPParserCodeReadError = 3;
 
 SITPParserCode const SITPParserCodeUnknownDataSubType = 4;
-SITPParserCode const SITPParserCodeCustomStringEncodeNotSupport = 5;
+SITPParserCode const SITPParserCodePaddingError = 5;
 SITPParserCode const SITPParserCodeLengthByteCountError = 6;
 SITPParserCode const SITPParserCodeMessageSubTypeError = 7;
 
@@ -37,10 +37,15 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
 SITPParserCode _SITPParserReadFieldSubtype(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
 
 SITPParserCode _SITPParserReadFieldDataHead(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
+SITPParserCode _SITPParserReadFieldDataSubtype(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
+
 
 SITPParserCode _SITPParserReadFieldContentLength(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
 
 SITPParserCode _SITPParserReadSeekFieldContent(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
+
+SITPParserCode _SITPParserReadFieldArrayItemCount(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
+
 
 SITPParserCode _SITPParserReadIndexShift(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
 
@@ -107,9 +112,6 @@ SITPParserCode SITPParserParseData(void * _Nullable context, SITPByteBuffer_t * 
         }
         
         while (parser.readingIndexs.length > 0) {
-            if (parser.byteRange.length <= parser.readLength) {
-                return SITPParserCodeNeedMoreData;
-            }
             memset(&(parser.readingField), 0, sizeof(SITPField_t));
             parser.readingField.index = parser.readingIndexs.location;
             
@@ -234,21 +236,20 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
                 }
             }
                 break;
-            case SITPTypeCodeString: {
-                uint8_t subtypeControl = ((byte >> 3) & 0x1);
-                if (0 == subtypeControl) {
+            case SITPTypeCodeString:
+            case SITPTypeCodeMessage: {
+                if (0 == (byte & 0x8)) {
                     SITPByteSize len = byte & 0x7;
                     if (len > 4) {
                         return SITPParserCodeLengthByteCountError;
                     }
-                    field->subtype = subtypeControl;
                     SITPParserFieldControl_t control = {
                         .func = _SITPParserReadFieldContentLength,
                         .length = len,
                     };
                     _SITPParserControlEnqueue(parser, control);
                 } else {
-                    return SITPParserCodeCustomStringEncodeNotSupport;
+                    return SITPParserCodePaddingError;
                 }
             }
                 break;

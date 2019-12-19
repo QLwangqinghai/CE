@@ -23,7 +23,7 @@ extern SITPParserCode const SITPParserCodeParamError;
 extern SITPParserCode const SITPParserCodeReadError;
 
 extern SITPParserCode const SITPParserCodeUnknownDataSubType;
-extern SITPParserCode const SITPParserCodeCustomStringEncodeNotSupport;
+extern SITPParserCode const SITPParserCodePaddingError;
 extern SITPParserCode const SITPParserCodeMessageSubTypeError;
 
 extern SITPParserCode const SITPParserCodeLengthByteCountError;
@@ -72,6 +72,8 @@ struct _SITPParser {
     SITPParserFieldControl_t controls[20];
     
     SITPField_t readingField;
+    
+    uint32_t tmp;
 };
 //typedef struct {
 //    SITPByteRange range;

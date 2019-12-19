@@ -62,25 +62,21 @@ static inline SITPByteSize SITPDataSubtypeGetLength(SITPDataSubtypeCode_e code) 
     }
 }
 
-
-typedef enum {
-    SITPStringSubtypeCodeUtf8String = 0x0,
-} SITPStringSubtypeCode_e;
-
-
 /*
  4b(type) 0b(0 subtypeControl) 4b(control) SITPTypeCodeSInt、SITPTypeCodeUInt
  4b(type) 4b(0 subtypeControl control) SITPTypeCodeFloat32、SITPTypeCodeFloat64
- 4b(type) 4b(content) SITPTypeCodeBool
- 4b(type) 4b(subtypeControl) 0b(length control) 6b(subtype) 2b(length control) SITPTypeCodeData
- 4b(type) [(1b(notUtf8) 3b(length control)), ] SITPTypeCodeString
+ 4b(type) 3b(0) 1b(content) SITPTypeCodeBool
+ 4b(type) 4b(subtypeControl) 0b(length control) 5b(subtype) 3b(length control) SITPTypeCodeData
+ 4b(type) 1b(0) 3b(length control) SITPTypeCodeString
  4b(type) 1b(0) 3b(length control) SITPTypeCodeMessage
 
- 4b(type) 1b(0) 3b(length control) SITPTypeCodeSIntArray、SITPTypeCodeUIntArray、SITPTypeCodeFloat32Array、SITPTypeCodeFloat64Array、SITPTypeCodeMessageArray
- 4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeDataArray
- 4b(type) 2b(subtypeControl) 2b(length control) SITPTypeCodeStringArray
- 4b(type) 2b(control) 2b(length control) SITPTypeCodeBoolArray
-
+ 
+ 4b(type) 1b(0) 3b(length control) SITPTypeCodeSIntArray、SITPTypeCodeUIntArray、SITPTypeCodeStringArray、SITPTypeCodeMessageArray
+ 4b(type) 1b(0) 3b(count control) SITPTypeCodeFloat32Array、SITPTypeCodeFloat64Array
+ 4b(type) 1b(0) 3b(count control) SITPTypeCodeBoolArray
+ 4b(type) 4b(subtypeControl) 0b(length control) 5b(subtype) 3b(length control) SITPTypeCodeDataArray
+ 11b
+ 3lenth 3headerLength
  
  */
 

@@ -94,6 +94,11 @@ typedef struct {
     SITPByteSize length;
 } SITPByteRange;
 
+static inline _Bool SITPByteRangeIsInvalid(SITPByteRange range) {
+    return range.location == SITPByteSizeNotFound || range.length == 0;
+}
+
+
 static inline SITPByteRange SITPByteRangeMake(SITPByteSize location, SITPByteSize length) {
     SITPByteRange range = {
         .location = location,
@@ -104,15 +109,17 @@ static inline SITPByteRange SITPByteRangeMake(SITPByteSize location, SITPByteSiz
 
 typedef struct {
     SITPIndex index;
-    uint32_t type: 8;
+    uint32_t type: 15;
     uint32_t subtype: 16;//data dataArray时有用
-    uint32_t contentControl: 8;
+    uint32_t boolValue: 1;
     SITPByteRange contentRange;
 } SITPField_t;
 
 extern SITPField_t const SITPFieldInvalid;
 
 _Bool SITPFieldIsInvalid(SITPField_t field);
+
+
 
 
 /*

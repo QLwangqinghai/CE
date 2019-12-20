@@ -38,7 +38,7 @@ typedef struct {
 } SITPByteBuffer_t;
 
 
-typedef SITPParserCode (*SITPByteReader_f)(void * _Nonnull context, uint8_t * _Nonnull buffer, SITPByteRange range);
+typedef SITPParserCode (*SITPByteReader_f)(void * _Nonnull context, void * _Nonnull buffer, SITPByteRange range);
 
 typedef struct {
     void * _Nonnull context;

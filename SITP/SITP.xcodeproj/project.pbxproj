@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D610B92923ACFB4F0056D0D2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D610B92823ACFB4F0056D0D2 /* main.c */; };
 		D6978F6B23A89EC3001F8B3F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6978F6A23A89EC3001F8B3F /* AppDelegate.m */; };
 		D6978F6E23A89EC3001F8B3F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D6978F6D23A89EC3001F8B3F /* ViewController.m */; };
 		D6978F7023A89EC5001F8B3F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6978F6F23A89EC5001F8B3F /* Assets.xcassets */; };
@@ -17,7 +18,21 @@
 		D6E9F97823A92AE0002E747E /* SITPParser.c in Sources */ = {isa = PBXBuildFile; fileRef = D6E9F97723A92AE0002E747E /* SITPParser.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		D610B92423ACFB4F0056D0D2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		D610B92623ACFB4F0056D0D2 /* ByteOrder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ByteOrder; sourceTree = BUILT_PRODUCTS_DIR; };
+		D610B92823ACFB4F0056D0D2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		D6978F6623A89EC3001F8B3F /* SITP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SITP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6978F6923A89EC3001F8B3F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D6978F6A23A89EC3001F8B3F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -37,6 +52,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D610B92323ACFB4F0056D0D2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D6978F6323A89EC3001F8B3F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -47,10 +69,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D610B92723ACFB4F0056D0D2 /* ByteOrder */ = {
+			isa = PBXGroup;
+			children = (
+				D610B92823ACFB4F0056D0D2 /* main.c */,
+			);
+			path = ByteOrder;
+			sourceTree = "<group>";
+		};
 		D6978F5D23A89EC3001F8B3F = {
 			isa = PBXGroup;
 			children = (
 				D6978F6823A89EC3001F8B3F /* SITP */,
+				D610B92723ACFB4F0056D0D2 /* ByteOrder */,
 				D6978F6723A89EC3001F8B3F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -59,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				D6978F6623A89EC3001F8B3F /* SITP.app */,
+				D610B92623ACFB4F0056D0D2 /* ByteOrder */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -96,6 +128,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D610B92523ACFB4F0056D0D2 /* ByteOrder */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D610B92C23ACFB4F0056D0D2 /* Build configuration list for PBXNativeTarget "ByteOrder" */;
+			buildPhases = (
+				D610B92223ACFB4F0056D0D2 /* Sources */,
+				D610B92323ACFB4F0056D0D2 /* Frameworks */,
+				D610B92423ACFB4F0056D0D2 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ByteOrder;
+			productName = ByteOrder;
+			productReference = D610B92623ACFB4F0056D0D2 /* ByteOrder */;
+			productType = "com.apple.product-type.tool";
+		};
 		D6978F6523A89EC3001F8B3F /* SITP */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D6978F7A23A89EC5001F8B3F /* Build configuration list for PBXNativeTarget "SITP" */;
@@ -122,6 +171,9 @@
 				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = angfung;
 				TargetAttributes = {
+					D610B92523ACFB4F0056D0D2 = {
+						CreatedOnToolsVersion = 11.0;
+					};
 					D6978F6523A89EC3001F8B3F = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
@@ -141,6 +193,7 @@
 			projectRoot = "";
 			targets = (
 				D6978F6523A89EC3001F8B3F /* SITP */,
+				D610B92523ACFB4F0056D0D2 /* ByteOrder */,
 			);
 		};
 /* End PBXProject section */
@@ -158,6 +211,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D610B92223ACFB4F0056D0D2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D610B92923ACFB4F0056D0D2 /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D6978F6223A89EC3001F8B3F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -185,6 +246,24 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D610B92A23ACFB4F0056D0D2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D610B92B23ACFB4F0056D0D2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		D6978F7823A89EC5001F8B3F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -331,6 +410,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D610B92C23ACFB4F0056D0D2 /* Build configuration list for PBXNativeTarget "ByteOrder" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D610B92A23ACFB4F0056D0D2 /* Debug */,
+				D610B92B23ACFB4F0056D0D2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D6978F6123A89EC3001F8B3F /* Build configuration list for PBXProject "SITP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

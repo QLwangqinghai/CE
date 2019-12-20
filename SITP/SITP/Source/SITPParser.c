@@ -64,7 +64,54 @@ SITPParserCode _SITPParserReadIndexShift(SITPParserPtr _Nonnull parser, SITPByte
 
 SITPParserCode SITPByteReaderMemoryRead(void * _Nonnull context, uint8_t * _Nonnull buffer, SITPByteRange range) {
     assert(context);
-    SITPByteReaderMemoryContext_t * memoryContext = context;
+    SITPByteReaderMemoryContext_t * ctx = context;
+//    SITPByteBuffer_t * _Nonnull buffers;
+//    uint32_t bufferCount;
+//    uint32_t lastReadBufferIndex;
+    
+    SITPByteBuffer_t page = ctx->buffers[ctx->lastReadBufferIndex];
+    
+    while (page.range.location > range.location || page.range.location + page.range.length >= range.location) {
+        if (page.range.location > range.location) {
+            if (ctx->lastReadBufferIndex > 0) {
+                ctx->lastReadBufferIndex -= 1;
+            } else {
+                return SITPParserCodeReadError;
+            }
+        } else {
+            if (ctx->lastReadBufferIndex + 1 < ctx->bufferCount) {
+                ctx->lastReadBufferIndex += 1;
+            } else {
+                return SITPParserCodeReadError;
+            }
+        }
+        page = ctx->buffers[ctx->lastReadBufferIndex];
+    }
+    
+    SITPByteRange unreaded = range;
+    
+    while (unreaded.length > 0) {
+        SITPByteSize pageRemain = page.range.location + page.range.length - unreaded.location;
+        uint8_t * content = page.content;
+        if (pageRemain >= unreaded.length) {
+            content += unreaded.location - page.range.location;
+            memcpy(buffer, content, unreaded.length);
+            return SITPParserCodeSuccess;
+        } else {
+            content += unreaded.location - page.range.location;
+            memcpy(buffer, content, pageRemain);
+            unreaded.location += pageRemain;
+            unreaded.length -= pageRemain;
+
+            if (ctx->lastReadBufferIndex + 1 < ctx->bufferCount) {
+                ctx->lastReadBufferIndex += 1;
+                page = ctx->buffers[ctx->lastReadBufferIndex];
+            } else {
+                return SITPParserCodeReadError;
+            }
+        }
+    }
+    
     
     return SITPParserCodeSuccess;
 }
@@ -202,8 +249,12 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
             }
                 break;
             case SITPTypeCodeBool: {
-                field->contentRange = SITPByteRangeMake(range.location + range.length, 0);
-                field->contentControl = (byte & 0xf);
+                if (0 == (byte & 0xe)) {
+                    field->contentRange = SITPByteRangeMake(range.location + range.length, 0);
+                    field->contentControl = (byte & 0x1);
+                } else {
+                    return SITPParserCodePaddingError;
+                }
             }
                 break;
             case SITPTypeCodeString:
@@ -213,11 +264,13 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
                     if (len > 4) {
                         return SITPParserCodeLengthByteCountError;
                     }
-                    SITPParserFieldControl_t control = {
-                        .func = _SITPParserReadFieldContentLength,
-                        .length = len,
-                    };
-                    _SITPParserControlEnqueue(parser, control);
+                    if (len > 0) {
+                        SITPParserFieldControl_t control = {
+                            .func = _SITPParserReadFieldContentLength,
+                            .length = len,
+                        };
+                        _SITPParserControlEnqueue(parser, control);
+                    }
                 } else {
                     return SITPParserCodePaddingError;
                 }
@@ -256,11 +309,13 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
                     if (lengthCount > 4) {
                         return SITPParserCodeLengthByteCountError;
                     }
-                    SITPParserFieldControl_t control = {
-                        .func = _SITPParserReadSeekFieldContent,
-                        .length = lengthCount,
-                    };
-                    _SITPParserControlEnqueue(parser, control);
+                    if (lengthCount > 0) {
+                        SITPParserFieldControl_t control = {
+                            .func = _SITPParserReadFieldContentLength,
+                            .length = lengthCount,
+                        };
+                        _SITPParserControlEnqueue(parser, control);
+                    }
                 } else {
                     return SITPParserCodePaddingError;
                 }
@@ -314,6 +369,44 @@ SITPParserCode _SITPParserReadFieldDataSubtype(SITPParserPtr _Nonnull parser, SI
     }
     return result;
 }
+
+SITPParserCode _SITPParserReadFieldContentLength(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range) {
+    assert(parser);
+    assert(range.length > 0 && range.length <= 4);
+    uint32_t length = 0;
+    
+    SITPField_t * field = &(parser->readingField);
+    SITPParserCode result = SITPParserCodeSuccess;
+    result = reader.read(reader.context, &length, range);
+    if (SITPParserCodeSuccess == result) {
+        if (length > 0) {
+            SITPParserFieldControl_t control = {
+                .func = _SITPParserReadSeekFieldContent,
+                .length = length,
+            };
+            _SITPParserControlEnqueue(parser, control);
+        }
+    }
+    return result;
+}
+
+
+SITPParserCode _SITPParserReadSeekFieldContent(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range) {
+    return SITPParserCodeSuccess;
+}
+
+void _SITPParserControlEnqueue(SITPParserPtr _Nonnull parser, SITPParserFieldControl_t control) {
+    uint32_t index = (parser->controlCount + parser->controlOffset) & 0x7;
+    parser->controls[index] = control;
+    parser->controlCount += 1;
+}
+SITPParserFieldControl_t _SITPParserControlDequeue(SITPParserPtr _Nonnull parser) {
+    SITPParserFieldControl_t control = parser->controls[parser->controlOffset];
+    parser->controlOffset = (parser->controlOffset + 1) & 0x7;
+    return control;
+}
+
+
 
 //
 //SITPParserCode _SITPParserReadFieldContentLength(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);

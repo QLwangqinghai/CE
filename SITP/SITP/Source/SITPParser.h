@@ -69,7 +69,7 @@ struct _SITPParser {
 
     uint32_t controlOffset: 16;
     uint32_t controlCount: 16;
-    SITPParserFieldControl_t controls[20];
+    SITPParserFieldControl_t controls[8];
     
     SITPField_t readingField;
     

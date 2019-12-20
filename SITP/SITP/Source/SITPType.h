@@ -71,9 +71,7 @@ static inline SITPByteSize SITPDataSubtypeGetLength(SITPDataSubtypeCode_e code) 
  4b(type) 1b(0) 3b(length control) SITPTypeCodeMessage
 
  
- 4b(type) 1b(0) 3b(length control) SITPTypeCodeSIntArray、SITPTypeCodeUIntArray、SITPTypeCodeStringArray、SITPTypeCodeMessageArray
- 4b(type) 1b(0) 3b(count control) SITPTypeCodeFloat32Array、SITPTypeCodeFloat64Array
- 4b(type) 1b(0) 3b(count control) SITPTypeCodeBoolArray
+ 4b(type) 1b(0) 3b(length control) SITPTypeCodeSIntArray、SITPTypeCodeUIntArray、SITPTypeCodeStringArray、SITPTypeCodeMessageArray、SITPTypeCodeFloat32Array、SITPTypeCodeFloat64Array、SITPTypeCodeBoolArray
  4b(type) 4b(subtypeControl) 0b(length control) 5b(subtype) 3b(length control) SITPTypeCodeDataArray
  11b
  3lenth 3headerLength
@@ -107,8 +105,8 @@ static inline SITPByteRange SITPByteRangeMake(SITPByteSize location, SITPByteSiz
 typedef struct {
     SITPIndex index;
     uint32_t type: 8;
-    uint32_t subtype: 12;//data、 string 时有用
-    uint32_t contentControl: 12;
+    uint32_t subtype: 16;//data dataArray时有用
+    uint32_t contentControl: 8;
     SITPByteRange contentRange;
 } SITPField_t;
 

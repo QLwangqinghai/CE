@@ -7,6 +7,14 @@
 //
 
 #import "ViewController.h"
+#include "SITPParser.h"
+
+SITPParserCode SITPParserParseCallbackFunc(void * _Nullable context, SITPField_t field) {
+    NSLog(@"%ld %ld", field.index, field.type);
+    return SITPParserCodeSuccess;
+}
+
+
 
 @implementation ViewController
 
@@ -14,6 +22,24 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
+    
+    uint8_t buffer[512] = {
+        0x2,
+        0x4,
+        0x1, 0x2, 0x3, 0x4,
+        0x21,
+
+        
+    };
+    SITPByteBuffer_t page = {
+        .content = buffer,
+    };
+    page.range = SITPByteRangeMake(0, 7);
+    
+    SITPParserCode code = SITPParserParseData(NULL, &page, 1, SITPByteRangeMake(0, 7), SITPParserParseCallbackFunc);
+    NSLog(@"code %ld", code);
+
+    
 }
 
 

@@ -53,7 +53,7 @@ SITPParserCode SITPByteReaderMemoryRead(void * _Nonnull context, void * _Nonnull
     
     SITPByteBuffer_t page = ctx->buffers[ctx->lastReadBufferIndex];
     
-    while (page.range.location > range.location || page.range.location + page.range.length >= range.location) {
+    while (page.range.location > range.location || page.range.location + page.range.length < range.location) {
         if (page.range.location > range.location) {
             if (ctx->lastReadBufferIndex > 0) {
                 ctx->lastReadBufferIndex -= 1;
@@ -322,9 +322,7 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
 //        parser->readingIndexs.length = shift.length;
     }
     return result;
-    
 }
-
 
 SITPParserCode _SITPParserReadFieldDataSubtype(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range) {
     assert(parser);
@@ -350,15 +348,14 @@ SITPParserCode _SITPParserReadFieldDataSubtype(SITPParserPtr _Nonnull parser, SI
         }
         field->subtype = subtype;
         
-//        if (lengthCount > 4) {
-//            return SITPParserCodeLengthByteCountError;
-//        }
-//        SITPParserFieldControl_t control = {
-//            .func = _SITPParserReadSeekFieldContent,
-//            .length = lengthCount,
-//        };
-//        _SITPParserControlEnqueue(parser, control);
-
+        if (lengthControl > 4) {
+            return SITPParserCodeLengthByteCountError;
+        }
+        SITPParserFieldControl_t control = {
+            .func = _SITPParserReadSeekFieldContent,
+            .length = lengthControl,
+        };
+        _SITPParserControlEnqueue(parser, control);
     }
     return result;
 }
@@ -410,5 +407,6 @@ void _SITPParserControlEnqueue(SITPParserPtr _Nonnull parser, SITPParserFieldCon
 SITPParserFieldControl_t _SITPParserControlDequeue(SITPParserPtr _Nonnull parser) {
     SITPParserFieldControl_t control = parser->controls[parser->controlOffset];
     parser->controlOffset = (parser->controlOffset + 1) & 0x7;
+    parser->controlCount -= 1;
     return control;
 }

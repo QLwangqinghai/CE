@@ -137,13 +137,13 @@ typedef union {
     int64_t timeInterval;
     SITPTime time;
     SITPByteRange range;
-} SITPFieldContent_t;
+} SITPFieldContent_u;
 
 typedef struct {
     SITPIndex index;
     uint32_t type: 8;
     uint32_t subtype: 24;//data dataArray时有用
-    SITPFieldContent_t content;
+    SITPFieldContent_u content;
 } SITPField_t;
 
 extern SITPField_t const SITPFieldInvalid;

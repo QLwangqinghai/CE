@@ -27,6 +27,7 @@ extern SITPParserCode const SITPParserCodePaddingError;
 extern SITPParserCode const SITPParserCodeMessageSubTypeError;
 
 extern SITPParserCode const SITPParserCodeLengthByteCountError;
+extern SITPParserCode const SITPParserCodeLengthError;
 
 
 extern SITPParserCode const SITPParserCodeUnknownError;

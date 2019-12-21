@@ -10,6 +10,8 @@
 #define SITPType_h
 
 #include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
 
 typedef uint32_t SITPIndex;
 typedef uint32_t SITPLength;
@@ -24,18 +26,22 @@ typedef enum {
     SITPTypeCodeFloat32 = 0x2,
     SITPTypeCodeFloat64 = 0x3,
     SITPTypeCodeBool = 0x4,
-    SITPTypeCodeData = 0x5,
-    SITPTypeCodeString = 0x6,
-    SITPTypeCodeMessage = 0x7,
+    SITPTypeCodeTimestamp = 0x5,
+    SITPTypeCodeHighPrecisionTime = 0x6,
+    SITPTypeCodeData = 0x7,
+    SITPTypeCodeString = 0x8,
+    SITPTypeCodeMessage = 0x9,
 
-    SITPTypeCodeSIntArray = 0x8,
-    SITPTypeCodeUIntArray = 0x9,
-    SITPTypeCodeFloat32Array = 0xa,
-    SITPTypeCodeFloat64Array = 0xb,
-    SITPTypeCodeBoolArray = 0xc,
-    SITPTypeCodeDataArray = 0xd,
-    SITPTypeCodeStringArray = 0xe,
-    SITPTypeCodeMessageArray = 0xf,
+    SITPTypeCodeSIntArray = 0x10,
+    SITPTypeCodeUIntArray = 0x11,
+    SITPTypeCodeFloat32Array = 0x12,
+    SITPTypeCodeFloat64Array = 0x13,
+    SITPTypeCodeBoolArray = 0x14,
+    SITPTypeCodeTimestampArray = 0x15,
+    SITPTypeCodeHighPrecisionTimeArray = 0x16,
+    SITPTypeCodeDataArray = 0x17,
+    SITPTypeCodeStringArray = 0x18,
+    SITPTypeCodeMessageArray = 0x19,
 } SITPTypeCode_e;
 
 typedef enum {
@@ -63,16 +69,16 @@ static inline SITPByteSize SITPDataSubtypeGetLength(SITPDataSubtypeCode_e code) 
 }
 
 /*
- 4b(type) 0b(0 subtypeControl) 4b(control) SITPTypeCodeSInt、SITPTypeCodeUInt
- 4b(type) 4b(0 subtypeControl control) SITPTypeCodeFloat32、SITPTypeCodeFloat64
- 4b(type) 3b(0) 1b(content) SITPTypeCodeBool
- 4b(type) 4b(subtypeControl) 0b(length control) 5b(subtype) 3b(length control) SITPTypeCodeData
- 4b(type) 1b(0) 3b(length control) SITPTypeCodeString
- 4b(type) 1b(0) 3b(length control) SITPTypeCodeMessage
+ 5b(type) 3b(control) SITPTypeCodeSInt、SITPTypeCodeUInt
+ 5b(type) 3b(0 subtypeControl control) SITPTypeCodeFloat32、SITPTypeCodeFloat64
+ 5b(type) 2b(0) 1b(content) SITPTypeCodeBool
+ 5b(type) 3b(subtypeControl) 0b(length control) 5b(subtype) 3b(length control) SITPTypeCodeData
+ 5b(type) 3b(length control) SITPTypeCodeString
+ 5b(type) 3b(length control) SITPTypeCodeMessage
 
  
- 4b(type) 1b(0) 3b(length control) SITPTypeCodeSIntArray、SITPTypeCodeUIntArray、SITPTypeCodeStringArray、SITPTypeCodeMessageArray、SITPTypeCodeFloat32Array、SITPTypeCodeFloat64Array、SITPTypeCodeBoolArray
- 4b(type) 4b(subtypeControl) 0b(length control) 5b(subtype) 3b(length control) SITPTypeCodeDataArray
+ 5b(type) 3b(length control) SITPTypeCodeSIntArray、SITPTypeCodeUIntArray、SITPTypeCodeStringArray、SITPTypeCodeMessageArray、SITPTypeCodeFloat32Array、SITPTypeCodeFloat64Array、SITPTypeCodeBoolArray
+ 5b(type) 4b(subtypeControl) 0b(length control) 5b(subtype) 3b(length control) SITPTypeCodeDataArray
  11b
  3lenth 3headerLength
  
@@ -95,7 +101,7 @@ typedef struct {
 } SITPByteRange;
 
 static inline _Bool SITPByteRangeIsInvalid(SITPByteRange range) {
-    return range.location == SITPByteSizeNotFound || range.length == 0;
+    return range.location == SITPByteSizeNotFound || (range.location + range.length < range.location);
 }
 
 
@@ -108,10 +114,41 @@ static inline SITPByteRange SITPByteRangeMake(SITPByteSize location, SITPByteSiz
 }
 
 typedef struct {
+    uint32_t level: 2;//0(无), 1(毫秒), 2(微妙), 3(纳秒)
+    uint32_t _xx: 30;
+    int32_t sub;
+    int64_t timestamp;
+} SITPTime;
+
+static inline _Bool SITPTimeIsInvalid(SITPTime time) {
+    if (time.level == 0) {
+        return time.sub == 0;
+    } else if (time.level == 1) {
+        return time.sub < 1000 && time.sub > -1000;
+    } else if (time.level == 2) {
+        return time.sub < 1000000 && time.sub > -1000000;
+    }  else if (time.level == 3) {
+        return time.sub < 1000000000 && time.sub > -1000000000;
+    } else {
+        abort();
+    }
+    return 1;
+}
+
+
+typedef union {
+    _Bool boolValue: 1;
+    int64_t sintValue;
+    uint64_t uintValue;
+    int64_t timeInterval;
+    int64_t highPrecisionTimeInterval;
+    SITPByteRange contentRange;
+} SITPFieldContent_t;
+
+typedef struct {
     SITPIndex index;
-    uint32_t type: 15;
-    uint32_t subtype: 16;//data dataArray时有用
-    uint32_t boolValue: 1;
+    uint32_t type: 8;
+    uint32_t subtype: 24;//data dataArray时有用
     SITPByteRange contentRange;
 } SITPField_t;
 

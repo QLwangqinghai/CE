@@ -22,6 +22,7 @@ SITPParserCode const SITPParserCodeUnknownDataSubType = 4;
 SITPParserCode const SITPParserCodePaddingError = 5;
 SITPParserCode const SITPParserCodeLengthByteCountError = 6;
 SITPParserCode const SITPParserCodeMessageSubTypeError = 7;
+SITPParserCode const SITPParserCodeLengthError = 8;
 
 SITPParserCode const SITPParserCodeUnknownError = UINT32_MAX;
 
@@ -92,8 +93,6 @@ SITPParserCode SITPByteReaderMemoryRead(void * _Nonnull context, void * _Nonnull
             }
         }
     }
-    
-    
     return SITPParserCodeSuccess;
 }
 
@@ -134,7 +133,6 @@ SITPParserCode SITPParserParseData(void * _Nullable context, SITPByteBuffer_t * 
             break;
         }
     }
-    
     
     SITPParserCode result = SITPParserCodeSuccess;
     SITPByteReaderMemoryContext_t memoryContext = {};
@@ -220,13 +218,12 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
     
     result = reader.read(reader.context, &byte, range);
     if (SITPParserCodeSuccess == result) {
-        uint8_t type = (byte & 0xf0) >> 4;
+        uint8_t type = byte >> 3;
         field->type = type;
         switch (type) {
             case SITPTypeCodeSInt:
             case SITPTypeCodeUInt: {
-                SITPByteSize length = 16 - (byte & 0xf);
-                field->contentRange = SITPByteRangeMake(range.location + range.length, length);
+                SITPByteSize length = 8 - (byte & 0x7);
                 SITPParserFieldControl_t control = {
                     .func = _SITPParserReadSeekFieldContent,
                     .length = length,
@@ -235,7 +232,6 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
             }
                 break;
             case SITPTypeCodeFloat32: {
-                field->contentRange = SITPByteRangeMake(range.location + range.length, 4);
                 SITPParserFieldControl_t control = {
                     .func = _SITPParserReadSeekFieldContent,
                     .length = 4,
@@ -244,7 +240,6 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
             }
                 break;
             case SITPTypeCodeFloat64: {
-                field->contentRange = SITPByteRangeMake(range.location + range.length, 8);
                 SITPParserFieldControl_t control = {
                     .func = _SITPParserReadSeekFieldContent,
                     .length = 8,
@@ -253,7 +248,7 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
             }
                 break;
             case SITPTypeCodeBool: {
-                if (0 == (byte & 0xe)) {
+                if (0 == (byte & 0x6)) {
                     field->contentRange = SITPByteRangeMake(range.location + range.length, 0);
                     field->boolValue = (byte & 0x1);
                 } else {
@@ -261,30 +256,27 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
                 }
             }
                 break;
-            case SITPTypeCodeString:
-            case SITPTypeCodeMessage: {
-                if (0 == (byte & 0x8)) {
-                    SITPByteSize len = byte & 0x7;
-                    if (len > 4) {
-                        return SITPParserCodeLengthByteCountError;
-                    }
-                    if (len > 0) {
-                        SITPParserFieldControl_t control = {
-                            .func = _SITPParserReadFieldContentLength,
-                            .length = len,
-                        };
-                        _SITPParserControlEnqueue(parser, control);
-                    }
-                } else {
-                    return SITPParserCodePaddingError;
-                }
+            case SITPTypeCodeTimestamp: {
+                SITPParserFieldControl_t control = {
+                    .func = _SITPParserReadSeekFieldContent,
+                    .length = 8,
+                };
+                _SITPParserControlEnqueue(parser, control);
+            }
+                break;
+            case SITPTypeCodeHighPrecisionTime: {
+                SITPParserFieldControl_t control = {
+                    .func = _SITPParserReadSeekFieldContent,
+                    .length = 12,
+                };
+                _SITPParserControlEnqueue(parser, control);
             }
                 break;
             case SITPTypeCodeData:
             case SITPTypeCodeDataArray: {
-                uint16_t subtype = byte & 0x7;
+                uint16_t subtype = byte & 0x3;
                 SITPByteSize len = 0;
-                if (0 == (byte & 0x8)) {
+                if (0 == (byte & 0x4)) {
                     len = 1;
                     subtype = (subtype << 5);
                 } else {
@@ -300,29 +292,26 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
                 _SITPParserControlEnqueue(parser, control);
             }
                 break;
-                
+            case SITPTypeCodeString:
+            case SITPTypeCodeMessage:
             case SITPTypeCodeSIntArray:
             case SITPTypeCodeUIntArray:
             case SITPTypeCodeStringArray:
             case SITPTypeCodeMessageArray:
             case SITPTypeCodeBoolArray:
+            case SITPTypeCodeTimestampArray:
+            case SITPTypeCodeHighPrecisionTimeArray:
             case SITPTypeCodeFloat32Array:
             case SITPTypeCodeFloat64Array: {
-                if (0 == (byte & 0x8)) {
-                    SITPByteSize lengthCount = byte & 0x7;
-                    if (lengthCount > 4) {
-                        return SITPParserCodeLengthByteCountError;
-                    }
-                    if (lengthCount > 0) {
-                        SITPParserFieldControl_t control = {
-                            .func = _SITPParserReadFieldContentLength,
-                            .length = lengthCount,
-                        };
-                        _SITPParserControlEnqueue(parser, control);
-                    }
-                } else {
-                    return SITPParserCodePaddingError;
+                SITPByteSize lengthCount = byte & 0x7;
+                if (lengthCount > 4) {
+                    return SITPParserCodeLengthByteCountError;
                 }
+                SITPParserFieldControl_t control = {
+                    .func = _SITPParserReadFieldContentLength,
+                    .length = lengthCount,
+                };
+                _SITPParserControlEnqueue(parser, control);
             }
                 break;
             default:
@@ -378,18 +367,28 @@ SITPParserCode _SITPParserReadFieldDataSubtype(SITPParserPtr _Nonnull parser, SI
 SITPParserCode _SITPParserReadFieldContentLength(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range) {
     assert(parser);
     assert(!SITPByteRangeIsInvalid(range));
-    assert(range.length > 0 && range.length <= 4);
-    uint32_t length = 0;
-    
+    assert(range.length <= 4);
     SITPParserCode result = SITPParserCodeSuccess;
-    result = reader.read(reader.context, &length, range);
-    if (SITPParserCodeSuccess == result) {
-        if (length > 0) {
-            SITPParserFieldControl_t control = {
-                .func = _SITPParserReadSeekFieldContent,
-                .length = length,
-            };
-            _SITPParserControlEnqueue(parser, control);
+
+    if (range.length == 0) {
+        SITPParserFieldControl_t control = {
+            .func = _SITPParserReadSeekFieldContent,
+            .length = 0,
+        };
+        _SITPParserControlEnqueue(parser, control);
+    } else {
+        uint32_t length = 0;
+        result = reader.read(reader.context, &length, range);
+        if (SITPParserCodeSuccess == result) {
+            if (length > 0) {
+                SITPParserFieldControl_t control = {
+                    .func = _SITPParserReadSeekFieldContent,
+                    .length = length,
+                };
+                _SITPParserControlEnqueue(parser, control);
+            } else {
+                return SITPParserCodeLengthError;
+            }
         }
     }
     return result;
@@ -414,10 +413,3 @@ SITPParserFieldControl_t _SITPParserControlDequeue(SITPParserPtr _Nonnull parser
     parser->controlOffset = (parser->controlOffset + 1) & 0x7;
     return control;
 }
-
-
-
-//
-//SITPParserCode _SITPParserReadFieldContentLength(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
-//
-//SITPParserCode _SITPParserReadSeekFieldContent(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);

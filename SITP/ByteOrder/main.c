@@ -17,6 +17,8 @@ int main(int argc, const char * argv[]) {
     uint8_t * byte = &a;
     printf("%ld %ld\n", byte[0], byte[3]);
     
+    printf("%d \n", -11 % 8);
+
     
     return 0;
 }

@@ -8,6 +8,13 @@
 
 #include <stdio.h>
 
+
+typedef struct {
+    int32_t sub;
+    int64_t timestamp;
+} SITPTime;
+
+
 int main(int argc, const char * argv[]) {
     // insert code here...
     printf("Hello, World!\n");
@@ -17,7 +24,7 @@ int main(int argc, const char * argv[]) {
     uint8_t * byte = &a;
     printf("%ld %ld\n", byte[0], byte[3]);
     
-    printf("%d \n", -11 % 8);
+    printf("%d %d\n", -11 % 8, sizeof(SITPTime));
 
     
     return 0;

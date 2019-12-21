@@ -249,8 +249,7 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
                 break;
             case SITPTypeCodeBool: {
                 if (0 == (byte & 0x6)) {
-                    field->contentRange = SITPByteRangeMake(range.location + range.length, 0);
-                    field->boolValue = (byte & 0x1);
+                    field->content.boolValue = (byte & 0x1);
                 } else {
                     return SITPParserCodePaddingError;
                 }
@@ -399,7 +398,7 @@ SITPParserCode _SITPParserReadSeekFieldContent(SITPParserPtr _Nonnull parser, SI
     assert(!SITPByteRangeIsInvalid(range));
     assert(parser);
     SITPField_t * field = &(parser->readingField);
-    field->contentRange = range;
+    field->content.range = range;
     return SITPParserCodeSuccess;
 }
 

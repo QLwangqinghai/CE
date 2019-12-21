@@ -114,25 +114,19 @@ static inline SITPByteRange SITPByteRangeMake(SITPByteSize location, SITPByteSiz
 }
 
 typedef struct {
-    uint32_t level: 2;//0(无), 1(毫秒), 2(微妙), 3(纳秒)
-    uint32_t _xx: 30;
+    uint32_t _xxx;
     int32_t sub;
     int64_t timestamp;
 } SITPTime;
 
 static inline _Bool SITPTimeIsInvalid(SITPTime time) {
-    if (time.level == 0) {
-        return time.sub == 0;
-    } else if (time.level == 1) {
-        return time.sub < 1000 && time.sub > -1000;
-    } else if (time.level == 2) {
-        return time.sub < 1000000 && time.sub > -1000000;
-    }  else if (time.level == 3) {
+    if (time.timestamp == 0) {
         return time.sub < 1000000000 && time.sub > -1000000000;
+    } else if (time.timestamp < 0) {
+        return time.sub > -1000 && time.sub <= 0;
     } else {
-        abort();
+        return time.sub < 1000 && time.sub >= 0;
     }
-    return 1;
 }
 
 
@@ -141,15 +135,15 @@ typedef union {
     int64_t sintValue;
     uint64_t uintValue;
     int64_t timeInterval;
-    int64_t highPrecisionTimeInterval;
-    SITPByteRange contentRange;
+    SITPTime time;
+    SITPByteRange range;
 } SITPFieldContent_t;
 
 typedef struct {
     SITPIndex index;
     uint32_t type: 8;
     uint32_t subtype: 24;//data dataArray时有用
-    SITPByteRange contentRange;
+    SITPFieldContent_t content;
 } SITPField_t;
 
 extern SITPField_t const SITPFieldInvalid;

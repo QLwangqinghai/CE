@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <stdatomic.h>
 
 typedef uint32_t SITPIndex;
 typedef uint32_t SITPLength;
@@ -113,6 +114,14 @@ static inline SITPByteRange SITPByteRangeMake(SITPByteSize location, SITPByteSiz
     return range;
 }
 
+#pragma pack(push, 4)
+typedef struct {
+    int32_t sub;
+    int64_t timestamp;
+} SITPTime1;
+#pragma pack(pop)
+
+
 typedef struct {
     uint32_t _xxx;
     int32_t sub;
@@ -123,9 +132,9 @@ static inline _Bool SITPTimeIsInvalid(SITPTime time) {
     if (time.timestamp == 0) {
         return time.sub < 1000000000 && time.sub > -1000000000;
     } else if (time.timestamp < 0) {
-        return time.sub > -1000 && time.sub <= 0;
+        return time.sub > -1000000000 && time.sub <= 0;
     } else {
-        return time.sub < 1000 && time.sub >= 0;
+        return time.sub < 1000000000 && time.sub >= 0;
     }
 }
 
@@ -151,8 +160,35 @@ extern SITPField_t const SITPFieldInvalid;
 _Bool SITPFieldIsInvalid(SITPField_t field);
 
 
+typedef struct {
+    uint8_t content[16];
+} SITPByte16;
+typedef struct {
+    uint8_t content[32];
+} SITPByte32;
+typedef struct {
+    uint8_t content[48];
+} SITPByte48;
+typedef struct {
+    uint8_t content[64];
+} SITPByte64;
+
+typedef struct {
+    uint8_t content[64];
+} SITPData_t;
 
 
+
+typedef struct {
+    uint32_t type: 8;
+    uint32_t ref: 24;
+} Object;
+/*
+ SITPDataSubtypeCodeByte16 = 0x0,
+ SITPDataSubtypeCodeByte32 = 0x1,
+ SITPDataSubtypeCodeByte48 = 0x2,
+ SITPDataSubtypeCodeByte64 = 0x3,
+ */
 /*
  Message
  

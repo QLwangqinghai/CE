@@ -22,7 +22,6 @@ SITPParserCode SITPParserParseCallbackFunc(void * _Nullable context, SITPField_t
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
-    
     uint8_t buffer[512] = {
         0x2,
         0x4,

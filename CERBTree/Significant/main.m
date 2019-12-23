@@ -9,6 +9,18 @@
 #import <Foundation/Foundation.h>
 
 
+typedef union {
+    uintptr_t v;
+    void * _Nullable obj;
+} CCRef;
+
+static inline void CCRefRR(CCRef ref) {
+    
+    
+}
+
+
+
 static const uint32_t __CCCircularBufferCapacitys[35] = {0, 0x4uL, 0x8uL, 0x10uL, 0x20uL, 0x40uL, 0x80uL, 0x100uL, 0x1c0uL, 0x310uL, 0x55cuL, 0x960uL, 0x1068uL, 0x1cb4uL, 0x3238uL, 0x57e0uL, 0x99c8uL, 0x10d1cuL, 0x1d6f0uL, 0x33824uL, 0x5a23cuL, 0x9dbe8uL, 0x1140d4uL, 0x1e3170uL, 0x34d684uL, 0x5c7764uL, 0xa1d0ecuL, 0x11b2d9cuL, 0x1ef8fd0uL, 0x3633bacuL, 0x5eda86cuL, 0xa5fe6bcuL, 0x1227d3c8uL, 0x1fc5b29cuL, 0x20000000uL};
 
 static inline uint32_t __CCCircularBufferGoodCapacity(uint32_t capacity) {
@@ -63,6 +75,7 @@ int main(int argc, const char * argv[]) {
             count += 1;
         }
         
+        uintptr_t p = 0;
     }
     return 0;
 }

@@ -18,8 +18,15 @@ typedef struct {
 typedef struct {
     int32_t sub;
     int64_t timestamp;
-} SITPTime1;
+} SITPTime2;
 #pragma pack(pop)
+
+typedef struct {
+
+    int64_t timestamp;
+    int32_t sub;
+
+} SITPTime1 __attribute__((aligned));
 
 
 int main(int argc, const char * argv[]) {
@@ -31,7 +38,7 @@ int main(int argc, const char * argv[]) {
     uint8_t * byte = &a;
     printf("%ld %ld\n", byte[0], byte[3]);
     
-    printf("%d %d\n", -11 % 8, sizeof(SITPTime1));
+    printf("%d %d\n", sizeof(SITPTime2), sizeof(SITPTime1));
 
     
     return 0;

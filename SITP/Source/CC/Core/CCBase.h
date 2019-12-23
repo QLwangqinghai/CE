@@ -21,9 +21,9 @@
 #include <memory.h>
 #include <string.h>
 #include <errno.h>
-#include "CInteger.h"
-#include "CType.h"
-#include "CConfig.h"
+#include "CCInteger.h"
+#include "CCType.h"
+#include "CCConfig.h"
 
 
 //2kb
@@ -35,7 +35,7 @@ fflush(stderr);\
 } while(0)
 
 
-#if CBuild64Bit
+#if CCBuild64Bit
     typedef uint64_t CCIndex;
     typedef uint32_t CCType;
 #define CCDefineIndexNotFound UINT64_MAX
@@ -101,7 +101,7 @@ typedef struct __CCVector {
 
 static inline CCVector_s CCVectorMake(const void * _Nullable base, size_t count) {
     CCVector_s vec = {
-        .base = base,
+        .base = (void *)base,
         .count = count,
     };
     return vec;
@@ -162,7 +162,7 @@ static inline void CCDeallocate(void * _Nonnull ptr) {
 
 
 typedef struct __CCRefBase {
-#if CBuild64Bit
+#if CCBuild64Bit
     CCTypeStorage type;
     _Atomic(uint_fast64_t) ref;
 #else
@@ -172,7 +172,7 @@ typedef struct __CCRefBase {
 } CCRefBase_s;
 
 
-#if CBuild64Bit
+#if CCBuild64Bit
 static inline _Atomic(uint_fast64_t) * _Nonnull CCGetRefPtr(void * _Nonnull ref) {
     return &(((CCRefBase_s *)ref)->ref);
 }
@@ -184,7 +184,7 @@ static inline _Atomic(uint_fast32_t) * _Nonnull CCGetRefPtr(void * _Nonnull ref)
 
 static inline void __CCRefInit(CCRefBase_s * _Nonnull ref, CCType type, CCType subtype) {
     assert(ref);
-#if CBuild64Bit
+#if CCBuild64Bit
     uint_fast64_t rcInfo = 2;
     _Atomic(uint_fast64_t) * rcInfoPtr = CCGetRefPtr(ref);
 #else
@@ -206,7 +206,7 @@ static inline _Bool __CCRefRetain(CCRef _Nonnull ref) {
             return true;
         }
                 
-#if CBuild64Bit
+#if CCBuild64Bit
         uint_fast64_t rcInfo = 0;
         uint_fast64_t newRcInfo = 0;
         _Atomic(uint_fast64_t) * rcInfoPtr = CCGetRefPtr(ref);
@@ -235,7 +235,7 @@ static inline _Bool __CCRefRelease(CCRef _Nonnull ref) {
         return false;
     }
     
-#if CBuild64Bit
+#if CCBuild64Bit
     uint_fast64_t rcInfo = 0;
     uint_fast64_t newRcInfo = 0;
     _Atomic(uint_fast64_t) * rcInfoPtr = CCGetRefPtr(ref);
@@ -260,7 +260,7 @@ static inline CCIndex CCPowerAlign2(CCIndex capacity) {
     initialCapacity |= (initialCapacity >> 8);
     initialCapacity |= (initialCapacity >> 16);
     
-#if CBuild64Bit
+#if CCBuild64Bit
     initialCapacity |= (initialCapacity >> 32);
 #endif
     initialCapacity += 1;

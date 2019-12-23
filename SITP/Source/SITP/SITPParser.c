@@ -255,18 +255,10 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
                 }
             }
                 break;
-            case SITPTypeCodeTimestamp: {
+            case SITPTypeCodeTimeInterval: {
                 SITPParserFieldControl_t control = {
                     .func = _SITPParserReadSeekFieldContent,
                     .length = 8,
-                };
-                _SITPParserControlEnqueue(parser, control);
-            }
-                break;
-            case SITPTypeCodeHighPrecisionTime: {
-                SITPParserFieldControl_t control = {
-                    .func = _SITPParserReadSeekFieldContent,
-                    .length = 12,
                 };
                 _SITPParserControlEnqueue(parser, control);
             }
@@ -298,8 +290,7 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
             case SITPTypeCodeStringArray:
             case SITPTypeCodeMessageArray:
             case SITPTypeCodeBoolArray:
-            case SITPTypeCodeTimestampArray:
-            case SITPTypeCodeHighPrecisionTimeArray:
+            case SITPTypeCodeTimeIntervalArray:
             case SITPTypeCodeFloat32Array:
             case SITPTypeCodeFloat64Array: {
                 SITPByteSize lengthCount = byte & 0x7;

@@ -15,15 +15,30 @@
 #if defined(__GNUC__)
 #include <stdbool.h>
 #endif
+#include "CCConfig.h"
 
 
-typedef int64_t sint64_t;
-typedef int32_t sint32_t;
-typedef int16_t sint16_t;
-typedef int8_t sint8_t;
-typedef _Bool bool_t;
-typedef void * CCPointer;
+typedef uint64_t CCUInt64;
+typedef uint32_t CCUInt32;
+typedef uint16_t CCUInt16;
+typedef uint8_t CCUInt8;
+typedef int64_t CCSInt64;
+typedef int32_t CCSInt32;
+typedef int16_t CCSInt16;
+typedef int8_t CCSInt8;
+typedef _Bool CCBool;
 
+#if CCBuild64Bit
+typedef CCSInt64 CCInt;
+typedef CCUInt64 CCUInt;
+#else
+typedef CCSInt32 CCInt;
+typedef CCUInt32 CCUInt;
+#endif
+
+typedef CCSInt64 CCTimeInterval;
+
+typedef void * CCPtr;
 typedef void * CCRef;
 
 typedef enum {
@@ -47,13 +62,6 @@ typedef enum {
 static inline _Bool CTypeIsValid(CType_e t) {
     return (t >= CTypeBool && t <= CTypeBuffer);
 }
-
-typedef struct __CDate {
-    uint64_t second;
-    uint64_t direction: 1;
-    uint64_t precision: 3;
-    uint64_t s: 60;
-} CDate_s;
 
 
 /*

@@ -7,9 +7,6 @@
 //
 
 #include "CCArray.h"
-#include "CInteger.h"
-#include "CType.h"
-
 #include "CCImmutableBuffer.h"
 #include "CCCircularBuffer.h"
 

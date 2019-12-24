@@ -9,10 +9,7 @@
 #ifndef CCImmutableBuffer_h
 #define CCImmutableBuffer_h
 
-#include "CInteger.h"
-#include "CType.h"
 #include "CCBase.h"
-#include "CCAtomic.h"
 
 static int32_t const CCImmutableBufferStatusActive = 1;
 static int32_t const CCImmutableBufferStatusWaitDeallocate = 2;

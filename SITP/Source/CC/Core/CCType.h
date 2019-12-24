@@ -28,6 +28,9 @@ typedef int16_t CCSInt16;
 typedef int8_t CCSInt8;
 typedef _Bool CCBool;
 
+typedef CCUInt32 CCHashCode;
+
+
 #if CCBuild64Bit
 typedef CCSInt64 CCInt;
 typedef CCUInt64 CCUInt;

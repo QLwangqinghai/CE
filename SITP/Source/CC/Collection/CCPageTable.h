@@ -9,10 +9,7 @@
 #ifndef CCPageTable_h
 #define CCPageTable_h
 
-#include "CInteger.h"
-#include "CType.h"
 #include "CCBase.h"
-#include "CCAtomic.h"
 #include "CCPageSectionCollection.h"
 
 

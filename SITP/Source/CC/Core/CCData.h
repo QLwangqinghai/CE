@@ -9,6 +9,22 @@
 #ifndef CCData_h
 #define CCData_h
 
-#include <stdio.h>
+#include "CCBase.h"
+
+typedef CCRef CCDataRef;
+
+CCInt CCDataGetLength(CCRef _Nonnull CCDataRef);
+
+
+CCInt CCDataGetBytes(CCRef _Nonnull CCDataRef, CCRange range, void * _Nonnull buffer);
+
+
+
+
+
+
+
+
+
 
 #endif /* CCData_h */

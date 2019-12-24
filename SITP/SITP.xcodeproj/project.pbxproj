@@ -20,6 +20,7 @@
 		D6978F7023A89EC5001F8B3F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6978F6F23A89EC5001F8B3F /* Assets.xcassets */; };
 		D6978F7323A89EC5001F8B3F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6978F7123A89EC5001F8B3F /* Main.storyboard */; };
 		D6978F7623A89EC5001F8B3F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6978F7523A89EC5001F8B3F /* main.m */; };
+		D6D1F26823B1B4750081F9C5 /* CFAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D1F26723B1B4750081F9C5 /* CFAllocator.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -64,6 +65,8 @@
 		D6978F7423A89EC5001F8B3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6978F7523A89EC5001F8B3F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D6978F7723A89EC5001F8B3F /* SITP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SITP.entitlements; sourceTree = "<group>"; };
+		D6D1F26623B1B4750081F9C5 /* CFAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAllocator.h; sourceTree = "<group>"; };
+		D6D1F26723B1B4750081F9C5 /* CFAllocator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CFAllocator.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +139,8 @@
 				D610B96F23B10FB70056D0D2 /* CCString.c */,
 				D610B97223B1171F0056D0D2 /* CCData.h */,
 				D610B97323B1171F0056D0D2 /* CCData.c */,
+				D6D1F26623B1B4750081F9C5 /* CFAllocator.h */,
+				D6D1F26723B1B4750081F9C5 /* CFAllocator.c */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -281,6 +286,7 @@
 				D610B97123B10FB70056D0D2 /* CCString.c in Sources */,
 				D6978F6B23A89EC3001F8B3F /* AppDelegate.m in Sources */,
 				D610B95323B10B2A0056D0D2 /* SITPIndexShift.c in Sources */,
+				D6D1F26823B1B4750081F9C5 /* CFAllocator.c in Sources */,
 				D610B96923B10C580056D0D2 /* CCBase.c in Sources */,
 				D610B95423B10B2A0056D0D2 /* SITPParser.c in Sources */,
 			);

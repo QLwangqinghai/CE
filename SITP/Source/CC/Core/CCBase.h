@@ -9,9 +9,8 @@
 #ifndef CCBase_h
 #define CCBase_h
 
-
-
 #include <stdio.h>
+#include <wchar.h>
 #include <stdatomic.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -21,9 +20,11 @@
 #include <memory.h>
 #include <string.h>
 #include <errno.h>
+
 #include "CCInteger.h"
 #include "CCType.h"
 #include "CCConfig.h"
+#include "CCAtomic.h"
 
 
 //2kb

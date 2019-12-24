@@ -9,10 +9,7 @@
 #ifndef CCPageSectionCollection_h
 #define CCPageSectionCollection_h
 
-#include "CInteger.h"
-#include "CType.h"
 #include "CCBase.h"
-#include "CCAtomic.h"
 
 typedef struct {
     CCIndex count;

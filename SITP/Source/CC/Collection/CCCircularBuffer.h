@@ -9,8 +9,6 @@
 #ifndef CCCircularBuffer_h
 #define CCCircularBuffer_h
 
-#include "CInteger.h"
-#include "CType.h"
 #include "CCBase.h"
 #include "CCAtomic.h"
 #include "CCPageTable.h"

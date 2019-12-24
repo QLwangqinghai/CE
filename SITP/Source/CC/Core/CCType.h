@@ -39,10 +39,18 @@ typedef CCSInt32 CCInt;
 typedef CCUInt32 CCUInt;
 #endif
 
-typedef CCSInt64 CCTimeInterval;
+typedef CCSInt64 CCMicrosecondTime;
+
+
+typedef struct {
+    CCSInt64 seconds;
+    CCSInt32 nanosecond;
+    CCSInt32 _xx;//must be zero
+} CCTime;
 
 typedef void * CCPtr;
 typedef void * CCRef;
+
 
 typedef enum {
     CTypeNone = 0,
@@ -65,6 +73,9 @@ typedef enum {
 static inline _Bool CTypeIsValid(CType_e t) {
     return (t >= CTypeBool && t <= CTypeBuffer);
 }
+
+
+
 
 
 /*

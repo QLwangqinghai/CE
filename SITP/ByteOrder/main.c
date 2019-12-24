@@ -38,7 +38,7 @@ int main(int argc, const char * argv[]) {
     uint8_t * byte = &a;
     printf("%ld %ld\n", byte[0], byte[3]);
     
-    printf("%d %d\n", sizeof(SITPTime2), sizeof(SITPTime1));
+    printf("%d %d\n", sizeof(SITPTime2), sizeof(struct timeval));
 
     
     return 0;

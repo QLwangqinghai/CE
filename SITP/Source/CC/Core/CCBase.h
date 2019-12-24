@@ -269,5 +269,22 @@ static inline CCIndex CCPowerAlign2(CCIndex capacity) {
 }
 
 
+static inline CCSInt16 CCRefGetTaggedTypeCode(CCRef _Nonnull ref) {
+    CCSInt16 result = -1;
+    uintptr_t v = (uintptr_t)ref;
+    if (0 == (v & 0x1)) {
+        return result;
+    }
+    uint16_t tmp = (v >> 1) & 0xF;
+    result = tmp;
+    return result;
+}
+
+static inline CCUInt8 CCRefGetTaggedSpecific(CCRef _Nonnull ref) {
+    uintptr_t v = (uintptr_t)ref;
+    assert(v & 0x1);
+    return (v >> 5) & 0x7;
+}
+
 
 #endif /* CCBase_h */

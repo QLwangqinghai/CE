@@ -27,7 +27,7 @@ typedef enum {
     SITPTypeCodeFloat32 = 0x2,
     SITPTypeCodeFloat64 = 0x3,
     SITPTypeCodeBool = 0x4,
-    SITPTypeCodeTimeInterval = 0x5,
+    SITPTypeCodeTime = 0x5,
     SITPTypeCodeData = 0x6,
     SITPTypeCodeString = 0x7,
     SITPTypeCodeMessage = 0x8,
@@ -37,11 +37,15 @@ typedef enum {
     SITPTypeCodeFloat32Array = 0x12,
     SITPTypeCodeFloat64Array = 0x13,
     SITPTypeCodeBoolArray = 0x14,
-    SITPTypeCodeTimeIntervalArray = 0x15,
+    SITPTypeCodeTimeArray = 0x15,
     SITPTypeCodeDataArray = 0x16,
     SITPTypeCodeStringArray = 0x17,
     SITPTypeCodeMessageArray = 0x18,
 } SITPTypeCode_e;
+
+typedef enum {
+    SITPTimeSubtypeCodeMicrosecond = 0x0,
+} SITPTimeSubtypeCode_e;
 
 typedef enum {
     SITPDataSubtypeCodeByte16 = 0x0,

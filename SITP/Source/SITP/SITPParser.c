@@ -255,7 +255,12 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
                 }
             }
                 break;
-            case SITPTypeCodeTimeInterval: {
+            case SITPTypeCodeTime: {
+                uint16_t subtype = byte & 0x7;
+                if (subtype != SITPTimeSubtypeCodeMicrosecond) {
+                    return <#expression#>
+                }
+                field->subtype = subtype;
                 SITPParserFieldControl_t control = {
                     .func = _SITPParserReadSeekFieldContent,
                     .length = 8,
@@ -290,7 +295,7 @@ SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteR
             case SITPTypeCodeStringArray:
             case SITPTypeCodeMessageArray:
             case SITPTypeCodeBoolArray:
-            case SITPTypeCodeTimeIntervalArray:
+            case SITPTypeCodeTimeArray:
             case SITPTypeCodeFloat32Array:
             case SITPTypeCodeFloat64Array: {
                 SITPByteSize lengthCount = byte & 0x7;

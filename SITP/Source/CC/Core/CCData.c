@@ -11,13 +11,6 @@
 
 
 
-CCInt CCDataGetLength(CCRef _Nonnull CCDataRef);
-
-
-CCInt CCDataGetBytes(CCRef _Nonnull CCDataRef, CCRange range, void * _Nonnull buffer);
-
-
-
 #define ELF_STEP(B) T1 = (H << 4) + B; T2 = T1 & 0xF0000000; if (T2) T1 ^= (T2 >> 24); T1 &= (~T2); H = T1;
 
 CCHashCode CCHashBytes(uint8_t * _Nonnull bytes, CCIndex length) {
@@ -40,4 +33,16 @@ CCHashCode CCHashBytes(uint8_t * _Nonnull bytes, CCIndex length) {
     case 0:  ;
     }
     return H;
+}
+
+CCIndex CCDataGetLength(CCDataRef _Nonnull theData) {
+    
+    
+}
+const CCUInt8 * _Nullable CFDataGetBytePtr(CCDataRef _Nonnull theData) {
+    
+}
+void CCDataGetBytes(CCRef _Nonnull CCDataRef, CCRange range, void * _Nonnull buffer) {
+    
+    
 }

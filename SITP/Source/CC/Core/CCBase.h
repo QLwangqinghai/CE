@@ -54,6 +54,22 @@ fflush(stderr);\
 #define CCPageMaxCountPerGroup UINT32_MAX
 #endif
 
+#if CCBuild64Bit
+
+//256MB
+#define CCPageSize 0x10000000
+#define CCPageSizeShift 28
+
+#else
+
+//8MB
+#define CCPageSize 0x800000
+#define CCPageSizeShift 23
+
+#endif
+
+
+
 typedef uint8_t * CCPagePtr;
 
 

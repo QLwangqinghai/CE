@@ -50,6 +50,15 @@ typedef struct {
 
 typedef void * CCPtr;
 typedef void * CCRef;
+typedef CCRef CCDataRef;
+
+
+
+
+
+
+
+
 
 
 typedef enum {
@@ -73,7 +82,6 @@ typedef enum {
 static inline _Bool CTypeIsValid(CType_e t) {
     return (t >= CTypeBool && t <= CTypeBuffer);
 }
-
 
 
 

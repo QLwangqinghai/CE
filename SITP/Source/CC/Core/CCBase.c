@@ -17,8 +17,8 @@ const uint32_t CCCountLimit = 0x20000000uL;
 const uint32_t CCElementSizeLimit = CCDefineElementSizeLimit;//2KB
 const uint32_t CCCircularBufferElementsSizeLimit = 0x80000000uL;
 
-const CCType CCTypeArray = 0x1;
-const CCType CCTypeMutableArray = 0x1 | CCTypeMutableMask;
+//const CCType CCTypeArray = 0x1;
+//const CCType CCTypeMutableArray = 0x1 | CCTypeMutableMask;
 
 
 

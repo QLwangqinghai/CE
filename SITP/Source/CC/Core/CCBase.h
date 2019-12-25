@@ -38,7 +38,6 @@ fflush(stderr);\
 
 #if CCBuild64Bit
     typedef uint64_t CCIndex;
-    typedef uint32_t CCType;
 #define CCDefineIndexNotFound UINT64_MAX
 #define CCTypeMutableMask 0x80000000UL
 #define CCBufferMaxSize 0x800000
@@ -47,7 +46,6 @@ fflush(stderr);\
 #define CCPageIndexInGroupMask 0xFFFFF
 #else
     typedef uint32_t CCIndex;
-    typedef uint16_t CCType;
 #define CCDefineIndexNotFound UINT32_MAX
 #define CCTypeMutableMask 0x8000
 #define CCBufferMaxSize 0x20000
@@ -80,20 +78,20 @@ extern const uint32_t CCCountLimit;
 extern const uint32_t CCElementSizeLimit;//2KB
 extern const uint32_t CCCircularBufferElementsSizeLimit;
 
-extern const CCType CCTypeArray;
-extern const CCType CCTypeMutableArray;
-
-
-
-#pragma pack(push)
-#pragma pack(2)
-
-typedef struct {
-    CCType type;
-    CCType subtype;
-} CCTypeStorage;
-
-#pragma pack(pop)
+//extern const CCType CCTypeArray;
+//extern const CCType CCTypeMutableArray;
+//
+//
+//
+//#pragma pack(push)
+//#pragma pack(2)
+//
+//typedef struct {
+//    CCType type;
+//    CCType subtype;
+//} CCTypeStorage;
+//
+//#pragma pack(pop)
 
 typedef struct {
     CCIndex location;
@@ -179,11 +177,11 @@ static inline void CCDeallocate(void * _Nonnull ptr) {
 
 
 typedef struct __CCRefBase {
+    CCTypeRef _Nonnull type;
+
 #if CCBuild64Bit
-    CCTypeStorage type;
     _Atomic(uint_fast64_t) ref;
 #else
-    CCTypeStorage type;
     _Atomic(uint_fast32_t) ref;
 #endif
 } CCRefBase_s;
@@ -199,8 +197,11 @@ static inline _Atomic(uint_fast32_t) * _Nonnull CCGetRefPtr(void * _Nonnull ref)
 }
 #endif
 
-static inline void __CCRefInit(CCRefBase_s * _Nonnull ref, CCType type, CCType subtype) {
+static inline void __CCRefInit(CCRefBase_s * _Nonnull ref, CCTypeRef _Nonnull type) {
     assert(ref);
+    assert(type);
+    ref->type = type;
+
 #if CCBuild64Bit
     uint_fast64_t rcInfo = 2;
     _Atomic(uint_fast64_t) * rcInfoPtr = CCGetRefPtr(ref);
@@ -209,8 +210,6 @@ static inline void __CCRefInit(CCRefBase_s * _Nonnull ref, CCType type, CCType s
     _Atomic(uint_fast32_t) * rcInfoPtr = CCGetRefPtr(ref);
 #endif
     atomic_store(rcInfoPtr, rcInfo);
-    CCTypeStorage t = {.type = type, .subtype = subtype};
-    ref->type = t;
 }
 
 static inline _Bool __CCRefRetain(CCRef _Nonnull ref) {

@@ -52,6 +52,7 @@ typedef void * CCPtr;
 typedef void * CCRef;
 typedef CCRef CCDataRef;
 
+typedef CCRef CCTypeRef;
 
 
 

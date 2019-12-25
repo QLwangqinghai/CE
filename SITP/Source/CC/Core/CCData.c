@@ -35,14 +35,14 @@ CCHashCode CCHashBytes(uint8_t * _Nonnull bytes, CCIndex length) {
     return H;
 }
 
-CCIndex CCDataGetLength(CCDataRef _Nonnull theData) {
-    
-    
-}
-const CCUInt8 * _Nullable CFDataGetBytePtr(CCDataRef _Nonnull theData) {
-    
-}
-void CCDataGetBytes(CCRef _Nonnull CCDataRef, CCRange range, void * _Nonnull buffer) {
-    
-    
-}
+//CCIndex CCDataGetLength(CCDataRef _Nonnull theData) {
+//    
+//    
+//}
+//const CCUInt8 * _Nullable CFDataGetBytePtr(CCDataRef _Nonnull theData) {
+//    
+//}
+//void CCDataGetBytes(CCRef _Nonnull CCDataRef, CCRange range, void * _Nonnull buffer) {
+//    
+//    
+//}

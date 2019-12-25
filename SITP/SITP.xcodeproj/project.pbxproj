@@ -22,6 +22,7 @@
 		D6978F7023A89EC5001F8B3F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6978F6F23A89EC5001F8B3F /* Assets.xcassets */; };
 		D6978F7323A89EC5001F8B3F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6978F7123A89EC5001F8B3F /* Main.storyboard */; };
 		D6978F7623A89EC5001F8B3F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6978F7523A89EC5001F8B3F /* main.m */; };
+		D6A360E823B3A20900EAD544 /* CCRuntime.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360E723B3A20900EAD544 /* CCRuntime.c */; };
 		D6D1F26823B1B4750081F9C5 /* CFAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D1F26723B1B4750081F9C5 /* CFAllocator.c */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +71,9 @@
 		D6978F7423A89EC5001F8B3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6978F7523A89EC5001F8B3F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D6978F7723A89EC5001F8B3F /* SITP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SITP.entitlements; sourceTree = "<group>"; };
+		D6A360E623B3A20900EAD544 /* CCRuntime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCRuntime.h; sourceTree = "<group>"; };
+		D6A360E723B3A20900EAD544 /* CCRuntime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCRuntime.c; sourceTree = "<group>"; };
+		D6A360E923B3B64500EAD544 /* CCRuntime_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCRuntime_Internal.h; sourceTree = "<group>"; };
 		D6D1F26623B1B4750081F9C5 /* CFAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAllocator.h; sourceTree = "<group>"; };
 		D6D1F26723B1B4750081F9C5 /* CFAllocator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CFAllocator.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -149,6 +153,9 @@
 				D610B97523B263210056D0D2 /* CCTime.h */,
 				D610B97623B263210056D0D2 /* CCTime.c */,
 				D67DFCF523B3717900F815A6 /* CCType.c */,
+				D6A360E623B3A20900EAD544 /* CCRuntime.h */,
+				D6A360E723B3A20900EAD544 /* CCRuntime.c */,
+				D6A360E923B3B64500EAD544 /* CCRuntime_Internal.h */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -292,6 +299,7 @@
 				D610B97723B263210056D0D2 /* CCTime.c in Sources */,
 				D610B95523B10B2A0056D0D2 /* SITPType.c in Sources */,
 				D610B97423B1171F0056D0D2 /* CCData.c in Sources */,
+				D6A360E823B3A20900EAD544 /* CCRuntime.c in Sources */,
 				D6978F7623A89EC5001F8B3F /* main.m in Sources */,
 				D610B97123B10FB70056D0D2 /* CCString.c in Sources */,
 				D6978F6B23A89EC3001F8B3F /* AppDelegate.m in Sources */,

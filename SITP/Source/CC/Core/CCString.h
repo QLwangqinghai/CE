@@ -9,6 +9,15 @@
 #ifndef CCString_h
 #define CCString_h
 
-#include <stdio.h>
+#include "CCBase.h"
+
+
+
+
+
+
+
+
+
 
 #endif /* CCString_h */

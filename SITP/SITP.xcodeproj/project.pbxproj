@@ -23,6 +23,8 @@
 		D6978F7323A89EC5001F8B3F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6978F7123A89EC5001F8B3F /* Main.storyboard */; };
 		D6978F7623A89EC5001F8B3F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6978F7523A89EC5001F8B3F /* main.m */; };
 		D6A360E823B3A20900EAD544 /* CCRuntime.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360E723B3A20900EAD544 /* CCRuntime.c */; };
+		D6A360EE23B5062F00EAD544 /* CCPrivate.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360ED23B5062F00EAD544 /* CCPrivate.c */; };
+		D6A360F123B5134000EAD544 /* CCValue.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360F023B5134000EAD544 /* CCValue.c */; };
 		D6D1F26823B1B4750081F9C5 /* CFAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D1F26723B1B4750081F9C5 /* CFAllocator.c */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +76,10 @@
 		D6A360E623B3A20900EAD544 /* CCRuntime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCRuntime.h; sourceTree = "<group>"; };
 		D6A360E723B3A20900EAD544 /* CCRuntime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCRuntime.c; sourceTree = "<group>"; };
 		D6A360E923B3B64500EAD544 /* CCRuntime_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCRuntime_Internal.h; sourceTree = "<group>"; };
+		D6A360EC23B5062F00EAD544 /* CCPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPrivate.h; sourceTree = "<group>"; };
+		D6A360ED23B5062F00EAD544 /* CCPrivate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCPrivate.c; sourceTree = "<group>"; };
+		D6A360EF23B5134000EAD544 /* CCValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCValue.h; sourceTree = "<group>"; };
+		D6A360F023B5134000EAD544 /* CCValue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCValue.c; sourceTree = "<group>"; };
 		D6D1F26623B1B4750081F9C5 /* CFAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAllocator.h; sourceTree = "<group>"; };
 		D6D1F26723B1B4750081F9C5 /* CFAllocator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CFAllocator.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -156,6 +162,10 @@
 				D6A360E623B3A20900EAD544 /* CCRuntime.h */,
 				D6A360E723B3A20900EAD544 /* CCRuntime.c */,
 				D6A360E923B3B64500EAD544 /* CCRuntime_Internal.h */,
+				D6A360EC23B5062F00EAD544 /* CCPrivate.h */,
+				D6A360ED23B5062F00EAD544 /* CCPrivate.c */,
+				D6A360EF23B5134000EAD544 /* CCValue.h */,
+				D6A360F023B5134000EAD544 /* CCValue.c */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -294,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D610B96E23B10E370056D0D2 /* CCInteger.c in Sources */,
+				D6A360EE23B5062F00EAD544 /* CCPrivate.c in Sources */,
 				D6978F6E23A89EC3001F8B3F /* ViewController.m in Sources */,
 				D67DFCF623B3717900F815A6 /* CCType.c in Sources */,
 				D610B97723B263210056D0D2 /* CCTime.c in Sources */,
@@ -305,6 +316,7 @@
 				D6978F6B23A89EC3001F8B3F /* AppDelegate.m in Sources */,
 				D610B95323B10B2A0056D0D2 /* SITPIndexShift.c in Sources */,
 				D6D1F26823B1B4750081F9C5 /* CFAllocator.c in Sources */,
+				D6A360F123B5134000EAD544 /* CCValue.c in Sources */,
 				D610B96923B10C580056D0D2 /* CCBase.c in Sources */,
 				D610B95423B10B2A0056D0D2 /* SITPParser.c in Sources */,
 			);

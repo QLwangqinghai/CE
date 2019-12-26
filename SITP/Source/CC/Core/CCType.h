@@ -30,6 +30,9 @@ typedef _Bool CCBool;
 
 typedef CCUInt32 CCHashCode;
 
+typedef CCUInt16 CCU16Char;
+
+
 
 #if CCBuild64Bit
 typedef CCSInt64 CCInt;
@@ -53,8 +56,8 @@ typedef CCPtr CCRef;
 typedef CCPtr CCValueRef;
 
 typedef CCValueRef CCDataRef;
+typedef CCValueRef CCStringRef;
 typedef CCValueRef CCTypeRef;
-
 
 
 

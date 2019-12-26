@@ -142,11 +142,28 @@ typedef struct {
 } CCBaseCallBacks;
 
 
-static inline void * _Nullable CCTryAllocate(size_t size) {
+
+static inline CCPtr _Nonnull CCMalloc(size_t size) {
+    assert(size >= 0);
     if (size <= 0) {
+        size = 4;
+    }
+    CCPtr ptr = malloc(size);
+    assert((((uintptr_t)ptr) & 0x3) == 0);
+    return ptr;
+}
+static inline void CCFree(CCPtr _Nonnull ptr) {
+    free(ptr);
+}
+
+
+
+
+static inline CCPtr _Nullable CCTryAllocate(size_t size) {
+    if (size < 0) {
         return NULL;
     }
-    void * ptr = malloc(size);
+    CCPtr ptr = CCMalloc(size);
     if (ptr) {
         memset(ptr, 0, size);
     }
@@ -157,7 +174,7 @@ static inline void * _Nonnull CCAllocate(size_t size) {
     if (size <= 0) {
         size = 4;
     }
-    void * ptr = malloc(size);
+    CCPtr ptr = CCMalloc(size);
     if (NULL == ptr) {
         CCLogError("CCAllocate ptr is NULL\n");
         abort();
@@ -171,7 +188,7 @@ static inline void CCDeallocate(void * _Nonnull ptr) {
         CCLogError("CCDeallocate ptr is NULL\n");
         abort();
     }
-    free(ptr);
+    CCFree(ptr);
 }
 
 
@@ -184,20 +201,20 @@ typedef struct __CCRefBase {
 #else
     _Atomic(uint_fast32_t) ref;
 #endif
-} CCRefBase_s;
+} CCRefBase;
 
 
 #if CCBuild64Bit
 static inline _Atomic(uint_fast64_t) * _Nonnull CCGetRefPtr(void * _Nonnull ref) {
-    return &(((CCRefBase_s *)ref)->ref);
+    return &(((CCRefBase *)ref)->ref);
 }
 #else
 static inline _Atomic(uint_fast32_t) * _Nonnull CCGetRefPtr(void * _Nonnull ref) {
-    return &(((CCRefBase_s *)ref)->ref);
+    return &(((CCRefBase *)ref)->ref);
 }
 #endif
 
-static inline void __CCRefInit(CCRefBase_s * _Nonnull ref, CCTypeRef _Nonnull type) {
+static inline void __CCRefInit(CCRefBase * _Nonnull ref, CCTypeRef _Nonnull type) {
     assert(ref);
     assert(type);
     ref->type = type;
@@ -283,23 +300,24 @@ static inline CCIndex CCPowerAlign2(CCIndex capacity) {
     return initialCapacity;
 }
 
-
-static inline CCSInt16 CCRefGetTaggedTypeCode(CCRef _Nonnull ref) {
-    CCSInt16 result = -1;
-    uintptr_t v = (uintptr_t)ref;
-    if (0 == (v & 0x1)) {
-        return result;
-    }
-    uint16_t tmp = (v >> 1) & 0xF;
-    result = tmp;
-    return result;
-}
-
-static inline CCUInt8 CCRefGetTaggedSpecific(CCRef _Nonnull ref) {
-    uintptr_t v = (uintptr_t)ref;
-    assert(v & 0x1);
-    return (v >> 5) & 0x7;
-}
+//static inline CCBool CCRefIsTagged(CCRef _Nonnull ref) {
+//    assert(ref);
+//    uintptr_t v = (uintptr_t)ref;
+//    return (v & 0x1) ? (CCUInt8)((v >> 1) & 0x7) : 255;
+//}
+//
+//static inline CCUInt8 CCRefGetTaggedTypeCode(CCRef _Nonnull ref) {
+//    uintptr_t v = (uintptr_t)ref;
+//    assert(v & 0x1);
+//
+//    return (CCUInt8)((v >> 1) & 0x7);
+//}
+//
+//static inline CCUInt8 CCRefGetTaggedSpecific(CCRef _Nonnull ref) {
+//    uintptr_t v = (uintptr_t)ref;
+//    assert(v & 0x1);
+//    return (v >> 4) & 0x7;
+//}
 
 
 #endif /* CCBase_h */

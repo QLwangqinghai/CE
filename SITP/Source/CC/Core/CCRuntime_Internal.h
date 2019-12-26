@@ -89,4 +89,11 @@ extern CCType const CCMetaType;
 extern CCType const CCTypeRoot;
 
 
+
+
+
+
+
+
+
 #endif /* CCRuntime_Internal_h */

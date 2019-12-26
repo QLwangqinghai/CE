@@ -8,6 +8,7 @@
 
 #include "CCRuntime_Internal.h"
 
+const CCTypeKindCode CCTypeKindCodeConstantValue = 1;
 
 
 

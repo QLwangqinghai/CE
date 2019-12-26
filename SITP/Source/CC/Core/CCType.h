@@ -49,10 +49,11 @@ typedef struct {
 } CCTime;
 
 typedef void * CCPtr;
-typedef void * CCRef;
-typedef CCRef CCDataRef;
+typedef CCPtr CCRef;
+typedef CCPtr CCValueRef;
 
-typedef CCRef CCTypeRef;
+typedef CCValueRef CCDataRef;
+typedef CCValueRef CCTypeRef;
 
 
 

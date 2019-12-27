@@ -32,6 +32,16 @@ typedef struct __CCString {
 
 /*
  32
+ 4 2 10
+ 4 2 26
+ 
+ 64
+ 8 2 6
+ 8 2 22
+ 8 2 54
+
+ 
+ 
  8 + 4(CCHashCode) + 4    2     16
  8 + 4(CCHashCode) + 20   10    32
  8 + 4(CCHashCode) + 52   26    64

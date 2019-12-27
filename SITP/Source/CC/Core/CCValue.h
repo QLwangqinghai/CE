@@ -11,13 +11,21 @@
 
 #include "CCBase.h"
 
-typedef struct __CCValueBase {
+typedef struct {
 #if CCBuild64Bit
     _Atomic(uint_fast64_t) ref;
 #else
     _Atomic(uint_fast32_t) ref;
 #endif
 } CCValueBase;
+
+#define CCValueRefConstantRefMask 0x80
+
+typedef CCUInt8 CCValueTypeCode;
+
+extern const CCValueTypeCode CCValueTypeCodeString;
+extern const CCValueTypeCode CCValueTypeCodeConstantString;
+
 
 #if CCBuild64Bit
 #define CCValueRefConstantRc 0xFFFFFFFFFFFFFFUL
@@ -36,7 +44,7 @@ static inline _Atomic(uint_fast32_t) * _Nonnull CCValueRefGetRefPtr(CCValueRef _
 }
 #endif
 
-static inline void __CCValueRefInit(CCValueBase * _Nonnull ref, uint8_t type, CCBool isConstant) {
+static inline void __CCValueRefInit(CCValueBase * _Nonnull ref, CCUInt8 type, CCBool isConstant) {
     assert(ref);
     assert(type);
 
@@ -78,12 +86,20 @@ static inline void __CCValueRefRetain(CCValueRef _Nonnull ref) {
 #endif
     do {
         rcInfo = atomic_load(rcInfoPtr);
+        CCUInt8 type = (CCUInt8)(rcInfo >> 56);
+        if (type & CCValueRefConstantRefMask) {
+            return;
+        }
         assert((rcInfo & CCValueRefConstantRc) >= 2);
         if ((rcInfo & CCValueRefConstantRc) == CCValueRefConstantRc) {
             return;
         }
         newRcInfo = rcInfo + 1;
     } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+    
+    if (newRcInfo & CCValueRefConstantRc) {
+        CCLogError("%p rc become constant", ref);
+    }
 }
 
 //返回true 时 需要deallocate
@@ -100,6 +116,10 @@ static inline CCBool __CCValueRefRelease(CCValueRef _Nonnull ref) {
 #endif
     do {
         rcInfo = atomic_load(rcInfoPtr);
+        CCUInt8 type = (CCUInt8)(rcInfo >> 56);
+        if (type & CCValueRefConstantRefMask) {
+            return false;
+        }
         assert((rcInfo & CCValueRefConstantRc) >= 2);
         if ((rcInfo & CCValueRefConstantRc) == CCValueRefConstantRc) {
             return false;
@@ -108,6 +128,13 @@ static inline CCBool __CCValueRefRelease(CCValueRef _Nonnull ref) {
     } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
     return (rcInfo & CCValueRefConstantRc) == 1;
 }
+
+
+typedef struct {
+    CCValueBase base;
+    CCUInt length;
+    uint8_t content[0];
+} _CCString;
 
 
 

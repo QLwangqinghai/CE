@@ -7,6 +7,30 @@
 //
 
 #import "ViewController.h"
+#include <CoreText/CoreText.h>
+#include <CoreGraphics/CoreGraphics.h>
+
+#include <stdatomic.h>
+
+
+typedef struct {
+    uint32_t type;
+    _Atomic(uint_fast32_t) ref1;
+} CCValueBase0;
+
+
+
+
+typedef struct {
+    _Atomic(uint_fast32_t) ref;
+    _Atomic(uint_fast32_t) ref1;
+} CCValueBase1;
+typedef struct {
+    _Atomic(uint_fast32_t) ref;
+    _Atomic(uint_fast16_t) ref1;
+    _Atomic(uint_fast16_t) ref2;
+
+} CCValueBase2;
 
 
 static uint8_t a __attribute__((aligned(64))) = 8;
@@ -67,7 +91,13 @@ typedef struct CFRuntimeClass2 {
     }
 
     
+    NSLog(@"sizeof: %ld", sizeof(CCValueBase1));
+    NSLog(@"sizeof: %ld", sizeof(CCValueBase2));
+
+    uint8_t bytes[100] = {1, 0};
+    char * ptr = bytes;
     
+    printf("str::::   -%s\n", ptr);
     
     uintptr_t ap = &a;
     uintptr_t bp = &b;

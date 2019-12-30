@@ -27,6 +27,8 @@ typedef int32_t CCSInt32;
 typedef int16_t CCSInt16;
 typedef int8_t CCSInt8;
 typedef _Bool CCBool;
+
+typedef CCUInt8 CCChar;
 typedef CCUInt16 CCU16Char;
 
 

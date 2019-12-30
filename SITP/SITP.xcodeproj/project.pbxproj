@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D610B92923ACFB4F0056D0D2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D610B92823ACFB4F0056D0D2 /* main.c */; };
+		D610B92923ACFB4F0056D0D2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D610B92823ACFB4F0056D0D2 /* main.m */; };
 		D610B95323B10B2A0056D0D2 /* SITPIndexShift.c in Sources */ = {isa = PBXBuildFile; fileRef = D610B93323B10B2A0056D0D2 /* SITPIndexShift.c */; };
 		D610B95423B10B2A0056D0D2 /* SITPParser.c in Sources */ = {isa = PBXBuildFile; fileRef = D610B93423B10B2A0056D0D2 /* SITPParser.c */; };
 		D610B95523B10B2A0056D0D2 /* SITPType.c in Sources */ = {isa = PBXBuildFile; fileRef = D610B93523B10B2A0056D0D2 /* SITPType.c */; };
@@ -25,6 +25,7 @@
 		D6A360E823B3A20900EAD544 /* CCRuntime.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360E723B3A20900EAD544 /* CCRuntime.c */; };
 		D6A360EE23B5062F00EAD544 /* CCPrivate.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360ED23B5062F00EAD544 /* CCPrivate.c */; };
 		D6A360F123B5134000EAD544 /* CCValue.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360F023B5134000EAD544 /* CCValue.c */; };
+		D6A360F423BA4BF700EAD544 /* CCByte.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360F323BA4BF700EAD544 /* CCByte.c */; };
 		D6D1F26823B1B4750081F9C5 /* CFAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D1F26723B1B4750081F9C5 /* CFAllocator.c */; };
 /* End PBXBuildFile section */
 
@@ -42,7 +43,7 @@
 
 /* Begin PBXFileReference section */
 		D610B92623ACFB4F0056D0D2 /* ByteOrder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ByteOrder; sourceTree = BUILT_PRODUCTS_DIR; };
-		D610B92823ACFB4F0056D0D2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		D610B92823ACFB4F0056D0D2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D610B93123B10B2A0056D0D2 /* SITPParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SITPParser.h; sourceTree = "<group>"; };
 		D610B93223B10B2A0056D0D2 /* SITPType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SITPType.h; sourceTree = "<group>"; };
 		D610B93323B10B2A0056D0D2 /* SITPIndexShift.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SITPIndexShift.c; sourceTree = "<group>"; };
@@ -80,6 +81,8 @@
 		D6A360ED23B5062F00EAD544 /* CCPrivate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCPrivate.c; sourceTree = "<group>"; };
 		D6A360EF23B5134000EAD544 /* CCValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCValue.h; sourceTree = "<group>"; };
 		D6A360F023B5134000EAD544 /* CCValue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCValue.c; sourceTree = "<group>"; };
+		D6A360F223BA4BF700EAD544 /* CCByte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCByte.h; sourceTree = "<group>"; };
+		D6A360F323BA4BF700EAD544 /* CCByte.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCByte.c; sourceTree = "<group>"; };
 		D6D1F26623B1B4750081F9C5 /* CFAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAllocator.h; sourceTree = "<group>"; };
 		D6D1F26723B1B4750081F9C5 /* CFAllocator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CFAllocator.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -105,7 +108,7 @@
 		D610B92723ACFB4F0056D0D2 /* ByteOrder */ = {
 			isa = PBXGroup;
 			children = (
-				D610B92823ACFB4F0056D0D2 /* main.c */,
+				D610B92823ACFB4F0056D0D2 /* main.m */,
 			);
 			path = ByteOrder;
 			sourceTree = "<group>";
@@ -166,6 +169,8 @@
 				D6A360ED23B5062F00EAD544 /* CCPrivate.c */,
 				D6A360EF23B5134000EAD544 /* CCValue.h */,
 				D6A360F023B5134000EAD544 /* CCValue.c */,
+				D6A360F223BA4BF700EAD544 /* CCByte.h */,
+				D6A360F323BA4BF700EAD544 /* CCByte.c */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -295,7 +300,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D610B92923ACFB4F0056D0D2 /* main.c in Sources */,
+				D610B92923ACFB4F0056D0D2 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,6 +311,7 @@
 				D610B96E23B10E370056D0D2 /* CCInteger.c in Sources */,
 				D6A360EE23B5062F00EAD544 /* CCPrivate.c in Sources */,
 				D6978F6E23A89EC3001F8B3F /* ViewController.m in Sources */,
+				D6A360F423BA4BF700EAD544 /* CCByte.c in Sources */,
 				D67DFCF623B3717900F815A6 /* CCType.c in Sources */,
 				D610B97723B263210056D0D2 /* CCTime.c in Sources */,
 				D610B95523B10B2A0056D0D2 /* SITPType.c in Sources */,

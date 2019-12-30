@@ -162,6 +162,7 @@
 #if defined(linux) || defined(__linux__)
 # include <endian.h>
 #else
+
 #define    LITTLE_ENDIAN    1234    /* least-significant byte first (vax, pc) */
 #define    BIG_ENDIAN    4321    /* most-significant byte first (IBM, net) */
 #define    PDP_ENDIAN    3412    /* LSB first in word, MSW first in long (pdp)*/
@@ -250,6 +251,18 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 #else
 #define CCBuild64Bit 0
 #endif
+
+
+#if __LITTLE_ENDIAN__
+#define CCBuildLittleEndian 1
+#define CCBuildBigEndian    0
+#elif __BIG_ENDIAN__
+#define CCBuildLittleEndian 0
+#define CCBuildBigEndian    1
+#else
+#error unknown endian
+#endif
+
 
 
 

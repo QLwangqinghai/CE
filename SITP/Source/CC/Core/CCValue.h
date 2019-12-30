@@ -19,18 +19,26 @@ typedef struct {
 #endif
 } CCValueBase;
 
-#define CCValueRefConstantRefMask 0x80
+#define CCValueRefConstantRefMask 0xC0
 
 typedef CCUInt8 CCValueTypeCode;
 
 extern const CCValueTypeCode CCValueTypeCodeString;
+extern const CCValueTypeCode CCValueTypeCodeTaggedString;
 extern const CCValueTypeCode CCValueTypeCodeConstantString;
+
+
+extern const CCValueTypeCode CCValueTypeCodeData;
+extern const CCValueTypeCode CCValueTypeCodeTaggedData;
+extern const CCValueTypeCode CCValueTypeCodeConstantData;
 
 
 #if CCBuild64Bit
 #define CCValueRefConstantRc 0xFFFFFFFFFFFFFFUL
+#define CCConstantStringRcInfo 0xC1FFFFFFFFFFFFFFUL
 #else
 #define CCValueRefConstantRc 0xFFFFFFU
+#define CCConstantStringRcInfo 0xC1FFFFFFFFFFFFFFUL
 #endif
 
 

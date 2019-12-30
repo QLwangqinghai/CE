@@ -9,13 +9,27 @@
 #ifndef CCString_h
 #define CCString_h
 
-#include "CCBase.h"
+#include "CCValue.h"
 
 
 
 
+#pragma pack(push,1)
 
+typedef struct {
+    CCValueBase base;
+    CCHashCode hashCode;
+} CCStringBase;
 
+typedef struct {
+    CCStringBase base;
+    CCUInt length;
+    const CCU16Char * _Nonnull chars;
+} CCConstantString;
+
+#pragma pack(pop)
+
+extern CCStringRef _Nonnull CCEmptyString;
 
 
 

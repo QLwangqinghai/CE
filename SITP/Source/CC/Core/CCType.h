@@ -27,9 +27,6 @@ typedef int32_t CCSInt32;
 typedef int16_t CCSInt16;
 typedef int8_t CCSInt8;
 typedef _Bool CCBool;
-
-typedef CCUInt32 CCHashCode;
-
 typedef CCUInt16 CCU16Char;
 
 
@@ -41,6 +38,8 @@ typedef CCUInt64 CCUInt;
 typedef CCSInt32 CCInt;
 typedef CCUInt32 CCUInt;
 #endif
+
+typedef CCUInt CCHashCode;
 
 typedef CCSInt64 CCMicrosecondTime;
 

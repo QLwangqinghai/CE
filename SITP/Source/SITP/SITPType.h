@@ -47,6 +47,12 @@ typedef enum {
     SITPTimeSubtypeCodeMicrosecond = 0x0,
 } SITPTimeSubtypeCode_e;
 
+
+typedef enum {
+    SITPStringEncodingCodeUtf8 = 0,
+    SITPStringEncodingCodeUtf16LittleEndian = 0x1,
+} SITPStringEncodingCode_e;
+
 typedef enum {
     SITPDataSubtypeCodeByte16 = 0x0,
     SITPDataSubtypeCodeByte32 = 0x1,
@@ -71,6 +77,13 @@ static inline SITPByteSize SITPDataSubtypeGetLength(SITPDataSubtypeCode_e code) 
     }
 }
 
+
+
+/*
+ string content
+ 1B encodeCode
+ ...content
+ */
 /*
  5b(type) 3b(control) SITPTypeCodeSInt、SITPTypeCodeUInt
  5b(type) 3b(0 subtypeControl control) SITPTypeCodeFloat32、SITPTypeCodeFloat64

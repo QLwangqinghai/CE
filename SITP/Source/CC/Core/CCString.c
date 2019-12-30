@@ -40,7 +40,7 @@ typedef struct {
     CCUInt freePtr: 1;
     CCUInt length: 30;
 #endif
-    CCU16Char * _Nonnull chars;
+    const CCU16Char * _Nonnull chars;
 } CCStringContent;
 
 #if CCBuild64Bit

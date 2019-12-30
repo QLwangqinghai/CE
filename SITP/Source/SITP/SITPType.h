@@ -117,7 +117,7 @@ typedef struct {
 } SITPByteRange;
 
 static inline _Bool SITPByteRangeIsInvalid(SITPByteRange range) {
-    return range.location == SITPByteSizeNotFound || (range.location + range.length < range.location);
+    return range.location == SITPByteSizeNotFound || (range.location + range.length < range.location);//越界检查
 }
 
 
@@ -136,22 +136,24 @@ typedef struct {
 } SITPTime1;
 #pragma pack(pop)
 
+typedef int64_t SITPMicrosecondTime;
 
-typedef struct {
-    uint32_t _xxx;
-    int32_t sub;
-    int64_t timestamp;
-} SITPTime;
 
-static inline _Bool SITPTimeIsInvalid(SITPTime time) {
-    if (time.timestamp == 0) {
-        return time.sub < 1000000000 && time.sub > -1000000000;
-    } else if (time.timestamp < 0) {
-        return time.sub > -1000000000 && time.sub <= 0;
-    } else {
-        return time.sub < 1000000000 && time.sub >= 0;
-    }
-}
+//typedef struct {
+//    uint32_t _xxx;
+//    int32_t sub;
+//    int64_t timestamp;
+//} SITPTime;
+//
+//static inline _Bool SITPTimeIsInvalid(SITPTime time) {
+//    if (time.timestamp == 0) {
+//        return time.sub < 1000000000 && time.sub > -1000000000;
+//    } else if (time.timestamp < 0) {
+//        return time.sub > -1000000000 && time.sub <= 0;
+//    } else {
+//        return time.sub < 1000000000 && time.sub >= 0;
+//    }
+//}
 
 
 typedef union {
@@ -159,7 +161,7 @@ typedef union {
     int64_t sintValue;
     uint64_t uintValue;
     int64_t timeInterval;
-    SITPTime time;
+    SITPMicrosecondTime time;
     SITPByteRange range;
 } SITPFieldContent_u;
 

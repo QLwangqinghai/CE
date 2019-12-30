@@ -9,13 +9,15 @@
 #include "CCData.h"
 #include "CCValue.h"
 
-typedef struct __CCDataContent {
-    CCUInt32 code;
-    CCUInt8 content[0];
-} CCDataContent;
+#pragma pack(push,1)
 
 typedef struct __CCData {
-    CCValueBase base;
+    CCDataBase base;
+    CCUInt8 content[0];
+} CCData;
+
+
+typedef struct {
 #if CCBuild64Bit
     CCUInt hashed: 1;
     CCUInt freePtr: 1;
@@ -25,8 +27,45 @@ typedef struct __CCData {
     CCUInt freePtr: 1;
     CCUInt length: 30;
 #endif
-    CCUInt32 code;
-} CCData;
+    const CCUInt8 * _Nonnull content;
+} CCDataContent;
+
+#if CCBuild64Bit
+typedef struct {
+    CCUInt16 hashed: 1;
+    CCUInt16 length: 15;
+    CCUInt8 content[14];
+} CCDataTaggedContent32;
+typedef struct {
+    CCUInt16 hashed: 1;
+    CCUInt16 length: 15;
+    CCUInt8 content[46];
+} CCDataTaggedContent64;
+typedef struct {
+    CCUInt16 hashed: 1;
+    CCUInt16 length: 15;
+    CCUInt8 content[110];
+} CCDataTaggedContent128;
+#else
+typedef struct {
+    CCUInt16 hashed: 1;
+    CCUInt16 length: 15;
+    CCUInt8 content[6];
+} CCDataTaggedContent16;
+typedef struct {
+    CCUInt16 hashed: 1;
+    CCUInt16 length: 15;
+    CCUInt8 content[22];
+} CCDataTaggedContent32;
+typedef struct {
+    CCUInt16 hashed: 1;
+    CCUInt16 length: 15;
+    CCUInt8 content[54];
+} CCDataTaggedContent64;
+#endif
+
+#pragma pack(pop)
+
 
 /*
 32
@@ -78,3 +117,21 @@ CCHashCode CCHashBytes(uint8_t * _Nonnull bytes, CCIndex length) {
 //    
 //    
 //}
+
+
+
+
+
+/*
+32
+8 + 4(CCHashCode) + 4       16
+8 + 4(CCHashCode) + 20      32
+8 + 4(CCHashCode) + 52      64
+8 + 4(CCHashCode) + 4(Ptr)  16
+
+64
+16 + 4(CCHashCode) + 12      32
+16 + 4(CCHashCode) + 44      64
+16 + 4(CCHashCode) + 8(Ptr)  32
+
+*/

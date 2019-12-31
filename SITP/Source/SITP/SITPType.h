@@ -157,10 +157,9 @@ typedef int64_t SITPMicrosecondTime;
 
 
 typedef union {
-    _Bool boolValue: 1;
+    _Bool boolValue;
     int64_t sintValue;
     uint64_t uintValue;
-    int64_t timeInterval;
     SITPMicrosecondTime time;
     SITPByteRange range;
 } SITPFieldContent_u;

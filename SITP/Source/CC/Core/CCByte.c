@@ -78,7 +78,8 @@ CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCCh
     CCUInt8 currentByte = 0;
     CCInt outputIndex = 0;
     CCInt index=0;
-    for (; index<length; index += 3) {
+    CCInt upper = length / 3 * 3;
+    for (; index<upper; index += 3) {
         CCInt index1 = index + 1;
         CCInt index2 = index + 2;
 
@@ -164,8 +165,10 @@ CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCU
             }
         }
         if (paddingLength == 1) {
+            //3 char => 2Byte
             outputLength -= 1;
         } else if (paddingLength == 2) {
+            //2 char => 1Byte
             outputLength -= 2;
         } else if (paddingLength == 3) {
             return -3;
@@ -180,8 +183,9 @@ CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCU
     CCUInt8 currentByte = 0;
     CCInt outputIndex = 0;
     CCInt index=0;
-    
-    for (; index<length; index += 4) {
+    CCInt upper = length / 4 * 4;
+
+    for (; index<upper; index += 4) {
         CCInt index1 = index + 1;
         CCInt index2 = index + 2;
         CCInt index3 = index + 3;

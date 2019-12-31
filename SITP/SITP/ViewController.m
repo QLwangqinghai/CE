@@ -40,20 +40,29 @@ SITPParserCode SITPParserParseCallbackFunc(void * _Nullable context, SITPField_t
     
     SITPParserCode code = SITPParserParseData(NULL, &page, 1, SITPByteRangeMake(0, 7), SITPParserParseCallbackFunc);
     NSLog(@"code %ld", code);
-
+    NSMutableData * data = [NSMutableData dataWithLength:116];
+    SecRandomCopyBytes(kSecRandomDefault, data.length, data.mutableBytes);
 //    [self description];
-    
-    NSData * data = [@"0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 255, 255, 255, 255, 62," dataUsingEncoding:NSUTF8StringEncoding];
     NSMutableData * mdata = [NSMutableData dataWithLength:data.length * 2];
     NSMutableData * mdata2 = [NSMutableData dataWithLength:data.length];
 
-    CCInt le = CCByteBase64EncodeBytes(data.bytes, data.length, mdata.mutableBytes, mdata.length, false);
-    
-    
+    CFTimeInterval a = CACurrentMediaTime();
+    CCInt le = CCByteBase64EncodeBytes(data.bytes, data.length, mdata.mutableBytes, mdata.length, true);
     CCInt le2 = CCByteBase64DecodeBytes(mdata.mutableBytes, le, mdata2.mutableBytes, mdata2.length);
+    CFTimeInterval b = CACurrentMediaTime();
+    [data base64EncodedDataWithOptions:0];
+    CFTimeInterval c = CACurrentMediaTime();
+    NSLog(@"mtime:%.07lf", b - a);
+    NSLog(@"ctime:%.07lf", c - b);
+
     
-    
+    NSString * encoded = [[NSString alloc] initWithData:[mdata subdataWithRange:NSMakeRange(0, le)] encoding:NSUTF8StringEncoding];
+    NSLog(@"encoded:\n%@", encoded);
+
     BOOL r = [data isEqualToData:mdata2];
+    assert(r);
+    
+    
     
 
 }

@@ -9,6 +9,15 @@
 #include "CCString.h"
 
 
+// IMPORTANT: the kURLxxxxAllowedCharacters definitions MUST match sURLAllowedCharacters (except for the '[', ':' and ']' characters in kURLHostAllowedCharacters are not kURLHostAllowed, and ';' is not in kURLPathAllowedCharacters, but is special cased in kURLPathAllowed)
+#define kURLUserAllowedCharacters       "!$&'()*+,-.0123456789;=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"
+#define kURLPasswordAllowedCharacters   "!$&'()*+,-.0123456789;=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"
+#define kURLHostAllowedCharacters       "!$&'()*+,-.0123456789:;=ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz~"
+#define kURLPathAllowedCharacters       "!$&'()*+,-./0123456789:=@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~" // ";" is disallowed in paths for compatibility with API which uses rfc1808 parsing where ";" was the separator between path and param. ":" is allowed only after a "/" (it cannot be in the first segment in some cases)
+#define kURLQueryAllowedCharacters      "!$&'()*+,-./0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"
+#define kURLFragmentAllowedCharacters   "!$&'()*+,-./0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"
+
+
 /*
 32   [16, 32, 64, 128]
 8 2 6

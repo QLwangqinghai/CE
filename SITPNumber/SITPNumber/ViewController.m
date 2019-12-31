@@ -116,3 +116,20 @@ typedef struct CFRuntimeClass2 {
 
 
 @end
+
+
+int SITPCompressUInt64(uint64_t number, uint8_t * _Nonnull buffer, int bufferSize) {
+    const uint64_t mask = 0x8000000000000000ULL;
+    if ((number & mask) == mask) {
+        //高位省略1
+        
+        
+    } else {
+        
+        
+    }
+}
+//int SITPCompressSInt64(uint64_t number) {
+//}
+
+

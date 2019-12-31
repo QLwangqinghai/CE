@@ -36,11 +36,38 @@ static const char __CCBase64ByteToCharMappings[64] = {
     '_', '-',
 };
 
+void lll() {
+    {
+        NSCharacterSet * set = [NSCharacterSet URLUserAllowedCharacterSet];
+        NSLog(@"URLUserAllowedCharacterSet %@", set);
+    }
+    {
+        NSCharacterSet * set = [NSCharacterSet URLPasswordAllowedCharacterSet];
+        NSLog(@"URLPasswordAllowedCharacterSet %@", set);
+    }
+    {
+        NSCharacterSet * set = [NSCharacterSet URLHostAllowedCharacterSet];
+        NSLog(@"URLHostAllowedCharacterSet %@", set);
+    }
+    {
+        NSCharacterSet * set = [NSCharacterSet URLPathAllowedCharacterSet];
+        NSLog(@"URLPathAllowedCharacterSet %@", set);
+    }
+    {
+        NSCharacterSet * set = [NSCharacterSet URLQueryAllowedCharacterSet];
+        NSLog(@"URLQueryAllowedCharacterSet %@", set);
+    }
+    {
+        NSCharacterSet * set = [NSCharacterSet URLFragmentAllowedCharacterSet];
+        NSLog(@"URLFragmentAllowedCharacterSet %@", set);
+    }
+}
 
 
 int main(int argc, const char * argv[]) {
     // insert code here...
-    printf("Hello, World!\n");
+
+    NSMutableURLRequest * req = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://www.baidu.com"]];
     
     uint32_t a = 1;
     
@@ -51,14 +78,30 @@ int main(int argc, const char * argv[]) {
     printf("\n");
     printf("\n");
     
-    
+    NSMutableString * url = [NSMutableString string];
+    [url appendString:@"http://baidu.com?a="];
     NSMutableDictionary<NSString *, NSString *> * dict = [NSMutableDictionary dictionary];
     for (uint8_t i=0; i<64; i++) {
 //        dict[[NSString stringWithFormat:@"%c", __CCBase64ByteToCharMappings[i]]] = @(i);
         dict[[NSString stringWithFormat:@"%d",  __CCBase64ByteToCharMappings[i]]] = [NSString stringWithFormat:@"%d", i];
 
+        [url appendFormat:@"%c", __CCBase64ByteToCharMappings[i]];
     }
+    [url appendString:@"~"];
+    NSString * url2 = [url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+
+    printf("\n");
+    printf("\n");
+
+    NSLog(url);
+    NSLog(url2);
     
+    BOOL equaled = [url isEqualToString:url2];
+    
+
+    printf("\n");
+    printf("\n");
+
     NSMutableString * str = [NSMutableString string];
     for (uint16_t i=0; i<128; i++) {
         NSString * v = dict[[NSString stringWithFormat:@"%d", i]];

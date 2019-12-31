@@ -32,6 +32,7 @@ SITPParserCode SITPParserParseCallbackFunc(void * _Nullable context, SITPField_t
         
     };
     
+    NSUTF8StringEncoding;
     
     SITPByteBuffer_t page = {
         .content = buffer,

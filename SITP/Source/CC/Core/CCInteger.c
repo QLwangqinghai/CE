@@ -516,6 +516,107 @@ CCInt CCSInt32Encode(CCSInt32 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnul
 
 
 
+CCInt CCUInt64Decode(CCUInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const CCUInt8 * _Nonnull bytes, CCInt bytesLength) {
+    if (bytesLength <= 0) {
+        return -1;
+    }
+    assert(n);
+    assert(bytes);
+    CCUInt64 result = 0;
+    switch (encoding) {
+        case CCIntegerEncodingCompress7BitsPerComponent: {
+            CCInt upper = MIN(bytesLength, 10);
+            for (CCInt idx=0; idx<upper; idx++) {
+                CCUInt64 v = bytes[idx];
+                if (v >= 0x80) {
+                    result = (result << 7) | (v & 0x7F);
+                } else {
+                    result = (result << 7) | v;
+                    if (9 == idx && 0 != ((bytes[0] & 0x7E))) {
+                        return -2;
+                    }
+                    *n = result;
+                    return idx + 1;
+                }
+            }
+            return -2;
+        }
+            break;
+        case CCIntegerEncodingCompressNoFlag: {
+            if (bytesLength > 8) {
+                return -2;
+            }
+            for (CCInt idx=0; idx<bytesLength; idx++) {
+                CCUInt64 v = bytes[idx];
+                result = (result << 8) | v;
+            }
+            *n = result;
+            return bytesLength;
+        }
+            break;
+        default: {
+            return -1;
+        }
+            break;
+    }
+}
+CCInt CCSInt64Decode(CCSInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const CCUInt8 * _Nonnull bytes, CCInt bytesLength) {
+    if (bytesLength <= 0) {
+        return -1;
+    }
+    assert(n);
+    assert(bytes);
+
+    CCUInt64 result = 0;
+    
+    switch (encoding) {
+        case CCIntegerEncodingCompress7BitsPerComponent: {
+            CCBool compress0 = ((bytes[0] & 0x40) == 0);
+            if (!compress0) {
+                result = ~0ULL;
+            }
+
+            CCInt upper = MIN(bytesLength, 10);
+            for (CCInt idx=0; idx<upper; idx++) {
+                CCUInt64 v = bytes[idx];
+                if (v >= 0x80) {
+                    result = (result << 7) | (v & 0x7F);
+                } else {
+                    result = (result << 7) | v;
+                    if (9 == idx && (0x80 != bytes[0] || 0xFF != bytes[0])) {
+                        return -2;
+                    }
+                    *n = (CCSInt64)result;
+                    return idx + 1;
+                }
+            }
+            return -2;
+        }
+            break;
+        case CCIntegerEncodingCompressNoFlag: {
+            if (bytesLength > 8) {
+                return -2;
+            }
+            CCBool compress0 = ((bytes[0] & 0x80) == 0);
+            if (!compress0) {
+                result = ~0ULL;
+            }
+
+            for (CCInt idx=0; idx<bytesLength; idx++) {
+                CCUInt64 v = bytes[idx];
+                result = (result << 8) | v;
+            }
+            *n = (CCSInt64)result;
+            return bytesLength;
+        }
+            break;
+        default: {
+            return -1;
+        }
+            break;
+    }
+}
+
 
 
 static inline CCInt __CCIntegerToBytes(void * _Nonnull n, CCInt len, CCBool swap, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
@@ -536,68 +637,72 @@ static inline CCInt __CCIntegerToBytes(void * _Nonnull n, CCInt len, CCBool swap
     return len;
 }
 
-CCInt CCUInt64ToBytes(CCUInt64 n, CCBool usingBigEndian, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+static inline CCBool __CCIntegerBytesSwap(CCBool bigEndianEncode) {
 #if CCBuildLittleEndian
-    CCBool swap = usingBigEndian;
+    return bigEndianEncode;
 #else
-    CCBool swap = !usingBigEndian;
+    return !bigEndianEncode;
 #endif
-    return __CCIntegerToBytes(&n, 8, swap, outputBuffer, bufferLength);
-}
-CCInt CCUInt32ToBytes(CCUInt32 n, CCBool usingBigEndian, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
-#if CCBuildLittleEndian
-    CCBool swap = usingBigEndian;
-#else
-    CCBool swap = !usingBigEndian;
-#endif
-    return __CCIntegerToBytes(&n, 4, swap, outputBuffer, bufferLength);
-}
-CCInt CCUInt16ToBytes(CCUInt16 n, CCBool usingBigEndian, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
-#if CCBuildLittleEndian
-    CCBool swap = usingBigEndian;
-#else
-    CCBool swap = !usingBigEndian;
-#endif
-    return __CCIntegerToBytes(&n, 2, swap, outputBuffer, bufferLength);
-}
-CCInt CCUInt8ToBytes(CCUInt8 n, CCBool usingBigEndian, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
-#if CCBuildLittleEndian
-    CCBool swap = usingBigEndian;
-#else
-    CCBool swap = !usingBigEndian;
-#endif
-    return __CCIntegerToBytes(&n, 1, swap, outputBuffer, bufferLength);
 }
 
-CCInt CCSInt64ToBytes(CCSInt64 n, CCBool usingBigEndian, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
-#if CCBuildLittleEndian
-    CCBool swap = usingBigEndian;
-#else
-    CCBool swap = !usingBigEndian;
-#endif
-    return __CCIntegerToBytes(&n, 8, swap, outputBuffer, bufferLength);
+
+CCInt CCUInt64ToBytes(CCUInt64 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+    return __CCIntegerToBytes(&n, 8, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
 }
-CCInt CCSInt32ToBytes(CCSInt32 n, CCBool usingBigEndian, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
-#if CCBuildLittleEndian
-    CCBool swap = usingBigEndian;
-#else
-    CCBool swap = !usingBigEndian;
-#endif
-    return __CCIntegerToBytes(&n, 4, swap, outputBuffer, bufferLength);
+CCInt CCUInt32ToBytes(CCUInt32 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+    return __CCIntegerToBytes(&n, 4, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
 }
-CCInt CCSInt16ToBytes(CCSInt16 n, CCBool usingBigEndian, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
-#if CCBuildLittleEndian
-    CCBool swap = usingBigEndian;
-#else
-    CCBool swap = !usingBigEndian;
-#endif
-    return __CCIntegerToBytes(&n, 2, swap, outputBuffer, bufferLength);
+CCInt CCUInt16ToBytes(CCUInt16 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+    return __CCIntegerToBytes(&n, 2, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
 }
-CCInt CCSInt8ToBytes(CCSInt8 n, CCBool usingBigEndian, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
-#if CCBuildLittleEndian
-    CCBool swap = usingBigEndian;
-#else
-    CCBool swap = !usingBigEndian;
-#endif
-    return __CCIntegerToBytes(&n, 1, swap, outputBuffer, bufferLength);
+
+CCInt CCSInt64ToBytes(CCSInt64 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+    return __CCIntegerToBytes(&n, 8, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
+}
+CCInt CCSInt32ToBytes(CCSInt32 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+    return __CCIntegerToBytes(&n, 4, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
+}
+CCInt CCSInt16ToBytes(CCSInt16 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+    return __CCIntegerToBytes(&n, 2, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
+}
+
+
+static inline CCInt __CCBytesToInteger(const CCUInt8 * _Nonnull bytes, CCInt bytesLength, void * _Nonnull n, CCInt len, CCBool swap) {
+    if (bytesLength < len) {
+        return -1;
+    }
+    assert(n);
+    assert(bytes);
+    memcpy(n, bytes, len);
+    if (len > 1 && swap) {
+        CCUInt8 * v = (CCUInt8 *)n;
+        CCInt upper = len / 2;
+        for (CCInt i=0; i<upper; i++) {
+            CCUInt8 tmp = v[i];
+            v[i] = v[len-1-i];
+            v[len-1-i] = tmp;
+        }
+    }
+    return len;
+}
+
+
+CCInt CCBytesToUInt64(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCUInt64 * _Nonnull n) {
+    return __CCBytesToInteger(bytes, length, n, 8, __CCIntegerBytesSwap(bigEndianEncode));
+}
+CCInt CCBytesToUInt32(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCUInt32 * _Nonnull n) {
+    return __CCBytesToInteger(bytes, length, n, 4, __CCIntegerBytesSwap(bigEndianEncode));
+}
+CCInt CCBytesToUInt16(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCUInt16 * _Nonnull n) {
+    return __CCBytesToInteger(bytes, length, n, 2, __CCIntegerBytesSwap(bigEndianEncode));
+}
+
+CCInt CCBytesToSInt64(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt64 * _Nonnull n) {
+    return __CCBytesToInteger(bytes, length, n, 8, __CCIntegerBytesSwap(bigEndianEncode));
+}
+CCInt CCBytesToSInt32(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt32 * _Nonnull n) {
+    return __CCBytesToInteger(bytes, length, n, 4, __CCIntegerBytesSwap(bigEndianEncode));
+}
+CCInt CCBytesToSInt16(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt16 * _Nonnull n) {
+    return __CCBytesToInteger(bytes, length, n, 2, __CCIntegerBytesSwap(bigEndianEncode));
 }

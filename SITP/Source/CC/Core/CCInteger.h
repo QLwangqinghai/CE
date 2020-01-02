@@ -32,6 +32,7 @@ CCInt CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnul
 CCInt CCSInt64Encode(CCSInt64 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
 CCInt CCSInt32Encode(CCSInt32 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
 
+//>0 success
 CCInt CCUInt64Decode(CCUInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const CCUInt8 * _Nonnull bytes, CCInt bytesLength);
 CCInt CCSInt64Decode(CCSInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const CCUInt8 * _Nonnull bytes, CCInt bytesLength);
 

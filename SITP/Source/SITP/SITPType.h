@@ -18,6 +18,13 @@ typedef uint32_t SITPIndex;
 typedef uint32_t SITPLength;
 typedef uint64_t SITPByteSize;
 
+
+//65536
+#define SITPMessageIndexMaxCount 0x10000U
+
+#define SITPMessageMaxIndex INT32_MAX
+
+
 #define SITPIndexNotFound UINT32_MAX
 #define SITPByteSizeNotFound UINT64_MAX
 
@@ -31,6 +38,7 @@ typedef enum {
     SITPTypeCodeData = 0x6,
     SITPTypeCodeString = 0x7,
     SITPTypeCodeMessage = 0x8,
+    SITPTypeCodeUuid = 0x9,
 
     SITPTypeCodeSIntArray = 0x10,
     SITPTypeCodeUIntArray = 0x11,
@@ -41,6 +49,7 @@ typedef enum {
     SITPTypeCodeDataArray = 0x16,
     SITPTypeCodeStringArray = 0x17,
     SITPTypeCodeMessageArray = 0x18,
+    SITPTypeCodeUuidArray = 0x19,
 } SITPTypeCode_e;
 
 typedef enum {
@@ -103,7 +112,7 @@ static inline SITPByteSize SITPDataSubtypeGetLength(SITPDataSubtypeCode_e code) 
 
 typedef struct {
     SITPIndex offset;
-    SITPIndex length;
+    SITPIndex length;//[0, 16)
 } SITPIndexShift_t;
 
 typedef struct {
@@ -167,8 +176,11 @@ typedef union {
 typedef struct {
     SITPIndex index;
     uint32_t type: 8;
-    uint32_t subtype: 24;//data dataArray时有用
+    uint32_t boolValue: 1;//Bool时有用
+    uint32_t subtype: 23;//data dataArray时有用
     SITPFieldContent_u content;
+    
+    SITPByteSize contentLength;
 } SITPField_t;
 
 extern SITPField_t const SITPFieldInvalid;

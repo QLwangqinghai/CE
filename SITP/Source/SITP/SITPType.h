@@ -12,14 +12,15 @@
 #include "CCBase.h"
 
 typedef uint32_t SITPIndex;
-typedef uint32_t SITPLength;
+typedef uint32_t SITPSize;
 typedef uint64_t SITPByteSize;
 
 
-//2097151
+//21bit
 #define SITPMessageIndexMaxCount 0x1FFFFFU
 
-#define SITPMessageMaxIndex INT32_MAX
+//24bit
+#define SITPMessageMaxIndex 0xFFFFFFU
 
 
 #define SITPIndexNotFound UINT32_MAX
@@ -35,7 +36,7 @@ typedef enum {
     SITPTypeCodeData = 0x6,
     SITPTypeCodeString = 0x7,
     SITPTypeCodeMessage = 0x8,
-    SITPTypeCodeUuid = 0x9,
+    SITPTypeCodeByte16 = 0x9,
 
     SITPTypeCodeSIntArray = 0x10,
     SITPTypeCodeUIntArray = 0x11,
@@ -46,7 +47,7 @@ typedef enum {
     SITPTypeCodeDataArray = 0x16,
     SITPTypeCodeStringArray = 0x17,
     SITPTypeCodeMessageArray = 0x18,
-    SITPTypeCodeUuidArray = 0x19,
+    SITPTypeCodeByte16Array = 0x19,
 } SITPTypeCode_e;
 
 typedef enum {
@@ -58,32 +59,6 @@ typedef enum {
     SITPStringEncodingCodeUtf8 = 0,
     SITPStringEncodingCodeUtf16LittleEndian = 0x1,
 } SITPStringEncodingCode_e;
-
-typedef enum {
-    SITPDataSubtypeCodeByte16 = 0x0,
-    SITPDataSubtypeCodeByte32 = 0x1,
-    SITPDataSubtypeCodeByte48 = 0x2,
-    SITPDataSubtypeCodeByte64 = 0x3,
-    
-    SITPDataSubtypeCodeNormal = 0x16,
-    SITPDataSubtypeCodeJsonMap = 0x17,
-} SITPDataSubtypeCode_e;
-
-static inline SITPByteSize SITPDataSubtypeGetLength(SITPDataSubtypeCode_e code) {
-    if (SITPDataSubtypeCodeByte16 == code) {
-        return 16;
-    } else if (SITPDataSubtypeCodeByte32 == code) {
-        return 32;
-    } else if (SITPDataSubtypeCodeByte48 == code) {
-        return 48;
-    } else if (SITPDataSubtypeCodeByte64 == code) {
-        return 64;
-    } else {
-        return 0;
-    }
-}
-
-
 
 /*
  string content
@@ -171,13 +146,10 @@ typedef union {
 } SITPFieldContent_u;
 
 typedef struct {
-    SITPIndex index;
-    uint32_t type: 8;
+    uint32_t index: 24;
+    uint32_t type: 7;
     uint32_t boolValue: 1;//Bool时有用
-    uint32_t subtype: 23;//data dataArray时有用
-    SITPFieldContent_u content;
-    
-    SITPByteSize contentLength;
+    SITPSize contentLength;
 } SITPField_t;
 
 extern SITPField_t const SITPFieldInvalid;

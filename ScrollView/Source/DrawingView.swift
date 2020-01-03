@@ -9,6 +9,11 @@
 import UIKit
 
 /*
+ 
+  
+ 960 * 540
+ 810 * 540
+
  1280 * 720
  1080 * 720
  1920 * 1080
@@ -18,11 +23,34 @@ import UIKit
 
 public class DrawingContext {
     public struct Config {
-        public let blockSize: UInt32
-        public let blockPerRow: UInt32
-        public let numberOfRows: UInt32
+        public enum SizeMode {
+            case preset960x540
+            case preset810x540
+            case preset1280x720
+            case preset1080x720
+            case preset1920x1080
+            case preset1620x1080
+            
+            var size: (width: UInt32, height: UInt32) {
+                switch self {
+                case .preset960x540: return (960, 540)
+                case .preset810x540: return (960, 540)
+                case .preset1280x720: return (1280, 720)
+                case .preset1080x720: return (1080, 720)
+                case .preset1920x1080: return (1920, 1080)
+                case .preset1620x1080: return (1620, 1080)
+                }
+            }
+        }
+        
+        
+        public let mode: SizeMode
+//        public let blockSize: UInt32
+//        public let blockPerRow: UInt32
+//        public let numberOfRows: UInt32
         public let width: UInt32
         public let height: UInt32
+        public let pageCount: UInt32
         public let pixelsCount: UInt32
         public let colorSpace: ColorSpace
         public var backgroundColor: Color = Color(little32Argb: 0)
@@ -30,32 +58,42 @@ public class DrawingContext {
         public let bytesPerRow: Int
         
         
-        public init(width: UInt32, height: UInt32, colorSpace: ColorSpace = .little32Argb) {
-            let blockSize: UInt32 = 256
-            var blockPerRow = (width + blockSize - 1) / blockSize
-            var numberOfRows = (height + blockSize - 1) / blockSize
-            blockPerRow = blockPerRow > 0 ? blockPerRow : 1
-            numberOfRows = numberOfRows > 0 ? numberOfRows : 1
+        public init(mode: SizeMode, pageCount: UInt32, colorSpace: ColorSpace = .little32Argb) {
+            self.mode = mode
+//            let blockSize: UInt32 = 256
+            let (width, height) = mode.size
             
-            let w = blockPerRow * blockSize
-            let h = numberOfRows * blockSize
-            let pixelsCount = w * h
+//            var blockPerRow = (width + blockSize - 1) / blockSize
+//            var numberOfRows = (height + blockSize - 1) / blockSize
+//            blockPerRow = blockPerRow > 0 ? blockPerRow : 1
+//            numberOfRows = numberOfRows > 0 ? numberOfRows : 1
+//            let w = blockPerRow * blockSize
+//            let h = numberOfRows * blockSize
+            var count = pageCount
+            if (count <= 0) {
+                count = 1;
+            }
+            
+            let pixelsCount = width * height * count
             let size: Int = Int(pixelsCount * colorSpace.bytesPerPixel)
-            self.blockSize = blockSize
-            self.blockPerRow = blockPerRow
-            self.numberOfRows = numberOfRows
-            self.width = w
-            self.height = h
+//            self.blockSize = blockSize
+//            self.blockPerRow = blockPerRow
+//            self.numberOfRows = numberOfRows
+            self.width = width
+            self.height = height
+            self.pageCount = count
             self.pixelsCount = pixelsCount
             self.bufferSize = size
             self.colorSpace = colorSpace
-            self.bytesPerRow = Int(w * colorSpace.bytesPerPixel)
+            self.bytesPerRow = Int(width * colorSpace.bytesPerPixel)
             print("w:\(width), h:\(height), bufferSize:\(self.bufferSize)")
         }
     }
     
 
     public enum ColorSpace: UInt32 {
+        //android 只有argb模式
+        
         case little32Argb = 1
         case little16Xrgb = 2
         public static let deviceRgb: CGColorSpace = CGColorSpaceCreateDeviceRGB()

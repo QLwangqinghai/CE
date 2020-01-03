@@ -25,6 +25,7 @@
     // Do any additional setup after loading the view.
     uint8_t buffer[512] = {
         0x2,
+        0x2,
         0x4,
         0x1, 0x2, 0x3, 0x4,
         0x21,
@@ -39,8 +40,11 @@
     };
     page.range = SITPByteRangeMake(0, 7);
     
-    SITPParserCode code = SITPParserParseData(NULL, &page, 1, SITPByteRangeMake(0, 7), NULL);
-    NSLog(@"code %ld", code);
+    SITPParserErrorRef error = NULL;
+    SITPParserParseMessageResult_t pr = SITPParserParseMessage(&page, 1, SITPByteRangeMake(0, 7), &error);
+    
+//    SITPParserCode code = SITPParserParseData(NULL, &page, 1, SITPByteRangeMake(0, 7), NULL);
+//    NSLog(@"code %ld", code);
     NSMutableData * data = [NSMutableData dataWithLength:116];
     SecRandomCopyBytes(kSecRandomDefault, data.length, data.mutableBytes);
 //    [self description];

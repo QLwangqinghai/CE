@@ -32,57 +32,15 @@ typedef struct {
 typedef struct {
     SITPField_t * _Nullable fields;
     SITPIndex fieldCount;
-    SITPLength headerLength;
+    SITPSize readLength;
 } SITPParserParseMessageResult_t;
 
-SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserErrorRef _Nullable * _Nullable errorRef);
+
+//if SITPParserParseMessageResult_t.fields != NULL, must call CCDealloc();
+SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserErrorRef _Nullable * _Nonnull errorRef);
 
 
 
-
-
-// case < 0 error; case = 0 success, case > 0 unused;
-
-
-
-
-typedef SITPParserCode (*SITPByteReader_f)(void * _Nonnull context, void * _Nonnull buffer, SITPByteRange range);
-
-typedef struct {
-    void * _Nonnull context;
-    SITPByteReader_f _Nonnull read;
-} SITPByteReader_t;
-
-typedef struct {
-    SITPByteRange range;
-    SITPByteBuffer_t * _Nonnull buffers;
-    uint32_t bufferCount;
-    uint32_t lastReadBufferIndex;
-} SITPByteReaderMemoryContext_t;
-
-typedef SITPParserCode (*SITPParserRead_f)(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
-
-typedef struct {
-    SITPParserRead_f _Nonnull func;
-    SITPByteSize length;
-} SITPParserFieldControl_t;
-
-struct _SITPParser {
-    SITPIndexRange readingIndexs;
-    SITPByteSize lengthByteCount;
-    SITPByteRange byteRange;
-    
-    //读取的数据长度
-    SITPByteSize readLength;
-
-    uint32_t controlOffset: 16;
-    uint32_t controlCount: 16;
-    SITPParserFieldControl_t controls[8];
-    
-    SITPField_t readingField;
-    
-    uint32_t tmp;
-};
 //typedef struct {
 //    SITPByteRange range;
 //    SITPByteBuffer_t * _Nonnull buffers;

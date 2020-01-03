@@ -8,7 +8,13 @@
 
 import UIKit
 
+/*
+ 1280 * 720
+ 1080 * 720
+ 1920 * 1080
+ 1620 * 1080
 
+ */
 
 public class DrawingContext {
     public struct Config {

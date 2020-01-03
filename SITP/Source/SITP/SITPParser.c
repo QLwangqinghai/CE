@@ -14,21 +14,84 @@
 
 #include "SITPIndexShift.h"
 
-SITPParserCode const SITPParserCodeSuccess = 0;
-SITPParserCode const SITPParserCodeNeedMoreData = -1;
-SITPParserCode const SITPParserCodeParamError = -2;
-SITPParserCode const SITPParserCodeReadError = -3;
+static SITPParserCode const SITPParserCodeUnknownError = 0;
+static SITPParserCode const SITPParserCodeNeedMoreData = 1;
+static SITPParserCode const SITPParserCodeParamError = 2;
+static SITPParserCode const SITPParserCodePaddingError = 3;
+static SITPParserCode const SITPParserCodeUnknownDataSubtype = 4;
+static SITPParserCode const SITPParserCodeContentLengthControlError = 5;
+static SITPParserCode const SITPParserCodeContentLengthError = 6;
+static SITPParserCode const SITPParserCodeIndexCountError = 7;
 
-SITPParserCode const SITPParserCodeUnknownDataSubType = -4;
-SITPParserCode const SITPParserCodePaddingError = -5;
-SITPParserCode const SITPParserCodeLengthByteCountError = -6;
-SITPParserCode const SITPParserCodeMessageSubTypeError = -7;
-SITPParserCode const SITPParserCodeLengthError = -8;
-SITPParserCode const SITPParserCodeIndexCountError = -9;
-SITPParserCode const SITPParserCodeDataError = -10;
+static const SITPParserError_t __SITPParserErrors[8] = {
+    {
+        .code = SITPParserCodeUnknownError,
+        .message = "SITP.Parser.UnknownError",
+    },
+    {
+        .code = SITPParserCodeNeedMoreData,
+        .message = "SITP.Parser.NeedMoreData",
+    },
+    {
+        .code = SITPParserCodeParamError,
+        .message = "SITP.Parser.ParamError",
+    },
+    {
+        .code = SITPParserCodePaddingError,
+        .message = "SITP.Parser.PaddingError",
+    },
+    {
+        .code = SITPParserCodeUnknownDataSubtype,
+        .message = "SITP.Parser.UnknownDataSubtype",
+    },
+    {
+        .code = SITPParserCodeContentLengthControlError,
+        .message = "SITP.Parser.ContentLengthControlError",
+    },
+    {
+        .code = SITPParserCodeContentLengthError,
+        .message = "SITP.Parser.ContentLengthError",
+    },
+    {
+        .code = SITPParserCodeIndexCountError,
+        .message = "SITP.Parser.IndexCountError",
+    },
+    
+    
+};
+
+SITPParserErrorRef _Nullable __SITPParserErrorWithCode(CCInt code) {
+    if (code > 0 && code < 8) {
+        return &(__SITPParserErrors[code]);
+    } else {
+        return &(__SITPParserErrors[0]);
+    }
+}
 
 
-SITPParserCode const SITPParserCodeUnknownError = INT32_MIN;
+typedef struct {
+    SITPByteRange range;
+    SITPByteBuffer_t * _Nonnull buffers;
+    uint32_t bufferCount;
+    uint32_t currentIndex;
+    SITPByteSize location;
+} SITPByteUnsafeReader_t;
+
+
+//SITPParserCode const SITPParserCodeNeedMoreData = -1;
+//SITPParserCode const SITPParserCodeParamError = -2;
+//SITPParserCode const SITPParserCodeReadError = -3;
+//
+//SITPParserCode const SITPParserCodeUnknownDataSubType = -4;
+//SITPParserCode const SITPParserCodePaddingError = -5;
+//SITPParserCode const SITPParserCodeContentLengthControlError = -6;
+//SITPParserCode const SITPParserCodeSubtypeError = -7;
+//SITPParserCode const SITPParserCodeLengthError = -8;
+//SITPParserCode const SITPParserCodeIndexCountError = -9;
+//SITPParserCode const SITPParserCodeDataError = -10;
+//
+//
+//SITPParserCode const SITPParserCodeUnknownError = INT32_MIN;
 
 
 SITPParserCode SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteSize location, SITPField_t * _Nonnull field, SITPByteSize * _Nonnull usedLength);
@@ -49,58 +112,204 @@ SITPParserCode _SITPParserReadSeekFieldContent(SITPParserPtr _Nonnull parser, SI
 SITPParserCode _SITPParserReadIndexShift(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
 
 
-SITPParserCode SITPByteReaderMemoryRead(void * _Nonnull context, void * _Nonnull buffer, SITPByteRange range) {
-    assert(context);
-    SITPByteReaderMemoryContext_t * ctx = context;
+SITPParserErrorRef _Nullable _SITPByteUnsafeReaderRead(SITPByteUnsafeReader_t * _Nonnull reader, void * _Nonnull buffer, SITPByteSize length) {
+    assert(reader);
+    if (length < 0) {
+        __SITPParserErrorWithCode(SITPParserCodeParamError);
+    }
+    if (length == 0) {
+        return NULL;
+    }
+    SITPByteUnsafeReader_t * ctx = reader;
 //    SITPByteBuffer_t * _Nonnull buffers;
 //    uint32_t bufferCount;
 //    uint32_t lastReadBufferIndex;
     
-    SITPByteBuffer_t page = ctx->buffers[ctx->lastReadBufferIndex];
-    
-    while (page.range.location > range.location || page.range.location + page.range.length < range.location) {
-        if (page.range.location > range.location) {
-            if (ctx->lastReadBufferIndex > 0) {
-                ctx->lastReadBufferIndex -= 1;
-            } else {
-                return SITPParserCodeReadError;
-            }
-        } else {
-            if (ctx->lastReadBufferIndex + 1 < ctx->bufferCount) {
-                ctx->lastReadBufferIndex += 1;
-            } else {
-                return SITPParserCodeReadError;
-            }
-        }
-        page = ctx->buffers[ctx->lastReadBufferIndex];
+    if (reader->currentIndex >= reader->bufferCount) {
+        return __SITPParserErrorWithCode(SITPParserCodeUnknownError);
     }
+    SITPByteBuffer_t page = reader->buffers[ctx->currentIndex];
+    if (page.range.location > reader->location || page.range.location + page.range.length < reader->location) {
+        return __SITPParserErrorWithCode(SITPParserCodeUnknownError);
+    }
+//    while (page.range.location + page.range.length < reader->location) {
+//        if (page.range.location > reader->location) {
+//            if (ctx->lastReadBufferIndex > 0) {
+//                ctx->lastReadBufferIndex -= 1;
+//            } else {
+//                return SITPParserCodeReadError;
+//            }
+//        } else {
+//            if (ctx->lastReadBufferIndex + 1 < ctx->bufferCount) {
+//                ctx->lastReadBufferIndex += 1;
+//            } else {
+//                return SITPParserCodeReadError;
+//            }
+//        }
+//        page = ctx->buffers[ctx->lastReadBufferIndex];
+//    }
     
-    SITPByteRange unreaded = range;
+    SITPByteRange unreaded = SITPByteRangeMake(reader->location, length);
     
     while (unreaded.length > 0) {
         SITPByteSize pageRemain = page.range.location + page.range.length - unreaded.location;
         uint8_t * content = page.content;
-        if (pageRemain >= unreaded.length) {
+        if (pageRemain == unreaded.length) {
             content += unreaded.location - page.range.location;
             memcpy(buffer, content, unreaded.length);
-            return SITPParserCodeSuccess;
+            reader->currentIndex += 1;
+            reader->location = unreaded.location + unreaded.length;
+            return NULL;
+        } else if (pageRemain > unreaded.length) {
+            content += unreaded.location - page.range.location;
+            memcpy(buffer, content, unreaded.length);
+            reader->location = unreaded.location + unreaded.length;
+            return NULL;
         } else {
             content += unreaded.location - page.range.location;
             memcpy(buffer, content, pageRemain);
             unreaded.location += pageRemain;
             unreaded.length -= pageRemain;
-
-            if (ctx->lastReadBufferIndex + 1 < ctx->bufferCount) {
-                ctx->lastReadBufferIndex += 1;
-                page = ctx->buffers[ctx->lastReadBufferIndex];
-            } else {
-                return SITPParserCodeReadError;
+            reader->currentIndex += 1;
+            if (reader->currentIndex >= reader->bufferCount) {
+                return __SITPParserErrorWithCode(SITPParserCodeUnknownError);
             }
         }
     }
-    return SITPParserCodeSuccess;
+    return NULL;
 }
 
+SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserErrorRef * _Nullable errorRef) {
+    SITPParserParseMessageResult_t result = {};
+    if (range.length == 0) {
+        return result;
+    }
+    
+    // do check input
+    if (bufferCount <= 0) {
+        return SITPParserCodeParamError;
+    }
+    if (range.location == SITPByteSizeNotFound) {
+        return SITPParserCodeParamError;
+    }
+    if (range.location + range.length < range.location) {
+        return SITPParserCodeParamError;
+    }
+    SITPByteSize location = buffers[0].range.location;
+    for (uint32_t i=0; i<bufferCount; i++) {
+        SITPByteBuffer_t buffer = buffers[i];
+        if (buffer.range.location == SITPByteSizeNotFound) {
+            return SITPParserCodeParamError;
+        }
+        if (buffer.range.location + buffer.range.length < range.location) {
+            return SITPParserCodeParamError;
+        }
+        if (buffer.range.length > 0 && NULL == buffer.content) {
+            return SITPParserCodeParamError;
+        }
+        if (buffer.range.location != location) {
+            return SITPParserCodeParamError;
+        }
+        location += buffer.range.length;
+        if (location >= range.location + range.length) {
+            break;
+        }
+    }
+    
+    SITPParserCode result = SITPParserCodeSuccess;
+    SITPByteReaderMemoryContext_t memoryContext = {};
+    memoryContext.range = range;
+    memoryContext.buffers = buffers;
+    memoryContext.bufferCount = bufferCount;
+    memoryContext.lastReadBufferIndex = 0;
+    
+    SITPByteReader_t reader = {
+        .context = &memoryContext,
+        .read = SITPByteReaderMemoryRead,
+    };
+    
+    SITPParser_t parser = {};
+    parser.byteRange = range;
+
+    
+    
+    SITPByteRange readRange = SITPByteRangeMake(parser.readLength + parser.byteRange.location, 1);
+
+    SITPIndex indexCount = 0;
+    {
+        uint8_t indexCountBytes[3] = {};
+        int indexCountBytesCount = 0;
+        for (int i=0; i<3; i++) {
+            result = reader.read(reader.context, &(indexCountBytes[i]), readRange);
+            if (SITPParserCodeSuccess != result) {
+                return result;
+            }
+            readRange.location += readRange.length;
+            if ((indexCountBytes[i] & 0x80) == 0) {
+                indexCountBytesCount = i + 1;
+                break;
+            } else {
+                if (i == 2) {
+                    return SITPParserCodeIndexCountError;
+                }
+            }
+        }
+        CCUInt64 tmpIndexCount = 0;
+        CCInt dResult = CCUInt64Decode(&tmpIndexCount, CCIntegerEncodingCompress7BitsPerComponent, indexCountBytes, indexCountBytesCount);
+        if (dResult != indexCountBytesCount) {
+            return SITPParserCodeIndexCountError;
+        }
+        if (tmpIndexCount > SITPMessageIndexMaxCount) {
+            return SITPParserCodeIndexCountError;
+        }
+        indexCount = (SITPIndex)tmpIndexCount;
+        parser.readLength += indexCountBytesCount;
+    }
+
+    SITPField_t * fieldBuffer = CCAllocate(sizeof(SITPField_t) * indexCount);
+    SITPIndex fieldIndex = 0;
+    CCIndex fieldBufferOffset = 0;
+    while (range.length > parser.readLength && fieldBufferOffset < indexCount) {
+        uint8_t byte = 0;
+        result = reader.read(reader.context, &byte, readRange);
+        if (SITPParserCodeSuccess != result) {
+            goto onError;
+        }
+        readRange.location += readRange.length;
+
+        SITPIndexShift_t shift = SITPIndexShiftMake(byte);
+        fieldIndex += shift.offset;
+        if (fieldIndex + shift.length > SITPMessageMaxIndex) {
+            goto onError;
+        }
+        for (SITPIndex i=0; i<shift.length; i++) {
+            fieldBuffer[fieldBufferOffset].index = fieldIndex + i;
+            fieldBufferOffset += 1;
+        }
+        fieldIndex += shift.length;
+    }
+    
+    fieldBufferOffset = 0;
+    
+    while (range.length > parser.readLength && fieldBufferOffset < indexCount) {
+        SITPByteSize usedLength = 0;
+        result = SITPParserReadFieldHead(&parser, reader, readRange.location, &(fieldBuffer[fieldBufferOffset]), &usedLength);
+        if (SITPParserCodeSuccess != result) {
+            goto onError;
+        }
+        readRange.location += usedLength;
+        fieldBufferOffset += 1;
+    }
+    return result;
+
+onError:
+    if (fieldBuffer) {
+        CCDeallocate(fieldBuffer);
+    }
+    return result;
+
+    
+}
 
 SITPParserCode SITPParserParseData2(void * _Nullable context, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPByteSize actualLength, SITPParserParseCallback_f _Nonnull callback) {
     if (range.length == 0) {
@@ -162,10 +371,9 @@ SITPParserCode SITPParserParseData2(void * _Nullable context, SITPByteBuffer_t *
 
     SITPIndex indexCount = 0;
     {
-        uint8_t indexCountBytes[5] = {};
-
+        uint8_t indexCountBytes[3] = {};
         int indexCountBytesCount = 0;
-        for (int i=0; i<5; i++) {
+        for (int i=0; i<3; i++) {
             result = reader.read(reader.context, &(indexCountBytes[i]), readRange);
             if (SITPParserCodeSuccess != result) {
                 return result;
@@ -175,7 +383,7 @@ SITPParserCode SITPParserParseData2(void * _Nullable context, SITPByteBuffer_t *
                 indexCountBytesCount = i + 1;
                 break;
             } else {
-                if (i == 4) {
+                if (i == 2) {
                     return SITPParserCodeIndexCountError;
                 }
             }
@@ -185,17 +393,13 @@ SITPParserCode SITPParserParseData2(void * _Nullable context, SITPByteBuffer_t *
         if (dResult != indexCountBytesCount) {
             return SITPParserCodeIndexCountError;
         }
-        if (tmpIndexCount > UINT32_MAX) {
+        if (tmpIndexCount > SITPMessageIndexMaxCount) {
             return SITPParserCodeIndexCountError;
         }
         indexCount = (SITPIndex)tmpIndexCount;
         parser.readLength += indexCountBytesCount;
     }
-    if (indexCount > SITPMessageIndexMaxCount) {
-        return SITPParserCodeDataError;
-    }
-    
-    
+
     SITPField_t * fieldBuffer = CCAllocate(sizeof(SITPField_t) * indexCount);
     SITPIndex fieldIndex = 0;
     CCIndex fieldBufferOffset = 0;
@@ -230,106 +434,13 @@ SITPParserCode SITPParserParseData2(void * _Nullable context, SITPByteBuffer_t *
         readRange.location += usedLength;
         fieldBufferOffset += 1;
     }
-    
+    return result;
+
 onError:
     if (fieldBuffer) {
         CCDeallocate(fieldBuffer);
     }
     return result;
-    
-    while (parser.byteRange.length > parser.readLength && SITPParserCodeSuccess == result) {
-        while (parser.byteRange.length > parser.readLength && 0 == parser.readingIndexs.length) {
-            SITPByteRange range = SITPByteRangeMake(parser.readLength + parser.byteRange.location, 1);
-            result = _SITPParserReadIndexShift(&parser, reader, range);
-            if (SITPParserCodeSuccess == result) {
-                parser.readLength += 1;
-            } else {
-                return result;
-            }
-        }
-        
-        while (parser.readingIndexs.length > 0) {
-            memset(&(parser.readingField), 0, sizeof(SITPField_t));
-            parser.readingField.index = parser.readingIndexs.location;
-            
-            //read field begin
-            SITPParserFieldControl_t readHeadControl = {
-                .func = _SITPParserReadFieldHead,
-                .length = 1,
-            };
-            _SITPParserControlEnqueue(&parser, readHeadControl);
-            while (parser.controlCount > 0) {
-                SITPParserFieldControl_t control = _SITPParserControlDequeue(&parser);
-                if (parser.byteRange.length - parser.readLength < control.length) {
-                    return SITPParserCodeNeedMoreData;
-                }
-                SITPByteRange range = SITPByteRangeMake(parser.readLength + parser.byteRange.location, control.length);
-                result = control.func(&parser, reader, range);
-                if (SITPParserCodeSuccess == result) {
-                    parser.readLength += range.length;
-                } else {
-                    return result;
-                }
-            }
-            callback(context, parser.readingField);
-            //read field end
-            
-            parser.readingIndexs.location += 1;
-            parser.readingIndexs.length -= 1;
-        }
-    }
-
-    
-    
-    
-    
-    while (parser.byteRange.length > parser.readLength && SITPParserCodeSuccess == result) {
-        while (parser.byteRange.length > parser.readLength && 0 == parser.readingIndexs.length) {
-            SITPByteRange range = SITPByteRangeMake(parser.readLength + parser.byteRange.location, 1);
-            result = _SITPParserReadIndexShift(&parser, reader, range);
-            if (SITPParserCodeSuccess == result) {
-                parser.readLength += 1;
-            } else {
-                return result;
-            }
-        }
-        
-        while (parser.readingIndexs.length > 0) {
-            memset(&(parser.readingField), 0, sizeof(SITPField_t));
-            parser.readingField.index = parser.readingIndexs.location;
-            
-            //read field begin
-            SITPParserFieldControl_t readHeadControl = {
-                .func = _SITPParserReadFieldHead,
-                .length = 1,
-            };
-            _SITPParserControlEnqueue(&parser, readHeadControl);
-            while (parser.controlCount > 0) {
-                SITPParserFieldControl_t control = _SITPParserControlDequeue(&parser);
-                if (parser.byteRange.length - parser.readLength < control.length) {
-                    return SITPParserCodeNeedMoreData;
-                }
-                SITPByteRange range = SITPByteRangeMake(parser.readLength + parser.byteRange.location, control.length);
-                result = control.func(&parser, reader, range);
-                if (SITPParserCodeSuccess == result) {
-                    parser.readLength += range.length;
-                } else {
-                    return result;
-                }
-            }
-            callback(context, parser.readingField);
-            //read field end
-            
-            parser.readingIndexs.location += 1;
-            parser.readingIndexs.length -= 1;
-        }
-    }
-    return result;
-
-    
-    
-    
-    
 }
 
 SITPParserCode SITPParserParseData(void * _Nullable context, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserParseCallback_f _Nonnull callback) {

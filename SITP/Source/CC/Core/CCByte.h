@@ -11,13 +11,9 @@
 
 #include "CCBase.h"
 
-#define CCByteBase64EncodeBlock 3
-#define CCByteBase64DecodeBlock 4
-
-
-CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCChar * _Nonnull outputBuffer, CCInt bufferLength, CCBool needPadding);
+CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCChar * _Nonnull outputBuffer, CCInt bufferLength);
 CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
 
-
+extern const CCChar __CCBase64ByteToCharMappings[64];
 
 #endif /* CCByte_h */

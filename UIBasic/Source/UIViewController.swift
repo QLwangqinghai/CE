@@ -25,7 +25,7 @@ private var _UIViewController_statusHandlerKey: Int = 0;
 
 public extension UIViewController {
 
-    @objc class func loadStatusHandler() -> ViewControllerStatusHandler {
+    @objc class func makeStatusHandler() -> ViewControllerStatusHandler {
         return ViewControllerStatusHandler()
     }
     
@@ -34,7 +34,7 @@ public extension UIViewController {
         if let v = value as? ViewControllerStatusHandler {
             return v
         } else {
-            let handler: ViewControllerStatusHandler = self.classForCoder.loadStatusHandler()
+            let handler: ViewControllerStatusHandler = self.classForCoder.makeStatusHandler()
             objc_setAssociatedObject(self, &_UIViewController_statusHandlerKey, handler, .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             return handler;
         }
@@ -49,5 +49,15 @@ public class BaseViewController: UIViewController {
         
     }
     
+    
+    @objc public func back(animate: Bool, onFinish: DispatchWorkItem) {
+
+    }
+    
+    @objc public func back(animate: Bool, onFinished:@escaping ()-> Void) {
+        DispatchQueue.main.async {
+            
+        }
+    }
     
 }

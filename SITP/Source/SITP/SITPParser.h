@@ -15,34 +15,35 @@ struct _SITPParser;
 typedef struct _SITPParser SITPParser_t;
 typedef SITPParser_t * SITPParserPtr;
 
-
-
-// case < 0 error; case = 0 success, case > 0 unused;
 typedef int32_t SITPParserCode;
 
-extern SITPParserCode const SITPParserCodeSuccess;
-extern SITPParserCode const SITPParserCodeNeedMoreData;
-extern SITPParserCode const SITPParserCodeParamError;
-extern SITPParserCode const SITPParserCodeReadError;
+typedef struct {
+    CCInt code;
+    const char * _Nonnull message;
+} SITPParserError_t;
 
-
-extern SITPParserCode const SITPParserCodeUnknownDataSubType;
-extern SITPParserCode const SITPParserCodePaddingError;
-extern SITPParserCode const SITPParserCodeMessageSubTypeError;
-
-extern SITPParserCode const SITPParserCodeLengthByteCountError;
-extern SITPParserCode const SITPParserCodeLengthError;
-
-extern SITPParserCode const SITPParserCodeIndexCountError;
-extern SITPParserCode const SITPParserCodeDataError;
-
-extern SITPParserCode const SITPParserCodeUnknownError;
-
+typedef const SITPParserError_t * SITPParserErrorRef;
 
 typedef struct {
     uint8_t * _Nonnull content;
     SITPByteRange range;
 } SITPByteBuffer_t;
+
+typedef struct {
+    SITPField_t * _Nullable fields;
+    SITPIndex fieldCount;
+    SITPLength headerLength;
+} SITPParserParseMessageResult_t;
+
+SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserErrorRef _Nullable * _Nullable errorRef);
+
+
+
+
+
+// case < 0 error; case = 0 success, case > 0 unused;
+
+
 
 
 typedef SITPParserCode (*SITPByteReader_f)(void * _Nonnull context, void * _Nonnull buffer, SITPByteRange range);
@@ -115,13 +116,9 @@ typedef struct {
 } SITPParserCallback_t;
 
 
-
-
-
 SITPParserCode SITPParserParseData(void * _Nullable context, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserParseCallback_f _Nonnull callback);
 
 
-SITPParserCode SITPParserParseData2(void * _Nullable context, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPByteSize actualLength, SITPParserParseCallback_f _Nonnull callback);
 
 
 //SITPParserCode SITPParserReadFinishField(SITPParserPtr _Nonnull parser, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteSize length);

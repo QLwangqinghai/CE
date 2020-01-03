@@ -10,7 +10,7 @@
 
 //"-" / "." / "_" / "~"
 
-static const CCChar __CCBase64Padding = '~';
+static const CCChar __CCBase64Padding = '_';
 
 static const CCUInt8 __CCBase64CharToByteMappings[128] __attribute__((aligned(128))) = {
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -18,11 +18,12 @@ static const CCUInt8 __CCBase64CharToByteMappings[128] __attribute__((aligned(12
     255, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 255, 255, 255, 255, 62,
     255, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 255, 255, 255, 255, 255,
 };
-static const CCChar __CCBase64ByteToCharMappings[64] __attribute__((aligned(64))) = {
+
+const CCChar __CCBase64ByteToCharMappings[64] __attribute__((aligned(64))) = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    '_', '-',
+    '~', '-',
 };
 
 static inline CCUInt8 __CCByteBase64DecodeByte(CCChar c) {
@@ -42,7 +43,7 @@ static inline CCChar __CCByteBase64EncodeByte(CCUInt8 byte) {
 
 
 
-CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCChar * _Nonnull outputBuffer, CCInt bufferLength, CCBool needPadding) {
+CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCChar * _Nonnull outputBuffer, CCInt bufferLength) {
     assert(length >= 0);
     if (length > 0) {
         assert(bytes);
@@ -61,16 +62,10 @@ CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCCh
     
     CCInt outputLength = (length/3)*4;
     
-    if (needPadding) {
-        if (length % 3 != 0) {
-            outputLength += 4;
-        }
-    } else {
-        if (length % 3 == 1) {
-            outputLength += 2;
-        } else if (length % 3 == 2) {
-            outputLength += 3;
-        }
+    if (length % 3 == 1) {
+        outputLength += 2;
+    } else if (length % 3 == 2) {
+        outputLength += 3;
     }
     if (bufferLength < outputLength) {
         return -1;
@@ -105,14 +100,6 @@ CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCCh
 
         outputBuffer[outputIndex] = __CCByteBase64EncodeByte(currentByte);
         outputIndex ++;
-
-        if (needPadding) {
-            outputBuffer[outputIndex] = __CCBase64Padding;
-            outputIndex ++;
-
-            outputBuffer[outputIndex] = __CCBase64Padding;
-            outputIndex ++;
-        }
     } else if (length % 3 == 2) {
         outputBuffer[outputIndex] = __CCByteBase64EncodeByte(bytes[index] >> 2);
         outputIndex ++;
@@ -124,15 +111,9 @@ CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCCh
         currentByte = ((bytes[index + 1] << 2) & 0x3f);
         outputBuffer[outputIndex] = __CCByteBase64EncodeByte(currentByte);
         outputIndex ++;
-        if (needPadding) {
-            outputBuffer[outputIndex] = __CCBase64Padding;
-            outputIndex ++;
-        }
     }
     return outputIndex;
 }
-
-
 
 CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
     assert(length >= 0);
@@ -153,32 +134,10 @@ CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCU
         outputLength += 1;
     } else if (length % 4 == 3) {
         outputLength += 2;
-    } else {
-        for (CCInt index=length-1; index>=0; index--) {
-            if (__CCBase64Padding == encoded[index]) {
-                paddingLength ++;
-                if (paddingLength >= 4) {
-                    return -3;
-                }
-            } else {
-                break;
-            }
-        }
-        if (paddingLength == 1) {
-            //3 char => 2Byte
-            outputLength -= 1;
-        } else if (paddingLength == 2) {
-            //2 char => 1Byte
-            outputLength -= 2;
-        } else if (paddingLength == 3) {
-            return -3;
-        }
     }
     if (bufferLength < outputLength) {
         return -1;
     }
-    
-        
         
     CCUInt8 currentByte = 0;
     CCInt outputIndex = 0;

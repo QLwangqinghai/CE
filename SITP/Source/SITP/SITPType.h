@@ -9,18 +9,15 @@
 #ifndef SITPType_h
 #define SITPType_h
 
-#include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <stdatomic.h>
+#include "CCBase.h"
 
 typedef uint32_t SITPIndex;
 typedef uint32_t SITPLength;
 typedef uint64_t SITPByteSize;
 
 
-//65536
-#define SITPMessageIndexMaxCount 0x10000U
+//2097151
+#define SITPMessageIndexMaxCount 0x1FFFFFU
 
 #define SITPMessageMaxIndex INT32_MAX
 
@@ -112,7 +109,7 @@ static inline SITPByteSize SITPDataSubtypeGetLength(SITPDataSubtypeCode_e code) 
 
 typedef struct {
     SITPIndex offset;
-    SITPIndex length;//[0, 16)
+    SITPIndex length;//[0, 8]
 } SITPIndexShift_t;
 
 typedef struct {

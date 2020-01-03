@@ -10,10 +10,10 @@
 #include "SITPParser.h"
 #include "CCByte.h"
 
-SITPParserCode SITPParserParseCallbackFunc(void * _Nullable context, SITPField_t field) {
-    NSLog(@"%ld %ld", field.index, field.type);
-    return SITPParserCodeSuccess;
-}
+//SITPParserCode SITPParserParseCallbackFunc(void * _Nullable context, SITPField_t field) {
+//    NSLog(@"%ld %ld", field.index, field.type);
+//    return SITPParserCodeSuccess;
+//}
 
 
 
@@ -39,7 +39,7 @@ SITPParserCode SITPParserParseCallbackFunc(void * _Nullable context, SITPField_t
     };
     page.range = SITPByteRangeMake(0, 7);
     
-    SITPParserCode code = SITPParserParseData(NULL, &page, 1, SITPByteRangeMake(0, 7), SITPParserParseCallbackFunc);
+    SITPParserCode code = SITPParserParseData(NULL, &page, 1, SITPByteRangeMake(0, 7), NULL);
     NSLog(@"code %ld", code);
     NSMutableData * data = [NSMutableData dataWithLength:116];
     SecRandomCopyBytes(kSecRandomDefault, data.length, data.mutableBytes);
@@ -48,7 +48,7 @@ SITPParserCode SITPParserParseCallbackFunc(void * _Nullable context, SITPField_t
     NSMutableData * mdata2 = [NSMutableData dataWithLength:data.length];
 
     CFTimeInterval a = CACurrentMediaTime();
-    CCInt le = CCByteBase64EncodeBytes(data.bytes, data.length, mdata.mutableBytes, mdata.length, true);
+    CCInt le = CCByteBase64EncodeBytes(data.bytes, data.length, mdata.mutableBytes, mdata.length);
     CCInt le2 = CCByteBase64DecodeBytes(mdata.mutableBytes, le, mdata2.mutableBytes, mdata2.length);
     CFTimeInterval b = CACurrentMediaTime();
     [data base64EncodedDataWithOptions:0];

@@ -19,6 +19,13 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    UIStackView * v = [[UIStackView alloc] initWithFrame:CGRectMake(100, 150, 150, 150)];
+    [self.view addSubview:v];
+    
+    UIView * v1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 100)];
+    [v addSubview:v1];
+    v1.backgroundColor = [UIColor redColor];
+    
 }
 
 

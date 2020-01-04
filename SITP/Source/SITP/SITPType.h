@@ -16,14 +16,14 @@ typedef uint32_t SITPSize;
 typedef uint64_t SITPByteSize;
 
 
-//21bit
-#define SITPMessageIndexMaxCount 0x1FFFFFU
+//16bit
+#define SITPMessageIndexMaxCount 0xFFFFU
 
-//24bit
-#define SITPMessageMaxIndex 0xFFFFFFU
+//24bit - 1
+#define SITPMessageMaxIndex 0xFFFFFEU
 
 
-#define SITPIndexNotFound UINT32_MAX
+#define SITPIndexNotFound 0xFFFFFFU
 #define SITPByteSizeNotFound UINT64_MAX
 
 typedef enum {
@@ -151,6 +151,12 @@ typedef struct {
     uint32_t boolValue: 1;//Bool时有用
     SITPSize contentLength;
 } SITPField_t;
+
+typedef struct {
+    uint32_t type: 7;
+    uint32_t boolValue: 1;//Bool时有用
+    SITPSize contentLength;
+} SITPArrayItem_t;
 
 extern SITPField_t const SITPFieldInvalid;
 

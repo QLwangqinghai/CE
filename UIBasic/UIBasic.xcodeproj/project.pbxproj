@@ -15,6 +15,8 @@
 		D666EC6A23BB7E3100E80BC9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D666EC6823BB7E3100E80BC9 /* LaunchScreen.storyboard */; };
 		D666EC6D23BB7E3100E80BC9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D666EC6C23BB7E3100E80BC9 /* main.m */; };
 		D666EC7623BB7EF700E80BC9 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D666EC7523BB7EF700E80BC9 /* UIViewController.swift */; };
+		D6DDCB5923C0A062004BD2D1 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DDCB5823C0A062004BD2D1 /* BaseViewController.swift */; };
+		D6DDCB5B23C0A988004BD2D1 /* BaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DDCB5A23C0A988004BD2D1 /* BaseNavigationController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		D666EC6C23BB7E3100E80BC9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D666EC7423BB7EF700E80BC9 /* UIBasic-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIBasic-Bridging-Header.h"; sourceTree = "<group>"; };
 		D666EC7523BB7EF700E80BC9 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
+		D6DDCB5823C0A062004BD2D1 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		D6DDCB5A23C0A988004BD2D1 /* BaseNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNavigationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +89,8 @@
 			children = (
 				D666EC7523BB7EF700E80BC9 /* UIViewController.swift */,
 				D666EC7423BB7EF700E80BC9 /* UIBasic-Bridging-Header.h */,
+				D6DDCB5823C0A062004BD2D1 /* BaseViewController.swift */,
+				D6DDCB5A23C0A988004BD2D1 /* BaseNavigationController.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -161,10 +167,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D666EC6223BB7E2E00E80BC9 /* ViewController.m in Sources */,
+				D6DDCB5B23C0A988004BD2D1 /* BaseNavigationController.swift in Sources */,
 				D666EC5C23BB7E2E00E80BC9 /* AppDelegate.m in Sources */,
 				D666EC6D23BB7E3100E80BC9 /* main.m in Sources */,
 				D666EC5F23BB7E2E00E80BC9 /* SceneDelegate.m in Sources */,
 				D666EC7623BB7EF700E80BC9 /* UIViewController.swift in Sources */,
+				D6DDCB5923C0A062004BD2D1 /* BaseViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

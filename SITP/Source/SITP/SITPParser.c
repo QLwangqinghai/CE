@@ -14,6 +14,10 @@
 
 #include "SITPIndexShift.h"
 
+static CCUInt8 const SITPTypeCodeBoolTrue = 0xC4;
+static CCUInt8 const SITPTypeCodeBoolFalse = 0x84;
+
+
 static SITPParserCode const SITPParserCodeUnknownError = 0;
 static SITPParserCode const SITPParserCodeNeedMoreData = 1;
 static SITPParserCode const SITPParserCodeParamError = 2;
@@ -22,8 +26,10 @@ static SITPParserCode const SITPParserCodeUnknownDataSubtype = 4;
 static SITPParserCode const SITPParserCodeContentLengthControlError = 5;
 static SITPParserCode const SITPParserCodeContentLengthError = 6;
 static SITPParserCode const SITPParserCodeIndexCountError = 7;
+static SITPParserCode const SITPParserCodeUnknownMessageEncodeError = 8;
+static SITPParserCode const SITPParserCodeUnknownTypeError = 9;
 
-static const SITPParserError_t __SITPParserErrors[8] = {
+static const SITPParserError_t __SITPParserErrors[10] = {
     {
         .code = SITPParserCodeUnknownError,
         .message = "SITP.Parser.UnknownError",
@@ -56,12 +62,18 @@ static const SITPParserError_t __SITPParserErrors[8] = {
         .code = SITPParserCodeIndexCountError,
         .message = "SITP.Parser.IndexCountError",
     },
-    
-    
+    {
+        .code = SITPParserCodeUnknownMessageEncodeError,
+        .message = "SITP.Parser.UnknownMessageEncodeError",
+    },
+    {
+        .code = SITPParserCodeUnknownTypeError,
+        .message = "SITP.Parser.UnknownTypeError",
+    },
 };
 
 SITPParserErrorRef _Nullable __SITPParserErrorWithCode(CCInt code) {
-    if (code > 0 && code < 8) {
+    if (code > 0 && code < 10) {
         return &(__SITPParserErrors[code]);
     } else {
         return &(__SITPParserErrors[0]);
@@ -101,6 +113,8 @@ typedef struct {
 
 
 SITPParserErrorRef _Nullable _SITPParserReadFieldHead(SITPByteUnsafeReader_t * _Nonnull reader, SITPField_t * _Nonnull field);
+SITPParserErrorRef _Nullable _SITPParserReadCompressFieldHead(SITPByteUnsafeReader_t * _Nonnull reader, SITPField_t * _Nonnull field);
+
 
 //SITPParserCode _SITPParserReadFieldHead(SITPParserPtr _Nonnull parser, SITPByteReader_t reader, SITPByteRange range);
 
@@ -223,6 +237,7 @@ SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnul
     SITPParserErrorRef error = NULL;
 
     SITPParserParseMessageResult_t result = {};
+    result.erroredFieldIndex = SITPIndexNotFound;
     if (range.length == 0) {
         return result;
     }
@@ -243,7 +258,8 @@ SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnul
         goto onParamError;
     }
 
-    SITPIndex indexCount = 0;
+    SITPMessageEncoding_e encodeType = 0;
+    SITPIndex indexCount = SITPMessageEncodingError;
     do {
         uint8_t indexCountByte = 0;
         for (int i=0; i<3; i++) {
@@ -251,8 +267,17 @@ SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnul
             if (error) {
                 goto onError;
             }
-            indexCount = indexCount << 7;
-            indexCount += (indexCountByte & 0x7f);
+            if (0 == i) {
+                encodeType = ((indexCountByte >> 2) & 0x1F);
+                indexCount = (indexCountByte & 0x3);
+                if (SITPMessageEncodingIsInvalid(encodeType)) {
+                    error = __SITPParserErrorWithCode(SITPParserCodeUnknownMessageEncodeError);
+                    goto onError;
+                }
+            } else {
+                indexCount = indexCount << 7;
+                indexCount += (indexCountByte & 0x7f);
+            }
             if ((indexCountByte & 0x80) == 0) {
                 break;
             } else {
@@ -287,8 +312,23 @@ SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnul
     
     fieldBufferOffset = 0;
     
+    SITPParserErrorRef _Nullable (*readFieldHeadFunc)(SITPByteUnsafeReader_t * _Nonnull reader, SITPField_t * _Nonnull field);
+
+    switch (encodeType) {
+        case SITPMessageEncodingNormal:
+            readFieldHeadFunc = _SITPParserReadFieldHead;
+            break;
+        case SITPMessageEncodingCompressFieldContentLength:
+            readFieldHeadFunc = _SITPParserReadCompressFieldHead;
+            break;
+        default:
+            abort();
+            break;
+    }
+    
+    
     while (fieldBufferOffset < indexCount) {
-        error = _SITPParserReadFieldHead(&reader, &(result.fields[fieldBufferOffset]));
+        error = readFieldHeadFunc(&reader, &(result.fields[fieldBufferOffset]));
         if (error) {
             goto onError;
         }
@@ -298,6 +338,9 @@ SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnul
     return result;
 
 onError:
+    if (errorRef) {
+        *errorRef = error;
+    }
     result.readLength = (SITPSize)(reader.location - range.location);
     return result;
 
@@ -451,8 +494,105 @@ onParamError:
 //    return result;
 //}
 
-
 SITPParserErrorRef _Nullable _SITPParserReadFieldHead(SITPByteUnsafeReader_t * _Nonnull reader, SITPField_t * _Nonnull field) {
+    assert(field);
+    assert(reader);
+    SITPParserErrorRef error = NULL;
+    uint8_t type = 0;
+    error = _SITPByteUnsafeReaderRead(reader, &type, 1);
+    if (error) {
+        return error;
+    }
+    if (type == SITPTypeCodeBoolTrue) {
+        field->type = SITPTypeCodeBool;
+        field->boolValue = 0x1;
+        field->contentLength = 0;
+        return NULL;
+    } else if (type == SITPTypeCodeBoolFalse) {
+        field->type = SITPTypeCodeBool;
+        field->boolValue = 0x0;
+        field->contentLength = 0;
+        return NULL;
+    } else {
+        field->type = type;
+    }
+
+    field->type = type;
+    switch (type) {
+        case SITPTypeCodeSInt:
+        case SITPTypeCodeUInt: {
+            field->contentLength = 8;
+            return NULL;
+        }
+            break;
+        case SITPTypeCodeFloat32: {
+            field->contentLength = 4;
+            return NULL;
+        }
+            break;
+        case SITPTypeCodeFloat64: {
+            field->contentLength = 8;
+            return NULL;
+        }
+            break;
+        case SITPTypeCodeBool: {
+            return __SITPParserErrorWithCode(SITPParserCodeUnknownTypeError);
+        }
+            break;
+        case SITPTypeCodeTime: {
+            field->contentLength = 8;
+            return NULL;
+        }
+            break;
+        case SITPTypeCodeByte16: {
+            field->contentLength = 16;
+            return NULL;
+        }
+            break;
+        case SITPTypeCodeData:
+        case SITPTypeCodeDataArray:
+        case SITPTypeCodeString:
+        case SITPTypeCodeMessage:
+        case SITPTypeCodeSIntArray:
+        case SITPTypeCodeUIntArray:
+        case SITPTypeCodeStringArray:
+        case SITPTypeCodeMessageArray:
+        case SITPTypeCodeBoolArray:
+        case SITPTypeCodeTimeArray:
+        case SITPTypeCodeFloat32Array:
+        case SITPTypeCodeFloat64Array:
+        case SITPTypeCodeByte16Array: {
+            uint32_t length = 0;
+            error = _SITPByteUnsafeReaderRead(reader, &length, 4);
+            if (error) {
+                return error;
+            }
+#if CCBuildBigEndian
+            uint8_t * bytes = (uint8_t *)(&length);
+            uint8_t tmp = bytes[0];
+            bytes[0] = bytes[3];
+            bytes[3] = tmp;
+
+            tmp = bytes[1];
+            bytes[1] = bytes[2];
+            bytes[2] = tmp;
+#endif
+            field->contentLength = length;
+            return NULL;
+        }
+            break;
+        default:
+            return __SITPParserErrorWithCode(SITPParserCodeUnknownTypeError);
+            break;
+    }
+    return NULL;
+
+onPaddingError:
+    return __SITPParserErrorWithCode(SITPParserCodePaddingError);
+}
+
+
+SITPParserErrorRef _Nullable _SITPParserReadCompressFieldHead(SITPByteUnsafeReader_t * _Nonnull reader, SITPField_t * _Nonnull field) {
     assert(field);
     assert(reader);
     SITPParserErrorRef error = NULL;
@@ -466,7 +606,7 @@ SITPParserErrorRef _Nullable _SITPParserReadFieldHead(SITPByteUnsafeReader_t * _
     switch (type) {
         case SITPTypeCodeSInt:
         case SITPTypeCodeUInt: {
-            SITPByteSize length = 8 - (byte & 0x7);
+            SITPSize length = 8 - (byte & 0x7);
             field->contentLength = length;
             return error;
         }
@@ -553,8 +693,9 @@ SITPParserErrorRef _Nullable _SITPParserReadFieldHead(SITPByteUnsafeReader_t * _
             }
         }
             break;
-        default:
-            abort();
+        default: {
+            return __SITPParserErrorWithCode(SITPParserCodeUnknownTypeError);
+        }
             break;
     }
     return NULL;

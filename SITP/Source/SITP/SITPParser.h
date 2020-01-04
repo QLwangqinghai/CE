@@ -31,6 +31,7 @@ typedef struct {
 
 typedef struct {
     SITPField_t * _Nullable fields;
+    SITPIndex erroredFieldIndex;
     SITPIndex fieldCount;
     SITPSize readLength;
 } SITPParserParseMessageResult_t;
@@ -39,6 +40,23 @@ typedef struct {
 //if SITPParserParseMessageResult_t.fields != NULL, must call CCDealloc();
 SITPParserParseMessageResult_t SITPParserParseMessage(SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range, SITPParserErrorRef _Nullable * _Nonnull errorRef);
 
+
+
+typedef enum {
+    //field[type(1Byte), optional(contentLength, 4Byte)]
+    SITPMessageEncodingNormal = 0x0,
+    
+    //field[type(5bit), optional(contentLengthByteCount, 3bit), optional(contentLength, contentLengthByteCount Byte)]
+    SITPMessageEncodingCompressFieldContentLength = 0x1,
+    
+    
+    SITPMessageEncodingError = INT32_MAX,
+} SITPMessageEncoding_e;
+
+//encoding 是否是无效的
+static inline CCBool SITPMessageEncodingIsInvalid(SITPMessageEncoding_e encoding) {
+    return encoding != SITPMessageEncodingNormal && encoding != SITPMessageEncodingCompressFieldContentLength;
+};
 
 
 //typedef struct {

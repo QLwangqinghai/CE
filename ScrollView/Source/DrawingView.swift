@@ -22,29 +22,45 @@ import UIKit
  */
 
 public class DrawingContext {
-    public struct Config {
-        public enum SizeMode {
-            case preset960x540
-            case preset810x540
-            case preset1280x720
-            case preset1080x720
-            case preset1920x1080
-            case preset1620x1080
-            
-            var size: (width: UInt32, height: UInt32) {
-                switch self {
-                case .preset960x540: return (960, 540)
-                case .preset810x540: return (960, 540)
-                case .preset1280x720: return (1280, 720)
-                case .preset1080x720: return (1080, 720)
-                case .preset1920x1080: return (1920, 1080)
-                case .preset1620x1080: return (1620, 1080)
-                }
+    public enum BoxSize {
+        case preset960x540
+        case preset810x540
+        case preset1280x720
+        case preset1080x720
+        case preset1920x1080
+        case preset1620x1080
+        
+        var size: (width: UInt32, height: UInt32) {
+            switch self {
+            case .preset960x540: return (960, 540)
+            case .preset810x540: return (960, 540)
+            case .preset1280x720: return (1280, 720)
+            case .preset1080x720: return (1080, 720)
+            case .preset1920x1080: return (1920, 1080)
+            case .preset1620x1080: return (1620, 1080)
             }
         }
-        
-        
-        public let mode: SizeMode
+    }
+    
+    public struct LayoutConfig {
+        public let mode: BoxSize
+        public let width: UInt32
+        public let height: UInt32
+        public let pageCount: UInt32
+        public init?(mode: BoxSize, pageCount: UInt32) {
+            self.mode = mode
+            let (width, height) = mode.size
+            if (pageCount <= 0 || pageCount > 16) {
+                return nil
+            }
+            self.width = width
+            self.height = height
+            self.pageCount = pageCount
+        }
+    }    
+    
+    public struct Config {
+        public let mode: BoxSize
 //        public let blockSize: UInt32
 //        public let blockPerRow: UInt32
 //        public let numberOfRows: UInt32
@@ -58,7 +74,7 @@ public class DrawingContext {
         public let bytesPerRow: Int
         
         
-        public init(mode: SizeMode, pageCount: UInt32, colorSpace: ColorSpace = .little32Argb) {
+        public init(mode: BoxSize, pageCount: UInt32, colorSpace: ColorSpace = .little32Argb) {
             self.mode = mode
 //            let blockSize: UInt32 = 256
             let (width, height) = mode.size
@@ -267,6 +283,10 @@ public protocol Stroke: class {
     
 }
 
+open class DrawingBox: UIStackView {
+
+    
+}
 
 open class DrawingView: UIView {
     fileprivate var context: DrawingContext? = nil {
@@ -281,27 +301,27 @@ open class DrawingView: UIView {
 //        let layer: CALayer =
 //    }
     
-//    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        super.touchesBegan(touches, with: event)
-//        self.log(item: "\(touches) \(String(describing: event))")
-//    }
-//    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        super.touchesMoved(touches, with: event)
-//        self.log(item: "\(touches) \(String(describing: event))")
-//    }
-//    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        super.touchesEnded(touches, with: event)
-//        self.log(item: "\(touches) \(String(describing: event))")
-//    }
-//    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        super.touchesCancelled(touches, with: event)
-//        self.log(item: "\(touches) \(String(describing: event))")
-//    }
-//    
-//    func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
-//        print("\(file) :\(line): \(function) \(item())")
-//    }
-//    
+    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        self.log(item: "\(touches) \(String(describing: event))")
+    }
+    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        self.log(item: "\(touches) \(String(describing: event))")
+    }
+    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        self.log(item: "\(touches) \(String(describing: event))")
+    }
+    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        self.log(item: "\(touches) \(String(describing: event))")
+    }
+    
+    func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
+        print("\(file) :\(line): \(function) \(item())")
+    }
+    
     func resetContent() {
         
     }

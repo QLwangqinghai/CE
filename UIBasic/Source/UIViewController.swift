@@ -19,8 +19,6 @@ public class ViewControllerMutableStatusHandler: ViewControllerStatusHandler {
     
 }
 
-
-
 private var _UIViewController_statusHandlerKey: Int = 0;
 
 public extension UIViewController {
@@ -42,22 +40,4 @@ public extension UIViewController {
 }
 
 
-public class BaseViewController: UIViewController {
-    
-    public override func didMove(toParent parent: UIViewController?) {
-        super.didMove(toParent: parent)
-        
-    }
-    
-    
-    @objc public func back(animate: Bool, onFinish: DispatchWorkItem) {
 
-    }
-    
-    @objc public func back(animate: Bool, onFinished:@escaping ()-> Void) {
-        DispatchQueue.main.async {
-            
-        }
-    }
-    
-}

@@ -15,6 +15,7 @@
 		D63B1C6D230AD1F800AFD97E /* Core2D.c in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C6C230AD1F800AFD97E /* Core2D.c */; };
 		D64E0429231D361F0036F348 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64E0428231D361F0036F348 /* DrawingView.swift */; };
 		D67F5A252306F41E00F1CE91 /* GLES.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F5A242306F41E00F1CE91 /* GLES.swift */; };
+		D68FE43D23C063070066DD77 /* DrawViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68FE43C23C063070066DD77 /* DrawViewController.swift */; };
 		D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC1F230536D100432D18 /* AppDelegate.swift */; };
 		D69FCC22230536D100432D18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC21230536D100432D18 /* ViewController.swift */; };
 		D69FCC25230536D100432D18 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D69FCC23230536D100432D18 /* Main.storyboard */; };
@@ -47,6 +48,7 @@
 		D63B1C6C230AD1F800AFD97E /* Core2D.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Core2D.c; sourceTree = "<group>"; };
 		D64E0428231D361F0036F348 /* DrawingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
 		D67F5A242306F41E00F1CE91 /* GLES.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLES.swift; sourceTree = "<group>"; };
+		D68FE43C23C063070066DD77 /* DrawViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawViewController.swift; sourceTree = "<group>"; };
 		D69FCC1C230536D100432D18 /* ScrollView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D69FCC1F230536D100432D18 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D69FCC21230536D100432D18 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				D69FCC26230536D300432D18 /* Assets.xcassets */,
 				D69FCC28230536D300432D18 /* LaunchScreen.storyboard */,
 				D69FCC2B230536D300432D18 /* Info.plist */,
+				D68FE43C23C063070066DD77 /* DrawViewController.swift */,
 			);
 			path = ScrollView;
 			sourceTree = "<group>";
@@ -240,6 +243,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D68FE43D23C063070066DD77 /* DrawViewController.swift in Sources */,
 				D63B1C6D230AD1F800AFD97E /* Core2D.c in Sources */,
 				D63B1C472305685200AFD97E /* View.swift in Sources */,
 				D63B1C53230A6BED00AFD97E /* ScrollView.swift in Sources */,

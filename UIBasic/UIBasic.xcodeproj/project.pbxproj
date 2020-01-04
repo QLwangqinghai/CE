@@ -87,8 +87,8 @@
 		D666EC7323BB7E3500E80BC9 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				D666EC7523BB7EF700E80BC9 /* UIViewController.swift */,
 				D666EC7423BB7EF700E80BC9 /* UIBasic-Bridging-Header.h */,
+				D666EC7523BB7EF700E80BC9 /* UIViewController.swift */,
 				D6DDCB5823C0A062004BD2D1 /* BaseViewController.swift */,
 				D6DDCB5A23C0A988004BD2D1 /* BaseNavigationController.swift */,
 			);
@@ -314,7 +314,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = UIBasic/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -334,7 +336,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = UIBasic/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

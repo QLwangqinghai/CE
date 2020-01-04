@@ -14,20 +14,20 @@
 
 #include "SITPIndexShift.h"
 
-static CCUInt8 const SITPTypeCodeBoolTrue = 0xC4;
-static CCUInt8 const SITPTypeCodeBoolFalse = 0x84;
+CCUInt8 const SITPTypeCodeBoolTrue = 0xC4;
+CCUInt8 const SITPTypeCodeBoolFalse = 0x84;
 
 
-static SITPParserCode const SITPParserCodeUnknownError = 0;
-static SITPParserCode const SITPParserCodeNeedMoreData = 1;
-static SITPParserCode const SITPParserCodeParamError = 2;
-static SITPParserCode const SITPParserCodePaddingError = 3;
-static SITPParserCode const SITPParserCodeUnknownDataSubtype = 4;
-static SITPParserCode const SITPParserCodeContentLengthControlError = 5;
-static SITPParserCode const SITPParserCodeContentLengthError = 6;
-static SITPParserCode const SITPParserCodeIndexCountError = 7;
-static SITPParserCode const SITPParserCodeUnknownMessageEncodeError = 8;
-static SITPParserCode const SITPParserCodeUnknownTypeError = 9;
+SITPParserCode const SITPParserCodeUnknownError = 0;
+SITPParserCode const SITPParserCodeNeedMoreData = 1;
+SITPParserCode const SITPParserCodeParamError = 2;
+SITPParserCode const SITPParserCodePaddingError = 3;
+SITPParserCode const SITPParserCodeUnknownDataSubtype = 4;
+SITPParserCode const SITPParserCodeContentLengthControlError = 5;
+SITPParserCode const SITPParserCodeContentLengthError = 6;
+SITPParserCode const SITPParserCodeIndexCountError = 7;
+SITPParserCode const SITPParserCodeUnknownMessageEncodeError = 8;
+SITPParserCode const SITPParserCodeUnknownTypeError = 9;
 
 static const SITPParserError_t __SITPParserErrors[10] = {
     {

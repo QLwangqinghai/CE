@@ -41,9 +41,11 @@ public extension UIViewController {
             return handler;
         }
     }
-    @objc func back(sender: UIViewController, animate: Bool, completion: @escaping ()-> Void) -> Bool {
+    @objc func back(sender: UIViewController, animate: Bool, completion: (() -> Void)?) -> Bool {
         guard let parent = self.parent else {
-            completion()
+            if let closure = completion {
+                closure()
+            }
             return true
         }
         if parent == self.presentedViewController {
@@ -53,8 +55,13 @@ public extension UIViewController {
         return parent.close(child: self, sender:sender, animate: animate, completion: completion)
     }
     
+    @discardableResult @objc func back() -> Bool {
+        return self.back(sender: self, animate: true) {
+            
+        }
+    }
     
-    @objc func close(child: UIViewController, sender: UIViewController, animate: Bool, completion: @escaping ()-> Void) -> Bool {
+    @objc func close(child: UIViewController, sender: UIViewController, animate: Bool, completion: (() -> Void)?) -> Bool {
         return false
     }
     
@@ -62,7 +69,7 @@ public extension UIViewController {
 }
 
 public extension UINavigationController {
-    @objc override func close(child: UIViewController, sender: UIViewController, animate: Bool, completion: @escaping ()-> Void) -> Bool {
+    @objc override func close(child: UIViewController, sender: UIViewController, animate: Bool, completion: (() -> Void)?) -> Bool {
         if super.close(child: child, sender: sender, animate: animate, completion: completion) {
             return true
         }
@@ -72,7 +79,9 @@ public extension UINavigationController {
                 return self.back(sender: sender, animate: animate, completion: completion)
             } else {
                 self.popToViewController(self.viewControllers[index - 1], animated: animate)
-                DispatchQueue.main.async(execute: completion)
+                if let closure = completion {
+                    DispatchQueue.main.async(execute: closure)
+                }
                 return true
             }
         } else {

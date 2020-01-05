@@ -100,7 +100,7 @@ open class BaseViewController: UIViewController {
 //        }
     }
     
-    @objc open override func back(sender: UIViewController, animate: Bool, completion: @escaping ()-> Void) -> Bool {
+    @objc open override func back(sender: UIViewController, animate: Bool, completion: (() -> Void)?) -> Bool {
         return super.back(sender: sender, animate: animate, completion: completion)
     }
 }

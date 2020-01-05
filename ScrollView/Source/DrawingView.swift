@@ -21,7 +21,85 @@ import UIKit
 
  */
 
+public final class DrawingPoint {
+    
+}
+
+public protocol DrawingEventHandleable: class {
+    func handleTouchesBegan(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+    func handleTouchesMoved(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+    func handleTouchesEnded(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+    func handleTouchesCancelled(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+    
+}
+
+public class DrawingEventHandler: DrawingEventHandleable {
+    public let event: UIEvent
+    public let id: UInt32
+
+    public init(event: UIEvent, id: UInt32) {
+        self.event = event
+        self.id = id
+    }
+    
+    public func handleTouchesBegan(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+        guard event == self.event else {
+            return false
+        }
+        
+        return true
+    }
+    public func handleTouchesMoved(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+        guard event == self.event else {
+            return false
+        }
+        
+        return true
+    }
+    public func handleTouchesEnded(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+        guard event == self.event else {
+            return false
+        }
+        
+        return true
+    }
+    public func handleTouchesCancelled(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+        guard event == self.event else {
+            return false
+        }
+        
+        return true
+    }
+
+    
+}
+
+open class Shape {
+    public let id: UInt32
+
+    public init(id: UInt32) {
+        self.id = id
+    }
+    
+    open func begin(_ point: DrawingPoint) {
+        
+    }
+    open func move(_ point: DrawingPoint) {
+        
+    }
+    open func end(_ point: DrawingPoint) {
+        
+    }
+    open func cancel(_ point: DrawingPoint) {
+        
+    }
+
+}
+
+
+
 public class DrawingContext {
+    
     public enum BoxSize {
         case preset960x540
         case preset810x540
@@ -33,7 +111,7 @@ public class DrawingContext {
         var size: (width: UInt32, height: UInt32) {
             switch self {
             case .preset960x540: return (960, 540)
-            case .preset810x540: return (960, 540)
+            case .preset810x540: return (810, 540)
             case .preset1280x720: return (1280, 720)
             case .preset1080x720: return (1080, 720)
             case .preset1920x1080: return (1920, 1080)
@@ -191,6 +269,10 @@ public class DrawingContext {
         }
     }
     
+    private var drawIndex: UInt32 = 0
+    private var items: [Shape] = []
+    
+    
     public let mainPtr: UnsafeMutableRawPointer
     public let duplicatePtr: UnsafeMutableRawPointer
     public let config: Config
@@ -274,6 +356,14 @@ public class DrawingContext {
         return CGImage(width: Int(width), height: Int(height), bitsPerComponent: colorSpace.bitsPerComponent, bitsPerPixel: colorSpace.bitsPerPixel, bytesPerRow: config.bytesPerRow, space: DrawingContext.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
     }
     
+    
+    public func shouldBegin(event: UIEvent) -> DrawingEventHandleable? {
+        let handler = DrawingEventHandler(event: event, id: self.drawIndex)
+        self.drawIndex += 1
+        return handler
+    }
+    
+    
 }
 
 
@@ -301,29 +391,117 @@ open class DrawingView: UIView {
 //        let layer: CALayer =
 //    }
     
+    public var drawingHandler: DrawingEventHandleable?
+    
+    
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
+        guard let e = event else {
+            self.drawingHandler = nil
+//            super.touchesBegan(touches, with: event)
+            print("touchesBegan error: \(touches)")
+            return
+        }
+        guard let context = self.context else {
+            self.drawingHandler = nil
+//            super.touchesBegan(touches, with: event)
+            print("touchesBegan context is nil")
+            return
+        }
+        guard let handler = context.shouldBegin(event: e) else {
+            self.drawingHandler = nil
+//            super.touchesBegan(touches, with: event)
+            print("touchesBegan shouldBegin return nil")
+            return
+        }
+        self.drawingHandler = handler
+        if !handler.handleTouchesBegan(self, touches: touches, with: event) {
+            self.logTouch(touches, with: e)
+        }
     }
     open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesMoved(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
+        guard let e = event else {
+//            super.touchesMoved(touches, with: event)
+            print("touchesMoved error: \(touches)")
+            return
+        }
+        guard let handler = self.drawingHandler else {
+//            super.touchesMoved(touches, with: event)
+            print("touchesMoved drawingItem is nil")
+            return
+        }
+        if !handler.handleTouchesMoved(self, touches: touches, with: event) {
+            self.logTouch(touches, with: e)
+        }
     }
     open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
+        guard let e = event else {
+//            super.touchesEnded(touches, with: event)
+            print("touchesEnded error: \(touches)")
+            return
+        }
+        guard let handler = self.drawingHandler else {
+//            super.touchesEnded(touches, with: event)
+            print("touchesEnded drawingItem is nil")
+            return
+        }
+        if !handler.handleTouchesEnded(self, touches: touches, with: event) {
+            self.logTouch(touches, with: e)
+        }
     }
     open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesCancelled(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
+        guard let e = event else {
+//            super.touchesCancelled(touches, with: event)
+            print("touchesCancelled error: \(touches)")
+            return
+        }
+        guard let handler = self.drawingHandler else {
+//            super.touchesCancelled(touches, with: event)
+            print("touchesCancelled drawingItem is nil")
+            return
+        }
+        if !handler.handleTouchesCancelled(self, touches: touches, with: event) {
+            self.logTouch(touches, with: e)
+        }
+    }
+    
+    open func logTouch(_ touches: Set<UITouch>, with event: UIEvent) {
+//        super.touchesCancelled(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
     }
     
     func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
-        print("\(file) :\(line): \(function) \(item())")
+//        print("\(file) :\(line): \(function) \(item())")
+        
+        print("\(function) \(item())")
     }
     
+
+    
+    
+    
+//    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesBegan(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
+//    }
+//    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesMoved(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
+//    }
+//    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesEnded(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
+//    }
+//    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesCancelled(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
+//    }
+//
+//    func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
+//        print("\(file) :\(line): \(function) \(item())")
+//    }
+    
     func resetContent() {
-        
+
     }
     
 }
@@ -383,28 +561,50 @@ open class DrawingScrollView: UIScrollView {
         self.addSubview(self.contentView)
     }
     
-    
-    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
-    }
-    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesMoved(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
-    }
-    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
-    }
-    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesCancelled(touches, with: event)
-        self.log(item: "\(touches) \(String(describing: event))")
-    }
-    
-    func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
-        print("\(file) :\(line): \(function) \(item())")
-    }
-    
+//    public var drawingItem: (item: DrawingEventHandleable, event: UIEvent)?
+//
+//
+//    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let e = event else {
+//            super.touchesBegan(touches, with: event)
+//            return
+//        }
+//
+//        self.logTouch(touches, with: e)
+//    }
+//    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let e = event else {
+//            super.touchesMoved(touches, with: event)
+//            return
+//        }
+//        self.logTouch(touches, with: e)
+//    }
+//    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let e = event else {
+//            super.touchesEnded(touches, with: event)
+//            return
+//        }
+//        self.logTouch(touches, with: e)
+//    }
+//    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let e = event else {
+//            super.touchesCancelled(touches, with: event)
+//            return
+//        }
+//        self.logTouch(touches, with: e)
+//    }
+//
+//    open func logTouch(_ touches: Set<UITouch>, with event: UIEvent) {
+////        super.touchesCancelled(touches, with: event)
+//        self.log(item: "\(touches) \(String(describing: event))")
+//    }
+//
+//    func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
+////        print("\(file) :\(line): \(function) \(item())")
+//
+//        print("\\(function) \(item())")
+//    }
+//
     func resetContent() {
         
     }

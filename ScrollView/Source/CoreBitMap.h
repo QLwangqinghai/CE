@@ -21,6 +21,8 @@
  int32_t height;
  */
 
+typedef int64_t CCMicrosecondTime;
+
 typedef struct _C2DBitMapBlock {
     uint32_t x;
     uint32_t y;

@@ -221,9 +221,6 @@ class ViewController: UIViewController {
         }
         timer.schedule(deadline: DispatchTime.now(), repeating: DispatchTimeInterval.seconds(5), leeway: DispatchTimeInterval.seconds(5))
         timer.resume()
-        
-        
-        
     }
 
     @objc func tapped(tap: UITapGestureRecognizer) {

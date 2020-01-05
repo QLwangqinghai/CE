@@ -81,6 +81,10 @@ typedef enum {
  
  */
 
+typedef struct {
+    SITPIndex encoding;//5bit encoding
+    SITPIndex control;//3bit control
+} SITPArrayHead_t;//1Byte
 
 typedef struct {
     SITPIndex offset;

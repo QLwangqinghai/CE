@@ -41,7 +41,7 @@ public extension UIViewController {
             return handler;
         }
     }
-    @objc func back(animate: Bool, sender: UIViewController, completion: @escaping ()-> Void) -> Bool {
+    @objc func back(sender: UIViewController, animate: Bool, completion: @escaping ()-> Void) -> Bool {
         guard let parent = self.parent else {
             completion()
             return true
@@ -50,8 +50,36 @@ public extension UIViewController {
             parent.dismiss(animated: animate, completion: completion)
             return true
         }
+        return parent.close(child: self, sender:sender, animate: animate, completion: completion)
+    }
+    
+    
+    @objc func close(child: UIViewController, sender: UIViewController, animate: Bool, completion: @escaping ()-> Void) -> Bool {
         return false
     }
+    
+    
+}
+
+public extension UINavigationController {
+    @objc override func close(child: UIViewController, sender: UIViewController, animate: Bool, completion: @escaping ()-> Void) -> Bool {
+        if super.close(child: child, sender: sender, animate: animate, completion: completion) {
+            return true
+        }
+        
+        if let index = self.viewControllers.firstIndex(of: child) {
+            if index == 0 {
+                return self.back(sender: sender, animate: animate, completion: completion)
+            } else {
+                self.popToViewController(self.viewControllers[index - 1], animated: animate)
+                DispatchQueue.main.async(execute: completion)
+                return true
+            }
+        } else {
+            return false
+        }
+    }
+    
     
 }
 

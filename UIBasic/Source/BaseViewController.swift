@@ -10,8 +10,6 @@ import UIKit
 
 open class BaseViewController: UIViewController {
     private static var BaseViewControllerObserveContext: Int = 0;
-
-    
     
     public private(set) var displayStatus: ViewDisplayStatus = .didDisappear
     
@@ -45,13 +43,9 @@ open class BaseViewController: UIViewController {
     }
     
     open override func willMove(toParent parent: UIViewController?) {
-        
         print("\(self)willMove.b \(parent)")
         super.willMove(toParent: parent)
         print("\(self)willMove.e \(parent)")
-        
-        
-        
     }
     
     open override func didMove(toParent parent: UIViewController?) {
@@ -106,31 +100,7 @@ open class BaseViewController: UIViewController {
 //        }
     }
     
-    
-    @objc open override func back(animate: Bool, sender: UIViewController, completion:@escaping ()-> Void) -> Bool {
-        if !super.back(animate: animate, sender: sender, completion: completion) {
-            guard let parent = self.parent else {
-                completion()
-                return true
-            }
-            if let controller = parent as? UINavigationController {
-                if let index = controller.viewControllers.firstIndex(of: self) {
-                    if index == 0 {
-                        return controller.back(animate: animate, sender: sender, completion: completion)
-                    } else {
-                        controller.popToViewController(controller.viewControllers[index - 1], animated: animate)
-                        DispatchQueue.main.async(execute: completion)
-                        return true
-                    }
-                } else {
-                    return controller.back(animate: animate, sender: sender, completion: completion)
-                }
-            } else {
-                return parent.back(animate: animate, sender: sender, completion: completion)
-            }
-        } else {
-            return true
-        }
+    @objc open override func back(sender: UIViewController, animate: Bool, completion: @escaping ()-> Void) -> Bool {
+        return super.back(sender: sender, animate: animate, completion: completion)
     }
-    
 }

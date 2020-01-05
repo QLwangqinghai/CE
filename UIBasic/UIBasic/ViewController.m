@@ -65,10 +65,9 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(9 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSLog(@"9");
         
-        [self.navigationController.viewControllers[4] backWithAnimate:true sender:self.navigationController.viewControllers[4] completion:^{
+        [self.navigationController.viewControllers[4] backWithSender:self.navigationController.viewControllers[4] animate:true completion:^{
             NSLog(@"9 end");
         }];
-        
 //        [self.navigationController popToViewController:self.navigationController.viewControllers[4] animated:true];
     });
     

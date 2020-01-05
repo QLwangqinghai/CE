@@ -84,7 +84,4 @@ open class BaseNavigationController: UINavigationController {
         return result
     }
     
-    
-    
-    
 }

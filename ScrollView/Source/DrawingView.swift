@@ -25,15 +25,14 @@ public final class DrawingPoint {
     
 }
 
-public protocol DrawingEventHandleable: class {
-    func handleTouchesBegan(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
-    func handleTouchesMoved(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
-    func handleTouchesEnded(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
-    func handleTouchesCancelled(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
-    
+public protocol TouchesEventHandleable: class {
+    func handleTouchesBegan(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+    func handleTouchesMoved(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+    func handleTouchesEnded(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+    func handleTouchesCancelled(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
 }
 
-public class DrawingEventHandler: DrawingEventHandleable {
+public class DrawingEventHandler: TouchesEventHandleable {
     public let event: UIEvent
     public let id: UInt32
 
@@ -42,28 +41,28 @@ public class DrawingEventHandler: DrawingEventHandleable {
         self.id = id
     }
     
-    public func handleTouchesBegan(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+    public func handleTouchesBegan(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
         guard event == self.event else {
             return false
         }
         
         return true
     }
-    public func handleTouchesMoved(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+    public func handleTouchesMoved(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
         guard event == self.event else {
             return false
         }
         
         return true
     }
-    public func handleTouchesEnded(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+    public func handleTouchesEnded(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
         guard event == self.event else {
             return false
         }
         
         return true
     }
-    public func handleTouchesCancelled(_ view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+    public func handleTouchesCancelled(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
         guard event == self.event else {
             return false
         }
@@ -107,7 +106,6 @@ public class DrawingContext {
         case preset1080x720
         case preset1920x1080
         case preset1620x1080
-        
         var size: (width: UInt32, height: UInt32) {
             switch self {
             case .preset960x540: return (960, 540)
@@ -124,63 +122,50 @@ public class DrawingContext {
         public let mode: BoxSize
         public let width: UInt32
         public let height: UInt32
-        public let pageCount: UInt32
-        public init?(mode: BoxSize, pageCount: UInt32) {
+        
+        public let imageHeight: UInt32
+        public let contentHeight: UInt32
+        public init(mode: BoxSize, imageHeight: UInt32, contentHeight: UInt32) {
             self.mode = mode
             let (width, height) = mode.size
-            if (pageCount <= 0 || pageCount > 16) {
-                return nil
-            }
             self.width = width
             self.height = height
-            self.pageCount = pageCount
+            self.imageHeight = imageHeight
+            self.contentHeight = contentHeight
         }
     }    
     
     public struct Config {
-        public let mode: BoxSize
+        public let layout: LayoutConfig
 //        public let blockSize: UInt32
 //        public let blockPerRow: UInt32
 //        public let numberOfRows: UInt32
-        public let width: UInt32
-        public let height: UInt32
-        public let pageCount: UInt32
+
         public let pixelsCount: UInt32
         public let colorSpace: ColorSpace
         public var backgroundColor: Color = Color(little32Argb: 0)
         public let bufferSize: Int
         public let bytesPerRow: Int
-        
-        
-        public init(mode: BoxSize, pageCount: UInt32, colorSpace: ColorSpace = .little32Argb) {
-            self.mode = mode
+        public init(layout: LayoutConfig, colorSpace: ColorSpace = .little32Argb) {
+            self.layout = layout
 //            let blockSize: UInt32 = 256
-            let (width, height) = mode.size
-            
 //            var blockPerRow = (width + blockSize - 1) / blockSize
 //            var numberOfRows = (height + blockSize - 1) / blockSize
 //            blockPerRow = blockPerRow > 0 ? blockPerRow : 1
 //            numberOfRows = numberOfRows > 0 ? numberOfRows : 1
 //            let w = blockPerRow * blockSize
 //            let h = numberOfRows * blockSize
-            var count = pageCount
-            if (count <= 0) {
-                count = 1;
-            }
-            
-            let pixelsCount = width * height * count
+
+            let pixelsCount = layout.width * layout.contentHeight
             let size: Int = Int(pixelsCount * colorSpace.bytesPerPixel)
 //            self.blockSize = blockSize
 //            self.blockPerRow = blockPerRow
 //            self.numberOfRows = numberOfRows
-            self.width = width
-            self.height = height
-            self.pageCount = count
             self.pixelsCount = pixelsCount
             self.bufferSize = size
             self.colorSpace = colorSpace
-            self.bytesPerRow = Int(width * colorSpace.bytesPerPixel)
-            print("w:\(width), h:\(height), bufferSize:\(self.bufferSize)")
+            self.bytesPerRow = Int(layout.width * colorSpace.bytesPerPixel)
+            print("bufferSize:\(self.bufferSize)")
         }
     }
     
@@ -281,7 +266,18 @@ public class DrawingContext {
     public let dataProvider: CGDataProvider
     public let size: CGSize
 
+    public let backgroundImageLayer: CALayer
+    
+    
     public init(config: Config, size: CGSize) {
+        let layer = CALayer()
+        layer.frame = CGRect.init(x: <#T##Double#>, y: <#T##Double#>, width: <#T##Double#>, height: <#T##Double#>)
+        
+        
+        self.backgroundImageLayer = layer
+        
+        
+        
         let mainPtr = UnsafeMutableRawPointer.allocate(byteCount: config.bufferSize, alignment: 128)
         self.mainPtr = mainPtr
         self.duplicatePtr = UnsafeMutableRawPointer.allocate(byteCount: config.bufferSize, alignment: 128)
@@ -357,7 +353,7 @@ public class DrawingContext {
     }
     
     
-    public func shouldBegin(event: UIEvent) -> DrawingEventHandleable? {
+    public func shouldBegin(event: UIEvent) -> TouchesEventHandleable? {
         let handler = DrawingEventHandler(event: event, id: self.drawIndex)
         self.drawIndex += 1
         return handler
@@ -391,7 +387,7 @@ open class DrawingView: UIView {
 //        let layer: CALayer =
 //    }
     
-    public var drawingHandler: DrawingEventHandleable?
+    public var drawingHandler: TouchesEventHandleable?
     
     
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -561,7 +557,7 @@ open class DrawingScrollView: UIScrollView {
         self.addSubview(self.contentView)
     }
     
-//    public var drawingItem: (item: DrawingEventHandleable, event: UIEvent)?
+//    public var drawingItem: (item: TouchesEventHandleable, event: UIEvent)?
 //
 //
 //    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

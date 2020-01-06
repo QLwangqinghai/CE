@@ -24,6 +24,7 @@
 		D63B1C6D230AD1F800AFD97E /* Core2D.c in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C6C230AD1F800AFD97E /* Core2D.c */; };
 		D64E0429231D361F0036F348 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64E0428231D361F0036F348 /* DrawingView.swift */; };
 		D67F5A252306F41E00F1CE91 /* GLES.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F5A242306F41E00F1CE91 /* GLES.swift */; };
+		D68098BE23C34CC1007B3086 /* Memory.m in Sources */ = {isa = PBXBuildFile; fileRef = D68098BD23C34CC1007B3086 /* Memory.m */; };
 		D68FE43D23C063070066DD77 /* DrawViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68FE43C23C063070066DD77 /* DrawViewController.swift */; };
 		D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC1F230536D100432D18 /* AppDelegate.swift */; };
 		D69FCC22230536D100432D18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC21230536D100432D18 /* ViewController.swift */; };
@@ -89,6 +90,9 @@
 		D63B1C6C230AD1F800AFD97E /* Core2D.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Core2D.c; sourceTree = "<group>"; };
 		D64E0428231D361F0036F348 /* DrawingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
 		D67F5A242306F41E00F1CE91 /* GLES.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLES.swift; sourceTree = "<group>"; };
+		D68098BB23C34CC1007B3086 /* TD-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TD-Bridging-Header.h"; sourceTree = "<group>"; };
+		D68098BC23C34CC1007B3086 /* Memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Memory.h; sourceTree = "<group>"; };
+		D68098BD23C34CC1007B3086 /* Memory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Memory.m; sourceTree = "<group>"; };
 		D68FE43C23C063070066DD77 /* DrawViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawViewController.swift; sourceTree = "<group>"; };
 		D69FCC1C230536D100432D18 /* ScrollView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D69FCC1F230536D100432D18 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -153,6 +157,9 @@
 				D6226C9323C239D600AF40F8 /* Assets.xcassets */,
 				D6226C9523C239D600AF40F8 /* LaunchScreen.storyboard */,
 				D6226C9823C239D600AF40F8 /* Info.plist */,
+				D68098BC23C34CC1007B3086 /* Memory.h */,
+				D68098BD23C34CC1007B3086 /* Memory.m */,
+				D68098BB23C34CC1007B3086 /* TD-Bridging-Header.h */,
 			);
 			path = TD;
 			sourceTree = "<group>";
@@ -345,6 +352,7 @@
 				TargetAttributes = {
 					D6226C8723C239D100AF40F8 = {
 						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1120;
 					};
 					D6226C9C23C239D600AF40F8 = {
 						CreatedOnToolsVersion = 11.0;
@@ -427,6 +435,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D68098BE23C34CC1007B3086 /* Memory.m in Sources */,
 				D6226C8F23C239D100AF40F8 /* ViewController.swift in Sources */,
 				D6226C8B23C239D100AF40F8 /* AppDelegate.swift in Sources */,
 				D6226C8D23C239D100AF40F8 /* SceneDelegate.swift in Sources */,
@@ -532,15 +541,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = TD/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.TD;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "TD/TD-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -550,15 +563,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = TD/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.TD;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "TD/TD-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

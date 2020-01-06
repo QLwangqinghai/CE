@@ -19,6 +19,8 @@ import UIKit
  1920 * 1080
  1620 * 1080
 
+ //72 54 108  180 * 4 180 * 3 180 * 6
+
  */
 
 public final class DrawingPoint {
@@ -98,6 +100,25 @@ open class Shape {
 
 
 public class DrawingContext {
+    public class Page {
+        public let mode: BoxSize
+        public let width: UInt16
+        public let height: UInt16
+        
+        public let imageHeight: UInt16
+        public let contentHeight: UInt16
+        public init(width: UInt16, height: UInt16) {
+            self.mode = mode
+            let (width, height) = mode.size
+            self.width = width
+            self.height = height
+            self.imageHeight = imageHeight
+            self.contentHeight = contentHeight
+        }
+    }
+    
+
+    
     
     public enum BoxSize {
         case preset960x540
@@ -106,7 +127,7 @@ public class DrawingContext {
         case preset1080x720
         case preset1920x1080
         case preset1620x1080
-        var size: (width: UInt32, height: UInt32) {
+        var size: (width: UInt16, height: UInt16) {
             switch self {
             case .preset960x540: return (960, 540)
             case .preset810x540: return (810, 540)
@@ -120,12 +141,12 @@ public class DrawingContext {
     
     public struct LayoutConfig {
         public let mode: BoxSize
-        public let width: UInt32
-        public let height: UInt32
+        public let width: UInt16
+        public let height: UInt16
         
-        public let imageHeight: UInt32
-        public let contentHeight: UInt32
-        public init(mode: BoxSize, imageHeight: UInt32, contentHeight: UInt32) {
+        public let imageHeight: UInt16
+        public let contentHeight: UInt16
+        public init(mode: BoxSize, imageHeight: UInt16, contentHeight: UInt16) {
             self.mode = mode
             let (width, height) = mode.size
             self.width = width
@@ -156,7 +177,7 @@ public class DrawingContext {
 //            let w = blockPerRow * blockSize
 //            let h = numberOfRows * blockSize
 
-            let pixelsCount = layout.width * layout.contentHeight
+            let pixelsCount = UInt32(layout.width) * UInt32(layout.contentHeight)
             let size: Int = Int(pixelsCount * colorSpace.bytesPerPixel)
 //            self.blockSize = blockSize
 //            self.blockPerRow = blockPerRow
@@ -164,7 +185,7 @@ public class DrawingContext {
             self.pixelsCount = pixelsCount
             self.bufferSize = size
             self.colorSpace = colorSpace
-            self.bytesPerRow = Int(layout.width * colorSpace.bytesPerPixel)
+            self.bytesPerRow = Int(UInt32(layout.width) * colorSpace.bytesPerPixel)
             print("bufferSize:\(self.bufferSize)")
         }
     }

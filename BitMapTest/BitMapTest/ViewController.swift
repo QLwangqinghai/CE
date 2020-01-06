@@ -70,6 +70,7 @@ open class DrawingView: UIView {
         self.topLayer = topLayer;
         self.bottomLayer = bottomLayer
         
+        
         let top = UnsafeMutableRawPointer.allocate(byteCount: Int(width * height * 2), alignment: 128)
         let bottom = UnsafeMutableRawPointer.allocate(byteCount: Int(width * height * 2), alignment: 128)
 
@@ -201,10 +202,9 @@ class ViewController: UIViewController {
         v.frame.origin.y = 60
         v.backgroundColor = UIColor.white
         self.view.addSubview(v)
-        
-        Memory.test()
     }
 
 
 }
+
 

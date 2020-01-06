@@ -43,13 +43,13 @@ public extension UIViewController {
     }
     @objc func back(sender: UIViewController, animate: Bool, completion: (() -> Void)?) -> Bool {
         guard let parent = self.parent else {
-            if let closure = completion {
-                closure()
+            if let presentingViewController = self.presentingViewController {
+                presentingViewController.dismiss(animated: animate, completion: completion)
+            } else {
+                if let closure = completion {
+                    closure()
+                }
             }
-            return true
-        }
-        if parent == self.presentedViewController {
-            parent.dismiss(animated: animate, completion: completion)
             return true
         }
         return parent.close(child: self, sender:sender, animate: animate, completion: completion)

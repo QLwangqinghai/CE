@@ -82,13 +82,14 @@ open class DrawingView: UIView {
         self.bottomContext = bottomContext
         
         
-        topContext.setLineWidth(6)
+        topContext.setLineWidth(3)
         topContext.setStrokeColor(red: 1, green: 0, blue: 0, alpha: 1)
         topContext.translateBy(x: 0, y: CGFloat(height/2))
         topContext.scaleBy(x: 1.0, y: -1.0)
 
-        bottomContext.setLineWidth(6)
-        bottomContext.setStrokeColor(red: 0, green: 0, blue: 1, alpha: 1)
+        bottomContext.setLineWidth(3)
+        bottomContext.setStrokeColor(red: 1, green: 0, blue: 0, alpha: 1)
+//        bottomContext.setStrokeColor(red: 0, green: 0, blue: 1, alpha: 1)
         bottomContext.translateBy(x: 0, y: CGFloat(height/2))
         bottomContext.scaleBy(x: 1.0, y: -1.0)
         bottomContext.translateBy(x: 0, y: (-1.0) * CGFloat(height/2))
@@ -196,9 +197,9 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.view.backgroundColor = UIColor.lightGray
-        let v = DrawingView(width: 600, height: 1200)
-        v.frame.origin.x = 60
-        v.frame.origin.y = 80
+        let v = DrawingView(width: 900, height: 1800)
+        v.frame.origin.x = 20
+        v.frame.origin.y = 60
         v.backgroundColor = UIColor.white
         self.view.addSubview(v)
     }

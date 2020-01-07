@@ -10,6 +10,7 @@
 #define Core2D_h
 
 #include <stdio.h>
+#include <stdbool.h>
 
 
 typedef struct {
@@ -17,17 +18,27 @@ typedef struct {
     int32_t y;
 } C2DPoint;
 
+static inline _Bool C2DPointEqualPoint(C2DPoint lhs, C2DPoint rhs) {
+    return lhs.x == rhs.x && lhs.y == rhs.y;
+}
+
 typedef struct {
     int32_t width;
     int32_t height;
 } C2DSize;
+
+static inline _Bool C2DSizeEqualSize(C2DSize lhs, C2DSize rhs) {
+    return lhs.width == rhs.width && lhs.height == rhs.height;
+}
 
 typedef struct {
     C2DPoint origin;
     C2DSize size;
 } C2DRect;
 
-
+static inline _Bool C2DRectEqualRect(C2DRect lhs, C2DRect rhs) {
+    return C2DPointEqualPoint(lhs.origin, rhs.origin) && C2DSizeEqualSize(lhs.size, rhs.size);
+}
 
 typedef struct {
     int64_t x;

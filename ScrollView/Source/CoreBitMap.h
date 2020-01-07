@@ -18,6 +18,9 @@
 
 #include "Core2D.h"
 
+
+
+// 2 3 3 5 7 
 /*
  int32_t originX;
  int32_t originY;
@@ -56,12 +59,14 @@ static inline void C2DBitMapChangePageDestroy(C2DBitMapChangePage_s * _Nonnull p
     free(ptr);
 }
 
-
-
+typedef struct {
+    uint32_t count;
+    C2DBitMapChangePage_s * _Nonnull pages[8];
+} C2DBitMapChangeArray_s;
 
 typedef struct {
-    uint32_t x;
-    uint32_t y;
+    int32_t x;
+    int32_t y;
     uint32_t sequence;
     uint32_t count;
     C2DBitMapChangePage_s * _Nonnull pages[8];
@@ -78,57 +83,75 @@ static inline C2DBitMapChangePage_s * _Nonnull C2DBitMapChunkChangeGetPage(C2DBi
     return result;
 }
 
+#define C2DBitMapChunkRowSize 0x80
+#define C2DBitMapChunkRowSizeShift 7
+#define C2DBitMapChunkRowSizeMask 0x7F
 
-#define C2DBitMapChunkByteSize 0x40000
-#define C2DBitMapChunkRowByteSize 0x400
+#define C2DBitMapChunkByteSize 0x10000
+#define C2DBitMapChunkRowByteSize 0x200
+
+
 typedef struct {
-    uint32_t x;
-    uint32_t y;
-    void * _Nonnull content;
+    C2DRect frame;
+    uint32_t * _Nonnull content;
+} C2DBitMapPage_s;
+
+
+typedef struct {
+    C2DRect frame;
+    uint32_t * _Nonnull content;
 } C2DBitMapChunk_s;
 
-static inline uint32_t C2DBitMapContentChanges(C2DBitMapChunk_s * _Nonnull lhs, C2DBitMapChunk_s * _Nonnull rhs, C2DBitMapChunkChange_s * _Nonnull change) {
-    assert(lhs);
-    assert(rhs);
+
+
+
+static inline uint32_t C2DBitMapContentChanges(C2DBitMapChunk_s * _Nonnull oldValue, C2DBitMapChunk_s * _Nonnull newValue, int32_t y, C2DBitMapChunkChange_s * _Nonnull change) {
+    assert(oldValue);
+    assert(newValue);
     assert(change);
     assert(change->count == 0);
-    assert(change->x == rhs->x);
-    assert(change->y == rhs->y);
+    assert(change->x == newValue->x);
+    assert(change->y == newValue->y);
 
-    assert(lhs != rhs);
-    assert(lhs->x == rhs->x);
-    assert(lhs->y == rhs->y);
-    uint32_t * lc = lhs->content;
-    uint32_t * rc = rhs->content;
+    assert(oldValue != newValue);
+    assert(oldValue->x == newValue->x);
+    assert(oldValue->y == newValue->y);
+    assert(oldValue->y <= y && oldValue->y + C2DBitMapChunkRowSize > y);
     
+    
+    uint32_t * lc = oldValue->content;
+    uint32_t * rc = newValue->content;
+    
+    int32_t row = y - oldValue->y;
+    lc += row * C2DBitMapChunkRowSize;
+    rc += row * C2DBitMapChunkRowSize;
+
     uint32_t offset = 0;
 
     uint32_t pageIndex = 0;
     C2DBitMapChangePage_s * page = C2DBitMapChunkChangeGetPage(change, pageIndex);
 
-    for (int y=0; y<256; y++) {
-        for (int x=0; x<256; x++) {
-            if (lc[x] != rc[x]) {
-                C2DBitMapChange_s * item = &(page->changes[offset]);
-                item->x = lhs->x + x;
-                item->y = lhs->y + y;
-
-            }
+    for (int x=0; x<C2DBitMapChunkRowSize; x++) {
+        if (lc[x] != rc[x]) {
+            C2DBitMapChange_s * item = &(page->changes[offset]);
+            item->x = oldValue->x + x;
+            item->y = y;
+            item->from =
+            offset += 1;
         }
-        lc += 256;
-        rc += 256;
     }
-
-    return result;
+    change->count += offset;
+    return offset;
 }
 
-static inline C2DBitMapChunk_s * _Nonnull C2DBitMapChunkCreate(uint32_t x, uint32_t y) {
+static inline C2DBitMapChunk_s * _Nonnull C2DBitMapChunkCreate(C2DRect frame) {
     C2DBitMapChunk_s * result = malloc(sizeof(C2DBitMapChunk_s));
     assert(result);
-    assert((x & 0xFF) == 0);
-    assert((y & 0xFF) == 0);
-    result->x = x;
-    result->y = y;
+    assert(frame.origin.x >= 0);
+    assert(frame.origin.y >= 0);
+    assert((frame.origin.x & C2DBitMapChunkRowSizeMask) == 0);
+    assert((frame.origin.y & C2DBitMapChunkRowSizeMask) == 0);
+    result->origin = origin;
     void * content = malloc(C2DBitMapChunkByteSize);
     assert(content);
     memset(content, 0, C2DBitMapChunkByteSize);
@@ -137,8 +160,10 @@ static inline C2DBitMapChunk_s * _Nonnull C2DBitMapChunkCreate(uint32_t x, uint3
 }
 static inline C2DBitMapChunk_s * _Nonnull C2DBitMapChunkCreateByCopy(C2DBitMapChunk_s * _Nonnull ptr) {
     assert(ptr);
-    assert((ptr->x & 0xFF) == 0);
-    assert((ptr->y & 0xFF) == 0);
+    assert(ptr->x >= 0);
+    assert(ptr->y >= 0);
+    assert((ptr->x & C2DBitMapChunkRowSizeMask) == 0);
+    assert((ptr->y & C2DBitMapChunkRowSizeMask) == 0);
     C2DBitMapChunk_s * result = malloc(sizeof(C2DBitMapChunk_s));
     assert(result);
     memcpy(result, ptr, sizeof(C2DBitMapChunk_s));

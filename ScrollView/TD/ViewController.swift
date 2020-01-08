@@ -111,37 +111,89 @@ open class DrawingView: UIView {
     var points: [CGPoint] = []
     
     
+
+    public var buffers: [SamplePointBuffer] = []
+    
+    
+    public var buffer: SamplePointBuffer?
+    
+    
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch: UITouch = touches.first else {
+        guard let touch = touches.first else {
             return
         }
-        let point = touch.location(in: self)
-        self.points.append(point)
+        let buffer = SamplePointBuffer()
+        buffer.append(point: touch.location(in: self), time: touch.timestamp)
+        self.buffer = buffer
     }
     open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch: UITouch = touches.first else {
+        guard let touch = touches.first else {
             return
         }
-        let point = touch.location(in: self)
-        self.points.append(point)
-
+        if let buffer = self.buffer {
+            buffer.append(point: touch.location(in: self), time: touch.timestamp)
+        }
     }
     open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch: UITouch = touches.first else {
+        guard let touch = touches.first else {
             return
         }
-        let point = touch.location(in: self)
-        self.points.append(point)
-        self.finish()
+        if let buffer = self.buffer {
+            buffer.append(point: touch.location(in: self), time: touch.timestamp)
+            self.append(buffer)
+        }
     }
     open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch: UITouch = touches.first else {
+        guard let touch = touches.first else {
             return
         }
-        let point = touch.location(in: self)
-        self.points.append(point)
-        self.finish()
+        if let buffer = self.buffer {
+            buffer.append(point: touch.location(in: self), time: touch.timestamp)
+            self.append(buffer)
+        }
     }
+    
+    func append(_ buffer: SamplePointBuffer) {
+        self.buffers.append(buffer)
+        
+        let ps = buffer.finish()
+        
+        let points: [CGPoint] = self.points
+        self.points.removeAll()
+        
+        let path = UIBezierPath()
+        path.lineWidth = 2
+        
+        let scale = UIScreen.main.scale
+        for (index, sp) in ps.enumerated() {
+            let p = CGPoint(x: CGFloat(sp.point.x) * scale / 10000, y: CGFloat(sp.point.y) * scale / 10000)
+            if index == 0 {
+                self.topContext.move(to: p)
+                self.bottomContext.move(to: p)
+            } else {
+                self.topContext.addLine(to: p)
+                self.bottomContext.addLine(to: p)
+            }
+        }
+        self.topContext.strokePath()
+        self.bottomContext.strokePath()
+        
+        self.bottomContext.fill(CGRect(x: 30, y: 30, width: 30, height: 30))
+        self.bottomContext.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+        
+//        self.topContext.addPath(path.cgPath)
+//        self.bottomContext.addPath(path.cgPath)
+
+        let image = self.topContext.makeImage()
+        self.topLayer.contents = image
+        self.bottomLayer.contents = self.bottomContext.makeImage()
+
+        
+        
+    }
+
+    
+    
     
     func finish() {
         let points: [CGPoint] = self.points
@@ -196,18 +248,18 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.view.backgroundColor = UIColor.lightGray
-//        let v = DrawingView(width: 900, height: 1800)
-//        v.frame.origin.x = 20
-//        v.frame.origin.y = 60
-//        v.backgroundColor = UIColor.white
-//        self.view.addSubview(v)
+        let v = DrawingView(width: 900, height: 1800)
+        v.frame.origin.x = 20
+        v.frame.origin.y = 60
+        v.backgroundColor = UIColor.white
+        self.view.addSubview(v)
 //
 //        Memory.test()
         
         
-        let v = SamplePointView(frame: CGRect.init(x: 20, y: 60, width: 300, height: 800))
-        v.backgroundColor = UIColor.white
-        self.view.addSubview(v)
+//        let v = SamplePointView(frame: CGRect.init(x: 20, y: 60, width: 300, height: 800))
+//        v.backgroundColor = UIColor.white
+//        self.view.addSubview(v)
     }
 
 

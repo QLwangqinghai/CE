@@ -188,17 +188,7 @@ public final class DrawCache<KeyType : AnyObject & Hashable, ObjectType : AnyObj
     }
 }
 
-    
 
-public final class SampledPoint {
-    public let point: Point
-    public let time: Int64
-    
-    init(point: CGPoint, timestamp: TimeInterval) {
-        
-    }
-    
-}
 
 public protocol TouchesEventHandleable: class {
     func handleTouchesBegan(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
@@ -255,18 +245,18 @@ open class Shape {
         self.id = id
     }
     
-    open func begin(_ point: DrawingPoint) {
-        
-    }
-    open func move(_ point: DrawingPoint) {
-        
-    }
-    open func end(_ point: DrawingPoint) {
-        
-    }
-    open func cancel(_ point: DrawingPoint) {
-        
-    }
+//    open func begin(_ point: DrawingPoint) {
+//        
+//    }
+//    open func move(_ point: DrawingPoint) {
+//        
+//    }
+//    open func end(_ point: DrawingPoint) {
+//        
+//    }
+//    open func cancel(_ point: DrawingPoint) {
+//        
+//    }
 
 }
 

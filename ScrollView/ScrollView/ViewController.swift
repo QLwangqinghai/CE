@@ -94,6 +94,14 @@ class ViewController: UIViewController {
     var scrollView: UIScrollView? = nil
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = UIColor.lightGray
+
+        let v = SamplePointView(frame: CGRect.init(x: 20, y: 80, width: 300, height: 800))
+        v.backgroundColor = UIColor.white
+        self.view.addSubview(v)
+        
+        return
+        
         
         let leftItem = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         leftItem.backgroundColor = UIColor.red

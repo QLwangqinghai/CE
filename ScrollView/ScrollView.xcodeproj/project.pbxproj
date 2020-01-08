@@ -17,6 +17,8 @@
 		D6226C9723C239D600AF40F8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6226C9523C239D600AF40F8 /* LaunchScreen.storyboard */; };
 		D6226CA223C239D600AF40F8 /* TDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6226CA123C239D600AF40F8 /* TDTests.swift */; };
 		D6226CAD23C239D600AF40F8 /* TDUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6226CAC23C239D600AF40F8 /* TDUITests.swift */; };
+		D6226CB823C6225400AF40F8 /* SamplePointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6974FCF23C5A6760088FB3C /* SamplePointView.swift */; };
+		D6226CBA23C634DA00AF40F8 /* SamplePointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6226CB923C634DA00AF40F8 /* SamplePointView.swift */; };
 		D63B1C472305685200AFD97E /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C462305685200AFD97E /* View.swift */; };
 		D63B1C492305687400AFD97E /* Responder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C482305687400AFD97E /* Responder.swift */; };
 		D63B1C53230A6BED00AFD97E /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63B1C52230A6BEC00AFD97E /* ScrollView.swift */; };
@@ -27,7 +29,6 @@
 		D68098BE23C34CC1007B3086 /* Memory.m in Sources */ = {isa = PBXBuildFile; fileRef = D68098BD23C34CC1007B3086 /* Memory.m */; };
 		D68FE43D23C063070066DD77 /* DrawViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68FE43C23C063070066DD77 /* DrawViewController.swift */; };
 		D6974FCE23C57A240088FB3C /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D6974FCD23C57A240088FB3C /* Test.m */; };
-		D6974FD023C5A6760088FB3C /* SamplePointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6974FCF23C5A6760088FB3C /* SamplePointView.swift */; };
 		D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC1F230536D100432D18 /* AppDelegate.swift */; };
 		D69FCC22230536D100432D18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC21230536D100432D18 /* ViewController.swift */; };
 		D69FCC25230536D100432D18 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D69FCC23230536D100432D18 /* Main.storyboard */; };
@@ -83,6 +84,7 @@
 		D6226CA823C239D600AF40F8 /* TDUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TDUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6226CAC23C239D600AF40F8 /* TDUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDUITests.swift; sourceTree = "<group>"; };
 		D6226CAE23C239D600AF40F8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D6226CB923C634DA00AF40F8 /* SamplePointView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SamplePointView.swift; sourceTree = "<group>"; };
 		D63B1C462305685200AFD97E /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		D63B1C482305687400AFD97E /* Responder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Responder.swift; sourceTree = "<group>"; };
 		D63B1C52230A6BEC00AFD97E /* ScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollView.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 		D6226C8923C239D100AF40F8 /* TD */ = {
 			isa = PBXGroup;
 			children = (
+				D6226CB923C634DA00AF40F8 /* SamplePointView.swift */,
 				D6226C8A23C239D100AF40F8 /* AppDelegate.swift */,
 				D6226C8C23C239D100AF40F8 /* SceneDelegate.swift */,
 				D6226C8E23C239D100AF40F8 /* ViewController.swift */,
@@ -167,7 +170,6 @@
 				D68098BB23C34CC1007B3086 /* TD-Bridging-Header.h */,
 				D6974FCC23C57A240088FB3C /* Test.h */,
 				D6974FCD23C57A240088FB3C /* Test.m */,
-				D6974FCF23C5A6760088FB3C /* SamplePointView.swift */,
 			);
 			path = TD;
 			sourceTree = "<group>";
@@ -254,6 +256,7 @@
 				D6083FC8230EE12E00C09C75 /* BitmapBlock.swift */,
 				D64E0428231D361F0036F348 /* DrawingView.swift */,
 				D6226C8223C2308600AF40F8 /* Log.swift */,
+				D6974FCF23C5A6760088FB3C /* SamplePointView.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -448,7 +451,7 @@
 				D6226C8F23C239D100AF40F8 /* ViewController.swift in Sources */,
 				D6226C8B23C239D100AF40F8 /* AppDelegate.swift in Sources */,
 				D6226C8D23C239D100AF40F8 /* SceneDelegate.swift in Sources */,
-				D6974FD023C5A6760088FB3C /* SamplePointView.swift in Sources */,
+				D6226CBA23C634DA00AF40F8 /* SamplePointView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -491,6 +494,7 @@
 				D6083FC9230EE12E00C09C75 /* BitmapBlock.swift in Sources */,
 				D69FCC22230536D100432D18 /* ViewController.swift in Sources */,
 				D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */,
+				D6226CB823C6225400AF40F8 /* SamplePointView.swift in Sources */,
 				D64E0429231D361F0036F348 /* DrawingView.swift in Sources */,
 				D6D45738230E864E00E1F5FB /* CoreBitMap.c in Sources */,
 			);
@@ -555,7 +559,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = TD/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -577,7 +581,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = TD/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

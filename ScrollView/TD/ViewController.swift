@@ -196,13 +196,18 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.view.backgroundColor = UIColor.lightGray
-        let v = DrawingView(width: 900, height: 1800)
-        v.frame.origin.x = 20
-        v.frame.origin.y = 60
+//        let v = DrawingView(width: 900, height: 1800)
+//        v.frame.origin.x = 20
+//        v.frame.origin.y = 60
+//        v.backgroundColor = UIColor.white
+//        self.view.addSubview(v)
+//
+//        Memory.test()
+        
+        
+        let v = SamplePointView(frame: CGRect.init(x: 20, y: 60, width: 300, height: 800))
         v.backgroundColor = UIColor.white
         self.view.addSubview(v)
-        
-        Memory.test()
     }
 
 

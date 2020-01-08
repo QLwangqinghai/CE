@@ -148,58 +148,58 @@ typedef struct {
 //    return offset;
 //}
 
-static inline C2DBitMapPage_s * _Nonnull C2DBitMapPageCreate(C2DRect frame) {
-    C2DBitMapPage_s * result = malloc(sizeof(C2DBitMapPage_s));
-    assert(result);
-    assert(frame.origin.x >= 0);
-    assert(frame.origin.y >= 0);
-    assert(frame.size.width > 0);
-    assert(frame.size.height > 0);
-    
-    int32_t countPerRow = (frame.size.width + C2DBitMapChunkSize - 1) >> C2DBitMapChunkShift;
-    int32_t numberOfRows = (frame.size.height + C2DBitMapChunkSize - 1) >> C2DBitMapChunkShift;
-    size_t size = countPerRow * numberOfRows * 4;
-    result->frame = frame;
-    result->countPerRow = countPerRow;
-    result->numberOfRows = numberOfRows;
-    void * content = malloc(size);
-    assert(content);
-    memset(content, 0, size);
-    result->content = content;
-    return result;
-}
-static inline C2DBitMapPage_s * _Nonnull C2DBitMapPageCreateByCopy(C2DBitMapPage_s * _Nonnull ptr) {
-    assert(ptr);
-    C2DRect frame = ptr->frame;
-    assert(frame.origin.x >= 0);
-    assert(frame.origin.y >= 0);
-    assert(frame.size.width > 0);
-    assert(frame.size.height > 0);
-    assert((frame.size.width & C2DBitMapChunkMask) == 0);
-    assert((frame.size.height & C2DBitMapChunkMask) == 0);
-
-    int32_t countPerRow = frame.size.width;
-    int32_t numberOfRows = frame.size.height;
-    size_t size = countPerRow * numberOfRows * 4;
-    assert(numberOfRows == ptr->numberOfRows);
-    assert(countPerRow == ptr->countPerRow);
-
-    C2DBitMapPage_s * result = malloc(sizeof(C2DBitMapPage_s));
-    assert(result);
-    result->frame = frame;
-    result->countPerRow = countPerRow;
-    result->numberOfRows = numberOfRows;
-    void * content = malloc(size);
-    assert(content);
-    memcpy(content, ptr->content, size);
-    result->content = content;
-    return result;
-}
-static inline void C2DBitMapPageDestroy(C2DBitMapPage_s * _Nonnull ptr) {
-    assert(ptr);
-    free(ptr->content);
-    free(ptr);
-}
+//static inline C2DBitMapPage_s * _Nonnull C2DBitMapPageCreate(C2DRect frame) {
+//    C2DBitMapPage_s * result = malloc(sizeof(C2DBitMapPage_s));
+//    assert(result);
+//    assert(frame.origin.x >= 0);
+//    assert(frame.origin.y >= 0);
+//    assert(frame.size.width > 0);
+//    assert(frame.size.height > 0);
+//    
+//    int32_t countPerRow = (frame.size.width + C2DBitMapChunkSize - 1) >> C2DBitMapChunkShift;
+//    int32_t numberOfRows = (frame.size.height + C2DBitMapChunkSize - 1) >> C2DBitMapChunkShift;
+//    size_t size = countPerRow * numberOfRows * 4;
+//    result->frame = frame;
+//    result->countPerRow = countPerRow;
+//    result->numberOfRows = numberOfRows;
+//    void * content = malloc(size);
+//    assert(content);
+//    memset(content, 0, size);
+//    result->content = content;
+//    return result;
+//}
+//static inline C2DBitMapPage_s * _Nonnull C2DBitMapPageCreateByCopy(C2DBitMapPage_s * _Nonnull ptr) {
+//    assert(ptr);
+//    C2DRect frame = ptr->frame;
+//    assert(frame.origin.x >= 0);
+//    assert(frame.origin.y >= 0);
+//    assert(frame.size.width > 0);
+//    assert(frame.size.height > 0);
+//    assert((frame.size.width & C2DBitMapChunkMask) == 0);
+//    assert((frame.size.height & C2DBitMapChunkMask) == 0);
+//
+//    int32_t countPerRow = frame.size.width;
+//    int32_t numberOfRows = frame.size.height;
+//    size_t size = countPerRow * numberOfRows * 4;
+//    assert(numberOfRows == ptr->numberOfRows);
+//    assert(countPerRow == ptr->countPerRow);
+//
+//    C2DBitMapPage_s * result = malloc(sizeof(C2DBitMapPage_s));
+//    assert(result);
+//    result->frame = frame;
+//    result->countPerRow = countPerRow;
+//    result->numberOfRows = numberOfRows;
+//    void * content = malloc(size);
+//    assert(content);
+//    memcpy(content, ptr->content, size);
+//    result->content = content;
+//    return result;
+//}
+//static inline void C2DBitMapPageDestroy(C2DBitMapPage_s * _Nonnull ptr) {
+//    assert(ptr);
+//    free(ptr->content);
+//    free(ptr);
+//}
 
 
 //static inline uint32_t C2DBitMapContentChanges(C2DBitMapChunk_s * _Nonnull oldValue, C2DBitMapChunk_s * _Nonnull newValue, int32_t y, C2DBitMapChunkChange_s * _Nonnull change) {

@@ -190,7 +190,13 @@ public final class DrawCache<KeyType : AnyObject & Hashable, ObjectType : AnyObj
 
     
 
-public final class DrawingPoint {
+public final class SampledPoint {
+    public let point: Point
+    public let time: Int64
+    
+    init(point: CGPoint, timestamp: TimeInterval) {
+        
+    }
     
 }
 
@@ -490,9 +496,7 @@ public class DrawingContext {
         
         
         self.backgroundImageLayer = CALayer()
-
         self.size = size
-
     }
 
     

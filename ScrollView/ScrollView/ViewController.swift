@@ -126,9 +126,9 @@ class ViewController: UIViewController {
         let w: UInt32 = 256 * 6
         let h: UInt32 = 256 * 4 * 10
         
-        var config = DrawingContext.Config(mode: .preset1080x720, pageCount: 8, colorSpace: .little16Xrgb)
+        var config = DrawingContext.Config(boxSize: .preset1080x720)
         config.backgroundColor = DrawingContext.Color.init(little32Argb: 0x00_ff_00_00)
-        let context: DrawingContext = DrawingContext(config: config, size: CGSize(width: CGFloat(w) / UIScreen.main.scale, height: CGFloat(h) / UIScreen.main.scale))
+        let context: DrawingContext = DrawingContext(config: config)
         scrollView.context = context
         
 //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {

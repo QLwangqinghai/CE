@@ -26,6 +26,8 @@
 		D67F5A252306F41E00F1CE91 /* GLES.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F5A242306F41E00F1CE91 /* GLES.swift */; };
 		D68098BE23C34CC1007B3086 /* Memory.m in Sources */ = {isa = PBXBuildFile; fileRef = D68098BD23C34CC1007B3086 /* Memory.m */; };
 		D68FE43D23C063070066DD77 /* DrawViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68FE43C23C063070066DD77 /* DrawViewController.swift */; };
+		D6974FCE23C57A240088FB3C /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D6974FCD23C57A240088FB3C /* Test.m */; };
+		D6974FD023C5A6760088FB3C /* SamplePointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6974FCF23C5A6760088FB3C /* SamplePointView.swift */; };
 		D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC1F230536D100432D18 /* AppDelegate.swift */; };
 		D69FCC22230536D100432D18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC21230536D100432D18 /* ViewController.swift */; };
 		D69FCC25230536D100432D18 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D69FCC23230536D100432D18 /* Main.storyboard */; };
@@ -94,6 +96,9 @@
 		D68098BC23C34CC1007B3086 /* Memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Memory.h; sourceTree = "<group>"; };
 		D68098BD23C34CC1007B3086 /* Memory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Memory.m; sourceTree = "<group>"; };
 		D68FE43C23C063070066DD77 /* DrawViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawViewController.swift; sourceTree = "<group>"; };
+		D6974FCC23C57A240088FB3C /* Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
+		D6974FCD23C57A240088FB3C /* Test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
+		D6974FCF23C5A6760088FB3C /* SamplePointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplePointView.swift; sourceTree = "<group>"; };
 		D69FCC1C230536D100432D18 /* ScrollView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D69FCC1F230536D100432D18 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D69FCC21230536D100432D18 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -160,6 +165,9 @@
 				D68098BC23C34CC1007B3086 /* Memory.h */,
 				D68098BD23C34CC1007B3086 /* Memory.m */,
 				D68098BB23C34CC1007B3086 /* TD-Bridging-Header.h */,
+				D6974FCC23C57A240088FB3C /* Test.h */,
+				D6974FCD23C57A240088FB3C /* Test.m */,
+				D6974FCF23C5A6760088FB3C /* SamplePointView.swift */,
 			);
 			path = TD;
 			sourceTree = "<group>";
@@ -435,10 +443,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6974FCE23C57A240088FB3C /* Test.m in Sources */,
 				D68098BE23C34CC1007B3086 /* Memory.m in Sources */,
 				D6226C8F23C239D100AF40F8 /* ViewController.swift in Sources */,
 				D6226C8B23C239D100AF40F8 /* AppDelegate.swift in Sources */,
 				D6226C8D23C239D100AF40F8 /* SceneDelegate.swift in Sources */,
+				D6974FD023C5A6760088FB3C /* SamplePointView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

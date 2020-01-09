@@ -127,6 +127,7 @@ open class DrawingView: UIView {
         self.buffer = buffer
     }
     open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("---[moved]")
         guard let touch = touches.first else {
             return
         }
@@ -165,22 +166,36 @@ open class DrawingView: UIView {
         path.lineWidth = 2
         
         let scale = UIScreen.main.scale
+        
         for (index, sp) in ps.enumerated() {
-            let p = CGPoint(x: CGFloat(sp.point.x) * scale / 10000, y: CGFloat(sp.point.y) * scale / 10000)
-            if index == 0 {
-                self.topContext.move(to: p)
-                self.bottomContext.move(to: p)
+            let p = CGPoint(x: sp.point.x * scale, y: sp.point.y * scale)
+
+            let rect = CGRect(origin: p, size: CGSize(width: 1 * scale, height: 1 * scale))
+            if sp.type == .normal {
+                self.topContext.setFillColor(red: 1, green: 0, blue: 0, alpha: 1)
+                self.bottomContext.setFillColor(red: 1, green: 0, blue: 0, alpha: 1)
             } else {
-                self.topContext.addLine(to: p)
-                self.bottomContext.addLine(to: p)
+                self.topContext.setFillColor(red: 0, green: 1, blue: 0, alpha: 1)
+                self.bottomContext.setFillColor(red: 0, green: 1, blue: 0, alpha: 1)
             }
+            
+            self.topContext.fill(rect)
+            self.bottomContext.fill(rect)
+
+//            if index == 0 {
+//                self.topContext.move(to: p)
+//                self.bottomContext.move(to: p)
+//            } else {
+//                self.topContext.addLine(to: p)
+//                self.bottomContext.addLine(to: p)
+//            }
         }
         self.topContext.strokePath()
         self.bottomContext.strokePath()
         
-        self.bottomContext.fill(CGRect(x: 30, y: 30, width: 30, height: 30))
         self.bottomContext.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
-        
+        self.bottomContext.fill(CGRect(x: 30, y: 30, width: 30, height: 30))
+
 //        self.topContext.addPath(path.cgPath)
 //        self.bottomContext.addPath(path.cgPath)
 

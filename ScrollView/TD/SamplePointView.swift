@@ -25,6 +25,23 @@ public struct Point64 {
     }
 }
 
+public class Vector {
+    public var value: Int64
+    public let time: Int64
+    public var velocity: Int64
+    public var acceleration: Int64
+    public var velocityOffset: Int64 = 0
+    public var aa: Int64 = 0
+    init(value: Int64, time: Int64) {
+        self.value = value
+        self.time = time
+        self.velocity = 0
+        self.acceleration = 0
+    }
+    convenience init(value: CGFloat, scale: CGFloat, timeInterval: TimeInterval) {
+        self.init(value: Int64(value * scale), time: Int64(timeInterval * 1000))
+    }
+}
 
 public class SamplePoint: CustomDebugStringConvertible {
     public enum SampleType: UInt32 {
@@ -33,30 +50,32 @@ public class SamplePoint: CustomDebugStringConvertible {
     }
     
     public let type: SampleType
-    public let point: Point64
+    
+    public var x: Vector
+    public var y: Vector
     public let time: Int64
-    public var velocity: Point64
-    public var acceleration: Point64
-
-    public init(type: SampleType, point: Point64, time: Int64, velocity: Point64 = Point64(), acceleration: Point64 = Point64()) {
-        self.type = type
-        self.point = point
-        self.time = time
-        self.velocity = velocity
-        self.acceleration = acceleration
+    
+    public var point: CGPoint {
+        return CGPoint(x: Double(self.x.value) / 1000000, y: Double(self.y.value) / 1000000)
     }
     
-    public init(type: SampleType, cgPoint: CGPoint, timeInterval: TimeInterval) {
+    public init(type: SampleType, point: CGPoint, timeInterval: TimeInterval) {
         self.type = type
-        self.point = Point64(cgPoint: cgPoint, scale: 10000)
-        self.time = Int64(timeInterval * 1000000)
-        self.velocity = Point64()
-        self.acceleration = Point64()
+        self.x = Vector(value: point.x, scale: 1000000, timeInterval: timeInterval)
+        self.y = Vector(value: point.y, scale: 1000000, timeInterval: timeInterval)
+        self.time = Int64(timeInterval * 1000)
+    }
+    
+    public init(type: SampleType, x: Vector, y: Vector, time: Int64) {
+        self.type = type
+        self.x = x
+        self.y = y
+        self.time = time
     }
     
     
     public var debugDescription: String {
-        return "(\(type): \(point), at:\(time), v:\(velocity), a:\(acceleration))"
+        return "(\(type): \(x) \(y), at:\(time))"
     }
 }
 
@@ -65,10 +84,25 @@ public class SamplePointBuffer {
     public private(set) var points: [SamplePoint] = []
     
     public func append(point: CGPoint, time: TimeInterval) {
-        self.points.append(SamplePoint(type: .normal, cgPoint: point, timeInterval: time))
+        self.points.append(SamplePoint(type: .normal, point: point, timeInterval: time))
     }
     
     public init() {}
+    
+    
+    public func velocity(p0: Vector, p1: Vector, t: Int64) -> Int64 {
+        let change = p1.value - p0.value
+        return change / t
+    }
+    public func acceleration(p0: Vector, p1: Vector, t: Int64) -> Int64 {
+        let change = p1.velocity - p0.velocity
+        return change / t
+    }
+    public func velocityOffset(p0: Vector, p1: Vector, t: Int64) -> Int64 {
+        let change = p1.value - p0.value
+        let total = change - (p0.velocity + p1.velocity) * t / 2
+        return (total - p0.aa * t * t / 2) / t
+    }
     
     public func finish() -> [SamplePoint] {
         guard self.points.count > 0 else {
@@ -79,46 +113,63 @@ public class SamplePointBuffer {
         let points = self.points
         var fps: Int = 60
 
-        
         if points.count >= 2 {
             let p0 = points[0]
             let p1 = points[1]
-
-            var change = Point64()
-            change.x = p1.point.x - p0.point.x
-            change.y = p1.point.y - p0.point.y
-            let t = p1.time - p0.time
-
-            var v = Point64()
-            v.x = change.x / t
-            v.y = change.y / t
-
-            p0.velocity = v
-            p1.velocity = v
+            let dt = p1.time - p0.time
+            let velocityX = self.velocity(p0: p0.x, p1: p1.x, t: dt)
+            let velocityY = self.velocity(p0: p0.y, p1: p1.y, t: dt)
+            p0.x.velocity = velocityX
+            p0.y.velocity = velocityY
+            p1.x.velocity = velocityX
+            p1.y.velocity = velocityY
             fps = Int((self.points.count - 1) * 1000000 / Int(points.last!.time - points[0].time))
         }
         
         if points.count > 2 {
-            var last = points[1]
-            for idx in 2 ..< points.count {
-                var change = Point64()
+            var last = points[0]
+            for idx in 1 ..< points.count {
                 let current = points[idx]
-                change.x = current.point.x - last.point.x
-                change.y = current.point.y - last.point.y
-                let t = current.time - last.time
-                let xa = (change.x - last.velocity.x * t) * 2 / t / t
-                last.acceleration.x = xa
-                
-                let ya = (change.y - last.velocity.y * t) * 2 / t / t
-                last.acceleration.y = ya
 
-                current.velocity.x = change.x * 2 / t - last.velocity.x
-                current.velocity.y = change.y * 2 / t - last.velocity.y
+                if idx != points.count - 1 {
+                    let next = points[idx + 1]
+                    let dt = next.time - last.time
+
+                    current.x.velocity = self.velocity(p0: last.x, p1: next.x, t: dt)
+                    current.y.velocity = self.velocity(p0: last.y, p1: next.y, t: dt)
+                    if idx == 1 {
+                        last.x.velocity = current.x.velocity / 2
+                        last.y.velocity = current.x.velocity / 2
+                    }
+                } else {
+                    current.x.velocity = last.x.velocity / 2
+                    current.y.velocity = last.x.velocity / 2
+                }
+
+                
+                let dt = current.time - last.time
+                last.x.acceleration = self.acceleration(p0: last.x, p1: current.x, t: dt)
+                last.y.acceleration = self.acceleration(p0: last.y, p1: current.y, t: dt)
+
+                last = current
+            }
+
+
+            //加速度变化
+            last = points[0]
+            for idx in 1 ..< points.count {
+                let current = points[idx]
+                let dt = current.time - last.time
+                last.x.aa = (current.x.acceleration - last.x.acceleration) / dt
+                last.y.aa = (current.y.acceleration - last.y.acceleration) / dt
+
+                last.x.velocityOffset = self.velocityOffset(p0: last.x, p1: current.x, t: dt)
+                last.y.velocityOffset = self.velocityOffset(p0: last.y, p1: current.y, t: dt)
                 last = current
             }
             
             last = points[0]
-            for idx in 1 ..< points.count {
+            for idx in 1 ..< points.count - 1 {
                 result.append(last)
                 let current = points[idx]
                 let offset = (current.time - last.time) / 16
@@ -126,21 +177,14 @@ public class SamplePointBuffer {
                     let go = offset * Int64(idx)
                     let t = last.time + Int64(go)
                     
-                    var v = Point64()
-                    v.x = last.velocity.x + last.acceleration.x * go
-                    v.y = last.velocity.y + last.acceleration.y * go
-
-                    var p = Point64()
-                    p.x = last.point.x + (last.velocity.x + v.x) * go / 2
-                    p.y = last.point.y + (last.velocity.y + v.y) * go / 2
-
-                    let sp = SamplePoint(type: .interpolation, point: p, time: t, velocity: v)
+                    let x = Vector(value: last.x.value + (last.x.velocity + current.x.velocity) * go / 2 + last.x.velocityOffset * go + last.x.aa * go * go / 2, time: t)
+                    let y = Vector(value: last.y.value + (last.y.velocity + current.y.velocity) * go / 2 + last.y.velocityOffset * go + last.y.aa * go * go / 2, time: t)
+                    let sp = SamplePoint(type: .interpolation, x: x, y: y, time: t)
                     result.append(sp)
                 }
                 last = current
             }
             result.append(last)
-
             
         }
         print("[\(points)] fps:\(fps)")
@@ -148,46 +192,207 @@ public class SamplePointBuffer {
     }
 
     
-    func log() {
-        let points = self.points
-        var fps: Int = 60
+    
+//    public func finish() -> [SamplePoint] {
+//        guard self.points.count > 0 else {
+//            return []
+//        }
+//
+//        var result: [SamplePoint] = []
+//        let points = self.points
+//        var fps: Int = 60
+//
+//        if points.count >= 2 {
+//            let p0 = points[0]
+//            let p1 = points[1]
+//            let dt = p1.time - p0.time
+//            let velocityX = self.velocity(p0: p0.x, p1: p1.x, t: dt)
+//            let velocityY = self.velocity(p0: p0.y, p1: p1.y, t: dt)
+//            p0.x.velocity = velocityX
+//            p0.y.velocity = velocityY
+//            p1.x.velocity = velocityX
+//            p1.y.velocity = velocityY
+//            fps = Int((self.points.count - 1) * 1000000 / Int(points.last!.time - points[0].time))
+//        }
+//
+//        if points.count > 2 {
+//            var last = points[0]
+//            for idx in 1 ..< points.count {
+//                let current = points[idx]
+//
+//                if idx != points.count - 1 {
+//                    let next = points[idx + 1]
+//                    let dt = next.time - last.time
+//
+//                    current.x.velocity = self.velocity(p0: last.x, p1: next.x, t: dt)
+//                    current.y.velocity = self.velocity(p0: last.y, p1: next.y, t: dt)
+//                    if idx == 1 {
+//                        last.x.velocity = current.x.velocity / 2
+//                        last.y.velocity = current.x.velocity / 2
+//                    }
+//                } else {
+//                    current.x.velocity = last.x.velocity / 2
+//                    current.y.velocity = last.x.velocity / 2
+//                }
+//
+//
+//                let dt = current.time - last.time
+//                last.x.acceleration = self.acceleration(p0: last.x, p1: current.x, t: dt)
+//                last.y.acceleration = self.acceleration(p0: last.y, p1: current.y, t: dt)
+//
+//                last = current
+//            }
+//
+//
+//            //加速度变化
+//            last = points[0]
+//            for idx in 1 ..< points.count {
+//                let current = points[idx]
+//                let dt = current.time - last.time
+//                last.x.aa = (current.x.acceleration - last.x.acceleration) / dt
+//                last.y.aa = (current.y.acceleration - last.y.acceleration) / dt
+//
+//                last.x.velocityOffset = self.velocityOffset(p0: last.x, p1: current.x, t: dt)
+//                last.y.velocityOffset = self.velocityOffset(p0: last.y, p1: current.y, t: dt)
+//                last = current
+//            }
+//
+//            last = points[0]
+//            for idx in 1 ..< points.count - 1 {
+//                result.append(last)
+//                let current = points[idx]
+//                let offset = (current.time - last.time) / 16
+//                for idx in 1 ..< 16 {
+//                    let go = offset * Int64(idx)
+//                    let t = last.time + Int64(go)
+//
+//                    let x = Vector(value: last.x.value + (last.x.velocity + current.x.velocity) * go / 2 + last.x.velocityOffset * go + last.x.aa * go * go / 2, time: t)
+//                    let y = Vector(value: last.y.value + (last.y.velocity + current.y.velocity) * go / 2 + last.y.velocityOffset * go + last.y.aa * go * go / 2, time: t)
+//                    let sp = SamplePoint(type: .interpolation, x: x, y: y, time: t)
+//                    result.append(sp)
+//                }
+//                last = current
+//            }
+//            result.append(last)
+//
+//        }
+//        print("[\(points)] fps:\(fps)")
+//        return result
+//    }
+    
+    
+//    public func finish() -> [SamplePoint] {
+//        guard self.points.count > 0 else {
+//            return []
+//        }
+//
+//        var result: [SamplePoint] = []
+//        let points = self.points
+//        var fps: Int = 60
+//
+//
+//        if points.count >= 2 {
+//            let p0 = points[0]
+//            let p1 = points[1]
+//
+//            var change = Point64()
+//            change.x = p1.point.x - p0.point.x
+//            change.y = p1.point.y - p0.point.y
+//            let t = p1.time - p0.time
+//
+//            var v = Point64()
+//            v.x = change.x / t
+//            v.y = change.y / t
+//
+//            p0.velocity = v
+//            p1.velocity = v
+//            fps = Int((self.points.count - 1) * 1000000 / Int(points.last!.time - points[0].time))
+//        }
+//
+//        if points.count > 2 {
+//            var last = points[1]
+//            for idx in 2 ..< points.count {
+//                var change = Point64()
+//                let current = points[idx]
+//                change.x = current.point.x - last.point.x
+//                change.y = current.point.y - last.point.y
+//                let t = current.time - last.time
+//                let xa = (change.x - last.velocity.x * t) * 2 / t / t
+//                last.acceleration.x = xa
+//
+//                let ya = (change.y - last.velocity.y * t) * 2 / t / t
+//                last.acceleration.y = ya
+//
+//                current.velocity.x = change.x * 2 / t - last.velocity.x
+//                current.velocity.y = change.y * 2 / t - last.velocity.y
+//                last = current
+//            }
+//
+//            last = points[0]
+//            for idx in 1 ..< points.count {
+//                result.append(last)
+//                let current = points[idx]
+//                let offset = (current.time - last.time) / 16
+//                for idx in 1 ..< 16 {
+//                    let go = offset * Int64(idx)
+//                    let t = last.time + Int64(go)
+//
+//                    var v = Point64()
+//                    v.x = last.velocity.x + last.acceleration.x * go
+//                    v.y = last.velocity.y + last.acceleration.y * go
+//
+//                    var p = Point64()
+//                    p.x = last.point.x + (last.velocity.x + v.x) * go / 2
+//                    p.y = last.point.y + (last.velocity.y + v.y) * go / 2
+//
+//                    let sp = SamplePoint(type: .interpolation, point: p, time: t, velocity: v)
+//                    result.append(sp)
+//                }
+//                last = current
+//            }
+//            result.append(last)
+//
+//
+//        }
+//        print("[\(points)] fps:\(fps)")
+//        return result
+//    }
 
-        
-        if points.count >= 2 {
-            let p0 = points[0]
-            let p1 = points[1]
-
-            var v = Point64()
-            v.x = p1.point.x - p0.point.x
-            v.y = p1.point.y - p0.point.y
-            p0.velocity = v
-            p1.velocity = v
-            fps = Int((self.points.count - 1) * 1000000 / Int(points.last!.time - points[0].time))
-        }
-        
-        if points.count > 2 {
-            var last = points[1]
-            for idx in 2 ..< points.count {
-                var change = Point64()
-                let current = points[idx]
-                change.x = current.point.x - last.point.x
-                change.y = current.point.y - last.point.y
-                let t = current.time - last.time
-                let xa = (Int64(change.x) - Int64(last.velocity.x) * t) * 2 / t / t
-                last.acceleration.x = xa
-                
-                let ya = (Int64(change.y) - Int64(last.velocity.y) * t) * 2 / t / t
-                last.acceleration.y = ya
-
-                current.velocity.x = Int64(change.x) * 2 / t - Int64(last.velocity.x)
-                current.velocity.y = Int64(change.y) * 2 / t - Int64(last.velocity.y)
-                last = current
-            }
-        }
-        print("[\(points)] fps:\(fps)")
-        
-        
-    }
+    
+//    func log() {
+//        let points = self.points
+//        var fps: Int = 60
+//        if points.count >= 2 {
+//            let p0 = points[0]
+//            let p1 = points[1]
+//            var v = Point64()
+//            v.x = p1.point.x - p0.point.x
+//            v.y = p1.point.y - p0.point.y
+//            p0.velocity = v
+//            p1.velocity = v
+//            fps = Int((self.points.count - 1) * 1000000 / Int(points.last!.time - points[0].time))
+//        }
+//        if points.count > 2 {
+//            var last = points[1]
+//            for idx in 2 ..< points.count {
+//                var change = Point64()
+//                let current = points[idx]
+//                change.x = current.point.x - last.point.x
+//                change.y = current.point.y - last.point.y
+//                let t = current.time - last.time
+//                let xa = (Int64(change.x) - Int64(last.velocity.x) * t) * 2 / t / t
+//                last.acceleration.x = xa
+//
+//                let ya = (Int64(change.y) - Int64(last.velocity.y) * t) * 2 / t / t
+//                last.acceleration.y = ya
+//
+//                current.velocity.x = Int64(change.x) * 2 / t - Int64(last.velocity.x)
+//                current.velocity.y = Int64(change.y) * 2 / t - Int64(last.velocity.y)
+//                last = current
+//            }
+//        }
+//        print("[\(points)] fps:\(fps)")
+//    }
 }
 
 
@@ -237,8 +442,6 @@ public class SamplePointView: UIView {
     
     func append(_ buffer: SamplePointBuffer) {
         self.buffers.append(buffer)
-        
-        buffer.log()
-        
+                
     }
 }

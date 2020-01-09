@@ -8,6 +8,9 @@
 
 import UIKit
 
+//http://blog.sina.com.cn/s/blog_894d45e20102wwrt.html
+
+
 public struct Point64 {
     public var x: Int64
     public var y: Int64
@@ -90,6 +93,16 @@ public class SamplePointBuffer {
     public init() {}
     
     
+    public func velocity(of vector: Vector, next: (Vector, Int64)) -> Int64 {
+        return (next.0.value - vector.value) / next.1
+    }
+    public func velocity(of vector: Vector, prev: (Vector, Int64)) -> Int64 {
+        return (vector.value - prev.0.value) / prev.1
+    }
+    public func velocity(of vector: Vector, prev: (Vector, Int64), next: (Vector, Int64)) -> Int64 {
+        return ((vector.value - prev.0.value) / prev.1 + (next.0.value - vector.value) / next.1) / 2
+    }
+    
     public func velocity(p0: Vector, p1: Vector, t: Int64) -> Int64 {
         let change = p1.value - p0.value
         return change / t
@@ -135,15 +148,15 @@ public class SamplePointBuffer {
                     let next = points[idx + 1]
                     let dt = next.time - last.time
 
-                    current.x.velocity = self.velocity(p0: last.x, p1: next.x, t: dt)
-                    current.y.velocity = self.velocity(p0: last.y, p1: next.y, t: dt)
+                    current.x.velocity = self.velocity(of: current.x, prev: (last.x, current.time - last.time), next: (next.x, dt))
+                    current.y.velocity = self.velocity(of: current.y, prev: (last.y, current.time - last.time), next: (next.y, dt))
                     if idx == 1 {
-                        last.x.velocity = current.x.velocity / 2
-                        last.y.velocity = current.x.velocity / 2
+                        last.x.velocity = self.velocity(of: last.x, next: (next.x, dt))
+                        last.y.velocity = self.velocity(of: last.y, next: (next.y, dt))
                     }
                 } else {
-                    current.x.velocity = last.x.velocity / 2
-                    current.y.velocity = last.x.velocity / 2
+                    current.x.velocity = self.velocity(of: current.x, prev: (last.x, current.time - last.time))
+                    current.y.velocity = self.velocity(of: current.y, prev: (last.y, current.time - last.time))
                 }
 
                 
@@ -160,8 +173,8 @@ public class SamplePointBuffer {
             for idx in 1 ..< points.count {
                 let current = points[idx]
                 let dt = current.time - last.time
-                last.x.aa = (current.x.acceleration - last.x.acceleration) / dt
-                last.y.aa = (current.y.acceleration - last.y.acceleration) / dt
+                last.x.aa = (current.x.acceleration - last.x.acceleration) / dt * 1
+                last.y.aa = (current.y.acceleration - last.y.acceleration) / dt * 1
 
                 last.x.velocityOffset = self.velocityOffset(p0: last.x, p1: current.x, t: dt)
                 last.y.velocityOffset = self.velocityOffset(p0: last.y, p1: current.y, t: dt)
@@ -403,7 +416,7 @@ public class SamplePointView: UIView {
     
     
     public var buffer: SamplePointBuffer?
-    
+    var aa: UIPanGestureRecognizer?
     
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else {

@@ -170,7 +170,7 @@ open class DrawingView: UIView {
         for (index, sp) in ps.enumerated() {
             let p = CGPoint(x: sp.point.x * scale, y: sp.point.y * scale)
 
-            let rect = CGRect(origin: p, size: CGSize(width: 1 * scale, height: 1 * scale))
+            let rect = CGRect(origin: p, size: CGSize(width: 1 * scale, height: 2 * scale))
             if sp.type == .normal {
                 self.topContext.setFillColor(red: 1, green: 0, blue: 0, alpha: 1)
                 self.bottomContext.setFillColor(red: 1, green: 0, blue: 0, alpha: 1)

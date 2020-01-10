@@ -262,7 +262,7 @@ open class Shape {
 
 
 
-public class DrawingContext {
+public class ScheduleContext {
 
     public enum BoxSize {
         case preset960x540
@@ -326,7 +326,6 @@ public class DrawingContext {
                 return 16
             }
         }
-        
         
         public var bitmapInfo: UInt32 {
             switch self {
@@ -435,7 +434,7 @@ public class DrawingContext {
             self.duplicatePtr = UnsafeMutableRawPointer.allocate(byteCount: config.bytesSize, alignment: 128)
             let colorSpace = config.colorSpace
 
-            self.context = CGContext(data: mainPtr, width: Int(config.contextSize.width), height: Int(config.contextSize.height), bitsPerComponent: colorSpace.bitsPerComponent, bytesPerRow: config.bytesPerRow, space: DrawingContext.ColorSpace.deviceRgb, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
+            self.context = CGContext(data: mainPtr, width: Int(config.contextSize.width), height: Int(config.contextSize.height), bitsPerComponent: colorSpace.bitsPerComponent, bytesPerRow: config.bytesPerRow, space: ScheduleContext.ColorSpace.deviceRgb, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
             }, releaseInfo: nil)!
             
             self.dataProvider = CGDataProvider(dataInfo: nil, data: self.mainPtr, size: self.config.bytesSize) { (mptr, ptr, size) in
@@ -474,9 +473,15 @@ public class DrawingContext {
     public let backgroundImageLayer: CALayer
     public let size: CGSize
     
+    public let drawingLayer: CALayer
+
+    
     public init(config: Config) {
         let layer = CALayer()
         self.layer = layer
+        
+        let drawingLayer = CALayer()
+        self.drawingLayer = drawingLayer
         
         let scale = UIScreen.main.scale
         let size = CGSize(width: CGFloat(config.boxSize.size.width) / scale, height: CGFloat(config.boxSize.size.height) / scale)
@@ -484,12 +489,10 @@ public class DrawingContext {
         let frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         layer.frame = frame
         
-        
         self.backgroundImageLayer = CALayer()
         self.size = size
     }
 
-    
     public func shouldBegin(event: UIEvent) -> TouchesEventHandleable? {
         let handler = DrawingEventHandler(event: event, id: self.drawIndex)
         self.drawIndex += 1
@@ -499,12 +502,16 @@ public class DrawingContext {
     
 }
 
-
+public final class DrawingLayer: CALayer {
+    
+    
+}
 
 
 public protocol Stroke: class {
     
 }
+
 
 open class DrawingBox: UIStackView {
 
@@ -512,7 +519,7 @@ open class DrawingBox: UIStackView {
 }
 
 open class DrawingView: UIView {
-    fileprivate var context: DrawingContext? = nil {
+    fileprivate var context: ScheduleContext? = nil {
         didSet(oldValue) {
             if let old = oldValue {
                 old.layer.removeFromSuperlayer()
@@ -647,7 +654,7 @@ open class DrawingScrollView: UIScrollView {
     public var contentView: DrawingView
     var array: [CGImage?] = []
     
-    public var context: DrawingContext? = nil {
+    public var context: ScheduleContext? = nil {
         didSet {
             self.contentView.context = self.context
             

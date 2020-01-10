@@ -24,6 +24,7 @@
 @implementation Memory
 
 + (void)test {
+    malloc(11);
     // Do any additional setup after loading the view.
     NSInteger count = (1024 * 1024 * 8);
     uint64_t * buffer = malloc(sizeof(uint64_t) * count);

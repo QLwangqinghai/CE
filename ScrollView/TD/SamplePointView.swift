@@ -8,7 +8,28 @@
 
 import UIKit
 
+
 //http://blog.sina.com.cn/s/blog_894d45e20102wwrt.html
+
+public class DrawingContext {
+    init() {
+    }
+}
+
+
+
+public struct Manager {
+    public static let context: DrawingContext = DrawingContext()
+    public static let specificKey: DispatchSpecificKey<DrawingContext> = DispatchSpecificKey<DrawingContext>()
+    public static let queue: DispatchQueue = {
+        let q = DispatchQueue(label: "d", qos: DispatchQoS.userInitiated, attributes: [], autoreleaseFrequency: .inherit, target: nil)
+        q.setSpecific(key: Manager.specificKey, value: Manager.context)
+        return q
+    }()
+
+
+
+}
 
 
 public struct Point64 {
@@ -408,7 +429,84 @@ public class SamplePointBuffer {
 //    }
 }
 
+public struct TouchPoint {
+    let location: CGPoint
+    let velocity: CGPoint
+    let time: TimeInterval
+}
 
+public final class GestureEventHandler: NSObject {
+    public let panGestureRecognizer: UIPanGestureRecognizer = UIPanGestureRecognizer()
+    private var previousPoint: CGPoint = CGPoint()
+    
+    public let path: UIBezierPath = UIBezierPath()
+    override init() {
+        super.init()
+        self.panGestureRecognizer.addTarget(self, action: #selector(GestureEventHandler.handlePan))
+    }
+    
+    private func midpoint(_ p0: CGPoint, _ p1: CGPoint) -> CGPoint {
+        return CGPoint(x: (p0.x + p1.x) / 2.0, y: (p0.y + p1.y) / 2.0)
+    }
+    
+    @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
+        guard recognizer == self.panGestureRecognizer else {
+            return
+        }
+        let currentPoint = recognizer.location(in: recognizer.view)
+        let point = TouchPoint(location: currentPoint, velocity: recognizer.velocity(in: recognizer.view), time: CACurrentMediaTime())
+
+        let midPoint = self.midpoint(self.previousPoint, currentPoint);
+        if recognizer.state == .began {
+            self.path.move(to: currentPoint)
+        } else if recognizer.state == .changed {
+            self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint)
+        } else {
+            self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint)
+        }
+        self.previousPoint = currentPoint;
+    }
+    
+//    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let touch = touches.first else {
+//            return
+//        }
+//        let buffer = SamplePointBuffer()
+//        buffer.append(point: touch.location(in: self), time: touch.timestamp)
+//        self.buffer = buffer
+//    }
+//    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let touch = touches.first else {
+//            return
+//        }
+//        if let buffer = self.buffer {
+//            buffer.append(point: touch.location(in: self), time: touch.timestamp)
+//        }
+//    }
+//    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let touch = touches.first else {
+//            return
+//        }
+//        if let buffer = self.buffer {
+//            buffer.append(point: touch.location(in: self), time: touch.timestamp)
+//            self.append(buffer)
+//        }
+//    }
+//    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let touch = touches.first else {
+//            return
+//        }
+//        if let buffer = self.buffer {
+//            buffer.append(point: touch.location(in: self), time: touch.timestamp)
+//            self.append(buffer)
+//        }
+//    }
+//
+//    func append(_ buffer: SamplePointBuffer) {
+//        self.buffers.append(buffer)
+//
+//    }
+}
 
 public class SamplePointView: UIView {
 

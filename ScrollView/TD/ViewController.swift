@@ -250,7 +250,15 @@ open class DrawingView: UIView {
     
     func log(item: @autoclosure () -> Any, _ file: StaticString = #file, _ line: Int = #line, _ function: String = #function) {
 //        print("\(file) :\(line): \(function) \(item())")
+        #if os(Linux)
+           
+        #elseif os(macOS)
         
+        #endif
+        
+        
+        
+        Progress.current()
         print("\(function) \(item())")
     }
 }

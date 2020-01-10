@@ -134,9 +134,9 @@ class ViewController: UIViewController {
         let w: UInt32 = 256 * 6
         let h: UInt32 = 256 * 4 * 10
         
-        var config = DrawingContext.Config(boxSize: .preset1080x720)
-        config.backgroundColor = DrawingContext.Color.init(little32Argb: 0x00_ff_00_00)
-        let context: DrawingContext = DrawingContext(config: config)
+        var config = ScheduleContext.Config(boxSize: .preset1080x720)
+        config.backgroundColor = ScheduleContext.Color.init(little32Argb: 0x00_ff_00_00)
+        let context: ScheduleContext = ScheduleContext(config: config)
         scrollView.context = context
         
 //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {

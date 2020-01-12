@@ -36,6 +36,12 @@ typedef struct {
     C2DSize size;
 } C2DRect;
 
+
+typedef struct {
+    int32_t location;
+    int32_t length;
+} C2DBytesRange;
+
 static inline _Bool C2DRectEqualRect(C2DRect lhs, C2DRect rhs) {
     return C2DPointEqualPoint(lhs.origin, rhs.origin) && C2DSizeEqualSize(lhs.size, rhs.size);
 }

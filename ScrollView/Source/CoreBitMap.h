@@ -97,11 +97,52 @@ static inline C2DBitMapChangePage_s * _Nonnull C2DBitMapChunkChangeGetPage(C2DBi
 
 
 typedef struct {
+    int32_t x;
+    int32_t y;
+    int32_t width;
+    int32_t height;
+    int32_t countPerRow;
+    int32_t bytesPerPixel;
+    void * _Nonnull content;
+} C2DBitMap32Page_s;
+
+typedef struct {
     C2DRect frame;
     int32_t countPerRow;
-    int32_t numberOfRows;
-    uint32_t * _Nonnull content;
+    int32_t bytesPerPixel;
+    void * _Nonnull content;
 } C2DBitMapPage_s;
+
+
+//RingBuffer
+typedef struct {
+    C2DRect frame;
+    C2DRect validFrame;
+    int32_t offset;
+    int32_t bytesPerRow;
+    int32_t bytesPerPixel;
+    void * _Nonnull content;
+} C2DBitMapStore_s;
+
+static inline void C2DBitMapStoreResetFrame(C2DBitMapStore_s * _Nonnull store, C2DRect frame) {
+    
+    
+}
+
+static inline void C2DBitMapStoreClear(C2DBitMapStore_s * _Nonnull store) {
+    
+    
+}
+
+static inline void C2DBitMapStoreUpdateContentOffsetY(C2DBitMapStore_s * _Nonnull store, int32_t contentOffsetY) {
+    
+    
+}
+
+//static inline C2DBitMapPage_s C2DBitMapPageInit(C2DRect frame, int32_t countPerRow, int32_t bytesPerPixel) {
+//    
+//    
+//}
 
 
 typedef struct {

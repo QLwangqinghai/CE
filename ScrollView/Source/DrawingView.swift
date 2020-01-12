@@ -8,235 +8,211 @@
 
 import UIKit
 
-/*
- video: 16 * 9
- video: 4 * 3
- video: 3 * 2
-
- width: 720、810、960、1080、1280、1440、1620、1920
-        6    7   8    9     10    12   13    15
- 
- 
- 
- 960 * 540
- 720 * 540
- 810 * 540
- 
- 1280 * 720
- 960 * 720
- 1080 * 720
-
- 1920 * 1080
- 1440 * 1080
- 1620 * 1080
-
- //72 54 108  180 * 4 180 * 3 180 * 6
-
- */
 
 
 
-public final class DrawCache<KeyType : AnyObject & Hashable, ObjectType : AnyObject> {
-    fileprivate class CacheEntry<KeyType : AnyObject, ObjectType : AnyObject> {
-        var key: KeyType
-        var value: ObjectType
-        var cost: Int
-        var prevByCost: CacheEntry?
-        var nextByCost: CacheEntry?
-        init(key: KeyType, value: ObjectType, cost: Int) {
-            self.key = key
-            self.value = value
-            self.cost = cost
-        }
-    }
+public struct TouchPoint {
+    public var location: CGPoint
+    public var velocity: CGPoint
+    public var time: TimeInterval
     
-    private var _entries = Dictionary<KeyType, CacheEntry<KeyType, ObjectType>>()
-    private var _totalCost = 0
-    private var _head: CacheEntry<KeyType, ObjectType>?
-    
-    public var name: String = ""
-    public var totalCostLimit: Int = 0 // limits are imprecise/not strict
-
-    public init() {}
-    
-    public func object(forKey key: KeyType) -> ObjectType? {
-        var object: ObjectType?
-        if let entry = _entries[key] {
-            object = entry.value
-        }
-        return object
-    }
-    
-    public func setObject(_ obj: ObjectType, forKey key: KeyType) {
-        setObject(obj, forKey: key, cost: 0)
-    }
-    
-    private func remove(_ entry: CacheEntry<KeyType, ObjectType>) {
-        let oldPrev = entry.prevByCost
-        let oldNext = entry.nextByCost
-        
-        oldPrev?.nextByCost = oldNext
-        oldNext?.prevByCost = oldPrev
-        
-        if entry === _head {
-            _head = oldNext
-        }
-    }
-   
-    private func insert(_ entry: CacheEntry<KeyType, ObjectType>) {
-        guard var currentElement = _head else {
-            // The cache is empty
-            entry.prevByCost = nil
-            entry.nextByCost = nil
-            
-            _head = entry
-            return
-        }
-        
-        guard entry.cost > currentElement.cost else {
-            // Insert entry at the head
-            entry.prevByCost = nil
-            entry.nextByCost = currentElement
-            currentElement.prevByCost = entry
-            
-            _head = entry
-            return
-        }
-        
-        while let nextByCost = currentElement.nextByCost, nextByCost.cost < entry.cost {
-            currentElement = nextByCost
-        }
-        
-        // Insert entry between currentElement and nextElement
-        let nextElement = currentElement.nextByCost
-        
-        currentElement.nextByCost = entry
-        entry.prevByCost = currentElement
-        
-        entry.nextByCost = nextElement
-        nextElement?.prevByCost = entry
-    }
-    
-    public func setObject(_ obj: ObjectType, forKey key: KeyType, cost g: Int) {
-        let g = max(g, 0)
-        let keyRef = key
-                
-        let costDiff: Int
-        
-        if let entry = _entries[keyRef] {
-            costDiff = g - entry.cost
-            entry.cost = g
-            
-            entry.value = obj
-            
-            if costDiff != 0 {
-                remove(entry)
-                insert(entry)
-            }
-        } else {
-            let entry = CacheEntry(key: key, value: obj, cost: g)
-            _entries[keyRef] = entry
-            insert(entry)
-            
-            costDiff = g
-        }
-        
-        _totalCost += costDiff
-        
-        var purgeAmount = (totalCostLimit > 0) ? (_totalCost - totalCostLimit) : 0
-                
-        while purgeAmount > 0 {
-            if let entry = _head {
-                _totalCost -= entry.cost
-                purgeAmount -= entry.cost
-                
-                let key = entry.key
-                
-                autoreleasepool { () -> Void in
-                    remove(entry) // _head will be changed to next entry in remove(_:)
-                    _entries[key] = nil
-                }
-            } else {
-                break
-            }
-        }
-    }
-    
-    public func removeObjectStrongRefrence(forKey key: KeyType) {
-        let keyRef = key
-        autoreleasepool { () -> Void in
-            if let entry = _entries.removeValue(forKey: keyRef) {
-                _totalCost -= entry.cost
-                remove(entry)
-            }
-        }
-    }
-    
-    public func removeAllObjectStrongRefrences() {
-        _entries.removeAll()
-        autoreleasepool { () -> Void in
-            while let currentElement = _head {
-                let nextElement = currentElement.nextByCost
-                
-                currentElement.prevByCost = nil
-                currentElement.nextByCost = nil
-                
-                _head = nextElement
-            }
-        }
-        _totalCost = 0
+    public init(location: CGPoint = CGPoint(), velocity: CGPoint = CGPoint(), time: TimeInterval = 0) {
+        self.location = location
+        self.velocity = velocity
+        self.time = time
     }
 }
 
 
 
-public protocol TouchesEventHandleable: class {
-    func handleTouchesBegan(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
-    func handleTouchesMoved(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
-    func handleTouchesEnded(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
-    func handleTouchesCancelled(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+public protocol Drawable: class {
+    func getFrame() -> CGRect
+    
+    
+    
 }
 
-public class DrawingEventHandler: TouchesEventHandleable {
-    public let event: UIEvent
+
+public protocol DrawingEventHandle: class {
+    func begin(_ point: TouchPoint)
+    func change(_ point: TouchPoint)
+    func finish(_ point: TouchPoint)
+}
+
+public class DrawingEventHandler: DrawingEventHandle {
     public let id: UInt32
+    public let path: UIBezierPath = UIBezierPath()
 
-    public init(event: UIEvent, id: UInt32) {
-        self.event = event
+    private var previousPoint: TouchPoint = TouchPoint()
+    
+    public init(id: UInt32) {
         self.id = id
     }
+    private func midpoint(_ p0: TouchPoint, _ p1: TouchPoint) -> CGPoint {
+        return CGPoint(x: (p0.location.x + p1.location.x) / 2.0, y: (p0.location.y + p1.location.y) / 2.0)
+    }
     
-    public func handleTouchesBegan(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
-        guard event == self.event else {
-            return false
-        }
-        
-        return true
+    public func begin(_ point: TouchPoint) {
+        self.previousPoint = point
+        self.path.move(to: point.location)
     }
-    public func handleTouchesMoved(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
-        guard event == self.event else {
-            return false
-        }
-        
-        return true
+    public func change(_ point: TouchPoint) {
+        let midPoint = self.midpoint(self.previousPoint, point);
+        self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint.location)
+        self.previousPoint = point;
     }
-    public func handleTouchesEnded(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
-        guard event == self.event else {
-            return false
-        }
-        
-        return true
+    public func finish(_ point: TouchPoint) {
+        let midPoint = self.midpoint(self.previousPoint, point);
+        self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint.location)
+        self.previousPoint = point;
     }
-    public func handleTouchesCancelled(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
-        guard event == self.event else {
-            return false
+}
+
+public final class DrawingLayer: CALayer {
+    public let panGestureRecognizer: UIPanGestureRecognizer = UIPanGestureRecognizer()
+    public override init() {
+        super.init()
+        self.panGestureRecognizer.addTarget(self, action: #selector(DrawingLayer.handlePan))
+    }
+    
+    @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
+        guard recognizer == self.panGestureRecognizer else {
+            return
         }
-        
+        let location = recognizer.location(in: recognizer.view)
+        let point = TouchPoint(location: location, velocity: recognizer.velocity(in: recognizer.view), time: CACurrentMediaTime())
+        if recognizer.state == .began {
+            self.begin(point)
+        } else if recognizer.state == .changed {
+            self.change(point)
+        } else {
+            if recognizer.state == .cancelled || recognizer.state == .ended {
+                self.finish(point)
+            }
+        }
+        self.setNeedsDisplay()
+    }
+    
+    public let id: UInt32
+    public let path: UIBezierPath = UIBezierPath()
+
+    private var previousPoint: TouchPoint = TouchPoint()
+    
+    public init(id: UInt32) {
+        self.id = id
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func midpoint(_ p0: TouchPoint, _ p1: TouchPoint) -> CGPoint {
+        return CGPoint(x: (p0.location.x + p1.location.x) / 2.0, y: (p0.location.y + p1.location.y) / 2.0)
+    }
+    
+    public func begin(_ point: TouchPoint) {
+        self.previousPoint = point
+        self.path.move(to: point.location)
+    }
+    public func change(_ point: TouchPoint) {
+        let midPoint = self.midpoint(self.previousPoint, point);
+        self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint.location)
+        self.previousPoint = point;
+    }
+    public func finish(_ point: TouchPoint) {
+        let midPoint = self.midpoint(self.previousPoint, point);
+        self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint.location)
+        self.previousPoint = point;
+    }
+    
+    
+    optional func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 
     
 }
+
+
+public final class GestureEventHandler: NSObject {
+    public let panGestureRecognizer: UIPanGestureRecognizer = UIPanGestureRecognizer()
+    
+    override init() {
+        super.init()
+        self.panGestureRecognizer.addTarget(self, action: #selector(GestureEventHandler.handlePan))
+    }
+    
+    public var handler: TouchEventHandleable?
+
+    @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
+        guard recognizer == self.panGestureRecognizer else {
+            return
+        }
+        let location = recognizer.location(in: recognizer.view)
+        let point = TouchPoint(location: location, velocity: recognizer.velocity(in: recognizer.view), time: CACurrentMediaTime())
+
+        guard let handler = self.handler else {
+            return
+        }
+        
+        if recognizer.state == .began {
+            handler.begin(point)
+        } else if recognizer.state == .changed {
+            handler.change(point)
+        } else {
+            if recognizer.state == .cancelled || recognizer.state == .ended {
+                handler.finish(point)
+            }
+        }
+    }
+}
+
+
+
+//public protocol TouchesEventHandleable: class {
+//    func handleTouchesBegan(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+//    func handleTouchesMoved(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+//    func handleTouchesEnded(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+//    func handleTouchesCancelled(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool
+//}
+//
+//public class DrawingEventHandler: TouchesEventHandleable {
+//    public let event: UIEvent
+//    public let id: UInt32
+//
+//    public init(event: UIEvent, id: UInt32) {
+//        self.event = event
+//        self.id = id
+//    }
+//
+//    public func handleTouchesBegan(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+//        guard event == self.event else {
+//            return false
+//        }
+//
+//        return true
+//    }
+//    public func handleTouchesMoved(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+//        guard event == self.event else {
+//            return false
+//        }
+//
+//        return true
+//    }
+//    public func handleTouchesEnded(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+//        guard event == self.event else {
+//            return false
+//        }
+//
+//        return true
+//    }
+//    public func handleTouchesCancelled(_ view: UIView, touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+//        guard event == self.event else {
+//            return false
+//        }
+//
+//        return true
+//    }
+//}
 
 open class Shape {
     public let id: UInt32
@@ -262,82 +238,21 @@ open class Shape {
 
 
 
+public class BoxBounds {
+    public private(set) var y: Int32
+    public let height: Int32
+    public init(y: Int32, height: Int32) {
+        self.y = y
+        self.height = height
+    }
+    
+    
+    
+}
+
+
 public class ScheduleContext {
 
-    public enum BoxSize {
-        case preset960x540
-        case preset810x540
-        case preset1280x720
-        case preset1080x720
-        case preset1920x1080
-        case preset1620x1080
-        var size: Size {
-            switch self {
-            case .preset960x540: return Size(width: 960, height: 540)
-            case .preset810x540: return Size(width: 810, height: 540)
-            case .preset1280x720: return Size(width: 1280, height: 720)
-            case .preset1080x720: return Size(width: 1080, height: 720)
-            case .preset1920x1080: return Size(width: 1920, height: 1080)
-            case .preset1620x1080: return Size(width: 1620, height: 1080)
-            }
-        }
-    }
-    
-    public struct Config {
-        public let boxSize: BoxSize
-        public let page: BitMapPage.Config
-        public var backgroundColor: Color = Color(little32Argb: 0)
-        
-        public init(boxSize: BoxSize) {
-            self.boxSize = boxSize
-            self.page = BitMapPage.Config(boxSize: boxSize)
-        }
-    }
-    
-
-    public enum ColorSpace: UInt32 {
-        //android 只有argb模式
-        
-        case little32Argb = 1
-        case little16Xrgb = 2
-        public static let deviceRgb: CGColorSpace = CGColorSpaceCreateDeviceRGB()
-
-        public var bytesPerPixel: Int32 {
-            switch self {
-            case .little32Argb:
-                return 4
-            case .little16Xrgb:
-                return 2
-            }
-        }
-        public var bitsPerComponent: Int {
-            switch self {
-            case .little32Argb:
-                return 8
-            case .little16Xrgb:
-                return 5
-            }
-        }
-        public var bitsPerPixel: Int {
-            switch self {
-            case .little32Argb:
-                return 32
-            case .little16Xrgb:
-                return 16
-            }
-        }
-        
-        public var bitmapInfo: UInt32 {
-            switch self {
-            case .little32Argb:
-                return CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue
-            case .little16Xrgb:
-                return CGBitmapInfo.byteOrder16Little.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue
-            }
-        }
-        
-        
-    }
     
    /*
      RGB
@@ -385,63 +300,94 @@ public class ScheduleContext {
             self.origin = origin
             self.size = size
         }
-        
-        
     }
     
     public class BitMapPage {
-        public class Config {
-            public static let chunkSize: Int32 = 0x10
+        public class BitMapLineBuffer {
+            public var buffer: [C2DBytesRange] = []
             
-            public static func sizeAlign(size: Int32) -> Int32 {
-                return (size + Config.chunkSize - 1) / Config.chunkSize * Config.chunkSize
-            }
-            
-            public let contextSize: Size
-            public let bytesSize: Int
-            public let bytesPerRow: Int
-            public let colorSpace: ColorSpace
-                        
-            public init(boxSize: BoxSize) {
-                let width = Config.sizeAlign(size: boxSize.size.width)
-                let height = Config.sizeAlign(size: (width + 1) / 2)
-                let colorSpace: ColorSpace = .little32Argb
-                self.colorSpace = colorSpace
-                let contextSize = Size(width: width, height: height)
-                self.contextSize = contextSize
-                let bytesPerRow = Int(width * colorSpace.bytesPerPixel)
-                self.bytesPerRow = bytesPerRow
-                let bytesSize = bytesPerRow * Int(height)
-                self.bytesSize = bytesSize
+            public func append(_ range: C2DBytesRange) {
+                self.buffer.append(range)
             }
         }
         
-        public let config: Config
+        
+        public let config: DrawingContext.PageConfig
 
-        public let mainPtr: UnsafeMutableRawPointer
-        public let duplicatePtr: UnsafeMutableRawPointer
+        public let ptr: UnsafeMutableRawPointer
+        public let bitMapPage: C2DBitMapPage_s
         public let context: CGContext
         public let dataProvider: CGDataProvider
 
         public let layer: CALayer
+        public let originY: Int32
         
         
-        public init(config: Config) {
+        public init(config: DrawingContext.PageConfig, originY: Int32) {
             self.config = config
             self.layer = CALayer()
-            let mainPtr = UnsafeMutableRawPointer.allocate(byteCount: config.bytesSize, alignment: 128)
-            self.mainPtr = mainPtr
-            self.duplicatePtr = UnsafeMutableRawPointer.allocate(byteCount: config.bytesSize, alignment: 128)
+            let ptr = UnsafeMutableRawPointer.allocate(byteCount: config.bytesSize, alignment: 128)
+            self.ptr = ptr
+            
             let colorSpace = config.colorSpace
 
-            self.context = CGContext(data: mainPtr, width: Int(config.contextSize.width), height: Int(config.contextSize.height), bitsPerComponent: colorSpace.bitsPerComponent, bytesPerRow: config.bytesPerRow, space: ScheduleContext.ColorSpace.deviceRgb, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
+            
+            let bitMapPage: C2DBitMapPage_s = C2DBitMapPage_s(frame: C2DRect(origin: Point(x: 0, y: originY), size: config.contextSize), countPerRow: config.countPerRow, bytesPerPixel: colorSpace.bytesPerPixel, content: ptr)
+            self.bitMapPage = bitMapPage
+
+
+            self.context = CGContext(data: ptr, width: Int(config.contextSize.width), height: Int(config.contextSize.height), bitsPerComponent: colorSpace.bitsPerComponent, bytesPerRow: config.bytesPerRow, space: config.colorSpace.space, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
             }, releaseInfo: nil)!
             
-            self.dataProvider = CGDataProvider(dataInfo: nil, data: self.mainPtr, size: self.config.bytesSize) { (mptr, ptr, size) in
+            self.dataProvider = CGDataProvider(dataInfo: nil, data: self.ptr, size: self.config.bytesSize) { (mptr, ptr, size) in
                 print("de")
                 }!
-        
         }
+
+//        public func map(rect: CGRect, config: DrawingContext.PageConfig, originY: Int32, frames: inout [Int32: C2DBytesRange]) -> C2DRect {
+//            let scale = config.scale
+//            let x: Int32 = Int32(rect.origin.x * scale)
+//            let y: Int32 = Int32(rect.origin.y * scale)
+//            let width: Int32 = Int32(rect.size.width * scale)
+//            let height: Int32 = Int32(rect.size.height * scale)
+//
+//            var rect = C2DRect()
+//            if width > 0 {
+//                rect.origin.x = x - 1
+//                rect.size.width = width + 2
+//            } else {
+//                rect.origin.x = x + width - 2
+//                rect.size.width = width * -1 + 2
+//            }
+//            if height > 0 {
+//                rect.origin.y = y - 1
+//                rect.size.height = height + 2
+//            } else {
+//                rect.origin.y = y + height - 2
+//                rect.size.height = height * -1 + 2
+//            }
+//
+//            if config.colorSpace.bytesPerPixel < 8 {
+//                let mask = (8 / config.colorSpace.bytesPerPixel)
+//                let offset = x % mask
+//                if offset != 0 {
+//                    if x > 0 {
+//                        rect.origin.x -= offset
+//                    } else {
+//                        rect.origin.x -= offset
+//                    }
+//                    rect.size.width += offset
+//
+//
+//                }
+//            }
+//            return rect
+//        }
+
+        public func draw(_ item: Drawable) {
+            
+        }
+        
         
 //        func makeImage(x: UInt32, y: UInt32, width: UInt32, height: UInt32) -> CGImage? {
 //            let right = UInt64(x) + UInt64(width)
@@ -464,6 +410,49 @@ public class ScheduleContext {
 //        }        
     }
     
+    public class Storage {
+        public private(set) var buffer: (UnsafeMutableRawPointer, Int)
+        public var store: C2DBitMapStore_s
+        public let bytesPerPixel: Int32
+        public let contextSize: Size
+        public let bytesPerRow: Int
+        public let countPerRow: Int32
+        public let colorSpace: DrawingContext.ColorSpace
+
+        public init(boxSize: DrawingContext.BoxSize, colorSpace: DrawingContext.ColorSpace, frame: C2DRect) {
+            let width = boxSize.size.width
+            let height = width
+            self.colorSpace = colorSpace
+            let contextSize = Size(width: width, height: height)
+            self.contextSize = contextSize
+            self.bytesPerPixel = colorSpace.bytesPerPixel
+            let bytesPerRow = Int(width * colorSpace.bytesPerPixel)
+            self.bytesPerRow = bytesPerRow
+            self.countPerRow = width
+            
+            let bufferSize = bytesPerRow * Int(height)
+            let ptr = UnsafeMutableRawPointer.allocate(byteCount: bufferSize, alignment: 128)
+            self.buffer = (ptr, bufferSize)
+            
+            
+            
+        }
+        
+        
+        
+        public init(frame: C2DRect, bytesPerPixel: Int32) {
+            self.bytesPerPixel = bytesPerPixel
+            let countPerRow: Int32 = bytesPerPixel * frame.size.width
+            let page: C2DBitMapStore_s = C2DBitMapStore_s(frame: <#T##C2DRect#>, validFrame: <#T##C2DRect#>, offset: <#T##Int32#>, bytesPerRow: <#T##Int32#>, bytesPerPixel: <#T##Int32#>, content: <#T##UnsafeMutableRawPointer#>)
+            (frame: frame, countPerRow: countPerRow, bytesPerPixel: bytesPerPixel, content: ptr)
+            self.page = page
+            self.buffer = (ptr, bufferSize)
+        }
+        
+        deinit {
+            self.buffer.0.deallocate()
+        }
+    }
     
     private var drawIndex: UInt32 = 0
     private var items: [Shape] = []
@@ -475,8 +464,29 @@ public class ScheduleContext {
     
     public let drawingLayer: CALayer
 
+    public private(set) var pendingItem: Drawable? = nil
     
-    public init(config: Config) {
+    public func updatePendingItem(_ pendingItem: Drawable?) {
+        //revert
+
+        
+        self.pendingItem = pendingItem
+        
+        
+        //save
+        
+    }
+    
+    
+    
+//    private var store: Storage? = nil {
+//        Storage.init(frame: <#T##C2DRect#>, bytesPerPixel: <#T##Int32#>)
+//        let bitMapPage: C2DBitMapPage_s = C2DBitMapPage_s(frame: C2DRect(origin: Point(x: 0, y: originY), size: config.contextSize), countPerRow: config.countPerRow, bytesPerPixel: colorSpace.bytesPerPixel, content: ptr)
+//
+//    } ()
+//    public let boxBounds: BoxBounds
+
+    public init(config: DrawingContext.BoxConfig) {
         let layer = CALayer()
         self.layer = layer
         
@@ -493,19 +503,15 @@ public class ScheduleContext {
         self.size = size
     }
 
-    public func shouldBegin(event: UIEvent) -> TouchesEventHandleable? {
-        let handler = DrawingEventHandler(event: event, id: self.drawIndex)
-        self.drawIndex += 1
-        return handler
-    }
-    
+//    public func shouldBegin(event: UIEvent) -> TouchesEventHandleable? {
+//        let handler = DrawingEventHandler(event: event, id: self.drawIndex)
+//        self.drawIndex += 1
+//        return handler
+//    }
+//
     
 }
 
-public final class DrawingLayer: CALayer {
-    
-    
-}
 
 
 public protocol Stroke: class {
@@ -535,79 +541,79 @@ open class DrawingView: UIView {
 //        let layer: CALayer =
 //    }
     
-    public var drawingHandler: TouchesEventHandleable?
+    public var handler: GestureEventHandler = GestureEventHandler()
     
     
-    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let e = event else {
-            self.drawingHandler = nil
-//            super.touchesBegan(touches, with: event)
-            print("touchesBegan error: \(touches)")
-            return
-        }
-        guard let context = self.context else {
-            self.drawingHandler = nil
-//            super.touchesBegan(touches, with: event)
-            print("touchesBegan context is nil")
-            return
-        }
-        guard let handler = context.shouldBegin(event: e) else {
-            self.drawingHandler = nil
-//            super.touchesBegan(touches, with: event)
-            print("touchesBegan shouldBegin return nil")
-            return
-        }
-        self.drawingHandler = handler
-        if !handler.handleTouchesBegan(self, touches: touches, with: event) {
-            self.logTouch(touches, with: e)
-        }
-    }
-    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let e = event else {
-//            super.touchesMoved(touches, with: event)
-            print("touchesMoved error: \(touches)")
-            return
-        }
-        guard let handler = self.drawingHandler else {
-//            super.touchesMoved(touches, with: event)
-            print("touchesMoved drawingItem is nil")
-            return
-        }
-        if !handler.handleTouchesMoved(self, touches: touches, with: event) {
-            self.logTouch(touches, with: e)
-        }
-    }
-    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let e = event else {
-//            super.touchesEnded(touches, with: event)
-            print("touchesEnded error: \(touches)")
-            return
-        }
-        guard let handler = self.drawingHandler else {
-//            super.touchesEnded(touches, with: event)
-            print("touchesEnded drawingItem is nil")
-            return
-        }
-        if !handler.handleTouchesEnded(self, touches: touches, with: event) {
-            self.logTouch(touches, with: e)
-        }
-    }
-    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let e = event else {
-//            super.touchesCancelled(touches, with: event)
-            print("touchesCancelled error: \(touches)")
-            return
-        }
-        guard let handler = self.drawingHandler else {
-//            super.touchesCancelled(touches, with: event)
-            print("touchesCancelled drawingItem is nil")
-            return
-        }
-        if !handler.handleTouchesCancelled(self, touches: touches, with: event) {
-            self.logTouch(touches, with: e)
-        }
-    }
-    
+//    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let e = event else {
+//            self.drawingHandler = nil
+////            super.touchesBegan(touches, with: event)
+//            print("touchesBegan error: \(touches)")
+//            return
+//        }
+//        guard let context = self.context else {
+//            self.drawingHandler = nil
+////            super.touchesBegan(touches, with: event)
+//            print("touchesBegan context is nil")
+//            return
+//        }
+//        guard let handler = context.shouldBegin(event: e) else {
+//            self.drawingHandler = nil
+////            super.touchesBegan(touches, with: event)
+//            print("touchesBegan shouldBegin return nil")
+//            return
+//        }
+//        self.drawingHandler = handler
+//        if !handler.handleTouchesBegan(self, touches: touches, with: event) {
+//            self.logTouch(touches, with: e)
+//        }
+//    }
+//    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let e = event else {
+////            super.touchesMoved(touches, with: event)
+//            print("touchesMoved error: \(touches)")
+//            return
+//        }
+//        guard let handler = self.drawingHandler else {
+////            super.touchesMoved(touches, with: event)
+//            print("touchesMoved drawingItem is nil")
+//            return
+//        }
+//        if !handler.handleTouchesMoved(self, touches: touches, with: event) {
+//            self.logTouch(touches, with: e)
+//        }
+//    }
+//    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let e = event else {
+////            super.touchesEnded(touches, with: event)
+//            print("touchesEnded error: \(touches)")
+//            return
+//        }
+//        guard let handler = self.drawingHandler else {
+////            super.touchesEnded(touches, with: event)
+//            print("touchesEnded drawingItem is nil")
+//            return
+//        }
+//        if !handler.handleTouchesEnded(self, touches: touches, with: event) {
+//            self.logTouch(touches, with: e)
+//        }
+//    }
+//    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let e = event else {
+////            super.touchesCancelled(touches, with: event)
+//            print("touchesCancelled error: \(touches)")
+//            return
+//        }
+//        guard let handler = self.drawingHandler else {
+////            super.touchesCancelled(touches, with: event)
+//            print("touchesCancelled drawingItem is nil")
+//            return
+//        }
+//        if !handler.handleTouchesCancelled(self, touches: touches, with: event) {
+//            self.logTouch(touches, with: e)
+//        }
+//    }
+//
     open func logTouch(_ touches: Set<UITouch>, with event: UIEvent) {
 //        super.touchesCancelled(touches, with: event)
 //        self.log(item: "\(touches) \(String(describing: event))")

@@ -12,7 +12,42 @@ import UIKit
 //http://blog.sina.com.cn/s/blog_894d45e20102wwrt.html
 
 public class DrawingContext {
+    
+    var displaylink: CADisplayLink?
+    
+    func createDisplayLink() {
+        // 创建CADisplayLink
+        displaylink = CADisplayLink(target: self,
+                                    selector: #selector(DrawingContext.onDisplaylink))
+        
+        displaylink!.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
+    }
+    
+    
+//    open var timestamp: CFTimeInterval { get }
+//
+//    open var duration: CFTimeInterval { get }
+//
+//
+//    /* The next timestamp that the client should target their render for. */
+//
+//    @available(iOS 10.0, *)
+//    open var targetTimestamp: CFTimeInterval { get }
+
+    @objc func onDisplaylink(displaylink: CADisplayLink) {
+        // 打印时间戳
+//        print("current:\(CACurrentMediaTime()) linkInfo.current:\(displaylink.timestamp) linkInfo.target\(displaylink.targetTimestamp)")
+    }
+    
+    // 停止CADisplayLink
+    func stopDisplaylink() {
+        displaylink?.invalidate()
+        displaylink = nil
+    }
+    
+    
     init() {
+        self.createDisplayLink()
     }
 }
 
@@ -27,6 +62,8 @@ public struct Manager {
         return q
     }()
 
+    
+    
 
 
 }
@@ -430,82 +467,87 @@ public class SamplePointBuffer {
 }
 
 public struct TouchPoint {
-    let location: CGPoint
-    let velocity: CGPoint
-    let time: TimeInterval
+    public var location: CGPoint
+//    public var velocity: CGPoint
+    public var time: TimeInterval
+    
+    public init(location: CGPoint = CGPoint(), time: TimeInterval = 0) {
+        self.location = location
+//        self.velocity = velocity
+        self.time = time
+    }
 }
+
+public protocol TouchEventHandleable: class {
+    func begin(_ point: TouchPoint)
+    func change(_ point: TouchPoint)
+    func finish(_ point: TouchPoint)
+}
+
+public class DrawingEventHandler: TouchEventHandleable {
+    public let id: UInt32
+    public let path: UIBezierPath = UIBezierPath()
+
+    private var previousPoint: TouchPoint = TouchPoint()
+    
+    public init(id: UInt32) {
+        self.id = id
+    }
+    private func midpoint(_ p0: TouchPoint, _ p1: TouchPoint) -> CGPoint {
+        return CGPoint(x: (p0.location.x + p1.location.x) / 2.0, y: (p0.location.y + p1.location.y) / 2.0)
+    }
+    
+    public func begin(_ point: TouchPoint) {
+        self.previousPoint = point
+        self.path.move(to: point.location)
+    }
+    public func change(_ point: TouchPoint) {
+        let midPoint = self.midpoint(self.previousPoint, point);
+        self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint.location)
+        self.previousPoint = point;
+    }
+    public func finish(_ point: TouchPoint) {
+        let midPoint = self.midpoint(self.previousPoint, point);
+        self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint.location)
+        self.previousPoint = point;
+    }
+
+    
+}
+
+
 
 public final class GestureEventHandler: NSObject {
     public let panGestureRecognizer: UIPanGestureRecognizer = UIPanGestureRecognizer()
-    private var previousPoint: CGPoint = CGPoint()
     
-    public let path: UIBezierPath = UIBezierPath()
     override init() {
         super.init()
         self.panGestureRecognizer.addTarget(self, action: #selector(GestureEventHandler.handlePan))
     }
     
-    private func midpoint(_ p0: CGPoint, _ p1: CGPoint) -> CGPoint {
-        return CGPoint(x: (p0.x + p1.x) / 2.0, y: (p0.y + p1.y) / 2.0)
-    }
-    
+    public var handler: TouchEventHandleable?
+
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
         guard recognizer == self.panGestureRecognizer else {
             return
         }
-        let currentPoint = recognizer.location(in: recognizer.view)
-        let point = TouchPoint(location: currentPoint, velocity: recognizer.velocity(in: recognizer.view), time: CACurrentMediaTime())
+        let location = recognizer.location(in: recognizer.view)
+        let point = TouchPoint(location: location, velocity: recognizer.velocity(in: recognizer.view), time: CACurrentMediaTime())
 
-        let midPoint = self.midpoint(self.previousPoint, currentPoint);
-        if recognizer.state == .began {
-            self.path.move(to: currentPoint)
-        } else if recognizer.state == .changed {
-            self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint)
-        } else {
-            self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint)
+        guard let handler = self.handler else {
+            return
         }
-        self.previousPoint = currentPoint;
+        
+        if recognizer.state == .began {
+            handler.begin(point)
+        } else if recognizer.state == .changed {
+            handler.change(point)
+        } else {
+            if recognizer.state == .cancelled || recognizer.state == .ended {
+                handler.finish(point)
+            }
+        }
     }
-    
-//    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard let touch = touches.first else {
-//            return
-//        }
-//        let buffer = SamplePointBuffer()
-//        buffer.append(point: touch.location(in: self), time: touch.timestamp)
-//        self.buffer = buffer
-//    }
-//    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard let touch = touches.first else {
-//            return
-//        }
-//        if let buffer = self.buffer {
-//            buffer.append(point: touch.location(in: self), time: touch.timestamp)
-//        }
-//    }
-//    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard let touch = touches.first else {
-//            return
-//        }
-//        if let buffer = self.buffer {
-//            buffer.append(point: touch.location(in: self), time: touch.timestamp)
-//            self.append(buffer)
-//        }
-//    }
-//    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard let touch = touches.first else {
-//            return
-//        }
-//        if let buffer = self.buffer {
-//            buffer.append(point: touch.location(in: self), time: touch.timestamp)
-//            self.append(buffer)
-//        }
-//    }
-//
-//    func append(_ buffer: SamplePointBuffer) {
-//        self.buffers.append(buffer)
-//
-//    }
 }
 
 public class SamplePointView: UIView {

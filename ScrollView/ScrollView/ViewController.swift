@@ -100,6 +100,7 @@ class ViewController: UIViewController {
         v.backgroundColor = UIColor.white
         self.view.addSubview(v)
         
+        
         return
         
         
@@ -134,7 +135,7 @@ class ViewController: UIViewController {
         let w: UInt32 = 256 * 6
         let h: UInt32 = 256 * 4 * 10
         
-        var config = ScheduleContext.Config(boxSize: .preset1080x720)
+        var config = DrawingContext.Config(boxSize: .preset1080x720)
         config.backgroundColor = ScheduleContext.Color.init(little32Argb: 0x00_ff_00_00)
         let context: ScheduleContext = ScheduleContext(config: config)
         scrollView.context = context

@@ -154,6 +154,6 @@ static inline _Bool C2DEdgeInsetsEqualToEdgeInsets(C2DEdgeInsets insets1, C2DEdg
 
 
 
-
+int32_t C2DGetCachelineSize(void);
 
 #endif /* Core2D_h */

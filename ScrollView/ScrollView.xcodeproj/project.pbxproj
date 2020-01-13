@@ -44,6 +44,7 @@
 		D6C161D823CB15E700AE306A /* TMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C161D723CB15E700AE306A /* TMemory.m */; };
 		D6C161DA23CB2C4800AE306A /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161D923CB2C4800AE306A /* DrawingContext.swift */; };
 		D6C161DB23CB2D2000AE306A /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161D923CB2C4800AE306A /* DrawingContext.swift */; };
+		D6C161DD23CCCB4300AE306A /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161DC23CCCB4300AE306A /* Box.swift */; };
 		D6D45738230E864E00E1F5FB /* CoreBitMap.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D45737230E864E00E1F5FB /* CoreBitMap.c */; };
 /* End PBXBuildFile section */
 
@@ -111,6 +112,7 @@
 		D6C161D623CB15E700AE306A /* TMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TMemory.h; sourceTree = "<group>"; };
 		D6C161D723CB15E700AE306A /* TMemory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TMemory.m; sourceTree = "<group>"; };
 		D6C161D923CB2C4800AE306A /* DrawingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingContext.swift; sourceTree = "<group>"; };
+		D6C161DC23CCCB4300AE306A /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		D6D45736230E864E00E1F5FB /* CoreBitMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreBitMap.h; sourceTree = "<group>"; };
 		D6D45737230E864E00E1F5FB /* CoreBitMap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CoreBitMap.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -233,6 +235,7 @@
 				D6226CBE23C8B7A000AF40F8 /* UnsafeCache.swift */,
 				D6C161D923CB2C4800AE306A /* DrawingContext.swift */,
 				D690EEDB23CC5BC2008044A0 /* CBridge.swift */,
+				D6C161DC23CCCB4300AE306A /* Box.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -441,6 +444,7 @@
 				D63B1C53230A6BED00AFD97E /* ScrollView.swift in Sources */,
 				D63B1C492305687400AFD97E /* Responder.swift in Sources */,
 				D67F5A252306F41E00F1CE91 /* GLES.swift in Sources */,
+				D6C161DD23CCCB4300AE306A /* Box.swift in Sources */,
 				D69FCC352305370900432D18 /* ScrollViewCore.m in Sources */,
 				D6083FC9230EE12E00C09C75 /* BitmapBlock.swift in Sources */,
 				D69FCC22230536D100432D18 /* ViewController.swift in Sources */,

@@ -10,7 +10,7 @@
 #include <sys/sysctl.h>
 
 
-int32_t C2DGetCachelineSize() {
+int32_t C2DGetCachelineSize(void) {
     int name[] = {CTL_HW,HW_CACHELINE};
     size_t lineSize = 0;
     size_t sizeOfLineSize = sizeof(lineSize);

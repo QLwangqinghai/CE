@@ -14,6 +14,10 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        UIColor.init(patternImage: UIImage)
+        
+        
+        
         let mem = TMemory()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
             mem.test()

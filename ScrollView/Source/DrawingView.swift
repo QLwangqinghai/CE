@@ -361,6 +361,222 @@ public class ScheduleContext {
 //                print("de")
 //                }!
 //            return CGImage(width: Int(width), height: Int(height), bitsPerComponent: colorSpace.bitsPerComponent, bitsPerPixel: colorSpace.bitsPerPixel, bytesPerRow: config.bytesPerRow, space: DrawingContext.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+//        }
+    }
+    
+    public class Storage {
+        public private(set) var buffer: (UnsafeMutableRawPointer, Int)
+        public var store: C2DBitMapStore_s
+        public let bytesPerPixel: Int32
+        public let contextSize: Size
+        public let bytesPerRow: Int32
+        public let countPerRow: Int32
+        public let colorSpace: DrawingContext.ColorSpace
+
+        public init(boxSize: DrawingContext.BoxSize, colorSpace: DrawingContext.ColorSpace, frame: C2DRect) {
+            let width = boxSize.size.width
+            let height = width
+            self.colorSpace = colorSpace
+            let contextSize = Size(width: width, height: height)
+            self.contextSize = contextSize
+            self.bytesPerPixel = colorSpace.bytesPerPixel
+            let bytesPerRow = width * colorSpace.bytesPerPixel
+            self.bytesPerRow = bytesPerRow
+            self.countPerRow = width
+            
+            let bufferSize = Int(bytesPerRow * height)
+            let ptr = UnsafeMutableRawPointer.allocate(byteCount: bufferSize, alignment: 128)
+            self.buffer = (ptr, bufferSize)
+            
+            let countPerRow: Int32 = bytesPerPixel * frame.size.width
+            let store: C2DBitMapStore_s = C2DBitMapStore_s(frame: frame, validFrame: C2DRect(), offset: 0, bytesPerRow: countPerRow, bytesPerPixel: colorSpace.bytesPerPixel, content: ptr)
+            self.store = store
+        }
+        
+        deinit {
+            self.buffer.0.deallocate()
+        }
+    }
+    
+    private var drawIndex: UInt32 = 0
+    private var items: [Shape] = []
+
+    
+    public let layer: CALayer
+    public let backgroundImageLayer: CALayer
+    public let size: CGSize
+    
+    public let drawingLayer: CALayer
+
+    public private(set) var pendingItem: Drawable? = nil
+    
+    public func updatePendingItem(_ pendingItem: Drawable?) {
+        //revert
+
+        
+        self.pendingItem = pendingItem
+        
+        
+        //save
+        
+    }
+    
+    
+    
+//    private var store: Storage? = nil {
+//        Storage.init(frame: <#T##C2DRect#>, bytesPerPixel: <#T##Int32#>)
+//        let bitMapPage: C2DBitMapPage_s = C2DBitMapPage_s(frame: C2DRect(origin: Point(x: 0, y: originY), size: config.contextSize), countPerRow: config.countPerRow, bytesPerPixel: colorSpace.bytesPerPixel, content: ptr)
+//
+//    } ()
+//    public let boxBounds: BoxBounds
+
+    public init(config: DrawingContext.BoxConfig) {
+        let layer = CALayer()
+        self.layer = layer
+        
+        let drawingLayer = CALayer()
+        self.drawingLayer = drawingLayer
+        
+        let scale = UIScreen.main.scale
+        let size = CGSize(width: CGFloat(config.boxSize.size.width) / scale, height: CGFloat(config.boxSize.size.height) / scale)
+
+        let frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        layer.frame = frame
+        
+        self.backgroundImageLayer = CALayer()
+        self.size = size
+    }
+
+//    public func shouldBegin(event: UIEvent) -> TouchesEventHandleable? {
+//        let handler = DrawingEventHandler(event: event, id: self.drawIndex)
+//        self.drawIndex += 1
+//        return handler
+//    }
+//
+    
+}
+
+
+
+
+
+public class ScheduleContext {
+
+    
+   /*
+     RGB
+     16 bpp, 5 bpc, kCGImageAlphaNoneSkipFirst
+     Mac OS X, iOS
+     RGB
+     32 bpp, 8 bpc, kCGImageAlphaNoneSkipFirst
+     Mac OS X, iOS
+     RGB
+     32 bpp, 8 bpc, kCGImageAlphaNoneSkipLast
+     Mac OS X, iOS
+     RGB
+     32 bpp, 8 bpc, kCGImageAlphaPremultipliedFirst
+     Mac OS X, iOS
+     RGB
+     32 bpp, 8 bpc, kCGImageAlphaPremultipliedLast
+     Mac OS X, iOS
+     */ //https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_context/dq_context.html#//apple_ref/doc/uid/TP30001066-CH203-BCIBHHBB
+    public struct Color {
+        public let color32: UInt32
+        public let color16: UInt16
+        public init(little32Argb: UInt32) {
+            self.color32 = little32Argb
+            let a = little32Argb & 0xf0_00_00_00
+            let r = little32Argb & 0x00_f0_00_00
+            let g = little32Argb & 0x00_00_f0_00
+            let b = little32Argb & 0x00_00_00_f0
+            self.color16 = UInt16(clamping: (a >> 16) + (r >> 12) + (g >> 8) + (b >> 4))
+        }
+        public init(little16Argb: UInt16) {
+            self.color16 = little16Argb
+            let c: UInt32 = UInt32(little16Argb)
+            let a = c & 0x00_00_f0_00
+            let r = c & 0x00_00_0f_00
+            let g = c & 0x00_00_00_f0
+            let b = c & 0x00_00_00_0f
+            self.color32 = ((a << 16) + (r << 12) + (g << 8) + (b << 4))
+        }
+    }
+    
+    public class Item {
+        public let origin: Point
+        public let size: Size
+        public init(origin: Point, size: Size) {
+            self.origin = origin
+            self.size = size
+        }
+    }
+    
+    public class BitMapPage {
+        public class BitMapLineBuffer {
+            public var buffer: [C2DBytesRange] = []
+            
+            public func append(_ range: C2DBytesRange) {
+                self.buffer.append(range)
+            }
+        }
+        
+        
+        public let config: DrawingContext.PageConfig
+
+        public let ptr: UnsafeMutableRawPointer
+        public let bitMapPage: C2DBitMapPage_s
+        public let context: CGContext
+        public let dataProvider: CGDataProvider
+
+        public let layer: CALayer
+        public let originY: Int32
+        
+        
+        public init(config: DrawingContext.PageConfig, originY: Int32) {
+            self.config = config
+            self.layer = CALayer()
+            let ptr = UnsafeMutableRawPointer.allocate(byteCount: config.bytesSize, alignment: 128)
+            self.ptr = ptr
+            
+            let colorSpace = config.colorSpace
+
+            
+            let bitMapPage: C2DBitMapPage_s = C2DBitMapPage_s(frame: C2DRect(origin: Point(x: 0, y: originY), size: config.contextSize), countPerRow: config.countPerRow, bytesPerPixel: colorSpace.bytesPerPixel, content: ptr)
+            self.bitMapPage = bitMapPage
+
+
+            self.context = CGContext(data: ptr, width: Int(config.contextSize.width), height: Int(config.contextSize.height), bitsPerComponent: colorSpace.bitsPerComponent, bytesPerRow: config.bytesPerRow, space: config.colorSpace.space, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
+            }, releaseInfo: nil)!
+            
+            self.dataProvider = CGDataProvider(dataInfo: nil, data: self.ptr, size: self.config.bytesSize) { (mptr, ptr, size) in
+                print("de")
+                }!
+        }
+
+
+        public func draw(_ item: Drawable) {
+            
+        }
+        
+        
+//        func makeImage(x: UInt32, y: UInt32, width: UInt32, height: UInt32) -> CGImage? {
+//            let right = UInt64(x) + UInt64(width)
+//            let bottom = UInt64(y) + UInt64(height)
+//            if right > UInt64(self.config.width) {
+//                return nil
+//            }
+//            if bottom > UInt64(self.config.height) {
+//                return nil
+//            }
+//            let config = self.config
+//            let colorSpace = config.colorSpace
+//            let bitmapInfo: UInt32 = colorSpace.bitmapInfo
+//
+//            let offset = config.bytesPerRow * Int(y) + Int(colorSpace.bytesPerPixel * x)
+//            let dataProvider = CGDataProvider(dataInfo: nil, data: self.mainPtr.advanced(by: offset), size: self.config.bufferSize - offset) { (mptr, ptr, size) in
+//                print("de")
+//                }!
+//            return CGImage(width: Int(width), height: Int(height), bitsPerComponent: colorSpace.bitsPerComponent, bitsPerPixel: colorSpace.bitsPerPixel, bytesPerRow: config.bytesPerRow, space: DrawingContext.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
 //        }        
     }
     

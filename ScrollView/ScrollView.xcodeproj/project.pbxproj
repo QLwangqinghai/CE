@@ -27,6 +27,7 @@
 		D67F5A252306F41E00F1CE91 /* GLES.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F5A242306F41E00F1CE91 /* GLES.swift */; };
 		D68098BE23C34CC1007B3086 /* Memory.m in Sources */ = {isa = PBXBuildFile; fileRef = D68098BD23C34CC1007B3086 /* Memory.m */; };
 		D68FE43D23C063070066DD77 /* DrawViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68FE43C23C063070066DD77 /* DrawViewController.swift */; };
+		D690EEDC23CC5BC2008044A0 /* CBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D690EEDB23CC5BC2008044A0 /* CBridge.swift */; };
 		D6974FCE23C57A240088FB3C /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D6974FCD23C57A240088FB3C /* Test.m */; };
 		D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC1F230536D100432D18 /* AppDelegate.swift */; };
 		D69FCC22230536D100432D18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCC21230536D100432D18 /* ViewController.swift */; };
@@ -84,6 +85,7 @@
 		D68098BC23C34CC1007B3086 /* Memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Memory.h; sourceTree = "<group>"; };
 		D68098BD23C34CC1007B3086 /* Memory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Memory.m; sourceTree = "<group>"; };
 		D68FE43C23C063070066DD77 /* DrawViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawViewController.swift; sourceTree = "<group>"; };
+		D690EEDB23CC5BC2008044A0 /* CBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBridge.swift; sourceTree = "<group>"; };
 		D6974FCC23C57A240088FB3C /* Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
 		D6974FCD23C57A240088FB3C /* Test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
 		D6974FCF23C5A6760088FB3C /* SamplePointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplePointView.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				D6974FCF23C5A6760088FB3C /* SamplePointView.swift */,
 				D6226CBE23C8B7A000AF40F8 /* UnsafeCache.swift */,
 				D6C161D923CB2C4800AE306A /* DrawingContext.swift */,
+				D690EEDB23CC5BC2008044A0 /* CBridge.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -433,6 +436,7 @@
 				D68FE43D23C063070066DD77 /* DrawViewController.swift in Sources */,
 				D63B1C6D230AD1F800AFD97E /* Core2D.c in Sources */,
 				D6226C8323C2308600AF40F8 /* Log.swift in Sources */,
+				D690EEDC23CC5BC2008044A0 /* CBridge.swift in Sources */,
 				D63B1C472305685200AFD97E /* View.swift in Sources */,
 				D63B1C53230A6BED00AFD97E /* ScrollView.swift in Sources */,
 				D63B1C492305687400AFD97E /* Responder.swift in Sources */,

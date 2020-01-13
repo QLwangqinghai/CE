@@ -14,11 +14,6 @@ import UIKit
 public class DrawingContext {
     
     
-    
-    
-    
-    
-    
     var displaylink: CADisplayLink?
     
     func createDisplayLink() {
@@ -67,6 +62,12 @@ extension DrawingContext {
     video: 4 * 3
     video: 3 * 2
 
+     3/3/5 45 720
+     3/5 60 960
+     3/5 75 1200
+     3/5 80 1280
+
+     
     width: 720、810、960、1080、1280、1440、1620、1920
            6    7   8    9     10    12   13    1
     960 * 540

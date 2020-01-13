@@ -15,9 +15,9 @@
 #include <stdatomic.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 #include "Core2D.h"
-
 
 
 // 2 3 3 5 7 
@@ -124,9 +124,64 @@ typedef struct {
     void * _Nonnull content;
 } C2DBitMapStore_s;
 
-static inline void C2DBitMapStoreResetFrame(C2DBitMapStore_s * _Nonnull store, C2DRect frame) {
-    
-    
+typedef struct {
+    C2DRect frame;
+    int32_t count;
+    C2DRect newlys[4];
+} C2DRectEnlargeChanges_s;
+
+static inline C2DRectEnlargeChanges_s C2DRectEnlargeFrame(C2DRect from, C2DRect to) {
+    C2DRectEnlargeChanges_s result = {};
+    if (from.size.width < 0) {
+        from.origin.x += from.size.width;
+        from.size.width *= -1;
+    }
+    if (from.size.height < 0) {
+        from.origin.y += from.size.height;
+        from.size.height *= -1;
+    }
+    if (to.size.width < 0) {
+        to.origin.x += to.size.width;
+        to.size.width *= -1;
+    }
+    if (to.size.height < 0) {
+        to.origin.y += to.size.height;
+        to.size.height *= -1;
+    }
+    int32_t minX = MIN(from.origin.x, to.origin.x);
+    int32_t minY = MIN(from.origin.y, to.origin.y);
+    int32_t maxX = MAX(from.origin.x + from.size.width, to.origin.x + to.size.width);
+    int32_t maxY = MAX(from.origin.y + from.size.height, to.origin.y + to.size.height);
+    if ((from.size.width == 0 || from.size.height == 0) && (to.size.width == 0 || to.size.height == 0)) {
+        return result;
+    }
+    if (from.size.width == 0 || from.size.height == 0) {
+        result.frame = to;
+        return result;
+    }
+    if (to.size.width == 0 || to.size.height == 0) {
+        result.frame = from;
+        result.newlys[result.count] = to;
+        result.count += 1;
+        return result;
+    }
+    if (minY < from.origin.y) {
+        result.newlys[result.count] = C2DRectMake(minX, minY, maxX - minX, from.origin.y - minY);
+        result.count += 1;
+    }
+    if (minX < from.origin.x) {
+        result.newlys[result.count] = C2DRectMake(minX, from.origin.y, from.origin.x - minX, from.size.height);
+        result.count += 1;
+    }
+    if (maxX > from.origin.x + from.size.width) {
+        result.newlys[result.count] = C2DRectMake(from.origin.x + from.size.width, from.origin.y, maxX - (from.origin.x + from.size.width), from.size.height);
+        result.count += 1;
+    }
+    if (maxY > from.origin.y + from.size.height) {
+        result.newlys[result.count] = C2DRectMake(minX, from.origin.y + from.size.height, maxX - minX, maxY - (from.origin.y + from.size.height));
+        result.count += 1;
+    }
+    return result;
 }
 
 static inline void C2DBitMapStoreClear(C2DBitMapStore_s * _Nonnull store) {
@@ -134,7 +189,7 @@ static inline void C2DBitMapStoreClear(C2DBitMapStore_s * _Nonnull store) {
     
 }
 
-static inline void C2DBitMapStoreUpdateContentOffsetY(C2DBitMapStore_s * _Nonnull store, int32_t contentOffsetY) {
+static inline void C2DBitMapStoreUpdateOriginY(C2DBitMapStore_s * _Nonnull store, int32_t contentOffsetY) {
     
     
 }

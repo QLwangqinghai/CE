@@ -123,13 +123,6 @@ public final class DrawingLayer: CALayer {
         self.path.addQuadCurve(to: midPoint, controlPoint: previousPoint.location)
         self.previousPoint = point;
     }
-    
-    
-    optional func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
-
-    
 }
 
 
@@ -344,45 +337,6 @@ public class ScheduleContext {
                 }!
         }
 
-//        public func map(rect: CGRect, config: DrawingContext.PageConfig, originY: Int32, frames: inout [Int32: C2DBytesRange]) -> C2DRect {
-//            let scale = config.scale
-//            let x: Int32 = Int32(rect.origin.x * scale)
-//            let y: Int32 = Int32(rect.origin.y * scale)
-//            let width: Int32 = Int32(rect.size.width * scale)
-//            let height: Int32 = Int32(rect.size.height * scale)
-//
-//            var rect = C2DRect()
-//            if width > 0 {
-//                rect.origin.x = x - 1
-//                rect.size.width = width + 2
-//            } else {
-//                rect.origin.x = x + width - 2
-//                rect.size.width = width * -1 + 2
-//            }
-//            if height > 0 {
-//                rect.origin.y = y - 1
-//                rect.size.height = height + 2
-//            } else {
-//                rect.origin.y = y + height - 2
-//                rect.size.height = height * -1 + 2
-//            }
-//
-//            if config.colorSpace.bytesPerPixel < 8 {
-//                let mask = (8 / config.colorSpace.bytesPerPixel)
-//                let offset = x % mask
-//                if offset != 0 {
-//                    if x > 0 {
-//                        rect.origin.x -= offset
-//                    } else {
-//                        rect.origin.x -= offset
-//                    }
-//                    rect.size.width += offset
-//
-//
-//                }
-//            }
-//            return rect
-//        }
 
         public func draw(_ item: Drawable) {
             
@@ -415,7 +369,7 @@ public class ScheduleContext {
         public var store: C2DBitMapStore_s
         public let bytesPerPixel: Int32
         public let contextSize: Size
-        public let bytesPerRow: Int
+        public let bytesPerRow: Int32
         public let countPerRow: Int32
         public let colorSpace: DrawingContext.ColorSpace
 
@@ -426,27 +380,17 @@ public class ScheduleContext {
             let contextSize = Size(width: width, height: height)
             self.contextSize = contextSize
             self.bytesPerPixel = colorSpace.bytesPerPixel
-            let bytesPerRow = Int(width * colorSpace.bytesPerPixel)
+            let bytesPerRow = width * colorSpace.bytesPerPixel
             self.bytesPerRow = bytesPerRow
             self.countPerRow = width
             
-            let bufferSize = bytesPerRow * Int(height)
+            let bufferSize = Int(bytesPerRow * height)
             let ptr = UnsafeMutableRawPointer.allocate(byteCount: bufferSize, alignment: 128)
             self.buffer = (ptr, bufferSize)
             
-            
-            
-        }
-        
-        
-        
-        public init(frame: C2DRect, bytesPerPixel: Int32) {
-            self.bytesPerPixel = bytesPerPixel
             let countPerRow: Int32 = bytesPerPixel * frame.size.width
-            let page: C2DBitMapStore_s = C2DBitMapStore_s(frame: <#T##C2DRect#>, validFrame: <#T##C2DRect#>, offset: <#T##Int32#>, bytesPerRow: <#T##Int32#>, bytesPerPixel: <#T##Int32#>, content: <#T##UnsafeMutableRawPointer#>)
-            (frame: frame, countPerRow: countPerRow, bytesPerPixel: bytesPerPixel, content: ptr)
-            self.page = page
-            self.buffer = (ptr, bufferSize)
+            let store: C2DBitMapStore_s = C2DBitMapStore_s(frame: frame, validFrame: C2DRect(), offset: 0, bytesPerRow: countPerRow, bytesPerPixel: colorSpace.bytesPerPixel, content: ptr)
+            self.store = store
         }
         
         deinit {
@@ -626,7 +570,52 @@ open class DrawingView: UIView {
     }
     
 
-    
+    public func map(frame: CGRect, config: DrawingContext.PageConfig, originY: Int32, frames: inout [Int32: C2DBytesRange]) -> C2DRect? {
+        var tmp = frame.standardized
+        
+        let scale = config.scale
+        var bounds = C2DRectMake(Int32(tmp.origin.x * scale) - 1, Int32(tmp.origin.y * scale) - 1, Int32(tmp.size.width * scale) + 2, Int32(tmp.size.height * scale) + 2)
+        let m = C2DRectMake(0, 0, config.contextSize.width, INT32_MAX)
+        
+        if !C2DRectIntersect(m, bounds, &bounds) {
+            return nil
+        }
+        
+//        bounds = C2DRectEnlargeFrame(<#T##from: C2DRect##C2DRect#>, <#T##to: C2DRect##C2DRect#>)
+        if bounds.origin.x % 2 != 0 {
+            bounds.origin.x -= 1
+            bounds.size.width += 1
+        }
+        if bounds.origin.y % 2 != 0 {
+            bounds.origin.y -= 1
+            bounds.size.height += 1
+        }
+        if bounds.size.width % 2 != 0 {
+            bounds.size.width += 1
+        }
+        if bounds.size.height % 2 != 0 {
+            bounds.size.height += 1
+        }
+        
+        var rect = C2DRect()
+        if rect.origin.x < 0 {
+            rect.size.width += rect.origin.x
+            rect.origin.x = 0
+        }
+        if rect.origin.y < 0 {
+            rect.origin.y = 0
+        }
+        
+        if config.colorSpace.bytesPerPixel < 8 {
+            let mask = (8 / config.colorSpace.bytesPerPixel)
+            let offset = x % mask
+            if offset != 0 {
+                rect.origin.x -= offset
+                rect.size.width += offset
+            }
+        }
+        return rect
+    }
     
     
 //    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

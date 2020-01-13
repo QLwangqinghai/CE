@@ -13,6 +13,14 @@
 #include <stdbool.h>
 
 
+#if !defined(MIN)
+    #define MIN(A,B)    ({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __a : __b; })
+#endif
+
+#if !defined(MAX)
+    #define MAX(A,B)    ({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __b : __a; })
+#endif
+
 typedef struct {
     int32_t x;
     int32_t y;
@@ -36,6 +44,64 @@ typedef struct {
     C2DSize size;
 } C2DRect;
 
+static inline C2DRect C2DRectStandardize(C2DRect rect) {
+    if (rect.size.width < 0) {
+        rect.origin.x += rect.size.width;
+        rect.size.width *= -1;
+    }
+    if (rect.size.height < 0) {
+        rect.origin.y += rect.size.height;
+        rect.size.height *= -1;
+    }
+    return rect;
+}
+
+//并集
+static inline _Bool C2DRectUnion(C2DRect rect, C2DRect rect1, C2DRect * _Nonnull result) {
+    rect = C2DRectStandardize(rect);
+    rect1 = C2DRectStandardize(rect1);
+    C2DRect tmp = {};
+    tmp.origin.x = MIN(rect.origin.x, rect1.origin.x);
+    tmp.origin.y = MIN(rect.origin.y, rect1.origin.y);
+    tmp.size.width = MAX(rect.origin.x + rect.size.width, rect1.origin.x + rect1.size.width) - tmp.origin.x;
+    tmp.size.height = MAX(rect.origin.y + rect.size.height, rect1.origin.y + rect1.size.height) - tmp.origin.y;
+    if (tmp.size.width > 0 && tmp.size.height > 0) {
+        *result = tmp;
+        return true;
+    }
+    return false;
+}
+
+//交集
+static inline _Bool C2DRectIntersect(C2DRect rect, C2DRect rect1, C2DRect * _Nonnull result) {
+    rect = C2DRectStandardize(rect);
+    rect1 = C2DRectStandardize(rect1);
+    C2DRect tmp = {};
+    tmp.origin.x = MAX(rect.origin.x, rect1.origin.x);
+    tmp.origin.y = MAX(rect.origin.y, rect1.origin.y);
+    tmp.size.width = MIN(rect.origin.x + rect.size.width, rect1.origin.x + rect1.size.width) - tmp.origin.x;
+    tmp.size.height = MIN(rect.origin.y + rect.size.height, rect1.origin.y + rect1.size.height) - tmp.origin.y;
+    if (tmp.size.width > 0 && tmp.size.height > 0) {
+        *result = tmp;
+        return true;
+    }
+    return false;
+}
+
+
+static inline C2DRect C2DRectMake(int32_t x, int32_t y, int32_t width, int32_t height) {
+    C2DRect result = {
+        .origin = {
+            .x = x,
+            .y = y,
+        },
+        .size = {
+            .width = width,
+            .height = height,
+        },
+    };
+    return result;
+}
 
 typedef struct {
     int32_t location;
@@ -43,6 +109,8 @@ typedef struct {
 } C2DBytesRange;
 
 static inline _Bool C2DRectEqualRect(C2DRect lhs, C2DRect rhs) {
+    lhs = C2DRectStandardize(lhs);
+    rhs = C2DRectStandardize(rhs);
     return C2DPointEqualPoint(lhs.origin, rhs.origin) && C2DSizeEqualSize(lhs.size, rhs.size);
 }
 

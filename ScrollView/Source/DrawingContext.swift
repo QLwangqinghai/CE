@@ -63,9 +63,9 @@ extension DrawingContext {
     video: 3 * 2
 
      3/3/5 45 720
-     3/5 60 960
-     3/5 75 1200
-     3/5 80 1280
+     3/5   60 960
+     3/5   75 1200
+     3/5   80 1280
 
      
     width: 720、810、960、1080、1280、1440、1620、1920
@@ -85,19 +85,21 @@ extension DrawingContext {
     //72 54 108  180 * 4 180 * 3 180 * 6
 
     */
-
-    
     public enum BoxSize {
-        case preset720x540
+        
         case preset960x540
+        
+        //good
         case preset960x720
         case preset1280x720
         case preset1280x1080
+        
+        //good
         case preset1440x1080
         case preset1920x1080
+        
         var size: Size {
             switch self {
-            case .preset720x540: return Size(width: 720, height: 540)
             case .preset960x540: return Size(width: 960, height: 540)
             case .preset960x720: return Size(width: 960, height: 720)
             case .preset1280x720: return Size(width: 1280, height: 720)
@@ -107,43 +109,55 @@ extension DrawingContext {
             }
         }
     }
-    
-    public class PageConfig {
-        public let contextSize: Size
-        public let bytesSize: Int
-        public let bytesPerRow: Int
-        public let countPerRow: Int32
-        public let colorSpace: ColorSpace
-        public let scale: CGFloat
 
-        public init(boxSize: BoxSize, colorSpace: ColorSpace, scale: CGFloat) {
-            let width = boxSize.size.width
-            let height = width * 4
-            self.scale = scale
-            self.colorSpace = colorSpace
-            let contextSize = Size(width: width, height: height)
-            self.contextSize = contextSize
-            let bytesPerRow = Int(width * colorSpace.bytesPerPixel)
-            self.bytesPerRow = bytesPerRow
-            self.countPerRow = width
-            let bytesSize = bytesPerRow * Int(height)
-            self.bytesSize = bytesSize
-        }
-    }
     
     public struct BoxConfig {
         public let boxSize: BoxSize
-        public let page: PageConfig
         public let colorSpace: ColorSpace
         public let scale: CGFloat
+        public let backgroundColor: Color
+
+        public let bytesPerRow: Int
+        public let countPerRow: Int32
 
 //        public var backgroundColor: Color = Color(little32Argb: 0)
         
-        public init(boxSize: BoxSize, scale: CGFloat = UIScreen.main.scale, colorSpace: ColorSpace = .little32Argb) {
+        public init(boxSize: BoxSize, scale: CGFloat = UIScreen.main.scale, backgroundColor: Color = Color(little32Argb: 0x00_ff_ff_ff) , colorSpace: ColorSpace = .little32Argb) {
             self.boxSize = boxSize
             self.scale = scale
-            self.page = PageConfig(boxSize: boxSize, colorSpace: colorSpace, scale: scale)
+            let width = boxSize.size.width
+            self.bytesPerRow = Int(width * colorSpace.bytesPerPixel)
+            self.countPerRow = width
             self.colorSpace = colorSpace
+            self.backgroundColor = backgroundColor
+        }
+    }
+    
+   /*
+     RGB
+     16 bpp, 5 bpc, kCGImageAlphaNoneSkipFirst
+     Mac OS X, iOS
+     RGB
+     32 bpp, 8 bpc, kCGImageAlphaNoneSkipFirst
+     Mac OS X, iOS
+     RGB
+     32 bpp, 8 bpc, kCGImageAlphaNoneSkipLast
+     Mac OS X, iOS
+     RGB
+     32 bpp, 8 bpc, kCGImageAlphaPremultipliedFirst
+     Mac OS X, iOS
+     RGB
+     32 bpp, 8 bpc, kCGImageAlphaPremultipliedLast
+     Mac OS X, iOS
+     */ //https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_context/dq_context.html#//apple_ref/doc/uid/TP30001066-CH203-BCIBHHBB
+    public struct Color {
+        public let color32: UInt32
+        public init(little32Argb: UInt32) {
+            self.color32 = little32Argb
+//            let a = little32Argb & 0xf0_00_00_00
+//            let r = little32Argb & 0x00_f0_00_00
+//            let g = little32Argb & 0x00_00_f0_00
+//            let b = little32Argb & 0x00_00_00_f0
         }
     }
     
@@ -152,31 +166,31 @@ extension DrawingContext {
         //android 只有argb模式
         
         case little32Argb = 1
-        case little16Xrgb = 2
+//        case little16Xrgb = 2
         public static let deviceRgb: CGColorSpace = CGColorSpaceCreateDeviceRGB()
 
         public var bytesPerPixel: Int32 {
             switch self {
             case .little32Argb:
                 return 4
-            case .little16Xrgb:
-                return 2
+//            case .little16Xrgb:
+//                return 2
             }
         }
         public var bitsPerComponent: Int {
             switch self {
             case .little32Argb:
                 return 8
-            case .little16Xrgb:
-                return 5
+//            case .little16Xrgb:
+//                return 5
             }
         }
         public var bitsPerPixel: Int {
             switch self {
             case .little32Argb:
                 return 32
-            case .little16Xrgb:
-                return 16
+//            case .little16Xrgb:
+//                return 16
             }
         }
         
@@ -188,8 +202,8 @@ extension DrawingContext {
             switch self {
             case .little32Argb:
                 return CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue
-            case .little16Xrgb:
-                return CGBitmapInfo.byteOrder16Little.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue
+//            case .little16Xrgb:
+//                return CGBitmapInfo.byteOrder16Little.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue
             }
         }
     }

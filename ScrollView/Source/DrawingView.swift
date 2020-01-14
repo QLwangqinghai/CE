@@ -462,46 +462,6 @@ public class ScheduleContext {
 
 public class ScheduleContext {
 
-    
-   /*
-     RGB
-     16 bpp, 5 bpc, kCGImageAlphaNoneSkipFirst
-     Mac OS X, iOS
-     RGB
-     32 bpp, 8 bpc, kCGImageAlphaNoneSkipFirst
-     Mac OS X, iOS
-     RGB
-     32 bpp, 8 bpc, kCGImageAlphaNoneSkipLast
-     Mac OS X, iOS
-     RGB
-     32 bpp, 8 bpc, kCGImageAlphaPremultipliedFirst
-     Mac OS X, iOS
-     RGB
-     32 bpp, 8 bpc, kCGImageAlphaPremultipliedLast
-     Mac OS X, iOS
-     */ //https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_context/dq_context.html#//apple_ref/doc/uid/TP30001066-CH203-BCIBHHBB
-    public struct Color {
-        public let color32: UInt32
-        public let color16: UInt16
-        public init(little32Argb: UInt32) {
-            self.color32 = little32Argb
-            let a = little32Argb & 0xf0_00_00_00
-            let r = little32Argb & 0x00_f0_00_00
-            let g = little32Argb & 0x00_00_f0_00
-            let b = little32Argb & 0x00_00_00_f0
-            self.color16 = UInt16(clamping: (a >> 16) + (r >> 12) + (g >> 8) + (b >> 4))
-        }
-        public init(little16Argb: UInt16) {
-            self.color16 = little16Argb
-            let c: UInt32 = UInt32(little16Argb)
-            let a = c & 0x00_00_f0_00
-            let r = c & 0x00_00_0f_00
-            let g = c & 0x00_00_00_f0
-            let b = c & 0x00_00_00_0f
-            self.color32 = ((a << 16) + (r << 12) + (g << 8) + (b << 4))
-        }
-    }
-    
     public class Item {
         public let origin: Point
         public let size: Size

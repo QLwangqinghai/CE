@@ -8,7 +8,7 @@
 
 import Foundation
 
-//public typealias Rect = C2DRect
+public typealias Rect = C2DRect
 public typealias Size = C2DSize
 public typealias Point = C2DPoint
 

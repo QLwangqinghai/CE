@@ -45,6 +45,7 @@
 		D6C161DA23CB2C4800AE306A /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161D923CB2C4800AE306A /* DrawingContext.swift */; };
 		D6C161DB23CB2D2000AE306A /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161D923CB2C4800AE306A /* DrawingContext.swift */; };
 		D6C161DD23CCCB4300AE306A /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161DC23CCCB4300AE306A /* Box.swift */; };
+		D6C161DF23CF507800AE306A /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161DE23CF507800AE306A /* Controller.swift */; };
 		D6D45738230E864E00E1F5FB /* CoreBitMap.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D45737230E864E00E1F5FB /* CoreBitMap.c */; };
 /* End PBXBuildFile section */
 
@@ -113,6 +114,7 @@
 		D6C161D723CB15E700AE306A /* TMemory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TMemory.m; sourceTree = "<group>"; };
 		D6C161D923CB2C4800AE306A /* DrawingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingContext.swift; sourceTree = "<group>"; };
 		D6C161DC23CCCB4300AE306A /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
+		D6C161DE23CF507800AE306A /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		D6D45736230E864E00E1F5FB /* CoreBitMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreBitMap.h; sourceTree = "<group>"; };
 		D6D45737230E864E00E1F5FB /* CoreBitMap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CoreBitMap.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -236,6 +238,7 @@
 				D6C161D923CB2C4800AE306A /* DrawingContext.swift */,
 				D690EEDB23CC5BC2008044A0 /* CBridge.swift */,
 				D6C161DC23CCCB4300AE306A /* Box.swift */,
+				D6C161DE23CF507800AE306A /* Controller.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -449,6 +452,7 @@
 				D6083FC9230EE12E00C09C75 /* BitmapBlock.swift in Sources */,
 				D69FCC22230536D100432D18 /* ViewController.swift in Sources */,
 				D69FCC20230536D100432D18 /* AppDelegate.swift in Sources */,
+				D6C161DF23CF507800AE306A /* Controller.swift in Sources */,
 				D6226CBF23C8B7A000AF40F8 /* UnsafeCache.swift in Sources */,
 				D6226CB823C6225400AF40F8 /* SamplePointView.swift in Sources */,
 				D64E0429231D361F0036F348 /* DrawingView.swift in Sources */,

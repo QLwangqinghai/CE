@@ -8,35 +8,62 @@
 
 import Foundation
 
-public class Box: UIView {
+public class BoxView: UIView {
     public override init(frame: CGRect) {
         super.init(frame: frame)
     }
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+    
+//    public init(config: DrawingContext.BoxConfig) {}
+
 }
 
-public class Slice: NSObject {
-    public let backgroundColor: UIColor
-    public private(set) var backgroundImage: UIImage?
-    public let fillColor: DrawingContext.Color
-    public init(fillColor: DrawingContext.Color, backgroundColor: UIColor = UIColor.white, backgroundImage: UIImage? = nil) {
-        self.fillColor = fillColor
-        self.backgroundColor = backgroundColor
-        self.backgroundImage = backgroundImage
-    }
-}
 
-public class PageContext: NSObject {
-    public let fillColor: DrawingContext.Color
-    public init(fillColor: DrawingContext.Color) {
-        self.fillColor = fillColor
+// MARK: - model
+
+public class Box: NSObject {
+    let config: DrawingContext.BoxConfig
+    
+    public let pages: [Page]
+    public init?(config: DrawingContext.BoxConfig, pages: [Page]) {
+        guard config.scale >= 0.1, config.scale <= 10, !pages.isEmpty else {
+            return nil
+        }
+        self.config = config
+        self.pages = pages
+        super.init()
     }
 }
 
 public class Page: NSObject {
     public private(set) var context: PageContext?
     
+    public let identifer: Int = 0
     
 }
+public class Slice: NSObject {
+    public init(frame: C2DRect) {
+
+    }
+}
+
+public class BoxContext: NSObject {
+    public let backgroundColor: UIColor
+    public init(backgroundColor: UIColor) {
+        self.backgroundColor = backgroundColor
+    }
+}
+public class PageContext: NSObject {
+    public let backgroundColor: UIColor
+    public init(backgroundColor: UIColor) {
+        self.backgroundColor = backgroundColor
+    }
+}
+public class SliceContext: NSObject {
+    public init(frame: C2DRect) {
+
+    }
+}
+

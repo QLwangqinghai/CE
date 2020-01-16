@@ -20,12 +20,32 @@ public class BoxView: UIView {
 
 }
 
+public class DrawingBoardController {
+    public struct BoxConfig {
+        public let colorSpace: DrawingContext.ColorSpace
+        public let backgroundColor: DrawingContext.Color
+        public init(backgroundColor: DrawingContext.Color = DrawingContext.Color(little32Argb: 0x00_ff_ff_ff) , colorSpace: DrawingContext.ColorSpace = .little32Argb) {
+            self.colorSpace = colorSpace
+            self.backgroundColor = backgroundColor
+        }
+    }
+
+    
+    public let config: DrawingContext.BoxConfig
+    public let width: Int32
+    public let height: Int32
+
+    public init(width: Int32, height:Int32, config: DrawingContext.BoxConfig) {
+        self.config = config
+    }
+    
+}
+
 
 // MARK: - model
 
 public class Box: NSObject {
-    let config: DrawingContext.BoxConfig
-    
+    public let config: DrawingContext.BoxConfig
     public let pages: [Page]
     public init?(config: DrawingContext.BoxConfig, pages: [Page]) {
         guard config.scale >= 0.1, config.scale <= 10, !pages.isEmpty else {

@@ -45,7 +45,7 @@ public class Page: NSObject {
     
 }
 public class Slice: NSObject {
-    public init(frame: C2DRect) {
+    public init(y: Int32) {
 
     }
 }

@@ -9,51 +9,75 @@
 import Foundation
 
 
+//public class SliceCollection {
+//    private class Row {
+//        public let slices: [Slice]
+//        public init(slices: [Slice]) {
+//            self.slices = slices
+//        }
+//    }
+//    private let rows: [Row]
+//
+//    private let slicesSize: C2DSize
+//    public init?(size: C2DSize, slicesSize: C2DSize) {
+//        if slicesSize.width < 0 || slicesSize.height < 0 {
+//            return nil
+//        }
+//        if size.width < 0 || size.height < 0 {
+//            return nil
+//        }
+//        self.slicesSize = slicesSize
+//
+//        let numberOfSlicePerRow: Int32
+//        if slicesSize.width == 1 {
+//            numberOfSlicePerRow = size.width
+//        } else {
+//            numberOfSlicePerRow = (size.width + slicesSize.width - 1) / slicesSize.width
+//        }
+//        let rowCount: Int32
+//        if slicesSize.height == 1 {
+//            rowCount = size.height
+//        } else {
+//            rowCount = (size.height + slicesSize.height - 1) / slicesSize.height
+//        }
+//        var rows: [Row] = []
+//        for rowIndex in 0 ..< rowCount {
+//            let y = slicesSize.height * rowIndex
+//            var slices: [Slice] = []
+//            slices.reserveCapacity(Int(numberOfSlicePerRow))
+//            for sliceIndex in 0 ..< numberOfSlicePerRow {
+//                let frame = C2DRectMake(sliceIndex * slicesSize.width, y, slicesSize.width, slicesSize.height)
+//                slices.append(Slice(frame: frame))
+//            }
+//            rows.append(Row(slices: slices))
+//        }
+//        self.rows = rows
+//    }
+//}
+
 public class SliceCollection {
-    private class Row {
-        public let slices: [Slice]
-        public init(slices: [Slice]) {
-            self.slices = slices
-        }
-    }
-    private let rows: [Row]
+    private let rows: [Slice]
     
-    private let slicesSize: C2DSize
-    public init?(size: C2DSize, slicesSize: C2DSize) {
-        if slicesSize.width < 0 || slicesSize.height < 0 {
+    private let sliceHeight: Int32
+    public init?(sliceCount: Int32, sliceHeight: Int32) {
+        if sliceHeight <= 0 {
             return nil
         }
-        if size.width < 0 || size.height < 0 {
+        if sliceCount < 0 {
             return nil
         }
-        self.slicesSize = slicesSize
         
-        let numberOfSlicePerRow: Int32
-        if slicesSize.width == 1 {
-            numberOfSlicePerRow = size.width
-        } else {
-            numberOfSlicePerRow = (size.width + slicesSize.width - 1) / slicesSize.width
-        }
-        let rowCount: Int32
-        if slicesSize.height == 1 {
-            rowCount = size.height
-        } else {
-            rowCount = (size.height + slicesSize.height - 1) / slicesSize.height
-        }
-        var rows: [Row] = []
-        for rowIndex in 0 ..< rowCount {
-            let y = slicesSize.height * rowIndex
-            var slices: [Slice] = []
-            slices.reserveCapacity(Int(numberOfSlicePerRow))
-            for sliceIndex in 0 ..< numberOfSlicePerRow {
-                let frame = C2DRectMake(sliceIndex * slicesSize.width, y, slicesSize.width, slicesSize.height)
-                slices.append(Slice(frame: frame))
+        var slices: [Slice] = []
+        if sliceCount > 0 {
+            for index in 0 ..< sliceCount {
+                let y = sliceHeight * index
+                slices.append(Slice(y: y))
             }
-            rows.append(Row(slices: slices))
         }
-        self.rows = rows
+        self.rows = slices
     }
 }
+
 
 
 public class DrawingBoardController {
@@ -74,7 +98,7 @@ public class DrawingBoardController {
 
     
     public let config: DrawingContext.BoxConfig
-    private let rows: [_Row] = []
+    private let items: [Slice] = []
     public let frame: Rect
     public let slices: Slice
     public init(frame: Rect, config: DrawingContext.BoxConfig) {

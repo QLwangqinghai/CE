@@ -42,7 +42,6 @@
 		D6C161CD23CB15CF00AE306A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6C161CC23CB15CF00AE306A /* Assets.xcassets */; };
 		D6C161D023CB15CF00AE306A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6C161CE23CB15CF00AE306A /* LaunchScreen.storyboard */; };
 		D6C161D823CB15E700AE306A /* TMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C161D723CB15E700AE306A /* TMemory.m */; };
-		D6C161DA23CB2C4800AE306A /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161D923CB2C4800AE306A /* DrawingContext.swift */; };
 		D6C161DB23CB2D2000AE306A /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161D923CB2C4800AE306A /* DrawingContext.swift */; };
 		D6C161DD23CCCB4300AE306A /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161DC23CCCB4300AE306A /* Box.swift */; };
 		D6C161DF23CF507800AE306A /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C161DE23CF507800AE306A /* Controller.swift */; };
@@ -207,11 +206,11 @@
 			children = (
 				D69FCC1F230536D100432D18 /* AppDelegate.swift */,
 				D69FCC21230536D100432D18 /* ViewController.swift */,
+				D68FE43C23C063070066DD77 /* DrawViewController.swift */,
 				D69FCC23230536D100432D18 /* Main.storyboard */,
 				D69FCC26230536D300432D18 /* Assets.xcassets */,
 				D69FCC28230536D300432D18 /* LaunchScreen.storyboard */,
 				D69FCC2B230536D300432D18 /* Info.plist */,
-				D68FE43C23C063070066DD77 /* DrawViewController.swift */,
 			);
 			path = ScrollView;
 			sourceTree = "<group>";
@@ -465,7 +464,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6C161D823CB15E700AE306A /* TMemory.m in Sources */,
-				D6C161DA23CB2C4800AE306A /* DrawingContext.swift in Sources */,
 				D6C161C823CB15CD00AE306A /* ViewController.swift in Sources */,
 				D6C161C423CB15CD00AE306A /* AppDelegate.swift in Sources */,
 				D6C161C623CB15CD00AE306A /* SceneDelegate.swift in Sources */,

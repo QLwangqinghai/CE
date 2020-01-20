@@ -128,6 +128,81 @@ static inline CCBool CCSize64Equal(CCSize64 lhs, CCSize64 rhs) {
     return lhs.width == rhs.width && lhs.height == rhs.height;
 }
 
+
+#pragma mark - CCRect
+typedef struct {
+    CCPoint32 origin;
+    CCSize32 size;
+} CCRect32;
+static inline CCRect32 CCRect32Make(CCSInt32 x, CCSInt32 y, CCUInt32 width, CCUInt32 height) {
+    CCRect32 rect = {
+        .origin = CCPoint32Make(x, y),
+        .size = CCSize32Make(width, height),
+    };
+    return rect;
+}
+static inline CCBool CCRect32Equal(CCRect32 lhs, CCRect32 rhs) {
+    return CCPoint32Equal(lhs.origin, rhs.origin) && CCSize32Equal(lhs.size, rhs.size);
+}
+static inline CCBool CCRect32IsValid(CCRect32 rect) {
+    return 0;
+}
+
+
+
+typedef struct {
+    CCPoint64 origin;
+    CCSize64 size;
+} CCRect64;
+static inline CCRect64 CCRect64Make(CCSInt64 x, CCSInt64 y, CCUInt64 width, CCUInt64 height) {
+    CCRect64 rect = {
+        .origin = CCPoint64Make(x, y),
+        .size = CCSize64Make(width, height),
+    };
+    return rect;
+}
+static inline CCBool CCRect64Equal(CCRect64 lhs, CCRect64 rhs) {
+    return CCPoint64Equal(lhs.origin, rhs.origin) && CCSize64Equal(lhs.size, rhs.size);
+}
+static inline CCBool CCRect64IsValid(CCRect32 rect) {
+    return 0;
+}
+
+////并集
+//static inline _Bool CCRect32Union(CCRect32 rect, CCRect32 rect1, CCRect32 * _Nonnull result) {
+//    CCRect32 tmp = {};
+//    tmp.origin.x = MIN(rect.origin.x, rect1.origin.x);
+//    tmp.origin.y = MIN(rect.origin.y, rect1.origin.y);
+//    tmp.size.width = MAX(rect.origin.x + rect.size.width, rect1.origin.x + rect1.size.width) - tmp.origin.x;
+//    tmp.size.height = MAX(rect.origin.y + rect.size.height, rect1.origin.y + rect1.size.height) - tmp.origin.y;
+//    if (tmp.size.width > 0 && tmp.size.height > 0) {
+//        *result = tmp;
+//        return true;
+//    }
+//    return false;
+//}
+//
+////交集
+//static inline _Bool C2DRectIntersect(C2DRect rect, C2DRect rect1, C2DRect * _Nonnull result) {
+//    rect = C2DRectStandardize(rect);
+//    rect1 = C2DRectStandardize(rect1);
+//    C2DRect tmp = {};
+//    tmp.origin.x = MAX(rect.origin.x, rect1.origin.x);
+//    tmp.origin.y = MAX(rect.origin.y, rect1.origin.y);
+//    tmp.size.width = MIN(rect.origin.x + rect.size.width, rect1.origin.x + rect1.size.width) - tmp.origin.x;
+//    tmp.size.height = MIN(rect.origin.y + rect.size.height, rect1.origin.y + rect1.size.height) - tmp.origin.y;
+//    if (tmp.size.width > 0 && tmp.size.height > 0) {
+//        *result = tmp;
+//        return true;
+//    }
+//    return false;
+//}
+
+
+
+
+
+
 #pragma mark - CCRange
 
 typedef struct {

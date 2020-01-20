@@ -40,7 +40,7 @@ public final class UnsafeCache<KeyType : AnyObject & Hashable, ObjectType : AnyO
     }
     
     public func setObject(_ obj: ObjectType, forKey key: KeyType) {
-        setObject(obj, forKey: key, cost: 0)
+        self.setObject(obj, forKey: key, cost: 0)
     }
     
     private func remove(_ entry: CacheEntry<KeyType, ObjectType>) {

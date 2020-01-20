@@ -15,6 +15,8 @@ open class BaseViewController: UIViewController {
     
     public private(set) var navigationInteractivePopGestureRecognizer: UIGestureRecognizer?
 
+    public let contentView: UIStackView = UIStackView()
+    
     deinit {
         if let recognizer = self.navigationInteractivePopGestureRecognizer {
             recognizer.addObserver(self, forKeyPath: #keyPath(UIGestureRecognizer.state), options: [.new, .old], context: &BaseViewController.BaseViewControllerObserveContext)
@@ -37,6 +39,14 @@ open class BaseViewController: UIViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        let contentView = self.contentView;
+        contentView.frame = self.view.bounds
+        self.view.addSubview(contentView)
+        
+        
+        
+        
+        
         self.title = "\(arc4random() % 1000)"
         self.view.backgroundColor = UIColor(white: CGFloat(arc4random() % 1000) / 1000.0, alpha: 1.0)
         // Do any additional setup after loading the view.

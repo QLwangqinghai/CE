@@ -130,6 +130,7 @@ typedef struct {
     C2DRect newlys[4];
 } C2DRectEnlargeChanges_s;
 
+//合并
 static inline C2DRectEnlargeChanges_s C2DRectEnlargeFrame(C2DRect from, C2DRect to) {
     C2DRectEnlargeChanges_s result = {};
     if (from.size.width < 0) {

@@ -45,7 +45,12 @@ public class Page: NSObject {
     
 }
 public class Slice: NSObject {
-    public init(y: Int32, height: Int32) {
+    public enum Status {
+        case normal
+        
+    }
+    
+    public init(y: Int32, height: Int32, status: Status) {
 
     }
 }

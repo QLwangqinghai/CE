@@ -9,7 +9,7 @@
 #ifndef CCPrivate_h
 #define CCPrivate_h
 
-#include "CCBase.h"
+#include "CCReferenceBase.h"
 
 typedef struct __CCStringDataBase {
     CCRefBase base;

@@ -45,7 +45,7 @@ public class Page: NSObject {
     
 }
 public class Slice: NSObject {
-    public init(y: Int32) {
+    public init(y: Int32, height: Int32) {
 
     }
 }

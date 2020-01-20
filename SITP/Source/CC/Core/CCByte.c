@@ -10,7 +10,7 @@
 
 //"-" / "." / "_" / "~"
 
-static const CCChar __CCBase64Padding = '_';
+//static const CCChar __CCBase64Padding = '_';
 
 static const CCUInt8 __CCBase64CharToByteMappings[128] __attribute__((aligned(128))) = {
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -126,8 +126,6 @@ CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCU
         assert(outputBuffer);
     }
     CCInt outputLength = (length/4)*3;
-    CCInt paddingLength = 0;
-
     if (length % 4 == 1) {
         return -2;
     } else if (length % 4 == 2) {

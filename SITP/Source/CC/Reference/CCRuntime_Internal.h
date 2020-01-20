@@ -9,7 +9,6 @@
 #ifndef CCRuntime_Internal_h
 #define CCRuntime_Internal_h
 
-#include "CCBase.h"
 #include "CCRuntime.h"
 
 typedef CCInt CCTypeKindCode;

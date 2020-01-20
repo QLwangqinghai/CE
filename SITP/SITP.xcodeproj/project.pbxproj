@@ -26,6 +26,7 @@
 		D6A360EE23B5062F00EAD544 /* CCPrivate.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360ED23B5062F00EAD544 /* CCPrivate.c */; };
 		D6A360F123B5134000EAD544 /* CCValue.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360F023B5134000EAD544 /* CCValue.c */; };
 		D6A360F423BA4BF700EAD544 /* CCByte.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A360F323BA4BF700EAD544 /* CCByte.c */; };
+		D6B9D44823D5CB2000CED469 /* CCReferenceBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B9D44723D5CB2000CED469 /* CCReferenceBase.c */; };
 		D6D1F26823B1B4750081F9C5 /* CFAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D1F26723B1B4750081F9C5 /* CFAllocator.c */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +84,8 @@
 		D6A360F023B5134000EAD544 /* CCValue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCValue.c; sourceTree = "<group>"; };
 		D6A360F223BA4BF700EAD544 /* CCByte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCByte.h; sourceTree = "<group>"; };
 		D6A360F323BA4BF700EAD544 /* CCByte.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCByte.c; sourceTree = "<group>"; };
+		D6B9D44623D5CB2000CED469 /* CCReferenceBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCReferenceBase.h; sourceTree = "<group>"; };
+		D6B9D44723D5CB2000CED469 /* CCReferenceBase.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CCReferenceBase.c; sourceTree = "<group>"; };
 		D6D1F26623B1B4750081F9C5 /* CFAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAllocator.h; sourceTree = "<group>"; };
 		D6D1F26723B1B4750081F9C5 /* CFAllocator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CFAllocator.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -138,6 +141,7 @@
 		D610B93723B10B2A0056D0D2 /* CC */ = {
 			isa = PBXGroup;
 			children = (
+				D6B9D42523D5B06B00CED469 /* Reference */,
 				D610B96323B10C580056D0D2 /* Core */,
 			);
 			path = CC;
@@ -153,22 +157,11 @@
 				D610B96C23B10E370056D0D2 /* CCInteger.c */,
 				D610B96723B10C580056D0D2 /* CCBase.h */,
 				D610B96423B10C580056D0D2 /* CCBase.c */,
-				D610B97023B10FB70056D0D2 /* CCString.h */,
-				D610B96F23B10FB70056D0D2 /* CCString.c */,
-				D610B97223B1171F0056D0D2 /* CCData.h */,
-				D610B97323B1171F0056D0D2 /* CCData.c */,
 				D6D1F26623B1B4750081F9C5 /* CFAllocator.h */,
 				D6D1F26723B1B4750081F9C5 /* CFAllocator.c */,
 				D610B97523B263210056D0D2 /* CCTime.h */,
 				D610B97623B263210056D0D2 /* CCTime.c */,
 				D67DFCF523B3717900F815A6 /* CCType.c */,
-				D6A360E623B3A20900EAD544 /* CCRuntime.h */,
-				D6A360E723B3A20900EAD544 /* CCRuntime.c */,
-				D6A360E923B3B64500EAD544 /* CCRuntime_Internal.h */,
-				D6A360EC23B5062F00EAD544 /* CCPrivate.h */,
-				D6A360ED23B5062F00EAD544 /* CCPrivate.c */,
-				D6A360EF23B5134000EAD544 /* CCValue.h */,
-				D6A360F023B5134000EAD544 /* CCValue.c */,
 				D6A360F223BA4BF700EAD544 /* CCByte.h */,
 				D6A360F323BA4BF700EAD544 /* CCByte.c */,
 			);
@@ -208,6 +201,26 @@
 				D6978F7723A89EC5001F8B3F /* SITP.entitlements */,
 			);
 			path = SITP;
+			sourceTree = "<group>";
+		};
+		D6B9D42523D5B06B00CED469 /* Reference */ = {
+			isa = PBXGroup;
+			children = (
+				D6B9D44623D5CB2000CED469 /* CCReferenceBase.h */,
+				D6B9D44723D5CB2000CED469 /* CCReferenceBase.c */,
+				D6A360EF23B5134000EAD544 /* CCValue.h */,
+				D6A360F023B5134000EAD544 /* CCValue.c */,
+				D610B97023B10FB70056D0D2 /* CCString.h */,
+				D610B96F23B10FB70056D0D2 /* CCString.c */,
+				D6A360EC23B5062F00EAD544 /* CCPrivate.h */,
+				D6A360ED23B5062F00EAD544 /* CCPrivate.c */,
+				D610B97223B1171F0056D0D2 /* CCData.h */,
+				D610B97323B1171F0056D0D2 /* CCData.c */,
+				D6A360E623B3A20900EAD544 /* CCRuntime.h */,
+				D6A360E723B3A20900EAD544 /* CCRuntime.c */,
+				D6A360E923B3B64500EAD544 /* CCRuntime_Internal.h */,
+			);
+			path = Reference;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,6 +327,7 @@
 				D6A360F423BA4BF700EAD544 /* CCByte.c in Sources */,
 				D67DFCF623B3717900F815A6 /* CCType.c in Sources */,
 				D610B97723B263210056D0D2 /* CCTime.c in Sources */,
+				D6B9D44823D5CB2000CED469 /* CCReferenceBase.c in Sources */,
 				D610B95523B10B2A0056D0D2 /* SITPType.c in Sources */,
 				D610B97423B1171F0056D0D2 /* CCData.c in Sources */,
 				D6A360E823B3A20900EAD544 /* CCRuntime.c in Sources */,

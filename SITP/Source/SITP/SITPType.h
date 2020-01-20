@@ -36,7 +36,7 @@ typedef enum {
     SITPTypeCodeData = 0x6,
     SITPTypeCodeString = 0x7,
     SITPTypeCodeMessage = 0x8,
-    SITPTypeCodeByte16 = 0x9,
+    SITPTypeCodeByte16 = 0x9,//using for md5、uuid、uint128_t
 
     SITPTypeCodeSIntArray = 0x10,
     SITPTypeCodeUIntArray = 0x11,

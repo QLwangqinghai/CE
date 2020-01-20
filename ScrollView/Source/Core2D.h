@@ -31,8 +31,8 @@ static inline _Bool C2DPointEqualPoint(C2DPoint lhs, C2DPoint rhs) {
 }
 
 typedef struct {
-    int32_t width;
-    int32_t height;
+    uint32_t width;
+    uint32_t height;
 } C2DSize;
 
 static inline _Bool C2DSizeEqualSize(C2DSize lhs, C2DSize rhs) {

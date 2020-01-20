@@ -9,7 +9,7 @@
 #ifndef CCValue_h
 #define CCValue_h
 
-#include "CCBase.h"
+#include "CCReferenceBase.h"
 
 typedef struct {
 #if CCBuild64Bit

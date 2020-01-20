@@ -53,17 +53,6 @@ typedef struct {
 } CCTime;
 
 typedef void * CCPtr;
-typedef CCPtr CCRef;
-typedef CCPtr CCValueRef;
-
-typedef CCValueRef CCDataRef;
-typedef CCValueRef CCStringRef;
-typedef CCValueRef CCTypeRef;
-
-
-
-
-
 
 
 

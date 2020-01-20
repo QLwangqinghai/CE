@@ -9,7 +9,7 @@
 #ifndef CCRuntime_h
 #define CCRuntime_h
 
-#include "CCBase.h"
+#include "CCReferenceBase.h"
 
 typedef void(*CCRefFunc_f)(CCTypeRef _Nonnull ref);
 

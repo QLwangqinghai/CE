@@ -55,38 +55,32 @@ import Foundation
 //    }
 //}
 
-public class SliceCollection {
-    private let rows: [Slice]
-    
-    private let sliceHeight: Int32
-    public init?(sliceCount: Int32, sliceHeight: Int32) {
-        if sliceHeight <= 0 {
-            return nil
-        }
-        if sliceCount < 0 {
-            return nil
-        }
-        
-        var slices: [Slice] = []
-        if sliceCount > 0 {
-            for index in 0 ..< sliceCount {
-                let y = sliceHeight * index
-                slices.append(Slice(y: y))
-            }
-        }
-        self.rows = slices
-    }
-}
+//public class SliceCollection {
+//    private let rows: [Slice]
+//
+//    private let sliceHeight: Int32
+//    public init?(sliceCount: Int32, sliceHeight: Int32) {
+//        if sliceHeight <= 0 {
+//            return nil
+//        }
+//        if sliceCount < 0 {
+//            return nil
+//        }
+//
+//        var slices: [Slice] = []
+//        if sliceCount > 0 {
+//            for index in 0 ..< sliceCount {
+//                let y = sliceHeight * index
+//                slices.append(Slice(y: y))
+//            }
+//        }
+//        self.rows = slices
+//    }
+//}
 
 
 
 public class DrawingBoardController {
-    private class _Row {
-        public let slices: [Slice]
-        public init(slices: [Slice]) {
-            self.slices = slices
-        }
-    }
     public struct BoxConfig {
         public let colorSpace: DrawingContext.ColorSpace
         public let backgroundColor: DrawingContext.Color
@@ -95,20 +89,23 @@ public class DrawingBoardController {
             self.backgroundColor = backgroundColor
         }
     }
-
     
-    public let config: DrawingContext.BoxConfig
-    private let items: [Slice] = []
+    private let items: [Slice]
     public let frame: Rect
-    public let slices: Slice
-    public init(frame: Rect, config: DrawingContext.BoxConfig) {
-        let v = C2DRectStandardize(frame);
+    public init(frame: Rect) {
+        let v = C2DRectStandardize(frame)
         self.frame = v
         
-        let numberOfRows: Int = Int
-        
-        
-        self.config = config
+        let sliceHeight: Int32 = 256
+        let sliceCount: Int32 = v.size.height / sliceHeight
+        var slices: [Slice] = []
+        if sliceCount > 0 {
+            for index in 0 ..< sliceCount {
+                let y = sliceHeight * index
+                slices.append(Slice(y: y, height: sliceHeight))
+            }
+        }
+        self.items = slices
     }
     
 }

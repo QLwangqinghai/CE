@@ -289,11 +289,12 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
 
     dispatch_group_t g = dispatch_group_create();
 
-    for (NSInteger idx=0; idx<self.sizeInMb / 4; idx++) {
-        NSInteger offset = (4 * mb / 8) * idx;
+    for (NSInteger idx=0; idx<self.sizeInMb / 8; idx++) {
+        NSInteger offset = mb * idx;
         dispatch_group_enter(g);
         [helper appendWithTask:^{
-            CCMemoryCopy(buffer + offset, buffer1 + offset, 4 * mb);
+            printf("[%ld]\n", idx);
+            CCMemoryCopy(buffer + offset, buffer1 + offset, 8 * mb);
             dispatch_group_leave(g);
         }];
     }

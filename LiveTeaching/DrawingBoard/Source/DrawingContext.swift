@@ -13,7 +13,7 @@ import UIKit
 
 public class DrawingContext {
     
-    private var 
+    private var links: [TimeInterval]
     var displaylink: CADisplayLink?
     
     func createDisplayLink() {
@@ -50,7 +50,9 @@ public class DrawingContext {
     
     
     init() {
+        self.links = []
         self.createDisplayLink()
+        self.links.reserveCapacity(61)
     }
     
     
@@ -120,7 +122,7 @@ extension DrawingContext {
         public let backgroundColor: Color
 
         public let bytesPerRow: Int
-        public let countPerRow: Int32
+        public let countPerRow: UInt32
 
 //        public var backgroundColor: Color = Color(little32Argb: 0)
         
@@ -171,7 +173,7 @@ extension DrawingContext {
 //        case little16Xrgb = 2
         public static let deviceRgb: CGColorSpace = CGColorSpaceCreateDeviceRGB()
 
-        public var bytesPerPixel: Int32 {
+        public var bytesPerPixel: UInt32 {
             switch self {
             case .little32Argb:
                 return 4
@@ -179,7 +181,7 @@ extension DrawingContext {
 //                return 2
             }
         }
-        public var bitsPerComponent: Int {
+        public var bitsPerComponent: UInt32 {
             switch self {
             case .little32Argb:
                 return 8
@@ -187,7 +189,7 @@ extension DrawingContext {
 //                return 5
             }
         }
-        public var bitsPerPixel: Int {
+        public var bitsPerPixel: UInt32 {
             switch self {
             case .little32Argb:
                 return 32

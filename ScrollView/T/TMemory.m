@@ -114,11 +114,10 @@
 @end
 @implementation TMemory
 
-- (instancetype)init {
+- (instancetype)initWithSizeInMb:(NSInteger)sizeInMb {
     self = [super init];
     if (self) {
-        self.sizeInfo = @"64Mb";
-        NSInteger sizeInMb = 64;
+        self.sizeInfo = [NSString stringWithFormat:@"%ldMb", sizeInMb];
         self.sizeInMb = sizeInMb;
         NSInteger mb = 1024 * 1024;
         NSInteger size = sizeInMb * mb;
@@ -249,6 +248,47 @@
     NSTimeInterval e = CACurrentMediaTime();
 
     NSLog(@"comapre %.06lf", e - b);
+}
+
+
+-(void)dispatchSignal{
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(2);
+    dispatch_queue_t quene = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+     
+    //任务1
+    dispatch_async(quene, ^{
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        NSLog(@"run task 1");
+        sleep(1);
+        NSLog(@"complete task 1");
+        dispatch_semaphore_signal(semaphore);
+        sleep(1);
+    });
+    //任务2
+    dispatch_async(quene, ^{
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        NSLog(@"run task 2");
+        sleep(10);
+        NSLog(@"complete task 2");
+        dispatch_semaphore_signal(semaphore);
+    });
+    //任务3
+    dispatch_async(quene, ^{
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        NSLog(@"run task 3");
+        sleep(1);
+        NSLog(@"complete task 3");
+        dispatch_semaphore_signal(semaphore);
+    });
+    
+    //任务4
+    dispatch_async(quene, ^{
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        NSLog(@"run task 4");
+        sleep(1);
+        NSLog(@"complete task 4");
+        dispatch_semaphore_signal(semaphore);
+    });
 }
 
 

@@ -9,6 +9,10 @@
 import UIKit
 import UIKit.UIGestureRecognizerSubclass
 
+
+
+
+
 public enum ColorSpace: UInt32 {
     //android 只有argb模式
     
@@ -594,8 +598,6 @@ open class DrawingItem: NSObject {
 
 
 open class DrawingView: UIView {
-    public let panGestureRecognizer: DrawingPanGestureRecognizer = DrawingPanGestureRecognizer()
-
     public let topLayer: CALayer
 
     public let context: CGContext
@@ -622,9 +624,6 @@ open class DrawingView: UIView {
         topLayer.frame = self.bounds
         
         self.layer.addSublayer(topLayer)
-        self.panGestureRecognizer.addTarget(self, action: #selector(DrawingView.handlePan))
-//        self.addGestureRecognizer(self.panGestureRecognizer)
-        self.panGestureRecognizer.maximumNumberOfTouches = 1
     }
     
     private func midpointOf(_ p0: TouchPoint, _ p1: TouchPoint) -> CGPoint {
@@ -727,7 +726,6 @@ open class DrawingView: UIView {
         
         print("touchesCancelled coalescedTouches \(event?.coalescedTouches(for: touch))")
         print("predictedTouches \(event?.predictedTouches(for: touch))")
-
     }
     
 

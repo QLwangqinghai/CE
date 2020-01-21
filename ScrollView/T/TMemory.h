@@ -12,11 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TMemory : NSObject
 
+- (instancetype)initWithSizeInMb:(NSInteger)sizeInMb;
 
 - (void)test;
 
 - (void)testMemcpy;
-
+-(void)dispatchSignal;
 @end
 
 NS_ASSUME_NONNULL_END

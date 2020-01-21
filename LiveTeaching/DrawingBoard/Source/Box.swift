@@ -50,7 +50,7 @@ public class Slice: NSObject {
         
     }
     
-    public init(y: Int32, height: Int32, status: Status) {
+    public init(y: Int32, height: UInt32, status: Status) {
 
     }
 }

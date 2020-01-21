@@ -93,25 +93,16 @@ public class DrawingBoardController {
     private let items: [Slice]
     public let frame: Rect
     public init(frame: Rect) {
-        let v = C2DRectStandardize(frame)
-        self.frame = v
-        self.config = config
+        self.frame = frame
 
-        let sliceHeight: Int32 = 256
-        let sliceCount: Int32 = v.size.height / sliceHeight
-        let numberOfRows: Int = Int
-        
-        if sliceHeight <= 0 {
-            return nil
-        }
-        if sliceCount < 0 {
-            return nil
-        }
+        let sliceHeight: UInt32 = 256
+        let sliceCount: UInt32 = frame.size.height / sliceHeight
+        let numberOfRows: Int
         
         var slices: [Slice] = []
         if sliceCount > 0 {
             for index in 0 ..< sliceCount {
-                let y = sliceHeight * index
+                let y = Int32(sliceHeight * index)
                 slices.append(Slice(y: y, height: sliceHeight, status: .normal))
             }
         }

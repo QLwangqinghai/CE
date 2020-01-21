@@ -1,0 +1,364 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		643D1DCC2119A7CE00C7C9CB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 643D1DCB2119A7CE00C7C9CB /* AppDelegate.m */; };
+		643D1DCF2119A7CE00C7C9CB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 643D1DCE2119A7CE00C7C9CB /* ViewController.m */; };
+		643D1DD22119A7CE00C7C9CB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 643D1DD02119A7CE00C7C9CB /* Main.storyboard */; };
+		643D1DD42119A7CF00C7C9CB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 643D1DD32119A7CF00C7C9CB /* Assets.xcassets */; };
+		643D1DD72119A7CF00C7C9CB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 643D1DD52119A7CF00C7C9CB /* LaunchScreen.storyboard */; };
+		643D1DDA2119A7CF00C7C9CB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 643D1DD92119A7CF00C7C9CB /* main.m */; };
+		643D1DE62119A82900C7C9CB /* BCWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 643D1DE42119A82900C7C9CB /* BCWebView.m */; };
+		643D1DE92119A86800C7C9CB /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 643D1DE82119A86800C7C9CB /* WebKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		643D1DC72119A7CE00C7C9CB /* BCJSBridgeSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BCJSBridgeSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		643D1DCA2119A7CE00C7C9CB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		643D1DCB2119A7CE00C7C9CB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		643D1DCD2119A7CE00C7C9CB /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		643D1DCE2119A7CE00C7C9CB /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		643D1DD12119A7CE00C7C9CB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		643D1DD32119A7CF00C7C9CB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		643D1DD62119A7CF00C7C9CB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		643D1DD82119A7CF00C7C9CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		643D1DD92119A7CF00C7C9CB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		643D1DE42119A82900C7C9CB /* BCWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCWebView.m; sourceTree = "<group>"; };
+		643D1DE52119A82900C7C9CB /* BCWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCWebView.h; sourceTree = "<group>"; };
+		643D1DE82119A86800C7C9CB /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		643D1DC42119A7CE00C7C9CB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				643D1DE92119A86800C7C9CB /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		643D1DBE2119A7CE00C7C9CB = {
+			isa = PBXGroup;
+			children = (
+				643D1DE32119A82900C7C9CB /* Source */,
+				643D1DC92119A7CE00C7C9CB /* BCJSBridgeSDKDemo */,
+				643D1DC82119A7CE00C7C9CB /* Products */,
+				643D1DE72119A86800C7C9CB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		643D1DC82119A7CE00C7C9CB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				643D1DC72119A7CE00C7C9CB /* BCJSBridgeSDKDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		643D1DC92119A7CE00C7C9CB /* BCJSBridgeSDKDemo */ = {
+			isa = PBXGroup;
+			children = (
+				643D1DCA2119A7CE00C7C9CB /* AppDelegate.h */,
+				643D1DCB2119A7CE00C7C9CB /* AppDelegate.m */,
+				643D1DCD2119A7CE00C7C9CB /* ViewController.h */,
+				643D1DCE2119A7CE00C7C9CB /* ViewController.m */,
+				643D1DD02119A7CE00C7C9CB /* Main.storyboard */,
+				643D1DD32119A7CF00C7C9CB /* Assets.xcassets */,
+				643D1DD52119A7CF00C7C9CB /* LaunchScreen.storyboard */,
+				643D1DD82119A7CF00C7C9CB /* Info.plist */,
+				643D1DD92119A7CF00C7C9CB /* main.m */,
+			);
+			path = BCJSBridgeSDKDemo;
+			sourceTree = "<group>";
+		};
+		643D1DE32119A82900C7C9CB /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				643D1DE42119A82900C7C9CB /* BCWebView.m */,
+				643D1DE52119A82900C7C9CB /* BCWebView.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		643D1DE72119A86800C7C9CB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				643D1DE82119A86800C7C9CB /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		643D1DC62119A7CE00C7C9CB /* BCJSBridgeSDKDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 643D1DDD2119A7CF00C7C9CB /* Build configuration list for PBXNativeTarget "BCJSBridgeSDKDemo" */;
+			buildPhases = (
+				643D1DC32119A7CE00C7C9CB /* Sources */,
+				643D1DC42119A7CE00C7C9CB /* Frameworks */,
+				643D1DC52119A7CE00C7C9CB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BCJSBridgeSDKDemo;
+			productName = BCJSBridgeSDKDemo;
+			productReference = 643D1DC72119A7CE00C7C9CB /* BCJSBridgeSDKDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		643D1DBF2119A7CE00C7C9CB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0940;
+				ORGANIZATIONNAME = com.bichan;
+				TargetAttributes = {
+					643D1DC62119A7CE00C7C9CB = {
+						CreatedOnToolsVersion = 9.4.1;
+					};
+				};
+			};
+			buildConfigurationList = 643D1DC22119A7CE00C7C9CB /* Build configuration list for PBXProject "BCJSBridgeSDKDemo" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 643D1DBE2119A7CE00C7C9CB;
+			productRefGroup = 643D1DC82119A7CE00C7C9CB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				643D1DC62119A7CE00C7C9CB /* BCJSBridgeSDKDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		643D1DC52119A7CE00C7C9CB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				643D1DD72119A7CF00C7C9CB /* LaunchScreen.storyboard in Resources */,
+				643D1DD42119A7CF00C7C9CB /* Assets.xcassets in Resources */,
+				643D1DD22119A7CE00C7C9CB /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		643D1DC32119A7CE00C7C9CB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				643D1DE62119A82900C7C9CB /* BCWebView.m in Sources */,
+				643D1DCF2119A7CE00C7C9CB /* ViewController.m in Sources */,
+				643D1DDA2119A7CF00C7C9CB /* main.m in Sources */,
+				643D1DCC2119A7CE00C7C9CB /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		643D1DD02119A7CE00C7C9CB /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				643D1DD12119A7CE00C7C9CB /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		643D1DD52119A7CF00C7C9CB /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				643D1DD62119A7CF00C7C9CB /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		643D1DDB2119A7CF00C7C9CB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		643D1DDC2119A7CF00C7C9CB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		643D1DDE2119A7CF00C7C9CB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = BCJSBridgeSDKDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bichan.BCJSBridgeSDKDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		643D1DDF2119A7CF00C7C9CB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = BCJSBridgeSDKDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bichan.BCJSBridgeSDKDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		643D1DC22119A7CE00C7C9CB /* Build configuration list for PBXProject "BCJSBridgeSDKDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				643D1DDB2119A7CF00C7C9CB /* Debug */,
+				643D1DDC2119A7CF00C7C9CB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		643D1DDD2119A7CF00C7C9CB /* Build configuration list for PBXNativeTarget "BCJSBridgeSDKDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				643D1DDE2119A7CF00C7C9CB /* Debug */,
+				643D1DDF2119A7CF00C7C9CB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 643D1DBF2119A7CE00C7C9CB /* Project object */;
+}

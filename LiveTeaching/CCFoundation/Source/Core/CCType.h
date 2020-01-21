@@ -55,6 +55,9 @@ typedef CCSInt64 CCMicrosecondTime;
 
 #pragma mark - CCIndex
 
+#define CCConstantIndex32NotFound UINT32_MAX
+#define CCConstantIndex64NotFound UINT64_MAX
+
 #if CCBuild64Bit
     typedef uint64_t CCIndex;
 #define CCConstantIndexNotFound UINT64_MAX
@@ -64,6 +67,8 @@ typedef CCSInt64 CCMicrosecondTime;
 #endif
 
 extern const CCIndex CCIndexNotFound;
+extern const CCIndex CCIndex32NotFound;
+extern const CCIndex CCIndex64NotFound;
 
 
 #pragma mark - CCPoint
@@ -204,6 +209,19 @@ static inline CCBool CCRect64IsValid(CCRect32 rect) {
 
 
 #pragma mark - CCRange
+
+typedef struct {
+    CCUInt32 location;
+    CCUInt32 length;
+} CCRange32;
+static inline CCRange32 CCRange32Make(CCUInt32 location, CCUInt32 length) {
+    CCRange32 range = {
+        .location = location,
+        .length = length,
+    };
+    return range;
+}
+
 
 typedef struct {
     CCIndex location;

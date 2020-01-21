@@ -9,6 +9,8 @@
 #include "CCType.h"
 
 const CCIndex CCIndexNotFound = CCConstantIndexNotFound;
+const CCIndex CCIndex32NotFound = CCConstantIndex32NotFound;
+const CCIndex CCIndex64NotFound = CCConstantIndex64NotFound;
 
 
 //typedef struct __CFRuntimeClass {

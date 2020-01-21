@@ -107,7 +107,7 @@ static inline void _CCMemoryQuickCopy(CCUInt64 * _Nonnull dst, const CCUInt64 * 
         CCUInt64 * to = dst;
         const CCUInt64 * from = src;
         CCUInt64 * end = to + (count & countQuickMask);
-
+UINT64_MAX
         while (to < end) {
             *to = *from;
             to ++;
@@ -141,41 +141,45 @@ static inline void _CCMemoryQuickCopy(CCUInt64 * _Nonnull dst, const CCUInt64 * 
             from ++;
         }
     } else {
-        CCUInt64 * to = dst;
+        CCUInt64 * end = dst;
+        end = end + (count & countQuickMask);
+        CCUInt64 * to = end + count;
         const CCUInt64 * from = src;
-        CCUInt64 * end = to + (count & countQuickMask);
-
-        while (to < end) {
-            *to = *from;
-            to ++;
-            from ++;
-            *to = *from;
-            to ++;
-            from ++;
-            *to = *from;
-            to ++;
-            from ++;
-            *to = *from;
-            to ++;
-            from ++;
-            *to = *from;
-            to ++;
-            from ++;
-            *to = *from;
-            to ++;
-            from ++;
-            *to = *from;
-            to ++;
-            from ++;
-            *to = *from;
-            to ++;
-            from ++;
-        }
+        from = from + count;
+        
         end = (CCUInt64 *)dst + count;
-        while (to < end) {
+        while (to > end) {
+            to --;
+            from --;
             *to = *from;
-            to ++;
-            from ++;
+        }
+        
+        end = dst;
+        while (to > end) {
+            to --;
+            from --;
+            *to = *from;
+            to --;
+            from --;
+            *to = *from;
+            to --;
+            from --;
+            *to = *from;
+            to --;
+            from --;
+            *to = *from;
+            to --;
+            from --;
+            *to = *from;
+            to --;
+            from --;
+            *to = *from;
+            to --;
+            from --;
+            *to = *from;
+            to --;
+            from --;
+            *to = *from;
         }
     }
 }

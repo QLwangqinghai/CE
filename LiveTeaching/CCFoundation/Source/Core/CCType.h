@@ -42,6 +42,13 @@ typedef CCSInt32 CCInt;
 typedef CCUInt32 CCUInt;
 #endif
 
+#if CCBuild64Bit
+#define CCUInt_MAX UINT64_MAX
+#define CCSInt_MAX INT64_MAX
+#else
+#define CCUInt_MAX UINT32_MAX
+#define CCSInt_MAX INT32_MAX
+#endif
 
 #pragma mark - CCHashCode
 
@@ -58,13 +65,12 @@ typedef CCSInt64 CCMicrosecondTime;
 #define CCConstantIndex32NotFound UINT32_MAX
 #define CCConstantIndex64NotFound UINT64_MAX
 
-#if CCBuild64Bit
-    typedef uint64_t CCIndex;
-#define CCConstantIndexNotFound UINT64_MAX
-#else
-    typedef uint32_t CCIndex;
-#define CCConstantIndexNotFound UINT32_MAX
-#endif
+
+typedef CCUInt CCIndex;
+#define CCConstantIndexNotFound CCUInt_MAX
+
+typedef CCUInt32 CCIndex32;
+typedef CCUInt64 CCIndex64;
 
 extern const CCIndex CCIndexNotFound;
 extern const CCIndex CCIndex32NotFound;
@@ -211,10 +217,10 @@ static inline CCBool CCRect64IsValid(CCRect32 rect) {
 #pragma mark - CCRange
 
 typedef struct {
-    CCUInt32 location;
-    CCUInt32 length;
+    CCIndex32 location;
+    CCIndex32 length;
 } CCRange32;
-static inline CCRange32 CCRange32Make(CCUInt32 location, CCUInt32 length) {
+static inline CCRange32 CCRange32Make(CCIndex32 location, CCIndex32 length) {
     CCRange32 range = {
         .location = location,
         .length = length,
@@ -222,6 +228,17 @@ static inline CCRange32 CCRange32Make(CCUInt32 location, CCUInt32 length) {
     return range;
 }
 
+typedef struct {
+    CCIndex64 location;
+    CCIndex64 length;
+} CCRange64;
+static inline CCRange64 CCRange64Make(CCIndex64 location, CCIndex64 length) {
+    CCRange64 range = {
+        .location = location,
+        .length = length,
+    };
+    return range;
+}
 
 typedef struct {
     CCIndex location;

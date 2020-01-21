@@ -7,6 +7,7 @@
 //
 
 #import "TMemory.h"
+#import "T-Swift.h"
 
 
 /*
@@ -97,6 +98,118 @@
  
  */
 
+typedef uint64_t CCUInt64;
+
+static inline void _CCMemoryQuickCopy(CCUInt64 * _Nonnull dst, const CCUInt64 * _Nonnull src, size_t count) {
+    static size_t countQuickMask = ~((size_t)(0x7));
+
+    if ((dst + count) <= src || (src + count) <= dst) {//没有重叠区域
+        CCUInt64 * to = dst;
+        const CCUInt64 * from = src;
+        CCUInt64 * end = to + (count & countQuickMask);
+
+        while (to < end) {
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+        }
+        end = (CCUInt64 *)dst + count;
+        while (to < end) {
+            *to = *from;
+            to ++;
+            from ++;
+        }
+    } else {
+        CCUInt64 * to = dst;
+        const CCUInt64 * from = src;
+        CCUInt64 * end = to + (count & countQuickMask);
+
+        while (to < end) {
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+            *to = *from;
+            to ++;
+            from ++;
+        }
+        end = (CCUInt64 *)dst + count;
+        while (to < end) {
+            *to = *from;
+            to ++;
+            from ++;
+        }
+    }
+}
+
+void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
+    assert(dst);
+    assert(src);
+    assert(size >= 0);
+    uintptr_t from = (uintptr_t)dst;
+    uintptr_t to = (uintptr_t)src;
+
+    size_t offset = (from & 0x7);
+    if (offset == (to & 0x7)) {
+        uint8_t * dst8 = dst;
+        const uint8_t * src8 = src;
+        if (offset > 0) {
+            memcpy(dst, src, offset);
+            dst8 += offset;
+            src8 += offset;
+        }
+        size_t remain = (size - offset);
+        size_t count = remain / 8;
+        if (count > 0) {
+            _CCMemoryQuickCopy((CCUInt64 *)dst8, (const CCUInt64 *)src8, count);
+        }
+        remain = remain & 0x7;
+        if (remain > 0) {
+            memcpy(dst8 + (count * 8), src8 + (count * 8), remain);
+        }
+    } else {
+        memcpy(dst, src, size);
+    }
+}
+
 
 @interface TMemory ()
 
@@ -108,7 +221,6 @@
 
 @property (nonatomic, assign) uint64_t * buffer;
 @property (nonatomic, assign) uint64_t * buffer1;
-@property (nonatomic, assign) uint64_t * changes;
 
 
 @end
@@ -125,7 +237,6 @@
 
         self.buffer = malloc(size);
         self.buffer1 = malloc(size);
-        self.changes = malloc(size * 3);
         self.size = size;
         self.count = count;
         
@@ -134,16 +245,15 @@
             if (self.buffer[i] != self.buffer1[i]) {
                 
             }
-            
-            BOOL A = self.changes[i* 3] == self.changes[i* 3 + 1];
-            BOOL B = self.changes[i* 3 + 2] == self.changes[i* 3 + 1];
-            BOOL C = A == B;
         }
     }
     return self;
 }
 
 - (void)testMemcpy {
+    NSInteger mb = 1024 * 1024;
+
+
     uint64_t count = self.count;
     uint64_t countQuickMask = 0x7;
     countQuickMask = ~countQuickMask;
@@ -151,7 +261,6 @@
     uint64_t * buffer = self.buffer;
     uint64_t * buffer1 = self.buffer1;
 
-    uint64_t * changes = self.changes;
     NSInteger offset = 0;
 
     NSTimeInterval b0 = CACurrentMediaTime();
@@ -160,43 +269,11 @@
     
     NSTimeInterval b = CACurrentMediaTime();
     
-    uint64_t * ptrA = self.buffer;
-    uint64_t * ptrB = self.buffer1;
-    uint64_t * end = buffer + (count & countQuickMask);
-
-    while (ptrA < end) {
-        *ptrA = *ptrB;
-        ptrA ++;
-        ptrB ++;
-        *ptrA = *ptrB;
-        ptrA ++;
-        ptrB ++;
-        *ptrA = *ptrB;
-        ptrA ++;
-        ptrB ++;
-        *ptrA = *ptrB;
-        ptrA ++;
-        ptrB ++;
-        *ptrA = *ptrB;
-        ptrA ++;
-        ptrB ++;
-        *ptrA = *ptrB;
-        ptrA ++;
-        ptrB ++;
-        *ptrA = *ptrB;
-        ptrA ++;
-        ptrB ++;
-        *ptrA = *ptrB;
-        ptrA ++;
-        ptrB ++;
-    }
-    
-    end = buffer + count;
-    while (ptrA < end) {
-        *ptrA = *ptrB;
-        ptrA ++;
-        ptrB ++;
-    }
+//    for (NSInteger idx=0; idx<self.sizeInMb / 2; idx++) {
+//        NSInteger offset = (2 * mb / 8) * idx;
+//        CCMemoryCopy(buffer + offset, buffer1 + offset, 2 * mb);
+//    }
+    CCMemoryCopy(buffer, buffer1, self.size);
     
     NSTimeInterval e = CACurrentMediaTime();
     NSTimeInterval t0 = b - b0;
@@ -204,10 +281,32 @@
     t0 = t0 * 1000;
     t1 = t1 * 1000;
 
-    NSLog(@"%@ memcpy %.01lfms(%.03lfms/mb) custom:%.01lfms(%.03lfms/mb) ", self.sizeInfo, t0, t0 / self.sizeInMb, t1, t1 / self.sizeInMb);
+    NSMutableString * string = [NSMutableString string];
+    [string appendFormat:@"%@ memcpy %.01lfms(%.03lfms/mb) custom:%.01lfms(%.03lfms/mb) \n", self.sizeInfo, t0, t0 / self.sizeInMb, t1, t1 / self.sizeInMb];
     
-    
-    
+    TaskHelper * helper = [[TaskHelper alloc] init];
+    NSTimeInterval gb = CACurrentMediaTime();
+
+    dispatch_group_t g = dispatch_group_create();
+
+    for (NSInteger idx=0; idx<self.sizeInMb / 4; idx++) {
+        NSInteger offset = (4 * mb / 8) * idx;
+        dispatch_group_enter(g);
+        [helper appendWithTask:^{
+            CCMemoryCopy(buffer + offset, buffer1 + offset, 4 * mb);
+            dispatch_group_leave(g);
+        }];
+    }
+    [helper commit];
+    dispatch_group_wait(g, DISPATCH_TIME_FOREVER);
+
+    NSTimeInterval ge = CACurrentMediaTime();
+    NSTimeInterval gt = ge - gb;
+    gt = gt * 1000;
+
+    [string appendFormat:@"%@ threads %.01lfms(%.03lfms/mb) ", self.sizeInfo, gt, gt / self.sizeInMb];
+    NSLog(string);
+    [Label shared].text = string;
 }
 - (void)test {
     // Do any additional setup after loading the view.
@@ -224,7 +323,6 @@
     uint64_t * buffer = self.buffer;
     uint64_t * buffer1 = self.buffer1;
 
-    uint64_t * changes = self.changes;
     NSInteger offset = 0;
 
     NSTimeInterval b0 = CACurrentMediaTime();
@@ -235,60 +333,10 @@
     
     NSLog(@"memset %.06lf", b - b0);
 
-    for (NSInteger i=0; i<count; i++) {
-        if (buffer[i] != buffer1[i]) {
-            changes[offset] = i;
-            offset += 1;
-            changes[offset] = buffer[i];
-            offset += 1;
-            changes[offset] = buffer1[i];
-            offset += 1;
-        }
-    }
+
     NSTimeInterval e = CACurrentMediaTime();
 
     NSLog(@"comapre %.06lf", e - b);
-}
-
-
--(void)dispatchSignal{
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(2);
-    dispatch_queue_t quene = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-     
-    //任务1
-    dispatch_async(quene, ^{
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-        NSLog(@"run task 1");
-        sleep(1);
-        NSLog(@"complete task 1");
-        dispatch_semaphore_signal(semaphore);
-        sleep(1);
-    });
-    //任务2
-    dispatch_async(quene, ^{
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-        NSLog(@"run task 2");
-        sleep(10);
-        NSLog(@"complete task 2");
-        dispatch_semaphore_signal(semaphore);
-    });
-    //任务3
-    dispatch_async(quene, ^{
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-        NSLog(@"run task 3");
-        sleep(1);
-        NSLog(@"complete task 3");
-        dispatch_semaphore_signal(semaphore);
-    });
-    
-    //任务4
-    dispatch_async(quene, ^{
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-        NSLog(@"run task 4");
-        sleep(1);
-        NSLog(@"complete task 4");
-        dispatch_semaphore_signal(semaphore);
-    });
 }
 
 

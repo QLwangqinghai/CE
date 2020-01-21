@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)test;
 
 - (void)testMemcpy;
--(void)dispatchSignal;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -32,80 +32,96 @@ import UIKit
 
  */
 
-public class Accelerator {
-    public class TaskQueue {
-        public private(set) var tasks: [Worker]
-
+public final class Accelerator {
+    public final class TaskQueue {
+        public private(set) var tasks: [()->()]
         public let semaphore: DispatchSemaphore
-        
+        private let lockSemaphore: DispatchSemaphore
+
         public init() {
             let semaphore: DispatchSemaphore = DispatchSemaphore(value: 0)
-
-            var workers: [Worker] = []
-            let mainWorker = Worker(semaphore: semaphore)
-            workers.append(mainWorker)
-            let thread = Thread(target: mainWorker, selector: #selector(Worker.run), object: nil)
-            thread.threadPriority = 1.0
-            thread.start()
-            let count = ProcessInfo.processInfo.activeProcessorCount - 2
-            if count > 0 {
-                for _ in 0 ..< count {
-                    
-                }
-                let worker = Worker(semaphore: semaphore)
-                workers.append(worker)
-                let thread = Thread(target: worker, selector: #selector(Worker.run), object: nil)
-                thread.threadPriority = 1.0
-                thread.start()
-            }
             self.semaphore = semaphore
-            self.workers = workers
+            self.lockSemaphore = DispatchSemaphore(value: 1)
+            self.tasks = []
         }
         
+        private func sync<T>(_ closure: ()->T) -> T {
+            self.lockSemaphore.wait()
+            let result: T = closure()
+            self.lockSemaphore.signal()
+            return result
+        }
         
+        public func append(tasks: [()->()]) {
+            guard !tasks.isEmpty else {
+                return
+            }
+            let _ = self.sync { () -> Void in
+                self.tasks.append(contentsOf: tasks)
+            }
+            for _ in 0 ..< tasks.count {
+                self.semaphore.signal()
+            }
+        }
+        
+        public func pop() -> (()->()) {
+            return self.sync { () -> (()->()) in
+                return tasks.removeFirst()
+            }
+        }
     }
 
     
     
-    public class Pool {
+    public final class Pool {
         public let workers: [Worker]
 
-        public let semaphore: DispatchSemaphore
+        public let taskQueue: TaskQueue
         
         public init() {
-            let semaphore: DispatchSemaphore = DispatchSemaphore(value: 0)
-
+            let taskQueue: TaskQueue = TaskQueue()
             var workers: [Worker] = []
-            let mainWorker = Worker(semaphore: semaphore)
+            let mainWorker = Worker(taskQueue: taskQueue)
             workers.append(mainWorker)
             let thread = Thread(target: mainWorker, selector: #selector(Worker.run), object: nil)
             thread.threadPriority = 1.0
             thread.start()
             let count = ProcessInfo.processInfo.activeProcessorCount - 2
-            if count > 0 {
-                for _ in 0 ..< count {
-                    
+            print("thread count: \(count)")
+            if count >= 6 {
+                for _ in 0 ..< 2 {
+                    let worker = Worker(taskQueue: taskQueue)
+                    workers.append(worker)
+                    let thread = Thread(target: worker, selector: #selector(Worker.run), object: nil)
+                    thread.threadPriority = 0.75
+                    thread.start()
                 }
-                let worker = Worker(semaphore: semaphore)
+            } else if count >= 4 {
+                let worker = Worker(taskQueue: taskQueue)
                 workers.append(worker)
                 let thread = Thread(target: worker, selector: #selector(Worker.run), object: nil)
-                thread.threadPriority = 1.0
+                thread.threadPriority = 0.75
                 thread.start()
             }
-            self.semaphore = semaphore
+            self.taskQueue = taskQueue
             self.workers = workers
         }
-        
-        
     }
+    
     public class Worker: NSObject {
-        public let semaphore: DispatchSemaphore
-        public init(semaphore: DispatchSemaphore) {
-            self.semaphore = semaphore
+        public let taskQueue: TaskQueue
+        public init(taskQueue: TaskQueue) {
+            self.taskQueue = taskQueue
             super.init()
         }
         @objc func run() {
-            
+            while true {
+                let _ = autoreleasepool { () -> Void in
+                    self.taskQueue.semaphore.wait()
+                    let task = taskQueue.pop()
+                    task()
+                }
+            }
         }
     }
     
@@ -122,12 +138,30 @@ public class Accelerator {
     }
     
     let pool: Pool
-    
-    public init() {
+    private init() {
         self.pool = Pool()
     }
     
+    public func append(tasks: [()->()]) {
+        self.pool.taskQueue.append(tasks: tasks)
+    }
+    
+    public static let shared: Accelerator = Accelerator()
 }
+
+public class TaskHelper: NSObject {
+    public private(set) var tasks: [()->()] = []
+
+    
+    @objc public func append(task: @escaping ()->()) {
+        self.tasks.append(task)
+    }
+    
+    @objc public func commit() {
+        Accelerator.shared.append(tasks: self.tasks)
+    }
+}
+
 
 public class DisplayManager {
 
@@ -250,6 +284,21 @@ public class DisplayManager {
     public static let shared: DisplayManager = DisplayManager()
 }
 
+public class Label: NSObject {
+    @objc public static let shared: UILabel = {
+        let label = UILabel(frame: CGRect(x: 10, y: 40, width: 350, height: 130))
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.backgroundColor = UIColor.lightGray
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        return label;
+    } ()
+    
+    class func sharedLabel() -> UILabel {
+        return self.shared
+    }
+}
+
 
 class ViewController: UIViewController {
 
@@ -258,11 +307,14 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         
 //        UIColor.init(patternImage: UIImage)
+
         
         let _ = DisplayManager.shared
         
         let mem = TMemory(sizeInMb: 256)
-        mem.dispatchSignal()
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+            mem.testMemcpy()
+        }
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
             mem.testMemcpy()
         }
@@ -280,6 +332,15 @@ class ViewController: UIViewController {
         }
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.view.window!.addSubview(Label.shared)
+    }
 
 }
+
+
 

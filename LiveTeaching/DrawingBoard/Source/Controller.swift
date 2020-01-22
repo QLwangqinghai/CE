@@ -358,7 +358,8 @@ public final class DrawingEventRecognizer: NSObject {
 
     public enum State : Int {
         case possible
-        case recogning
+        case pan
+        case pan2
         case recognized
         case ended
         case cancelled
@@ -366,7 +367,7 @@ public final class DrawingEventRecognizer: NSObject {
 //        public static var recognized: UIGestureRecognizer.State { get }
     }
     
-    public var recogning: Bool
+//    public var recogning: Bool
     
     
     public var tapHandler: TapEventHandler?
@@ -438,7 +439,25 @@ public final class DrawingEventRecognizer: NSObject {
 
 }
 
-public class DrawingContainer: UIView {
+
+public class DrawingContainer: UIStackView {
+    public let drawingBoard: DrawingBoardView
+    
+    public override init(frame: CGRect) {
+        self.drawingBoard = DrawingBoardView(frame: CGRect())
+        super.init(frame: frame)
+        self.addSubview(self.drawingBoard)
+        self.drawingBoard.frame = self.bounds
+    }
+    public required init(coder: NSCoder) {
+        self.drawingBoard = DrawingBoardView(frame: CGRect())
+        super.init(coder: coder)
+        self.addSubview(self.drawingBoard)
+        self.drawingBoard.frame = self.bounds
+    }
+}
+
+public class DrawingBoardView: UIView {
     public let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
     
     private var isDispatchEventToRecognizer: Bool = false

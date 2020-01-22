@@ -9,7 +9,6 @@
 import UIKit
 
 public extension Point {
-    
     init(cgPoint: CGPoint, scale: CGFloat) {
         self.init(x: Int32(cgPoint.x * scale), y: Int32(cgPoint.y * scale))
     }

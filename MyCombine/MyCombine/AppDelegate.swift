@@ -8,6 +8,10 @@
 
 import Cocoa
 
+
+
+
+
 @propertyWrapper public struct Observed<Value> where Value: Equatable {
 
     public init(wrappedValue: Value) {

@@ -20,4 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+
+@interface TFile : NSObject
+
+- (instancetype)initWithSizeInMb:(NSInteger)sizeInMb;
+
+- (void)test;
+
+@end
+
 NS_ASSUME_NONNULL_END

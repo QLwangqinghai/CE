@@ -78,30 +78,29 @@ import Foundation
 //        self.rows = slices
 //    }
 //}
-=======
-public class SliceCollection {
-    private let rows: [Slice]
-    
-    private let sliceHeight: Int32
-    public init?(sliceCount: Int32, sliceHeight: Int32) {
-        if sliceHeight <= 0 {
-            return nil
-        }
-        if sliceCount < 0 {
-            return nil
-        }
-        
-        var slices: [Slice] = []
-        if sliceCount > 0 {
-            for index in 0 ..< sliceCount {
-                let y = sliceHeight * index
-                slices.append(Slice(y: y, height: sliceHeight))
-            }
-        }
-        self.rows = slices
-    }
-}
->>>>>>> Stashed changes
+
+//public class SliceCollection {
+//    private let rows: [Slice]
+//    
+//    private let sliceHeight: Int32
+//    public init?(sliceCount: Int32, sliceHeight: Int32) {
+//        if sliceHeight <= 0 {
+//            return nil
+//        }
+//        if sliceCount < 0 {
+//            return nil
+//        }
+//        
+//        var slices: [Slice] = []
+//        if sliceCount > 0 {
+//            for index in 0 ..< sliceCount {
+//                let y = sliceHeight * index
+//                slices.append(Slice(y: y, height: sliceHeight))
+//            }
+//        }
+//        self.rows = slices
+//    }
+//}
 
 
 

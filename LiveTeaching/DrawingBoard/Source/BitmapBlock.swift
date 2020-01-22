@@ -7,7 +7,6 @@
 //
 
 import UIKit
-@_exported import CCFoundation
 
 import CoreGraphics.CGBitmapContext
 

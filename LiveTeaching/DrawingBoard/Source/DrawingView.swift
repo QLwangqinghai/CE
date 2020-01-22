@@ -68,30 +68,34 @@ public class DrawingEventHandler: DrawingEventHandle {
     }
 }
 
+//public class Pan {
+//    public let panGestureRecognizer: UIPanGestureRecognizer = UIPanGestureRecognizer()
+//    public override init() {
+//        super.init()
+//        self.panGestureRecognizer.addTarget(self, action: #selector(DrawingLayer.handlePan))
+//    }
+//
+//    @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
+//        guard recognizer == self.panGestureRecognizer else {
+//            return
+//        }
+//        let location = recognizer.location(in: recognizer.view)
+//        let point = TouchPoint(location: location, velocity: recognizer.velocity(in: recognizer.view), time: CACurrentMediaTime())
+//        if recognizer.state == .began {
+//            self.begin(point)
+//        } else if recognizer.state == .changed {
+//            self.change(point)
+//        } else {
+//            if recognizer.state == .cancelled || recognizer.state == .ended {
+//                self.finish(point)
+//            }
+//        }
+//        self.setNeedsDisplay()
+//    }
+//}
+
+
 public final class DrawingLayer: CALayer {
-    public let panGestureRecognizer: UIPanGestureRecognizer = UIPanGestureRecognizer()
-    public override init() {
-        super.init()
-        self.panGestureRecognizer.addTarget(self, action: #selector(DrawingLayer.handlePan))
-    }
-    
-    @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
-        guard recognizer == self.panGestureRecognizer else {
-            return
-        }
-        let location = recognizer.location(in: recognizer.view)
-        let point = TouchPoint(location: location, velocity: recognizer.velocity(in: recognizer.view), time: CACurrentMediaTime())
-        if recognizer.state == .began {
-            self.begin(point)
-        } else if recognizer.state == .changed {
-            self.change(point)
-        } else {
-            if recognizer.state == .cancelled || recognizer.state == .ended {
-                self.finish(point)
-            }
-        }
-        self.setNeedsDisplay()
-    }
     
     public let id: UInt32
     public let path: UIBezierPath = UIBezierPath()
@@ -100,6 +104,7 @@ public final class DrawingLayer: CALayer {
     
     public init(id: UInt32) {
         self.id = id
+        super.init()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -746,52 +751,52 @@ open class DrawingView: UIView {
     }
     
 
-    public func map(frame: CGRect, config: DrawingContext.PageConfig, originY: Int32, frames: inout [Int32: C2DBytesRange]) -> C2DRect? {
-        var tmp = frame.standardized
-        
-        let scale = config.scale
-        var bounds = C2DRectMake(Int32(tmp.origin.x * scale) - 1, Int32(tmp.origin.y * scale) - 1, Int32(tmp.size.width * scale) + 2, Int32(tmp.size.height * scale) + 2)
-        let m = C2DRectMake(0, 0, config.contextSize.width, INT32_MAX)
-        
-        if !C2DRectIntersect(m, bounds, &bounds) {
-            return nil
-        }
-        
-//        bounds = C2DRectEnlargeFrame(<#T##from: C2DRect##C2DRect#>, <#T##to: C2DRect##C2DRect#>)
-        if bounds.origin.x % 2 != 0 {
-            bounds.origin.x -= 1
-            bounds.size.width += 1
-        }
-        if bounds.origin.y % 2 != 0 {
-            bounds.origin.y -= 1
-            bounds.size.height += 1
-        }
-        if bounds.size.width % 2 != 0 {
-            bounds.size.width += 1
-        }
-        if bounds.size.height % 2 != 0 {
-            bounds.size.height += 1
-        }
-        
-        var rect = C2DRect()
-        if rect.origin.x < 0 {
-            rect.size.width += rect.origin.x
-            rect.origin.x = 0
-        }
-        if rect.origin.y < 0 {
-            rect.origin.y = 0
-        }
-        
-        if config.colorSpace.bytesPerPixel < 8 {
-            let mask = (8 / config.colorSpace.bytesPerPixel)
-            let offset = x % mask
-            if offset != 0 {
-                rect.origin.x -= offset
-                rect.size.width += offset
-            }
-        }
-        return rect
-    }
+//    public func map(frame: CGRect, config: DrawingContext.BoxConfig, originY: Int32, frames: inout [Int32: C2DBytesRange]) -> C2DRect? {
+//        var tmp = frame.standardized
+//
+//        let scale = config.scale
+//        var bounds = C2DRectMake(Int32(tmp.origin.x * scale) - 1, Int32(tmp.origin.y * scale) - 1, Int32(tmp.size.width * scale) + 2, Int32(tmp.size.height * scale) + 2)
+//        let m = C2DRectMake(0, 0, config.contextSize.width, INT32_MAX)
+//
+//        if !C2DRectIntersect(m, bounds, &bounds) {
+//            return nil
+//        }
+//
+////        bounds = C2DRectEnlargeFrame(<#T##from: C2DRect##C2DRect#>, <#T##to: C2DRect##C2DRect#>)
+//        if bounds.origin.x % 2 != 0 {
+//            bounds.origin.x -= 1
+//            bounds.size.width += 1
+//        }
+//        if bounds.origin.y % 2 != 0 {
+//            bounds.origin.y -= 1
+//            bounds.size.height += 1
+//        }
+//        if bounds.size.width % 2 != 0 {
+//            bounds.size.width += 1
+//        }
+//        if bounds.size.height % 2 != 0 {
+//            bounds.size.height += 1
+//        }
+//
+//        var rect = C2DRect()
+//        if rect.origin.x < 0 {
+//            rect.size.width += rect.origin.x
+//            rect.origin.x = 0
+//        }
+//        if rect.origin.y < 0 {
+//            rect.origin.y = 0
+//        }
+//
+//        if config.colorSpace.bytesPerPixel < 8 {
+//            let mask = (8 / config.colorSpace.bytesPerPixel)
+//            let offset = x % mask
+//            if offset != 0 {
+//                rect.origin.x -= offset
+//                rect.size.width += offset
+//            }
+//        }
+//        return rect
+//    }
     
     
 //    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -924,25 +929,4 @@ open class DrawingScrollView: UIScrollView {
         
     }
 }
-
-public struct Package {
-    let x: UInt32
-    let y: UInt32
-    
-    enum ChangeCode: UInt16 {
-        case updateX = 1
-        case updateY = 2
-    }
-    
-    
-}
-
-public struct Change {
-    let x: UInt32
-    let y: UInt32
-    
-    
-    
-}
-
 

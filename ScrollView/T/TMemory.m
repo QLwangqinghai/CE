@@ -96,6 +96,32 @@
  2020-01-20 00:35:00.218466+0800 T[15204:5717522] 64Mb memcpy 22.1ms(0.345ms/mb) custom:22.1ms(0.345ms/mb)
  2020-01-20 00:35:03.585370+0800 T[15204:5717522] 64Mb memcpy 23.5ms(0.367ms/mb) custom:21.8ms(0.340ms/mb)
  
+ 
+ ipad 5
+ 2020-01-22 10:19:30.939845+0800 T[6476:2069402] 256Mb memcpy 274.1ms(1.071ms/mb) custom:215.8ms(0.843ms/mb) threads 88.8ms(0.347ms/mb)
+ 2020-01-22 10:19:33.779286+0800 T[6476:2069402] 256Mb memcpy 47.8ms(0.187ms/mb) custom:54.0ms(0.211ms/mb) threads 54.7ms(0.213ms/mb)
+ 2020-01-22 10:19:37.103765+0800 T[6476:2069402] 256Mb memcpy 46.2ms(0.181ms/mb) custom:57.5ms(0.224ms/mb) threads 54.0ms(0.211ms/mb)
+ 2020-01-22 10:19:40.397942+0800 T[6476:2069402] 256Mb memcpy 48.1ms(0.188ms/mb) custom:53.8ms(0.210ms/mb) threads 54.1ms(0.211ms/mb)
+ 2020-01-22 10:19:43.496014+0800 T[6476:2069402] 256Mb memcpy 45.7ms(0.179ms/mb) custom:53.8ms(0.210ms/mb) threads 53.9ms(0.211ms/mb)
+ 2020-01-22 10:19:47.029713+0800 T[6476:2069402] 256Mb memcpy 43.1ms(0.168ms/mb) custom:54.1ms(0.211ms/mb) threads 57.9ms(0.226ms/mb)
+ 
+ 结论
+ 1. 多线程对于联系memcpy是没有什么用的 （取决于内存带宽？）
+ 2. 可以按照1mb/0.2ms）(5mb/s) 去计算
+ 
+ 
+ 
+ 文件读写
+ 
+ 2020-01-22 14:54:46.642322+0800 T[6525:2108241] 128Mb write 3173.1ms(24.790ms/mb) read:190.4ms(1.488ms/mb)
+ 2020-01-22 14:54:49.810542+0800 T[6525:2108241] 128Mb write 2898.6ms(22.645ms/mb) read:261.5ms(2.043ms/mb)
+ 2020-01-22 14:54:54.245485+0800 T[6525:2108241] 128Mb write 3691.2ms(28.837ms/mb) read:628.6ms(4.911ms/mb)
+ 2020-01-22 14:54:57.888634+0800 T[6525:2108241] 128Mb write 3388.4ms(26.472ms/mb) read:247.9ms(1.937ms/mb)
+ 2020-01-22 14:55:01.018993+0800 T[6525:2108241] 128Mb write 2961.5ms(23.137ms/mb) read:162.7ms(1.271ms/mb)
+ 2020-01-22 14:55:04.180936+0800 T[6525:2108241] 128Mb write 2967.3ms(23.182ms/mb) read:189.2ms(1.478ms/mb)
+ 写 40mb/s
+ 读取 500mb/s
+ 策略 同步读 异步写
  */
 
 typedef uint64_t CCUInt64;
@@ -107,7 +133,7 @@ static inline void _CCMemoryQuickCopy(CCUInt64 * _Nonnull dst, const CCUInt64 * 
         CCUInt64 * to = dst;
         const CCUInt64 * from = src;
         CCUInt64 * end = to + (count & countQuickMask);
-UINT64_MAX
+
         while (to < end) {
             *to = *from;
             to ++;
@@ -285,8 +311,6 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
     t0 = t0 * 1000;
     t1 = t1 * 1000;
 
-    NSMutableString * string = [NSMutableString string];
-    [string appendFormat:@"%@ memcpy %.01lfms(%.03lfms/mb) custom:%.01lfms(%.03lfms/mb) \n", self.sizeInfo, t0, t0 / self.sizeInMb, t1, t1 / self.sizeInMb];
     
     TaskHelper * helper = [[TaskHelper alloc] init];
     NSTimeInterval gb = CACurrentMediaTime();
@@ -297,7 +321,6 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
         NSInteger offset = mb * idx;
         dispatch_group_enter(g);
         [helper appendWithTask:^{
-            printf("[%ld]\n", idx);
             CCMemoryCopy(buffer + offset, buffer1 + offset, 8 * mb);
             dispatch_group_leave(g);
         }];
@@ -309,7 +332,8 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
     NSTimeInterval gt = ge - gb;
     gt = gt * 1000;
 
-    [string appendFormat:@"%@ threads %.01lfms(%.03lfms/mb) ", self.sizeInfo, gt, gt / self.sizeInMb];
+    NSMutableString * string = [NSMutableString string];
+    [string appendFormat:@"%@ memcpy %.01lfms(%.03lfms/mb) custom:%.01lfms(%.03lfms/mb) threads %.01lfms(%.03lfms/mb)", self.sizeInfo, t0, t0 / self.sizeInMb, t1, t1 / self.sizeInMb, gt, gt / self.sizeInMb];
     NSLog(string);
     [Label shared].text = string;
 }
@@ -342,6 +366,67 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
     NSTimeInterval e = CACurrentMediaTime();
 
     NSLog(@"comapre %.06lf", e - b);
+}
+
+
+
+@end
+
+
+
+
+@interface TFile ()
+
+@property (nonatomic, copy) NSString * sizeInfo;
+@property (nonatomic, assign) size_t sizeInMb;
+
+@property (nonatomic, assign) size_t size;
+@property (nonatomic, assign) NSInteger count;
+
+@property (nonatomic, assign) uint64_t * buffer;
+
+@end
+@implementation TFile
+
+- (instancetype)initWithSizeInMb:(NSInteger)sizeInMb {
+    self = [super init];
+    if (self) {
+        self.sizeInfo = [NSString stringWithFormat:@"%ldMb", sizeInMb];
+        self.sizeInMb = sizeInMb;
+        NSInteger mb = 1024 * 1024;
+        NSInteger size = sizeInMb * mb;
+        NSInteger count = size / sizeof(uint64_t);
+
+        self.buffer = malloc(size);
+        self.size = size;
+        self.count = count;
+        
+        
+        for (NSInteger i=0; i<count; i++) {
+            self.buffer[i] = i;
+        }
+    }
+    return self;
+}
+
+- (void)test {
+    NSInteger tag = arc4random();
+    NSString * filePath = [NSString stringWithFormat:@"%@/Library/%ld", NSHomeDirectory(), tag];
+    NSData * data = [NSData dataWithBytesNoCopy:self.buffer length:self.size freeWhenDone:false];
+    NSTimeInterval b0 = CACurrentMediaTime();
+    [data writeToFile:filePath atomically:true];
+    NSTimeInterval b = CACurrentMediaTime();
+    NSData * read = [NSData dataWithContentsOfFile:filePath];
+    NSTimeInterval e = CACurrentMediaTime();
+    NSTimeInterval t0 = b - b0;
+    NSTimeInterval t1 = e - b;
+    t0 = t0 * 1000;
+    t1 = t1 * 1000;
+
+    NSMutableString * string = [NSMutableString string];
+    [string appendFormat:@"%@ write %.01lfms(%.03lfms/mb) read:%.01lfms(%.03lfms/mb)", self.sizeInfo, t0, t0 / self.sizeInMb, t1, t1 / self.sizeInMb];
+    NSLog(string);
+    [Label shared].text = string;
 }
 
 

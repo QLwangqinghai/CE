@@ -44,16 +44,7 @@ public class Page: NSObject {
     public let identifer: Int = 0
     
 }
-public class Slice: NSObject {
-    public enum Status {
-        case normal
-        
-    }
-    
-    public init(y: Int32, height: UInt32, status: Status) {
 
-    }
-}
 
 public class BoxContext: NSObject {
     public let backgroundColor: UIColor
@@ -67,9 +58,5 @@ public class PageContext: NSObject {
         self.backgroundColor = backgroundColor
     }
 }
-public class SliceContext: NSObject {
-    public init(frame: Rect) {
 
-    }
-}
 

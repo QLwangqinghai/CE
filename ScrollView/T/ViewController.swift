@@ -87,7 +87,7 @@ public final class Accelerator {
             thread.threadPriority = 1.0
             thread.start()
             let count = ProcessInfo.processInfo.activeProcessorCount - 2
-            print("thread count: \(count)")
+            print("cpu count: \(count)")
             if count >= 6 {
                 for _ in 0 ..< 2 {
                     let worker = Worker(taskQueue: taskQueue)
@@ -164,7 +164,6 @@ public class TaskHelper: NSObject {
 
 
 public class DisplayManager {
-
     private var links: [TimeInterval]
     private var last: Int64 = 0
     
@@ -181,40 +180,41 @@ public class DisplayManager {
      1 1 - 9
      0 0
      */
-    private var level: Int = 0 {
+    private var level: (Int64, Int) = (0, 0) {
        didSet(old) {
            let new = self.level
            if old != new {
-               print("fps level:\(level)")
+//            print("fps time:\(new.0) level:\(new.1)")
            }
        }
    }
-    private var fps: Int = 0 {
-        didSet(old) {
-            let new = self.fps
+    private var fps: (Int64, Int) = (0, 0) {
+        didSet(oldValue) {
+            let old = oldValue.1
+            let new = self.fps.1
             if old != new {
                 if new >= 58 {
-                    self.level = 10
+                    self.level = (self.fps.0, 10)
                 } else if new >= 55 {
-                    self.level = 9
+                    self.level = (self.fps.0, 9)
                 } else if new >= 52 {
-                    self.level = 8
+                    self.level = (self.fps.0, 8)
                 } else if new >= 49 {
-                    self.level = 7
+                    self.level = (self.fps.0, 7)
                 } else if new >= 45 {
-                    self.level = 6
+                    self.level = (self.fps.0, 6)
                 } else if new >= 40 {
-                    self.level = 5
+                    self.level = (self.fps.0, 5)
                 } else if new >= 30 {
-                    self.level = 4
+                    self.level = (self.fps.0, 4)
                 } else if new >= 20 {
-                    self.level = 3
+                    self.level = (self.fps.0, 3)
                 } else if new >= 10 {
-                    self.level = 2
+                    self.level = (self.fps.0, 2)
                 } else if new >= 1 {
-                    self.level = 1
+                    self.level = (self.fps.0, 1)
                 } else {
-                    self.level = 0
+                    self.level = (self.fps.0, 0)
                 }
             }
         }
@@ -257,9 +257,15 @@ public class DisplayManager {
     func check(timestamp: TimeInterval) {
         let last = Int64(timestamp)
         if last != self.last {
-            self.fps = self.links.count
-            self.links.removeAll()
-            self.last = last
+            if self.last + 1 == last {
+                self.fps = (self.last, self.links.count)
+                self.links.removeAll()
+                self.last = last
+            } else {
+                self.fps = (last - 1, 0)
+                self.links.removeAll()
+                self.last = last
+            }
         }
         self.links.append(timestamp)
     }
@@ -275,10 +281,6 @@ public class DisplayManager {
         self.links = [0]
         self.createDisplayLink()
         self.links.reserveCapacity(60)
-        
-        
-        ProcessInfo.processInfo.activeProcessorCount
-        
     }
     
     public static let shared: DisplayManager = DisplayManager()
@@ -310,25 +312,45 @@ class ViewController: UIViewController {
 
         
         let _ = DisplayManager.shared
+//
+//        let mem = TMemory(sizeInMb: 256)
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+//            mem.testMemcpy()
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
+//            mem.testMemcpy()
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 8) {
+//            mem.testMemcpy()
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 11) {
+//            mem.testMemcpy()
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 14) {
+//            mem.testMemcpy()
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 17) {
+//            mem.testMemcpy()
+//        }
         
-        let mem = TMemory(sizeInMb: 256)
+        let fileTester = TFile(sizeInMb: 128)
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-            mem.testMemcpy()
+            fileTester.test()
         }
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
-            mem.testMemcpy()
+            fileTester.test()
         }
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 8) {
-            mem.testMemcpy()
+            fileTester.test()
         }
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 11) {
-            mem.testMemcpy()
+            fileTester.test()
         }
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 14) {
-            mem.testMemcpy()
+            fileTester.test()
         }
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 17) {
-            mem.testMemcpy()
+            fileTester.test()
         }
     }
 

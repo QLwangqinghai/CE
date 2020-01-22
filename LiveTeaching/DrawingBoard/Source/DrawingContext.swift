@@ -8,6 +8,28 @@
 
 import UIKit
 
+public class BitmapLayout: Hashable {
+    public let colorSpace: DrawingContext.ColorSpace
+    public let bytesPerRow: Int
+    public let countPerRow: UInt32
+    public let backgroundColor: DrawingContext.Color
+    public init(boxSize: DrawingContext.BoxSize, colorSpace: DrawingContext.ColorSpace, backgroundColor: DrawingContext.Color) {
+        let width = boxSize.size.width
+        self.bytesPerRow = Int(width * colorSpace.bytesPerPixel)
+        self.countPerRow = width
+        self.colorSpace = colorSpace
+        self.backgroundColor = backgroundColor
+    }
+    
+    public static func == (lhs: BitmapLayout, rhs: BitmapLayout) -> Bool {
+        return lhs.bytesPerRow == rhs.bytesPerRow && lhs.colorSpace == rhs.colorSpace && lhs.countPerRow == rhs.countPerRow && lhs.backgroundColor == rhs.backgroundColor
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.bytesPerRow)
+        hasher.combine(self.bytesPerRow)
+    }
+
+}
 
 //http://blog.sina.com.cn/s/blog_894d45e20102wwrt.html
 
@@ -20,7 +42,6 @@ public class DrawingContext {
         // 创建CADisplayLink
         displaylink = CADisplayLink(target: self,
                                     selector: #selector(DrawingContext.onDisplaylink))
-        
         displaylink!.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
     }
     
@@ -113,26 +134,17 @@ extension DrawingContext {
             }
         }
     }
-
     
     public struct BoxConfig {
         public let boxSize: BoxSize
-        public let colorSpace: ColorSpace
         public let scale: CGFloat
         public let backgroundColor: Color
-
-        public let bytesPerRow: Int
-        public let countPerRow: UInt32
-
-//        public var backgroundColor: Color = Color(little32Argb: 0)
+        public let bitmapLayout: BitmapLayout
         
-        public init(boxSize: BoxSize, scale: CGFloat = UIScreen.main.scale, backgroundColor: Color = Color(little32Argb: 0x00_ff_ff_ff) , colorSpace: ColorSpace = .little32Argb) {
+        public init(boxSize: BoxSize, scale: CGFloat = UIScreen.main.scale, backgroundColor: Color = Color.clear, colorSpace: ColorSpace = .little32Argb) {
             self.boxSize = boxSize
             self.scale = scale
-            let width = boxSize.size.width
-            self.bytesPerRow = Int(width * colorSpace.bytesPerPixel)
-            self.countPerRow = width
-            self.colorSpace = colorSpace
+            self.bitmapLayout = BitmapLayout(boxSize: boxSize, colorSpace: colorSpace, backgroundColor: backgroundColor)
             self.backgroundColor = backgroundColor
         }
     }
@@ -154,7 +166,9 @@ extension DrawingContext {
      32 bpp, 8 bpc, kCGImageAlphaPremultipliedLast
      Mac OS X, iOS
      */ //https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_context/dq_context.html#//apple_ref/doc/uid/TP30001066-CH203-BCIBHHBB
-    public struct Color {
+    public struct Color: Equatable {
+        public static let clear: Color = Color(little32Argb: 0)
+        
         public let color32: UInt32
         public init(little32Argb: UInt32) {
             self.color32 = little32Argb
@@ -162,6 +176,9 @@ extension DrawingContext {
 //            let r = little32Argb & 0x00_f0_00_00
 //            let g = little32Argb & 0x00_00_f0_00
 //            let b = little32Argb & 0x00_00_00_f0
+        }
+        public static func == (lhs: Color, rhs: Color) -> Bool {
+            return lhs.color32 == rhs.color32
         }
     }
     
@@ -229,3 +246,256 @@ public struct Manager {
 
 
 }
+
+public class FileMetaData: NSObject {
+    public let ptr: UnsafeMutableRawPointer
+    public let size: Int
+    public init(ptr: UnsafeMutableRawPointer, size: Int) {
+        assert(size > 0);
+        self.ptr = ptr
+        self.size = size
+    }
+
+}
+public class FileContent {
+    public let path: String
+
+    //标识文件是否为空
+    public var meta: FileMetaData? {
+        didSet(old) {
+            if old != self.meta {
+                FileManager.shared.setNeedsSync(meta: self.meta, to: self.path)
+            }
+        }
+    }
+    public init(path: String, meta: FileMetaData?) {
+        self.meta = meta
+        self.path = path
+    }
+    public func setNeedsSyncToFile() {
+        FileManager.shared.setNeedsSync(meta: self.meta, to: self.path)
+    }
+}
+
+
+//可能被以下对象引用 FileWritingQueue、 SliceContext
+public final class FileData: ContentDiscardable {
+    public typealias ContentType = FileContent
+    
+    private static let contentLock: NSLock = NSLock()
+
+    private static let lock: NSLock = NSLock()
+    
+    //标识是否加载
+    private var content: FileContent? = nil
+    private var contentCounter: Int64 = 0
+    private var counter: Int64 = 0
+
+    public let path: String
+    internal init(path: String) {
+        self.path = path
+    }
+    
+    public func beginContentAccess() -> ContentType {
+        FileData.contentLock.lock()
+        self.contentCounter += 1
+        let content: ContentType
+        if let c = self.content {
+            content = c
+        } else {
+            content = FileManager.shared.loadContent(of: self.path)
+            self.content = content
+        }
+        FileData.contentLock.unlock()
+        return content
+    }
+    public func endContentAccess() {
+        
+    }
+    public func discardContentIfPossible() {
+        
+    }
+    public func isContentDiscarded() -> Bool {
+        return true
+    }
+    
+    fileprivate func beginAccess() {
+        self.counter += 1
+    }
+    fileprivate func endAccess() {
+        self.counter -= 1
+        if self.counter <= 0 {
+            FileManager.shared.setNeedsRemove(self)
+        }
+    }
+    fileprivate func isDiscarded() -> Bool {
+        return self.counter <= 0
+    }
+    
+    
+}
+public class FileManager {
+    /*
+     userId/liveId/dirId/pageId/bg/y
+     userId/liveId/dirId/pageId/drawing/y
+     userId/liveId/dirId/pageId/function/xx/xx
+     */
+    
+    private let lock: NSLock = NSLock()
+    private var dictionary: [String: FileData] = [:]
+    
+    private let markLock: NSLock = NSLock()
+    private var markedRemoves: [FileData] = []
+
+    public func setNeedsRemove(_ item: FileData) {
+        self.markLock.lock()
+        self.markedRemoves.append(item)
+        self.markLock.unlock()
+    }
+    
+    public static let shared: FileManager = FileManager()
+    
+    public func clear() {
+        self.markLock.lock()
+        let items = self.markedRemoves
+        self.markedRemoves.removeAll()
+        self.markLock.unlock()
+        self.lock.lock()
+        for item in items {
+            if item.isDiscarded() {
+                self.dictionary.removeValue(forKey: item.path)
+            }
+        }
+        self.lock.unlock()
+    }
+    
+    public func beginAccessFileData(path: String) -> FileData {
+        self.lock.lock()
+        let result: FileData
+        if let item = self.dictionary[path] {
+            result = item
+        } else {
+            result = FileData(path: path)
+            self.dictionary[path] = result
+        }
+        self.lock.unlock()
+        result.beginAccess()
+        return result
+    }
+    public func endAccess(fileData: FileData) {
+        fileData.endAccess()
+    }
+    
+    public func loadContent(of filePath: String) -> FileContent {
+        return FileContent(path:filePath, meta: nil)
+    }
+
+    public func setNeedsSync(meta: FileMetaData?, to path: String) {
+        
+    }
+
+}
+
+
+public class DisplayManager {
+    private var links: [TimeInterval]
+    private var last: Int64 = 0
+    
+    /*
+     10 58 +
+     9 55 - 57
+     8 52 - 54
+     7 49 - 51
+     6 45 - 48
+     5 40 - 44
+     4 30 - 39
+     3 20 - 29
+     2 10 - 19
+     1 1 - 9
+     0 0
+     */
+    private var level: (Int64, Int) = (0, 0) {
+       didSet(old) {
+           let new = self.level
+           if old != new {
+            print("fps time:\(new.0) level:\(new.1)")
+           }
+       }
+   }
+    private var fps: (Int64, Int) = (0, 0) {
+        didSet(oldValue) {
+            let old = oldValue.1
+            let new = self.fps.1
+            if old != new {
+                if new >= 58 {
+                    self.level = (self.fps.0, 10)
+                } else if new >= 55 {
+                    self.level = (self.fps.0, 9)
+                } else if new >= 52 {
+                    self.level = (self.fps.0, 8)
+                } else if new >= 49 {
+                    self.level = (self.fps.0, 7)
+                } else if new >= 45 {
+                    self.level = (self.fps.0, 6)
+                } else if new >= 40 {
+                    self.level = (self.fps.0, 5)
+                } else if new >= 30 {
+                    self.level = (self.fps.0, 4)
+                } else if new >= 20 {
+                    self.level = (self.fps.0, 3)
+                } else if new >= 10 {
+                    self.level = (self.fps.0, 2)
+                } else if new >= 1 {
+                    self.level = (self.fps.0, 1)
+                } else {
+                    self.level = (self.fps.0, 0)
+                }
+            }
+        }
+    }
+
+    var displaylink: CADisplayLink?
+    
+    func createDisplayLink() {
+        // 创建CADisplayLink
+        let displaylink = CADisplayLink(target: self,
+                                    selector: #selector(DisplayManager.onDisplaylink))
+        if #available(iOS 10, *) {
+            displaylink.preferredFramesPerSecond = 60
+        } else {
+            displaylink.frameInterval = 1
+        }
+        displaylink.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
+        self.displaylink = displaylink
+    }
+    
+    @objc func onDisplaylink(displaylink: CADisplayLink) {
+        self.check(timestamp: displaylink.timestamp)
+    }
+    func check(timestamp: TimeInterval) {
+        let last = Int64(timestamp)
+        if last != self.last {
+            if self.last + 1 == last {
+                self.fps = (self.last, self.links.count)
+                self.links.removeAll()
+                self.last = last
+            } else {
+                self.fps = (last - 1, 0)
+                self.links.removeAll()
+                self.last = last
+            }
+        }
+        self.links.append(timestamp)
+    }
+    func stopDisplaylink() {
+        displaylink?.invalidate()
+        displaylink = nil
+    }
+    init() {
+        self.links = [0]
+        self.createDisplayLink()
+        self.links.reserveCapacity(60)
+    }
+    public static let shared: DisplayManager = DisplayManager()
+}
+

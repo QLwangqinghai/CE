@@ -8,11 +8,6 @@
 
 import UIKit
 
-public typealias Rect = CCRect32
-public typealias Size = CCSize32
-public typealias Point = CCPoint32
-
-
 open class DisplayLayer: Hashable {
     public static func == (lhs: DisplayLayer, rhs: DisplayLayer) -> Bool {
         return lhs === rhs

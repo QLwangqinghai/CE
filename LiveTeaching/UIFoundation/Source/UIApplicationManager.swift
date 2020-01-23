@@ -7,6 +7,7 @@
 //
 
 @_exported import UIKit
+@_exported import Basic
 
 public final class UIApplicationManager: NSObject {
     public static let shared: UIApplicationManager = UIApplicationManager()

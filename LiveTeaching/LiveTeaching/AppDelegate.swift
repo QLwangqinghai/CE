@@ -10,9 +10,15 @@ import UIFoundation
 
 @UIApplicationMain
 class AppDelegate: BaseAppDelegate {
-
-
     
+    override init() {
+        print("init")
+        super.init()
+    }
+
+    override func loadRootViewController() -> UIViewController {
+        return MainTabBarViewController()
+    }
     
     
 }

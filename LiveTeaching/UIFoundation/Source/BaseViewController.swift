@@ -17,6 +17,18 @@ open class BaseViewController: UIViewController {
 
     public let contentView: UIStackView = UIStackView()
     
+    
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.hidesBottomBarWhenPushed = true
+    }
+    
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.hidesBottomBarWhenPushed = true
+    }
+    
+    
     deinit {
         if let recognizer = self.navigationInteractivePopGestureRecognizer {
             recognizer.addObserver(self, forKeyPath: #keyPath(UIGestureRecognizer.state), options: [.new, .old], context: &BaseViewController.BaseViewControllerObserveContext)

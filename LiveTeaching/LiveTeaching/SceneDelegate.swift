@@ -10,6 +10,8 @@ import UIFoundation
 
 @available(iOS 13, *)
 class SceneDelegate: BaseSceneDelegate {
-
+    override func loadRootViewController() -> UIViewController {
+        return MainTabBarViewController()
+    }
 }
 

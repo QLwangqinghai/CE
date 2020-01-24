@@ -138,7 +138,7 @@ public class DrawingBoard {
 
     
     public func begin(controller: DrawingBoardController, offset: Int32) throws {
-        let context = DrawingBoardContext(identifier: controller.identifier, sequence: controller.sequence, offset: offset)
+        let context = DrawingBoardContext(identifier: controller.pageContext.identifier, sequence: controller.sequence, offset: offset)
         if self.context != context {
             self.context = context
             self.clear()

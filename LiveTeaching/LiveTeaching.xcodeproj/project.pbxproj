@@ -23,10 +23,21 @@
 		D6307B3223D7EC2100FBE798 /* SamplePointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6307B2323D7EC2100FBE798 /* SamplePointView.swift */; };
 		D6307B3323D7EC2100FBE798 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6307B2423D7EC2100FBE798 /* Log.swift */; };
 		D6307B3423D7EC2100FBE798 /* UnsafeCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6307B2523D7EC2100FBE798 /* UnsafeCache.swift */; };
+		D63BFD9623DB4D6D003FE6C3 /* LiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63BFD9523DB4D6D003FE6C3 /* LiveViewController.swift */; };
 		D64EECDD23D8B1A500F2B712 /* CCFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1623223D5EB4200AE306A /* CCFoundation.framework */; };
 		D64EECDE23D8B1A500F2B712 /* CCFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1623223D5EB4200AE306A /* CCFoundation.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D64EECE023D8B1A900F2B712 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1629B23D5EC6300AE306A /* Foundation.framework */; };
 		D64EECE123D8B1A900F2B712 /* Foundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1629B23D5EC6300AE306A /* Foundation.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D67E493423DA927F00F9DDB9 /* DrawingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493323DA927F00F9DDB9 /* DrawingController.swift */; };
+		D67E493623DAFE5600F9DDB9 /* DrawingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493523DAFE5600F9DDB9 /* DrawingContainer.swift */; };
+		D67E493823DB296200F9DDB9 /* MainTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493723DB296200F9DDB9 /* MainTabViewController.swift */; };
+		D67E493A23DB2EB300F9DDB9 /* MinePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493923DB2EB300F9DDB9 /* MinePageViewController.swift */; };
+		D67E493C23DB45FA00F9DDB9 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493B23DB45FA00F9DDB9 /* Resource.swift */; };
+		D69427E223DB4FFE004FB084 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427E123DB4FFE004FB084 /* Extensions.swift */; };
+		D69427E423DB5B0D004FB084 /* DrawingContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427E323DB5B0D004FB084 /* DrawingContentController.swift */; };
+		D69427E623DB5CB1004FB084 /* DrawingBackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427E523DB5CB1004FB084 /* DrawingBackgroundController.swift */; };
+		D69427E823DB6124004FB084 /* DrawingSliceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427E723DB6124004FB084 /* DrawingSliceController.swift */; };
+		D69427EA23DB613E004FB084 /* DrawingPageContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427E923DB613E004FB084 /* DrawingPageContext.swift */; };
 		D6952BC723D8BD380015827C /* SITP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162A223D5ECB900AE306A /* SITP.framework */; };
 		D6952BC823D8BD380015827C /* SITP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162A223D5ECB900AE306A /* SITP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D6952BCA23D987EF0015827C /* GestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6952BC923D987EF0015827C /* GestureRecognizer.swift */; };
@@ -38,8 +49,7 @@
 		D6BC5B6223D6977E00F947D0 /* CCFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1623223D5EB4200AE306A /* CCFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D6C1620823D5EA9200AE306A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C1620723D5EA9200AE306A /* AppDelegate.swift */; };
 		D6C1620A23D5EA9200AE306A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C1620923D5EA9200AE306A /* SceneDelegate.swift */; };
-		D6C1620C23D5EA9200AE306A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C1620B23D5EA9200AE306A /* ViewController.swift */; };
-		D6C1620F23D5EA9200AE306A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6C1620D23D5EA9200AE306A /* Main.storyboard */; };
+		D6C1620C23D5EA9200AE306A /* HomePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C1620B23D5EA9200AE306A /* HomePageViewController.swift */; };
 		D6C1621123D5EA9300AE306A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6C1621023D5EA9300AE306A /* Assets.xcassets */; };
 		D6C1621423D5EA9300AE306A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6C1621223D5EA9300AE306A /* LaunchScreen.storyboard */; };
 		D6C1623623D5EB4200AE306A /* CCFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = D6C1623423D5EB4200AE306A /* CCFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -79,12 +89,12 @@
 		D6C162C523D5F54B00AE306A /* UIFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = D6C162C323D5F54B00AE306A /* UIFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6C162C823D5F54B00AE306A /* UIFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162C123D5F54B00AE306A /* UIFoundation.framework */; };
 		D6C162C923D5F54B00AE306A /* UIFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162C123D5F54B00AE306A /* UIFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D6C162D123D5F56D00AE306A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C162CE23D5F56D00AE306A /* ViewController.swift */; };
+		D6C162D123D5F56D00AE306A /* UIViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C162CE23D5F56D00AE306A /* UIViewControllerExtension.swift */; };
 		D6C162D223D5F56D00AE306A /* BaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C162CF23D5F56D00AE306A /* BaseNavigationController.swift */; };
 		D6C162D323D5F56D00AE306A /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C162D023D5F56D00AE306A /* BaseViewController.swift */; };
 		D6C162D523D5F64500AE306A /* BaseSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C162D423D5F64500AE306A /* BaseSceneDelegate.swift */; };
 		D6C162D723D5F65900AE306A /* BaseAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C162D623D5F65900AE306A /* BaseAppDelegate.swift */; };
-		D6C162D923D5F70900AE306A /* UIApplicationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C162D823D5F70900AE306A /* UIApplicationManager.swift */; };
+		D6C162D923D5F70900AE306A /* MainWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C162D823D5F70900AE306A /* MainWindowManager.swift */; };
 		D6C162E323D5F98E00AE306A /* DrawingBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = D6C162E123D5F98E00AE306A /* DrawingBoard.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6C162E623D5F98E00AE306A /* DrawingBoard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162DF23D5F98E00AE306A /* DrawingBoard.framework */; };
 		D6C162E723D5F98E00AE306A /* DrawingBoard.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162DF23D5F98E00AE306A /* DrawingBoard.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -283,6 +293,17 @@
 		D6307B2323D7EC2100FBE798 /* SamplePointView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SamplePointView.swift; sourceTree = "<group>"; };
 		D6307B2423D7EC2100FBE798 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		D6307B2523D7EC2100FBE798 /* UnsafeCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnsafeCache.swift; sourceTree = "<group>"; };
+		D63BFD9523DB4D6D003FE6C3 /* LiveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveViewController.swift; sourceTree = "<group>"; };
+		D67E493323DA927F00F9DDB9 /* DrawingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingController.swift; sourceTree = "<group>"; };
+		D67E493523DAFE5600F9DDB9 /* DrawingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingContainer.swift; sourceTree = "<group>"; };
+		D67E493723DB296200F9DDB9 /* MainTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabViewController.swift; sourceTree = "<group>"; };
+		D67E493923DB2EB300F9DDB9 /* MinePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinePageViewController.swift; sourceTree = "<group>"; };
+		D67E493B23DB45FA00F9DDB9 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
+		D69427E123DB4FFE004FB084 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		D69427E323DB5B0D004FB084 /* DrawingContentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingContentController.swift; sourceTree = "<group>"; };
+		D69427E523DB5CB1004FB084 /* DrawingBackgroundController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingBackgroundController.swift; sourceTree = "<group>"; };
+		D69427E723DB6124004FB084 /* DrawingSliceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingSliceController.swift; sourceTree = "<group>"; };
+		D69427E923DB613E004FB084 /* DrawingPageContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingPageContext.swift; sourceTree = "<group>"; };
 		D6952BC923D987EF0015827C /* GestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureRecognizer.swift; sourceTree = "<group>"; };
 		D6952BD023D98D4F0015827C /* Basic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Basic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6952BD223D98D4F0015827C /* Basic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Basic.h; sourceTree = "<group>"; };
@@ -291,8 +312,7 @@
 		D6C1620423D5EA9200AE306A /* LiveTeaching.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveTeaching.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6C1620723D5EA9200AE306A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6C1620923D5EA9200AE306A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		D6C1620B23D5EA9200AE306A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		D6C1620E23D5EA9200AE306A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D6C1620B23D5EA9200AE306A /* HomePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewController.swift; sourceTree = "<group>"; };
 		D6C1621023D5EA9300AE306A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D6C1621323D5EA9300AE306A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6C1621523D5EA9300AE306A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -336,12 +356,12 @@
 		D6C162C123D5F54B00AE306A /* UIFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = UIFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6C162C323D5F54B00AE306A /* UIFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIFoundation.h; sourceTree = "<group>"; };
 		D6C162C423D5F54B00AE306A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D6C162CE23D5F56D00AE306A /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D6C162CE23D5F56D00AE306A /* UIViewControllerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtension.swift; sourceTree = "<group>"; };
 		D6C162CF23D5F56D00AE306A /* BaseNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseNavigationController.swift; sourceTree = "<group>"; };
 		D6C162D023D5F56D00AE306A /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		D6C162D423D5F64500AE306A /* BaseSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSceneDelegate.swift; sourceTree = "<group>"; };
 		D6C162D623D5F65900AE306A /* BaseAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAppDelegate.swift; sourceTree = "<group>"; };
-		D6C162D823D5F70900AE306A /* UIApplicationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationManager.swift; sourceTree = "<group>"; };
+		D6C162D823D5F70900AE306A /* MainWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowManager.swift; sourceTree = "<group>"; };
 		D6C162DF23D5F98E00AE306A /* DrawingBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DrawingBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6C162E123D5F98E00AE306A /* DrawingBoard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawingBoard.h; sourceTree = "<group>"; };
 		D6C162E223D5F98E00AE306A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -426,6 +446,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D63BFD9223DB4D36003FE6C3 /* Mine */ = {
+			isa = PBXGroup;
+			children = (
+				D67E493923DB2EB300F9DDB9 /* MinePageViewController.swift */,
+			);
+			path = Mine;
+			sourceTree = "<group>";
+		};
+		D63BFD9323DB4D3D003FE6C3 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				D6C1620B23D5EA9200AE306A /* HomePageViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		D63BFD9423DB4D44003FE6C3 /* Live */ = {
+			isa = PBXGroup;
+			children = (
+				D63BFD9523DB4D6D003FE6C3 /* LiveViewController.swift */,
+			);
+			path = Live;
+			sourceTree = "<group>";
+		};
 		D6952BD123D98D4F0015827C /* Basic */ = {
 			isa = PBXGroup;
 			children = (
@@ -450,7 +494,6 @@
 				D6D675A323D9CB0A000B44E4 /* DrawingBoard */,
 				D6307B1923D7EC2000FBE798 /* CBridge.swift */,
 				D6307B1D23D7EC2100FBE798 /* Box.swift */,
-				D6307B1B23D7EC2000FBE798 /* Controller.swift */,
 				D6307B1723D7EC2000FBE798 /* DrawingContext.swift */,
 				D6307B1C23D7EC2000FBE798 /* BitmapBlock.swift */,
 				D6307B1F23D7EC2100FBE798 /* DrawingView.swift */,
@@ -502,13 +545,16 @@
 		D6C1620623D5EA9200AE306A /* LiveTeaching */ = {
 			isa = PBXGroup;
 			children = (
+				D63BFD9423DB4D44003FE6C3 /* Live */,
+				D63BFD9323DB4D3D003FE6C3 /* Home */,
+				D63BFD9223DB4D36003FE6C3 /* Mine */,
 				D6C1620723D5EA9200AE306A /* AppDelegate.swift */,
 				D6C1620923D5EA9200AE306A /* SceneDelegate.swift */,
-				D6C1620B23D5EA9200AE306A /* ViewController.swift */,
-				D6C1620D23D5EA9200AE306A /* Main.storyboard */,
+				D67E493723DB296200F9DDB9 /* MainTabViewController.swift */,
 				D6C1621023D5EA9300AE306A /* Assets.xcassets */,
 				D6C1621223D5EA9300AE306A /* LaunchScreen.storyboard */,
 				D6C1621523D5EA9300AE306A /* Info.plist */,
+				D67E493B23DB45FA00F9DDB9 /* Resource.swift */,
 			);
 			path = LiveTeaching;
 			sourceTree = "<group>";
@@ -617,10 +663,11 @@
 			children = (
 				D6C162CF23D5F56D00AE306A /* BaseNavigationController.swift */,
 				D6C162D023D5F56D00AE306A /* BaseViewController.swift */,
-				D6C162CE23D5F56D00AE306A /* ViewController.swift */,
+				D6C162CE23D5F56D00AE306A /* UIViewControllerExtension.swift */,
 				D6C162D423D5F64500AE306A /* BaseSceneDelegate.swift */,
 				D6C162D623D5F65900AE306A /* BaseAppDelegate.swift */,
-				D6C162D823D5F70900AE306A /* UIApplicationManager.swift */,
+				D6C162D823D5F70900AE306A /* MainWindowManager.swift */,
+				D69427E123DB4FFE004FB084 /* Extensions.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -659,9 +706,16 @@
 		D6D675A323D9CB0A000B44E4 /* DrawingBoard */ = {
 			isa = PBXGroup;
 			children = (
+				D6307B1B23D7EC2000FBE798 /* Controller.swift */,
 				D6D675A123D9CA04000B44E4 /* DrawingBoardView.swift */,
 				D6D675A423D9CB16000B44E4 /* DrawingBoard.swift */,
 				D6D675A623D9D898000B44E4 /* DrawingBoardController.swift */,
+				D67E493323DA927F00F9DDB9 /* DrawingController.swift */,
+				D67E493523DAFE5600F9DDB9 /* DrawingContainer.swift */,
+				D69427E323DB5B0D004FB084 /* DrawingContentController.swift */,
+				D69427E523DB5CB1004FB084 /* DrawingBackgroundController.swift */,
+				D69427E723DB6124004FB084 /* DrawingSliceController.swift */,
+				D69427E923DB613E004FB084 /* DrawingPageContext.swift */,
 			);
 			path = DrawingBoard;
 			sourceTree = "<group>";
@@ -953,7 +1007,6 @@
 			files = (
 				D6C1621423D5EA9300AE306A /* LaunchScreen.storyboard in Resources */,
 				D6C1621123D5EA9300AE306A /* Assets.xcassets in Resources */,
-				D6C1620F23D5EA9200AE306A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1008,7 +1061,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6C1620C23D5EA9200AE306A /* ViewController.swift in Sources */,
+				D6C1620C23D5EA9200AE306A /* HomePageViewController.swift in Sources */,
+				D67E493823DB296200F9DDB9 /* MainTabViewController.swift in Sources */,
+				D63BFD9623DB4D6D003FE6C3 /* LiveViewController.swift in Sources */,
+				D67E493A23DB2EB300F9DDB9 /* MinePageViewController.swift in Sources */,
+				D67E493C23DB45FA00F9DDB9 /* Resource.swift in Sources */,
 				D6C1620823D5EA9200AE306A /* AppDelegate.swift in Sources */,
 				D6C1620A23D5EA9200AE306A /* SceneDelegate.swift in Sources */,
 			);
@@ -1048,11 +1105,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6C162D223D5F56D00AE306A /* BaseNavigationController.swift in Sources */,
-				D6C162D123D5F56D00AE306A /* ViewController.swift in Sources */,
-				D6C162D923D5F70900AE306A /* UIApplicationManager.swift in Sources */,
+				D6C162D123D5F56D00AE306A /* UIViewControllerExtension.swift in Sources */,
+				D6C162D923D5F70900AE306A /* MainWindowManager.swift in Sources */,
 				D6C162D523D5F64500AE306A /* BaseSceneDelegate.swift in Sources */,
 				D6C162D323D5F56D00AE306A /* BaseViewController.swift in Sources */,
 				D6C162D723D5F65900AE306A /* BaseAppDelegate.swift in Sources */,
+				D69427E223DB4FFE004FB084 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1066,19 +1124,25 @@
 				D6D675A223D9CA04000B44E4 /* DrawingBoardView.swift in Sources */,
 				D630797E23D82FB5004BF002 /* FileWritingQueue.swift in Sources */,
 				D6307B3323D7EC2100FBE798 /* Log.swift in Sources */,
+				D67E493423DA927F00F9DDB9 /* DrawingController.swift in Sources */,
 				D6307B3023D7EC2100FBE798 /* GLES.swift in Sources */,
+				D69427E623DB5CB1004FB084 /* DrawingBackgroundController.swift in Sources */,
 				D6307B2623D7EC2100FBE798 /* DrawingContext.swift in Sources */,
 				D6307B2E23D7EC2100FBE798 /* DrawingView.swift in Sources */,
 				D6307B2C23D7EC2100FBE798 /* Box.swift in Sources */,
+				D67E493623DAFE5600F9DDB9 /* DrawingContainer.swift in Sources */,
 				D6307B2D23D7EC2100FBE798 /* Responder.swift in Sources */,
 				D6952BCA23D987EF0015827C /* GestureRecognizer.swift in Sources */,
 				D6D675A723D9D898000B44E4 /* DrawingBoardController.swift in Sources */,
 				D6307B3423D7EC2100FBE798 /* UnsafeCache.swift in Sources */,
+				D69427E423DB5B0D004FB084 /* DrawingContentController.swift in Sources */,
 				D6EB356A23D83C960044D191 /* ContentDiscardable.swift in Sources */,
+				D69427EA23DB613E004FB084 /* DrawingPageContext.swift in Sources */,
 				D6307B3223D7EC2100FBE798 /* SamplePointView.swift in Sources */,
 				D6307B2823D7EC2100FBE798 /* CBridge.swift in Sources */,
 				D6307B2A23D7EC2100FBE798 /* Controller.swift in Sources */,
 				D6307B2F23D7EC2100FBE798 /* CoreBitMap.c in Sources */,
+				D69427E823DB6124004FB084 /* DrawingSliceController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1153,14 +1217,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		D6C1620D23D5EA9200AE306A /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D6C1620E23D5EA9200AE306A /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		D6C1621223D5EA9300AE306A /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

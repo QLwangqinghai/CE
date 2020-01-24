@@ -247,7 +247,7 @@ public struct Manager {
 
 }
 
-public class FileMetaData: NSObject {
+public class ByteBuffer: NSObject {
     public let ptr: UnsafeMutableRawPointer
     public let size: Int
     public init(ptr: UnsafeMutableRawPointer, size: Int) {
@@ -255,20 +255,27 @@ public class FileMetaData: NSObject {
         self.ptr = ptr
         self.size = size
     }
-
+    public init(size: Int) {
+        assert(size > 0);
+        self.ptr = UnsafeMutableRawPointer.allocate(byteCount: size, alignment: CCGetCachelineSize())
+        self.size = size
+    }
+    deinit {
+        self.ptr.deallocate()
+    }
 }
 public class FileContent {
     public let path: String
 
     //标识文件是否为空
-    public var meta: FileMetaData? {
+    public var meta: ByteBuffer? {
         didSet(old) {
             if old != self.meta {
                 FileManager.shared.setNeedsSync(meta: self.meta, to: self.path)
             }
         }
     }
-    public init(path: String, meta: FileMetaData?) {
+    public init(path: String, meta: ByteBuffer?) {
         self.meta = meta
         self.path = path
     }
@@ -390,7 +397,7 @@ public class FileManager {
         return FileContent(path:filePath, meta: nil)
     }
 
-    public func setNeedsSync(meta: FileMetaData?, to path: String) {
+    public func setNeedsSync(meta: ByteBuffer?, to path: String) {
         
     }
 

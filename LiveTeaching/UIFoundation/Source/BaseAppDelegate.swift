@@ -12,6 +12,12 @@ open class BaseAppDelegate: UIResponder, UIApplicationDelegate {
 
     open var window: UIWindow?
 
+    public override init() {
+        self.window = MainWindowManager.shared.window
+        super.init()
+    }
+    
+    
     open func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
@@ -19,13 +25,17 @@ open class BaseAppDelegate: UIResponder, UIApplicationDelegate {
             
             
         } else {
-            let window: UIWindow = UIWindow(frame: UIScreen.main.bounds)
-            window.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
+            let window = self.window!
+            window.rootViewController = self.loadRootViewController()
             window.makeKeyAndVisible()
         }
         return true
     }
 
+    open func loadRootViewController() -> UIViewController {
+        return UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()!
+    }
+    
     // MARK: UISceneSession Lifecycle
     @available(iOS 13.0, *)
     open func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {

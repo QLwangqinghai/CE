@@ -1,0 +1,6 @@
+framework module SITP {
+  umbrella header "SITP-umbrella.h"
+
+  export *
+  module * { export * }
+}

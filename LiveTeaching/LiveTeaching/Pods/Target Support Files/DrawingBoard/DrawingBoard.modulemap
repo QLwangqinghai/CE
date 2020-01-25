@@ -1,0 +1,6 @@
+framework module DrawingBoard {
+  umbrella header "DrawingBoard-umbrella.h"
+
+  export *
+  module * { export * }
+}

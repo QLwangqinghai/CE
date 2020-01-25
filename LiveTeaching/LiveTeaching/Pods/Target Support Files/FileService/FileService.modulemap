@@ -1,0 +1,6 @@
+framework module FileService {
+  umbrella header "FileService-umbrella.h"
+
+  export *
+  module * { export * }
+}

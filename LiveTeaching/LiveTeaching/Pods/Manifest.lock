@@ -1,0 +1,47 @@
+PODS:
+  - Basic (0.1.0)
+  - CCFoundation (0.1.0)
+  - DrawingBoard (0.1.0):
+    - Basic
+    - CCFoundation
+  - FileService (0.1.0):
+    - Basic
+    - CCFoundation
+  - SITP (0.1.0):
+    - CCFoundation
+  - UIFoundation (0.1.0):
+    - Basic
+
+DEPENDENCIES:
+  - Basic (from `../Basic`)
+  - CCFoundation (from `../CCFoundation`)
+  - DrawingBoard (from `../DrawingBoard`)
+  - FileService (from `../FileService`)
+  - SITP (from `../SITP`)
+  - UIFoundation (from `../UIFoundation`)
+
+EXTERNAL SOURCES:
+  Basic:
+    :path: "../Basic"
+  CCFoundation:
+    :path: "../CCFoundation"
+  DrawingBoard:
+    :path: "../DrawingBoard"
+  FileService:
+    :path: "../FileService"
+  SITP:
+    :path: "../SITP"
+  UIFoundation:
+    :path: "../UIFoundation"
+
+SPEC CHECKSUMS:
+  Basic: 5d57e77ea12f8431d42d94f4487ae675d5134671
+  CCFoundation: 3e302a3cad0b4738afefe9012ee23a7d845c62f8
+  DrawingBoard: 909a1cb4b5de92aaaa3c9c9fd49ec1c3ef7fbef7
+  FileService: c69fdb0240e1cb99dfce598ac7027e1eb1e16567
+  SITP: a9c32c2ed1c66002a402a9211fe9f3e8966a5353
+  UIFoundation: 9b74b081b858c14164bee53a7fe2a239bf8af2d8
+
+PODFILE CHECKSUM: 11ee3afe0d4ddb48cc2b48c84048cb6acb5a3db5
+
+COCOAPODS: 1.8.4

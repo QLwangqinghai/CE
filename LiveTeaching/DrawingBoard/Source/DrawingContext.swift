@@ -13,6 +13,7 @@ public class BitmapLayout: Hashable {
     public let bytesPerRow: Int
     public let countPerRow: UInt32
     public let backgroundColor: DrawingContext.Color
+    
     public init(boxSize: DrawingContext.BoxSize, colorSpace: DrawingContext.ColorSpace, backgroundColor: DrawingContext.Color) {
         let width = boxSize.size.width
         self.bytesPerRow = Int(width * colorSpace.bytesPerPixel)

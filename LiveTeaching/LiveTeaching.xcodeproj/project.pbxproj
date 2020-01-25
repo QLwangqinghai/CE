@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D627AB4623DC6EB800E9ABD6 /* Bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = D627AB4423DC6EB800E9ABD6 /* Bridge.h */; };
+		D627AB4723DC6EB800E9ABD6 /* Bridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D627AB4523DC6EB800E9ABD6 /* Bridge.m */; };
+		D627AB5E23DC713500E9ABD6 /* OCBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D627AB5D23DC713500E9ABD6 /* OCBridge.m */; };
 		D630797E23D82FB5004BF002 /* FileWritingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D630797D23D82FB5004BF002 /* FileWritingQueue.swift */; };
 		D6307B2623D7EC2100FBE798 /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6307B1723D7EC2000FBE798 /* DrawingContext.swift */; };
 		D6307B2723D7EC2100FBE798 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6307B1823D7EC2000FBE798 /* View.swift */; };
@@ -26,11 +29,9 @@
 		D63BFD9623DB4D6D003FE6C3 /* LiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63BFD9523DB4D6D003FE6C3 /* LiveViewController.swift */; };
 		D64EECDD23D8B1A500F2B712 /* CCFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1623223D5EB4200AE306A /* CCFoundation.framework */; };
 		D64EECDE23D8B1A500F2B712 /* CCFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1623223D5EB4200AE306A /* CCFoundation.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		D64EECE023D8B1A900F2B712 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1629B23D5EC6300AE306A /* Foundation.framework */; };
-		D64EECE123D8B1A900F2B712 /* Foundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1629B23D5EC6300AE306A /* Foundation.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D67E493423DA927F00F9DDB9 /* DrawingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493323DA927F00F9DDB9 /* DrawingController.swift */; };
 		D67E493623DAFE5600F9DDB9 /* DrawingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493523DAFE5600F9DDB9 /* DrawingContainer.swift */; };
-		D67E493823DB296200F9DDB9 /* MainTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493723DB296200F9DDB9 /* MainTabViewController.swift */; };
+		D67E493823DB296200F9DDB9 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493723DB296200F9DDB9 /* MainTabBarViewController.swift */; };
 		D67E493A23DB2EB300F9DDB9 /* MinePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493923DB2EB300F9DDB9 /* MinePageViewController.swift */; };
 		D67E493C23DB45FA00F9DDB9 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67E493B23DB45FA00F9DDB9 /* Resource.swift */; };
 		D69427E223DB4FFE004FB084 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427E123DB4FFE004FB084 /* Extensions.swift */; };
@@ -38,6 +39,7 @@
 		D69427E623DB5CB1004FB084 /* DrawingBackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427E523DB5CB1004FB084 /* DrawingBackgroundController.swift */; };
 		D69427E823DB6124004FB084 /* DrawingSliceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427E723DB6124004FB084 /* DrawingSliceController.swift */; };
 		D69427EA23DB613E004FB084 /* DrawingPageContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427E923DB613E004FB084 /* DrawingPageContext.swift */; };
+		D69427ED23DB6B77004FB084 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69427EC23DB6B77004FB084 /* ViewController.swift */; };
 		D6952BC723D8BD380015827C /* SITP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162A223D5ECB900AE306A /* SITP.framework */; };
 		D6952BC823D8BD380015827C /* SITP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162A223D5ECB900AE306A /* SITP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D6952BCA23D987EF0015827C /* GestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6952BC923D987EF0015827C /* GestureRecognizer.swift */; };
@@ -106,9 +108,9 @@
 		D6C1630623D5FD0F00AE306A /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C1630023D5FD0F00AE306A /* FileItem.swift */; };
 		D6C1630723D5FD0F00AE306A /* UserGroup.md in Resources */ = {isa = PBXBuildFile; fileRef = D6C1630123D5FD0F00AE306A /* UserGroup.md */; };
 		D6C1630923D5FDD600AE306A /* CCFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1623223D5EB4200AE306A /* CCFoundation.framework */; };
-		D6C1630A23D5FDD600AE306A /* CCFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1623223D5EB4200AE306A /* CCFoundation.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D6C1630A23D5FDD600AE306A /* CCFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C1623223D5EB4200AE306A /* CCFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D6D6759423D98F86000B44E4 /* Basic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6952BD023D98D4F0015827C /* Basic.framework */; };
-		D6D6759523D98F86000B44E4 /* Basic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6952BD023D98D4F0015827C /* Basic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D6D6759523D98F86000B44E4 /* Basic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6952BD023D98D4F0015827C /* Basic.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D6D6759923D9C698000B44E4 /* UIFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162C123D5F54B00AE306A /* UIFoundation.framework */; };
 		D6D6759A23D9C698000B44E4 /* UIFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6C162C123D5F54B00AE306A /* UIFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D6D6759D23D9C6EF000B44E4 /* Basic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6952BD023D98D4F0015827C /* Basic.framework */; };
@@ -117,7 +119,6 @@
 		D6D675A523D9CB16000B44E4 /* DrawingBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D675A423D9CB16000B44E4 /* DrawingBoard.swift */; };
 		D6D675A723D9D898000B44E4 /* DrawingBoardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D675A623D9D898000B44E4 /* DrawingBoardController.swift */; };
 		D6EB356A23D83C960044D191 /* ContentDiscardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6EB356923D83C960044D191 /* ContentDiscardable.swift */; };
-		D6F1666C23D8B808001ADE4C /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6F1666B23D8B808001ADE4C /* AVKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,17 +213,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D64EECE223D8B1A900F2B712 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D64EECE123D8B1A900F2B712 /* Foundation.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D6BC5B6523D6977E00F947D0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -277,6 +267,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D627AB3F23DC6D9000E9ABD6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		D627AB4423DC6EB800E9ABD6 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
+		D627AB4523DC6EB800E9ABD6 /* Bridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Bridge.m; sourceTree = "<group>"; };
+		D627AB4F23DC6F4500E9ABD6 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		D627AB5123DC700900E9ABD6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		D627AB5B23DC713500E9ABD6 /* LiveTeaching-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LiveTeaching-Bridging-Header.h"; sourceTree = "<group>"; };
+		D627AB5C23DC713500E9ABD6 /* OCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCBridge.h; sourceTree = "<group>"; };
+		D627AB5D23DC713500E9ABD6 /* OCBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OCBridge.m; sourceTree = "<group>"; };
 		D630797D23D82FB5004BF002 /* FileWritingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWritingQueue.swift; sourceTree = "<group>"; };
 		D6307B1723D7EC2000FBE798 /* DrawingContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingContext.swift; sourceTree = "<group>"; };
 		D6307B1823D7EC2000FBE798 /* View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
@@ -296,7 +294,7 @@
 		D63BFD9523DB4D6D003FE6C3 /* LiveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveViewController.swift; sourceTree = "<group>"; };
 		D67E493323DA927F00F9DDB9 /* DrawingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingController.swift; sourceTree = "<group>"; };
 		D67E493523DAFE5600F9DDB9 /* DrawingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingContainer.swift; sourceTree = "<group>"; };
-		D67E493723DB296200F9DDB9 /* MainTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabViewController.swift; sourceTree = "<group>"; };
+		D67E493723DB296200F9DDB9 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
 		D67E493923DB2EB300F9DDB9 /* MinePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinePageViewController.swift; sourceTree = "<group>"; };
 		D67E493B23DB45FA00F9DDB9 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		D69427E123DB4FFE004FB084 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -304,6 +302,7 @@
 		D69427E523DB5CB1004FB084 /* DrawingBackgroundController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingBackgroundController.swift; sourceTree = "<group>"; };
 		D69427E723DB6124004FB084 /* DrawingSliceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingSliceController.swift; sourceTree = "<group>"; };
 		D69427E923DB613E004FB084 /* DrawingPageContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingPageContext.swift; sourceTree = "<group>"; };
+		D69427EC23DB6B77004FB084 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D6952BC923D987EF0015827C /* GestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureRecognizer.swift; sourceTree = "<group>"; };
 		D6952BD023D98D4F0015827C /* Basic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Basic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6952BD223D98D4F0015827C /* Basic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Basic.h; sourceTree = "<group>"; };
@@ -391,7 +390,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6F1666C23D8B808001ADE4C /* AVKit.framework in Frameworks */,
 				D6C162F723D5FC9E00AE306A /* FileService.framework in Frameworks */,
 				D6952BC723D8BD380015827C /* SITP.framework in Frameworks */,
 				D6C162C823D5F54B00AE306A /* UIFoundation.framework in Frameworks */,
@@ -405,7 +403,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D64EECE023D8B1A900F2B712 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -468,6 +465,18 @@
 				D63BFD9523DB4D6D003FE6C3 /* LiveViewController.swift */,
 			);
 			path = Live;
+			sourceTree = "<group>";
+		};
+		D69427EB23DB6A6B004FB084 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				D67E493B23DB45FA00F9DDB9 /* Resource.swift */,
+				D69427EC23DB6B77004FB084 /* ViewController.swift */,
+				D627AB5C23DC713500E9ABD6 /* OCBridge.h */,
+				D627AB5D23DC713500E9ABD6 /* OCBridge.m */,
+				D627AB5B23DC713500E9ABD6 /* LiveTeaching-Bridging-Header.h */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 		D6952BD123D98D4F0015827C /* Basic */ = {
@@ -545,16 +554,16 @@
 		D6C1620623D5EA9200AE306A /* LiveTeaching */ = {
 			isa = PBXGroup;
 			children = (
+				D69427EB23DB6A6B004FB084 /* Common */,
 				D63BFD9423DB4D44003FE6C3 /* Live */,
 				D63BFD9323DB4D3D003FE6C3 /* Home */,
 				D63BFD9223DB4D36003FE6C3 /* Mine */,
 				D6C1620723D5EA9200AE306A /* AppDelegate.swift */,
 				D6C1620923D5EA9200AE306A /* SceneDelegate.swift */,
-				D67E493723DB296200F9DDB9 /* MainTabViewController.swift */,
+				D67E493723DB296200F9DDB9 /* MainTabBarViewController.swift */,
 				D6C1621023D5EA9300AE306A /* Assets.xcassets */,
 				D6C1621223D5EA9300AE306A /* LaunchScreen.storyboard */,
 				D6C1621523D5EA9300AE306A /* Info.plist */,
-				D67E493B23DB45FA00F9DDB9 /* Resource.swift */,
 			);
 			path = LiveTeaching;
 			sourceTree = "<group>";
@@ -565,6 +574,8 @@
 				D6C1623E23D5EB9B00AE306A /* Source */,
 				D6C1623423D5EB4200AE306A /* CCFoundation.h */,
 				D6C1623523D5EB4200AE306A /* Info.plist */,
+				D627AB4423DC6EB800E9ABD6 /* Bridge.h */,
+				D627AB4523DC6EB800E9ABD6 /* Bridge.m */,
 			);
 			path = CCFoundation;
 			sourceTree = "<group>";
@@ -619,6 +630,9 @@
 		D6C1629A23D5EC6300AE306A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D627AB5123DC700900E9ABD6 /* ImageIO.framework */,
+				D627AB4F23DC6F4500E9ABD6 /* CoreImage.framework */,
+				D627AB3F23DC6D9000E9ABD6 /* UIKit.framework */,
 				D6F1666B23D8B808001ADE4C /* AVKit.framework */,
 				D6C1629B23D5EC6300AE306A /* Foundation.framework */,
 			);
@@ -736,6 +750,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6C1628423D5EB9B00AE306A /* CCType.h in Headers */,
+				D627AB4623DC6EB800E9ABD6 /* Bridge.h in Headers */,
 				D6C1628623D5EB9B00AE306A /* CCConfig.h in Headers */,
 				D6C1628F23D5EB9B00AE306A /* CCPrivate.h in Headers */,
 				D6C1628823D5EB9B00AE306A /* CCBase.h in Headers */,
@@ -841,7 +856,6 @@
 				D6C1622E23D5EB4200AE306A /* Sources */,
 				D6C1622F23D5EB4200AE306A /* Frameworks */,
 				D6C1623023D5EB4200AE306A /* Resources */,
-				D64EECE223D8B1A900F2B712 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -949,6 +963,7 @@
 					};
 					D6C1620323D5EA9200AE306A = {
 						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1130;
 					};
 					D6C1623123D5EB4200AE306A = {
 						CreatedOnToolsVersion = 11.0;
@@ -1062,11 +1077,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6C1620C23D5EA9200AE306A /* HomePageViewController.swift in Sources */,
-				D67E493823DB296200F9DDB9 /* MainTabViewController.swift in Sources */,
+				D67E493823DB296200F9DDB9 /* MainTabBarViewController.swift in Sources */,
 				D63BFD9623DB4D6D003FE6C3 /* LiveViewController.swift in Sources */,
+				D627AB5E23DC713500E9ABD6 /* OCBridge.m in Sources */,
 				D67E493A23DB2EB300F9DDB9 /* MinePageViewController.swift in Sources */,
 				D67E493C23DB45FA00F9DDB9 /* Resource.swift in Sources */,
 				D6C1620823D5EA9200AE306A /* AppDelegate.swift in Sources */,
+				D69427ED23DB6B77004FB084 /* ViewController.swift in Sources */,
 				D6C1620A23D5EA9200AE306A /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1082,6 +1099,7 @@
 				D6C1629823D5EB9B00AE306A /* CCReferenceBase.c in Sources */,
 				D6C1628B23D5EB9B00AE306A /* CCTime.c in Sources */,
 				D6C1628023D5EB9B00AE306A /* CCInteger.c in Sources */,
+				D627AB4723DC6EB800E9ABD6 /* Bridge.m in Sources */,
 				D6C1629123D5EB9B00AE306A /* CCRuntime.c in Sources */,
 				D6C1629323D5EB9B00AE306A /* CCData.c in Sources */,
 				D6C1627F23D5EB9B00AE306A /* CCByte.c in Sources */,
@@ -1343,7 +1361,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1397,7 +1415,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1412,11 +1430,12 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = LiveTeaching/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1424,6 +1443,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.liveTeaching;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "LiveTeaching/Common/LiveTeaching-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1434,11 +1455,12 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = LiveTeaching/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1446,6 +1468,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.liveTeaching;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "LiveTeaching/Common/LiveTeaching-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

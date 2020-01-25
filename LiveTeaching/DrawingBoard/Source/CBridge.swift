@@ -14,11 +14,11 @@ public typealias Size = CCSize32
 public typealias Point = CCPoint32
 
 public extension Size {
-    init(width: CCUInt32, height: CCUInt32) {
-        self.init()
-        self.width = width
-        self.height = height
-    }
+//    init(width: CCUInt32, height: CCUInt32) {
+//        self.init()
+//        self.width = width
+//        self.height = height
+//    }
 }
 extension Size: Equatable {
     public static func == (_ lhs: Size, _ rhs: Size) -> Bool {
@@ -27,11 +27,11 @@ extension Size: Equatable {
 }
 
 public extension Point {
-    init(x: CCSInt32, y: CCSInt32) {
-        self.init()
-        self.x = x
-        self.y = y
-    }
+//    init(x: CCSInt32, y: CCSInt32) {
+//        self.init()
+//        self.x = x
+//        self.y = y
+//    }
 }
 extension Point: Equatable {
     public static func == (_ lhs: Point, _ rhs: Point) -> Bool {
@@ -39,11 +39,16 @@ extension Point: Equatable {
     }
 }
 
-public extension Rect {
-    init(x: CCSInt32, y: CCSInt32, width: CCUInt32, height: CCUInt32) {
+extension Rect {
+    public init(x: CCSInt32, y: CCSInt32, width: CCUInt32, height: CCUInt32) {
         self.init()
         self.size = CCSize32Make(width, height)
         self.origin = CCPoint32Make(x, y)
+    }
+    public init(width: CCUInt32, height: CCUInt32) {
+        self.init()
+        self.size = CCSize32Make(width, height)
+        self.origin = CCPoint32Make(0, 0)
     }
 }
 extension Rect: Equatable {

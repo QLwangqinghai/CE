@@ -8,14 +8,22 @@
 
 import UIKit
 
+
+
+open class ControllerContentView: UIStackView {
+    
+}
+
+
+
+
 open class BaseViewController: UIViewController {
-    private static var BaseViewControllerObserveContext: Int = 0;
+    private static var BaseViewControllerObserveContext: Int = 0
     
     public private(set) var displayStatus: ViewDisplayStatus = .didDisappear
     
     public private(set) var navigationInteractivePopGestureRecognizer: UIGestureRecognizer?
-
-    public let contentView: UIStackView = UIStackView()
+    public let contentView: ControllerContentView = ControllerContentView()
     
     
     public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -46,22 +54,13 @@ open class BaseViewController: UIViewController {
         }
     }
     
-    
-    
-    
     override open func viewDidLoad() {
         super.viewDidLoad()
-        let contentView = self.contentView;
+        
+        let contentView = self.contentView
         contentView.frame = self.view.bounds
         self.view.addSubview(contentView)
-        
-        
-        
-        
-        
-        self.title = "\(arc4random() % 1000)"
-        self.view.backgroundColor = UIColor(white: CGFloat(arc4random() % 1000) / 1000.0, alpha: 1.0)
-        // Do any additional setup after loading the view.
+        self.view.backgroundColor = UIColor.white
     }
     
     open override func willMove(toParent parent: UIViewController?) {
@@ -109,7 +108,7 @@ open class BaseViewController: UIViewController {
     }
     
     open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-//        if context == &BaseViewController.BaseViewControllerObserveContext {
+        if context == &BaseViewController.BaseViewControllerObserveContext {
 //            print("keyPath:\(keyPath), object:\(object), change:\(change)")
 //            if keyPath == #keyPath(UIGestureRecognizer.state) {
 //
@@ -117,12 +116,34 @@ open class BaseViewController: UIViewController {
 //            } else {
 //
 //            }
-//        } else {
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//        }
+        } else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
     }
     
     @objc open override func back(sender: UIViewController, animate: Bool, completion: (() -> Void)?) -> Bool {
         return super.back(sender: sender, animate: animate, completion: completion)
+    }
+}
+
+open class BaseTestViewController: BaseViewController {
+
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.hidesBottomBarWhenPushed = true
+        self.title = "\(arc4random() % 1000)"
+    }
+    
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.hidesBottomBarWhenPushed = true
+        self.title = "\(arc4random() % 1000)"
+    }
+    
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.view.backgroundColor = UIColor(white: CGFloat(arc4random() % 1000) / 1000.0, alpha: 1.0)
+        // Do any additional setup after loading the view.
     }
 }

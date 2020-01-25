@@ -7,7 +7,7 @@
 //
 
 import UIFoundation
-import DrawingBoard
+import CCFoundation
 
 
 //import UIKit.UIGestureRecognizerSubclass
@@ -98,48 +98,38 @@ import DrawingBoard
 
 
 
-class HomePageViewController: BaseViewController {
-    public let panGestureRecognizer: GestureRecognizer = GestureRecognizer()
-
-//    public let drawingController: DrawingController = {
-//        let bounds: Rect
-//        
-//        BitmapLayout.init(boxSize: <#T##DrawingContext.BoxSize#>, colorSpace: <#T##DrawingContext.ColorSpace#>, backgroundColor: <#T##DrawingContext.Color#>)
-//        let scale = UIScreen.main.scale
-//        let screenSize: CGSize = UIScreen.main.size
-//        let min = screenSize.width < screenSize.height ? screenSize.width : screenSize.height
-//        if min * scale + 0.4 > 1080 {
-//            //good
-//            case preset960x720
-//            case preset1280x720
-//            case preset1280x1080
-//            
-//            //good
-//            case preset1440x1080
-//            
-//        } else {
-//        
-//        }
-//        
-//        
-//        let controller = DrawingController.init(identifier: "1", bounds: Rect, offset: <#T##Int32#>, bitmapLayout: BitmapLayout, scale: <#T##CGFloat#>, dataSource: <#T##DrawingBoardDataSource#>)
-//        
-//        
-//    } ()
-//        DrawingController(identifier: "1", bounds: <#Rect#>)
-//    
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        self.view.addSubview(self.drawingController.view)
-//
-//    }
-
-
-    @objc private func handlePan(recognizer: GestureRecognizer) {
-        guard recognizer == self.panGestureRecognizer else {
-            return
-        }
-        print("recognizer.state \(recognizer.state.rawValue)")
+class HomePageViewController: ViewController {
+//    public let panGestureRecognizer: GestureRecognizer = GestureRecognizer()
+    public let tapGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer()
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.hidesBottomBarWhenPushed = false
     }
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.hidesBottomBarWhenPushed = false
+    }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.tapGestureRecognizer.addTarget(self, action: #selector(HomePageViewController.handleTapped))
+        self.view.addGestureRecognizer(self.tapGestureRecognizer)
+    }
+
+    
+    @objc private func handleTapped(recognizer: UITapGestureRecognizer) {
+        let controller = LiveViewController()
+        self.present(controller, animated: true) {
+            print("present finish")
+        }
+    }
+
+    
+//    @objc private func handlePan(recognizer: GestureRecognizer) {
+//        guard recognizer == self.panGestureRecognizer else {
+//            return
+//        }
+//        print("recognizer.state \(recognizer.state.rawValue)")
+//    }
 }
 

@@ -73,8 +73,8 @@ typedef CCUInt32 CCIndex32;
 typedef CCUInt64 CCIndex64;
 
 extern const CCIndex CCIndexNotFound;
-extern const CCIndex CCIndex32NotFound;
-extern const CCIndex CCIndex64NotFound;
+extern const CCIndex32 CCIndex32NotFound;
+extern const CCIndex64 CCIndex64NotFound;
 
 
 #pragma mark - CCPoint

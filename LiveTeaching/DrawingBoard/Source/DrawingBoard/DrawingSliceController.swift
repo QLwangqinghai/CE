@@ -149,13 +149,14 @@ public class DrawingSliceController<T: NSObject>: BaseController<T> {
     public let layer: CALayer
     public let dataSource: DrawingContentDataSource
     public let domain: String
+    public let observer: DrawingPageContext.Observer
     
     public init(pageContext: DrawingPageContext, domain: String, dataSource: DrawingContentDataSource) {
         self.pageContext = pageContext
         let identifier = pageContext.identifier.appending("/\(domain)")
         self.identifier = identifier
         self.domain = domain
-
+        self.observer = DrawingPageContext.Observer(identifier: identifier)
         let layer: CALayer = CALayer()
         layer.frame = pageContext.bounds
         layer.masksToBounds = true
@@ -177,5 +178,6 @@ public class DrawingSliceController<T: NSObject>: BaseController<T> {
         self.layer = layer
         super.init()
     }
+    
 }
 

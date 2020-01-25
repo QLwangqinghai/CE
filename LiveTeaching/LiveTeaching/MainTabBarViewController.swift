@@ -1,5 +1,5 @@
 //
-//  MainTabViewController.swift
+//  MainTabBarViewController.swift
 //  LiveTeaching
 //
 //  Created by vector on 2020/1/24.

@@ -1,0 +1,34 @@
+PODS:
+  - Basic (0.1.0)
+  - CCFoundation (0.1.0)
+  - FileService (0.1.0):
+    - Basic
+    - CCFoundation
+  - SITP (0.1.0):
+    - CCFoundation
+
+DEPENDENCIES:
+  - Basic (from `../../../Common/Basic`)
+  - CCFoundation (from `../../../Common/CCFoundation`)
+  - FileService (from `../../../Common/FileService`)
+  - SITP (from `../../../Common/SITP`)
+
+EXTERNAL SOURCES:
+  Basic:
+    :path: "../../../Common/Basic"
+  CCFoundation:
+    :path: "../../../Common/CCFoundation"
+  FileService:
+    :path: "../../../Common/FileService"
+  SITP:
+    :path: "../../../Common/SITP"
+
+SPEC CHECKSUMS:
+  Basic: 43707a2cef5f207047f59cf558653f3bdb7bcf12
+  CCFoundation: 85e8dfb352770dcacf102c2fed1e473ed27ba2b2
+  FileService: bcf8a4b8a95bcb55b85d8f2ac92875196af1a5fc
+  SITP: fecb2d9a665432515035c9f03da8deaf20b25124
+
+PODFILE CHECKSUM: 8775d7b3d86a1c2c809a18330e05f9be12ef5dfa
+
+COCOAPODS: 1.8.4

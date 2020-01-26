@@ -1,9 +1,9 @@
 //
 //  DrawingView.swift
-//  ScrollView
+//  DrawingBoard
 //
-//  Created by vector on 2019/9/2.
-//  Copyright © 2019 angfung. All rights reserved.
+//  Created by vector on 2020/1/23.
+//  Copyright © 2020 vector. All rights reserved.
 //
 
 import UIKit

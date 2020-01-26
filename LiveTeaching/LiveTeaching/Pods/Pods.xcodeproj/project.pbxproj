@@ -3,26 +3,24 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		04C70D7D3A39BD9A42F5490989149FAC /* DrawingBoard-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE25525AEC5D0FC2BE9BB99C1042F02 /* DrawingBoard-dummy.m */; };
-		0656D41C7B6770451E340935F1E2BAE6 /* DrawingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE79A2BA2AD4BE82FD796E4695ADC9D2 /* DrawingContainer.swift */; };
-		0E9F52BE5417F50FDD3754223F8E4B2D /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5EC4AC34FA551536DC01668708BC216 /* View.swift */; };
+		073DBEFE747D2F6637DB9C08B1FF1A56 /* DrawingBoardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3ED7021F20DF8A3BF30979E1A3FF39F /* DrawingBoardController.swift */; };
+		0F8B1C4952F490D4E22AC7ED320A7217 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4326BDFF710626775AFD491DCDF55479 /* DrawingView.swift */; };
 		118609F933F3EB08DAA62ED57507B685 /* SITPType.h in Headers */ = {isa = PBXBuildFile; fileRef = 08703318A8290F8B479FEBF9619AC807 /* SITPType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		12E1A277524FE48317DEB51063928580 /* Pods-LiveTeaching-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 60481736564033B1866F9CCAED3BB43C /* Pods-LiveTeaching-dummy.m */; };
-		13820664C3DB95C34B2D10E5E990CA0B /* DrawingContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C2CB30E23317532A4B5907CBBE0A2 /* DrawingContentController.swift */; };
-		177BF23914837E82C0889BFCC333D3B0 /* GestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB020D5FE0523939C6E949697AAB34F8 /* GestureRecognizer.swift */; };
 		177E1DCE003527D5F49B6517EE57B5F5 /* Basic-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C1A681FC044F4BA00EDDB0A1E77D447 /* Basic-dummy.m */; };
-		1789C58893988D71257FBF42A7741985 /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DB8DE806E6CD2585DDC02015CF277D /* DrawingContext.swift */; };
 		184498A10594C2D1AA196B3AFD3DD3AB /* CCBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D32D535F38A940AA01E0CF44256E79A5 /* CCBase.c */; };
-		1C2F3F5AAF6491A6D529A7313F4E80B2 /* UnsafeCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80F7557E4BF1C6187063F500BDFFED1 /* UnsafeCache.swift */; };
+		19B346D732ECBA57547A23FA37C94F5F /* DrawingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972BF317FA88ABFA8AA742552284B293 /* DrawingContainer.swift */; };
+		1A480D9DD523485750075A24B2B19314 /* BitmapBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069364A7BE69B50AB70507093020988 /* BitmapBlock.swift */; };
+		2235619C025B49E57F53B79BB23E522E /* UnsafeCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80F7557E4BF1C6187063F500BDFFED1 /* UnsafeCache.swift */; };
 		24B7B9A0CF245031AF32A38D57BC825B /* BaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F554B7113C97099C37EAF87D52CC34A /* BaseNavigationController.swift */; };
+		29957DBECE93237042065963BC3147E1 /* ContentDiscardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D864CB4C3E688F8FB0B0F29E8F910C3B /* ContentDiscardable.swift */; };
+		2B1E8B5A0A16F91920F7554AFEF11FCE /* DrawingBackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCEA6129A3009227B39C703B38F3DE5 /* DrawingBackgroundController.swift */; };
 		2F2DFA7CCF1750DD84F88EB2428204AC /* UIFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD5251F699E5C645594341597EA0BAA9 /* UIFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		305EC81E22F5E9C6579F8521E898E089 /* GLES.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4803A53ABCB5091A53C9042F884C85 /* GLES.swift */; };
 		306594B373240DFA839748F868A06A73 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B359DE6D4ADFAE6249D35EF0F2A9E2A3 /* Extensions.swift */; };
-		310D4AE0E4A1160918E661BAC6CA0761 /* DrawingBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7B4FD738BF7D792155CECE7B619B771 /* DrawingBoard.swift */; };
 		31920D2DEDEC86B38C99E84A3C2AD539 /* CCFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8A426D60DB3F311F9823E6FC120449 /* CCFoundation.framework */; };
 		35751E5E1851304FC38198E0FEA1D8E4 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0368E4AC901073C6DA03705739B506A /* Manager.swift */; };
 		35F04FDFF34F10F3E8B543A78C73CE1C /* UIFoundation-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 3650D36C027C2626D12AA0E7EC3384C5 /* UIFoundation-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -33,48 +31,52 @@
 		4BC6BB7FEDCB7BA34DA374EC6C2ADD56 /* Basic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4565D7C5A99F9129F8176FAF30091E4B /* Basic.framework */; };
 		4EDBB3FFC2F1528C427D835D24B1E4EF /* FileManagerBase.c in Sources */ = {isa = PBXBuildFile; fileRef = 82B9BF541DC0394213C514495168C49F /* FileManagerBase.c */; };
 		4F691722DA608BA068D0E604159EB713 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4A09A2DCBAB4D880E1AA03A7DCF9AB /* Foundation.framework */; };
-		508B6F8C27E4B3527F85008124C3CDE3 /* Responder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD01A35DEF075ED28064D6A7B5759C1 /* Responder.swift */; };
 		52BBE069AD351752EBF5EE365E64B4AC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4A09A2DCBAB4D880E1AA03A7DCF9AB /* Foundation.framework */; };
 		53D6DBB3EE119013396486C4EDD364DE /* Core2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A1C93187786B64EE9976CAF09AC4B43 /* Core2D.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		54C4BEEE0A4148F776FE0105F25A9E77 /* SITPParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 6700CB005908E03FF97D4627833E3BF6 /* SITPParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		570D17C48463D341666B0C4AAD7D02DD /* DrawingPageContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554611BCF6543CE466437339AAB3BE3C /* DrawingPageContext.swift */; };
+		555B9425E36FEF0950E99541CE216EBF /* GLES.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4803A53ABCB5091A53C9042F884C85 /* GLES.swift */; };
+		561551F26B502D8F699ACCB304519D3C /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DB8DE806E6CD2585DDC02015CF277D /* DrawingContext.swift */; };
 		57D3E3F1AB25AD83714B148EF07445F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4A09A2DCBAB4D880E1AA03A7DCF9AB /* Foundation.framework */; };
 		58B2992F52C289BA0402F507746F4008 /* BaseAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867DC8D6A514E06BF257A5F91CA2D8EA /* BaseAppDelegate.swift */; };
 		5B994683225A56A2D25868F5F66770B7 /* CCFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8A426D60DB3F311F9823E6FC120449 /* CCFoundation.framework */; };
 		5C3098FE8C830479952ADB0B87270AD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4A09A2DCBAB4D880E1AA03A7DCF9AB /* Foundation.framework */; };
 		5DA6F6C9D6A0E5316FCC219984937D28 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B6CDE385EAF399B118D285F90634EB /* BaseViewController.swift */; };
 		624958E49717209F45CEA982E68B4B69 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4A09A2DCBAB4D880E1AA03A7DCF9AB /* Foundation.framework */; };
-		62CBBFEE6FCE8AE6BA7712196D68327A /* ContentDiscardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D864CB4C3E688F8FB0B0F29E8F910C3B /* ContentDiscardable.swift */; };
-		630B75544D6D57C9AA6591F2C0FE3390 /* DrawingSliceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AC5833E898C9FE7EE3D304CE3EAA799 /* DrawingSliceController.swift */; };
 		66288E8869DBF193D04CEC10018F29F6 /* Basic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4565D7C5A99F9129F8176FAF30091E4B /* Basic.framework */; };
-		68791803F8B0B11371307A79FA9277F8 /* CBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37DDDA0B2D2A2C0AA31BDDE29B79C56 /* CBridge.swift */; };
 		6962A77AA90768E361BC8094DE85555C /* CCInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 365907CDB746A5A42F2951CD25A14750 /* CCInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		69A6F647E5445C6A7D9B21B4972C3941 /* SITPParser.c in Sources */ = {isa = PBXBuildFile; fileRef = 7085079BB8EC19FBA59E33D2FE9B20AA /* SITPParser.c */; };
+		6B8DA1D5A24CFD1ECD89CAD0F1491138 /* DrawingContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48010673956AE9E25C8A2862AB16868 /* DrawingContentController.swift */; };
+		6BBFF737AB32CFE75E00E6A28C97336F /* Responder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD01A35DEF075ED28064D6A7B5759C1 /* Responder.swift */; };
 		6C4CBC1CCB011BD1B0A829B76A918314 /* SITPIndexShift.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB8C0E2359827C358E061751B24EDB6 /* SITPIndexShift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6C6EA596F7A4D4D314F181BC9798BB4E /* CCFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 16670EE15A6AC89688693C6B11B2FFAD /* CCFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		72045997113476FD6D32ABBBB31107E5 /* BaseSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9801C0E108DCD208B171FC3BB86FF8FA /* BaseSceneDelegate.swift */; };
 		73B92AD4CDFD67F5807AFB9F41E1CDEA /* FileService.h in Headers */ = {isa = PBXBuildFile; fileRef = 9EAD74E16B909DCCE4289DA02EAD1E34 /* FileService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7D18A2767AF303E5A07B429B5B5B974E /* Basic-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 1655F44FF919D6F253BDA5D5D83977AC /* Basic-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7F57566BAB267D3AA76905C627CAFD52 /* UIViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCDE85170EDB3D77DDBC9458B6D7A6E /* UIViewControllerExtension.swift */; };
-		82D8E24527FDBC1E0F175CDA890650FB /* DrawingBackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD04E97D04CD7A8BADE892A0884A8990 /* DrawingBackgroundController.swift */; };
 		857AE47F238DDFEB1AA0AFFD30FBB5EC /* Pods-LiveTeaching-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B09853CB36F69390EC01523EDABB9D4B /* Pods-LiveTeaching-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		85881A55CEF7D11EAD623ED573454920 /* DrawingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BCA615435FDCD3E0178791B2C0A692 /* DrawingController.swift */; };
+		89487CB21D116E4B9CD4AFF438B345D1 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEA5B222A2B194F3C08D45DDB0B8147 /* Controller.swift */; };
 		89EA3DFE0C1916CDABDD6B41CF5BFC42 /* FileManagerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 00A1A1B736BBDECA7CB668A352099C31 /* FileManagerBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A638442E645A5914CCEB947A01EAF7A /* CCType.c in Sources */ = {isa = PBXBuildFile; fileRef = 88880EF9AC4F18226EFD8A2C99DD2A87 /* CCType.c */; };
 		8DDFFC0CD1976B9B60705182B170BA0E /* CCInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = DF5C80C4A22D058A7DC93898E2798566 /* CCInteger.c */; };
-		8FDB14839935B3D02C372D27840A715D /* BitmapBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069364A7BE69B50AB70507093020988 /* BitmapBlock.swift */; };
 		9391A6A1DF719CC4BB724585DB9BB7EF /* CCFoundation-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CF26086C34D1493C4BB0F0509A3552 /* CCFoundation-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		942DC001148832264F51922970ADB498 /* FileService-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4AD926D642BE076556CFD3A7E7830E /* FileService-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		94CE7B0B4708D857BB920F04C2F6A508 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864A4FCAF77E0155A3C55C1285FB0EE8 /* Box.swift */; };
 		95181A3A42037D59AAD56512F23D58ED /* DrawingBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = 82ECBFC2A46F03308E4A2C2D0E48D731 /* DrawingBoard.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9918E7612689C893768B30F47042DC37 /* DrawingSliceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E9E2E5161D40D3EFBF7747910BBF50 /* DrawingSliceController.swift */; };
 		9E9761393AE7746D0070A063C0954C43 /* UserGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83562B57C4A7817B57E9472C6AE45434 /* UserGroup.swift */; };
 		A0D3AB40E1A0D09E9BF08247FBE9D2C3 /* FileService-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9974F7F1759F553018BB452C2C83D145 /* FileService-dummy.m */; };
 		A2C27720E591177A62A5929583C740BA /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7D3CDA2AD57ABE714BF68898E5E86F /* FileItem.swift */; };
 		A3B02237A801984DDD90A29355E0CBC9 /* CCTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CE69D00D93C6ABC4E94D7D3D245414D /* CCTime.c */; };
-		A48BB28DD75B7C0E6E3FED8C933AE37E /* DrawingBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FE30537E18FA20D2D30D609A309C6F /* DrawingBoardView.swift */; };
-		A50DF7420B05241DA8FB5A7DACC0B086 /* FileWritingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4886B8696CDE088E8A3AB8DFA72F6D48 /* FileWritingQueue.swift */; };
 		A88B72AE9D06078140CFB70744E0EFFA /* Basic.h in Headers */ = {isa = PBXBuildFile; fileRef = C413CC860365F303A0DE477F1C03A02C /* Basic.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AA35643C9EDDE361CADC6C6C58172860 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB177068487337C8864B374AA955DDD9 /* Controller.swift */; };
+		A90049B1E84E308B87881C3124FC0DB7 /* DrawingBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A8390B57DC072CD4466CB12CCA12CD /* DrawingBoard.swift */; };
+		AB7031C068ABA0AD5674553478CD6C35 /* DrawingBoard-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE25525AEC5D0FC2BE9BB99C1042F02 /* DrawingBoard-dummy.m */; };
 		ACF1FBAB86F81ACC06AB2A6A4C34C186 /* Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = A055E6C1836E5158E97124FC99CE6193 /* Object.swift */; };
-		B26A22D0824592201B00A757D1F87FBB /* DrawingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8198422F19B660744F71EA19DDF22450 /* DrawingController.swift */; };
+		AE83ABF05E4C727A93E7564DB623DCE4 /* GestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB020D5FE0523939C6E949697AAB34F8 /* GestureRecognizer.swift */; };
+		B2CFD7E92AD409E4969E4DE3284624AE /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A4D4248B4D7B69BBD0C912D9001C54 /* Log.swift */; };
+		B35E400C3184B8FC57927A8B1BBA05F1 /* CoreBitMap.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B9FEEF9AD7205544380A7526C6C8F5F /* CoreBitMap.c */; };
+		B3E78C18118FCE6C9D878BE5AF920486 /* FileWritingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4886B8696CDE088E8A3AB8DFA72F6D48 /* FileWritingQueue.swift */; };
+		B72E85320B31FBD782B9488A2341CC94 /* DrawingPageContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E196088305F0E4BB10331D223BDEC8 /* DrawingPageContext.swift */; };
 		B8A9277950B0AF542EB9A661E16C8EEB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4A09A2DCBAB4D880E1AA03A7DCF9AB /* Foundation.framework */; };
 		BA254B48DAB16BD678A1E6DFA46A41F1 /* Basic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4565D7C5A99F9129F8176FAF30091E4B /* Basic.framework */; };
 		BD8F7BD1777B588018709889B495E905 /* SITP-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C7FA746D0F2991A3704BE4303DB4E7FE /* SITP-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -83,19 +85,16 @@
 		C0CEA16E7AB61B49C1F662194502AC36 /* UIFoundation-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3715801D83985365EB5FB805C1CD6A17 /* UIFoundation-dummy.m */; };
 		C6A0A8F9EFB986E7923851C0FCB31125 /* CCFoundation-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8AF86D61F7A90B8076B8127D5E32CB /* CCFoundation-dummy.m */; };
 		C8C4EE785AF44DBE04A0876A4F48481E /* SITP-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F7E371FFEFD142C26B751E1F506805D4 /* SITP-dummy.m */; };
-		CAEA451DFD28A630DE22A27770A359B0 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A4D4248B4D7B69BBD0C912D9001C54 /* Log.swift */; };
-		CC2B037FC4E5FDE8E59E6354099C8D31 /* DrawingBoardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE50AF717B8FE5E98690D557D88CD845 /* DrawingBoardController.swift */; };
 		CEB07E7825F6FA6086B9B8C7B0EA6772 /* SITPType.c in Sources */ = {isa = PBXBuildFile; fileRef = 74CE4D0A2C16E8E58382D909E1FBA2E3 /* SITPType.c */; };
 		CF80491735FC06690EA55477B05D3AE4 /* CCByte.c in Sources */ = {isa = PBXBuildFile; fileRef = 43C5B57AAFC7AF1D4DFAC63B2D23628B /* CCByte.c */; };
-		D18173895AC6B349FDAE454107082BCC /* SamplePointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B6EA1BADFF280A5DCCC726984EA9A0 /* SamplePointView.swift */; };
 		D2D73D7AFE170E57706888EFFE1C55F4 /* SITP.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC446D33FF1436BD0A6966EE48D9E38 /* SITP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D3992F353E5FEABB033D04F6FAA4B026 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4A09A2DCBAB4D880E1AA03A7DCF9AB /* Foundation.framework */; };
 		D531C789E2D2B80663DF99805C619695 /* SITPIndexShift.c in Sources */ = {isa = PBXBuildFile; fileRef = D4048D9EE145B99BF97357F43FFBE820 /* SITPIndexShift.c */; };
-		D72631026C01039E50DEC7AFDDC16AD8 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864A4FCAF77E0155A3C55C1285FB0EE8 /* Box.swift */; };
 		DDD3A15D778BE75B267AD676309F1829 /* CCBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B3B9CAEA16E60B205855AFD77CA48 /* CCBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DF419B09BC1642CC32443502EBC395C6 /* CoreBitMap.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B9FEEF9AD7205544380A7526C6C8F5F /* CoreBitMap.c */; };
-		F13B9EDA73E4028874C9B57AAB666ED9 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4326BDFF710626775AFD491DCDF55479 /* DrawingView.swift */; };
+		E7BA7F890D6610CC99E948B917ACF2F7 /* CBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37DDDA0B2D2A2C0AA31BDDE29B79C56 /* CBridge.swift */; };
+		E8BB641A04A747B25E532615B04BAD08 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5EC4AC34FA551536DC01668708BC216 /* View.swift */; };
 		F1B981B992D2716D5F6630BDA8E6471A /* CCType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED354F57B8A466122056A3598F95944 /* CCType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F4559799F7CAED27C7D227EB816E4F85 /* SamplePointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B6EA1BADFF280A5DCCC726984EA9A0 /* SamplePointView.swift */; };
 		F6A7A71C10AD5A2629778E083E65FB54 /* MainWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885F6A395E207AF08AA201338422540B /* MainWindowManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -188,7 +187,7 @@
 
 /* Begin PBXFileReference section */
 		00A1A1B736BBDECA7CB668A352099C31 /* FileManagerBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = FileManagerBase.h; sourceTree = "<group>"; };
-		06BF75690C90F23EE468B79F988C8B5E /* DrawingBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DrawingBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		06BF75690C90F23EE468B79F988C8B5E /* DrawingBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = DrawingBoard.framework; path = DrawingBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		079070743C5E8041F3DA599D71A8824C /* Pods-LiveTeaching-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-LiveTeaching-Info.plist"; sourceTree = "<group>"; };
 		08703318A8290F8B479FEBF9619AC807 /* SITPType.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITPType.h; sourceTree = "<group>"; };
 		0A1C93187786B64EE9976CAF09AC4B43 /* Core2D.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Core2D.h; sourceTree = "<group>"; };
@@ -196,15 +195,16 @@
 		1305ADCB3982F9577591A8CA248F1980 /* Basic-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Basic-prefix.pch"; sourceTree = "<group>"; };
 		1655F44FF919D6F253BDA5D5D83977AC /* Basic-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Basic-umbrella.h"; sourceTree = "<group>"; };
 		16670EE15A6AC89688693C6B11B2FFAD /* CCFoundation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCFoundation.h; sourceTree = "<group>"; };
-		16E7B18458F9F65D837B23E5071B1A91 /* UIFoundation.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = UIFoundation.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		16E7B18458F9F65D837B23E5071B1A91 /* UIFoundation.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = UIFoundation.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		182ED40B4F7219E51B4480ACE6667EF7 /* CoreBitMap.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CoreBitMap.h; sourceTree = "<group>"; };
 		1A4AD926D642BE076556CFD3A7E7830E /* FileService-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "FileService-umbrella.h"; sourceTree = "<group>"; };
 		1C1A681FC044F4BA00EDDB0A1E77D447 /* Basic-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Basic-dummy.m"; sourceTree = "<group>"; };
 		1E43A3DB5B2845B24AB8A19F170A6280 /* CCFoundation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CCFoundation.xcconfig; sourceTree = "<group>"; };
 		1FCDE85170EDB3D77DDBC9458B6D7A6E /* UIViewControllerExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtension.swift; sourceTree = "<group>"; };
 		22B6CDE385EAF399B118D285F90634EB /* BaseViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		23E196088305F0E4BB10331D223BDEC8 /* DrawingPageContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingPageContext.swift; sourceTree = "<group>"; };
 		2FE25525AEC5D0FC2BE9BB99C1042F02 /* DrawingBoard-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DrawingBoard-dummy.m"; sourceTree = "<group>"; };
-		35368285D8501FD2E59E2146D6FD272A /* CCFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CCFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		35368285D8501FD2E59E2146D6FD272A /* CCFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = CCFoundation.framework; path = CCFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3650D36C027C2626D12AA0E7EC3384C5 /* UIFoundation-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIFoundation-umbrella.h"; sourceTree = "<group>"; };
 		365907CDB746A5A42F2951CD25A14750 /* CCInteger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCInteger.h; sourceTree = "<group>"; };
 		36A273936EC2E5C5DAC31C69D29D537C /* Basic.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Basic.xcconfig; sourceTree = "<group>"; };
@@ -213,69 +213,68 @@
 		39114F636648D3AD06C5BD4A51D86F3F /* Pods-LiveTeaching.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-LiveTeaching.debug.xcconfig"; sourceTree = "<group>"; };
 		3FD01A35DEF075ED28064D6A7B5759C1 /* Responder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Responder.swift; sourceTree = "<group>"; };
 		4326BDFF710626775AFD491DCDF55479 /* DrawingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
-		43C5B57AAFC7AF1D4DFAC63B2D23628B /* CCByte.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCByte.c; sourceTree = "<group>"; };
+		43C5B57AAFC7AF1D4DFAC63B2D23628B /* CCByte.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCByte.c; sourceTree = "<group>"; };
 		44E062143F82DE775BE994BD128E841C /* CCAllocator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCAllocator.h; sourceTree = "<group>"; };
 		4565D7C5A99F9129F8176FAF30091E4B /* Basic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Basic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		47560C6EE645120C3F2D74B9933DFE97 /* SITP-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SITP-prefix.pch"; sourceTree = "<group>"; };
 		4886B8696CDE088E8A3AB8DFA72F6D48 /* FileWritingQueue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FileWritingQueue.swift; sourceTree = "<group>"; };
-		48E20E42C9B25F6A7AC90A91782D907B /* FileService.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = FileService.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		4CE69D00D93C6ABC4E94D7D3D245414D /* CCTime.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCTime.c; sourceTree = "<group>"; };
+		48BCA615435FDCD3E0178791B2C0A692 /* DrawingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingController.swift; sourceTree = "<group>"; };
+		48E20E42C9B25F6A7AC90A91782D907B /* FileService.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = FileService.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		4CE69D00D93C6ABC4E94D7D3D245414D /* CCTime.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCTime.c; sourceTree = "<group>"; };
 		4DC446D33FF1436BD0A6966EE48D9E38 /* SITP.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITP.h; sourceTree = "<group>"; };
 		4FF2561034C5191F734FF55FFCE40697 /* FileService.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = FileService.xcconfig; sourceTree = "<group>"; };
-		554611BCF6543CE466437339AAB3BE3C /* DrawingPageContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingPageContext.swift; sourceTree = "<group>"; };
-		55FE30537E18FA20D2D30D609A309C6F /* DrawingBoardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingBoardView.swift; sourceTree = "<group>"; };
-		5B9FEEF9AD7205544380A7526C6C8F5F /* CoreBitMap.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CoreBitMap.c; sourceTree = "<group>"; };
+		5B9FEEF9AD7205544380A7526C6C8F5F /* CoreBitMap.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CoreBitMap.c; sourceTree = "<group>"; };
 		5D28A64698E3935FF7F344A25F14CB87 /* FileService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "FileService-Info.plist"; sourceTree = "<group>"; };
-		5EDB57C0AA603D545D80F45036C28F60 /* Basic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Basic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EDB57C0AA603D545D80F45036C28F60 /* Basic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Basic.framework; path = Basic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FCEA6129A3009227B39C703B38F3DE5 /* DrawingBackgroundController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingBackgroundController.swift; sourceTree = "<group>"; };
 		60481736564033B1866F9CCAED3BB43C /* Pods-LiveTeaching-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-LiveTeaching-dummy.m"; sourceTree = "<group>"; };
 		6069364A7BE69B50AB70507093020988 /* BitmapBlock.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BitmapBlock.swift; sourceTree = "<group>"; };
 		622977BB5C1633FD6EB1408FA4A3B8BB /* UIFoundation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = UIFoundation.xcconfig; sourceTree = "<group>"; };
 		63AD01D976B1BE6BB067E36FE68A9C9E /* DrawingBoard.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = DrawingBoard.modulemap; sourceTree = "<group>"; };
 		6700CB005908E03FF97D4627833E3BF6 /* SITPParser.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITPParser.h; sourceTree = "<group>"; };
 		6765F9A3246E60A2F880A2A5D956CE3A /* UIFoundation-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIFoundation-prefix.pch"; sourceTree = "<group>"; };
-		7085079BB8EC19FBA59E33D2FE9B20AA /* SITPParser.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = SITPParser.c; sourceTree = "<group>"; };
+		7085079BB8EC19FBA59E33D2FE9B20AA /* SITPParser.c */ = {isa = PBXFileReference; includeInIndex = 1; path = SITPParser.c; sourceTree = "<group>"; };
 		7280476AD95C02D76B7B0A747EF18FBA /* Pods-LiveTeaching.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-LiveTeaching.release.xcconfig"; sourceTree = "<group>"; };
-		74CE4D0A2C16E8E58382D909E1FBA2E3 /* SITPType.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = SITPType.c; sourceTree = "<group>"; };
+		74CE4D0A2C16E8E58382D909E1FBA2E3 /* SITPType.c */ = {isa = PBXFileReference; includeInIndex = 1; path = SITPType.c; sourceTree = "<group>"; };
 		76F3D3E52352425A825C6ED9E29D9C23 /* DrawingBoard-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "DrawingBoard-Info.plist"; sourceTree = "<group>"; };
 		7A7D3CDA2AD57ABE714BF68898E5E86F /* FileItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
-		7AC5833E898C9FE7EE3D304CE3EAA799 /* DrawingSliceController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingSliceController.swift; sourceTree = "<group>"; };
 		7CE0C654E6BCDEA8E743D34FA8E3A8B5 /* DrawingBoard.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DrawingBoard.xcconfig; sourceTree = "<group>"; };
 		7F554B7113C97099C37EAF87D52CC34A /* BaseNavigationController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BaseNavigationController.swift; sourceTree = "<group>"; };
-		8198422F19B660744F71EA19DDF22450 /* DrawingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingController.swift; sourceTree = "<group>"; };
-		82B9BF541DC0394213C514495168C49F /* FileManagerBase.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = FileManagerBase.c; sourceTree = "<group>"; };
+		82B9BF541DC0394213C514495168C49F /* FileManagerBase.c */ = {isa = PBXFileReference; includeInIndex = 1; path = FileManagerBase.c; sourceTree = "<group>"; };
 		82ECBFC2A46F03308E4A2C2D0E48D731 /* DrawingBoard.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DrawingBoard.h; sourceTree = "<group>"; };
 		83562B57C4A7817B57E9472C6AE45434 /* UserGroup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UserGroup.swift; sourceTree = "<group>"; };
-		83C3D4F5FA75FB9349D1934FAE0B82D6 /* Basic.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = Basic.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		83C3D4F5FA75FB9349D1934FAE0B82D6 /* Basic.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = Basic.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		864A4FCAF77E0155A3C55C1285FB0EE8 /* Box.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		867DC8D6A514E06BF257A5F91CA2D8EA /* BaseAppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BaseAppDelegate.swift; sourceTree = "<group>"; };
 		885F6A395E207AF08AA201338422540B /* MainWindowManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MainWindowManager.swift; sourceTree = "<group>"; };
-		88880EF9AC4F18226EFD8A2C99DD2A87 /* CCType.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCType.c; sourceTree = "<group>"; };
+		88880EF9AC4F18226EFD8A2C99DD2A87 /* CCType.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCType.c; sourceTree = "<group>"; };
 		88DB8DE806E6CD2585DDC02015CF277D /* DrawingContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingContext.swift; sourceTree = "<group>"; };
-		8C8D4E43118C74A9159E232962C46C07 /* FileService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FileService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C8D4E43118C74A9159E232962C46C07 /* FileService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = FileService.framework; path = FileService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D4A09A2DCBAB4D880E1AA03A7DCF9AB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		8F4803A53ABCB5091A53C9042F884C85 /* GLES.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GLES.swift; sourceTree = "<group>"; };
+		94A8390B57DC072CD4466CB12CCA12CD /* DrawingBoard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingBoard.swift; sourceTree = "<group>"; };
 		953735F414C3FA44A209764C92BEBE18 /* Pods-LiveTeaching-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-LiveTeaching-acknowledgements.markdown"; sourceTree = "<group>"; };
+		972BF317FA88ABFA8AA742552284B293 /* DrawingContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingContainer.swift; sourceTree = "<group>"; };
 		9801C0E108DCD208B171FC3BB86FF8FA /* BaseSceneDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BaseSceneDelegate.swift; sourceTree = "<group>"; };
 		996B3B9CAEA16E60B205855AFD77CA48 /* CCBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCBase.h; sourceTree = "<group>"; };
 		9974F7F1759F553018BB452C2C83D145 /* FileService-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "FileService-dummy.m"; sourceTree = "<group>"; };
 		9D8AF86D61F7A90B8076B8127D5E32CB /* CCFoundation-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CCFoundation-dummy.m"; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9EAD74E16B909DCCE4289DA02EAD1E34 /* FileService.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = FileService.h; sourceTree = "<group>"; };
 		9FB8C0E2359827C358E061751B24EDB6 /* SITPIndexShift.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITPIndexShift.h; sourceTree = "<group>"; };
 		A055E6C1836E5158E97124FC99CE6193 /* Object.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Object.swift; sourceTree = "<group>"; };
+		A2E9E2E5161D40D3EFBF7747910BBF50 /* DrawingSliceController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingSliceController.swift; sourceTree = "<group>"; };
 		AB77C604CF49C3D1F51CF1F7A72D8917 /* Pods-LiveTeaching-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-LiveTeaching-acknowledgements.plist"; sourceTree = "<group>"; };
 		B09853CB36F69390EC01523EDABB9D4B /* Pods-LiveTeaching-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-LiveTeaching-umbrella.h"; sourceTree = "<group>"; };
 		B16CA05EACA2F68EFC44BFF6E4208C9C /* FileService-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "FileService-prefix.pch"; sourceTree = "<group>"; };
 		B359DE6D4ADFAE6249D35EF0F2A9E2A3 /* Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B3B6EA1BADFF280A5DCCC726984EA9A0 /* SamplePointView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SamplePointView.swift; sourceTree = "<group>"; };
-		B6647B6F03EEE024A531C9C3E5F0A10A /* UIFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = UIFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6647B6F03EEE024A531C9C3E5F0A10A /* UIFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = UIFoundation.framework; path = UIFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B70CB69BDAB0859C4B5733C902098C9A /* CCConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCConfig.h; sourceTree = "<group>"; };
-		B81B68CBE9195373ED85DB62211E6A46 /* SITP.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = SITP.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		B81B68CBE9195373ED85DB62211E6A46 /* SITP.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = SITP.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		B99F9E489B2B9F806F0B0A2F543DD961 /* Basic.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Basic.modulemap; sourceTree = "<group>"; };
 		BB8A426D60DB3F311F9823E6FC120449 /* CCFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CCFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD04E97D04CD7A8BADE892A0884A8990 /* DrawingBackgroundController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingBackgroundController.swift; sourceTree = "<group>"; };
 		BDE6B380A0D2B73E44DECC6BB3EBD463 /* SITP.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SITP.xcconfig; sourceTree = "<group>"; };
-		BE50AF717B8FE5E98690D557D88CD845 /* DrawingBoardController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingBoardController.swift; sourceTree = "<group>"; };
 		C00CE3F8F6202C899274725E695036A8 /* Pods-LiveTeaching.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-LiveTeaching.modulemap"; sourceTree = "<group>"; };
 		C3CF26086C34D1493C4BB0F0509A3552 /* CCFoundation-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CCFoundation-umbrella.h"; sourceTree = "<group>"; };
 		C3EA3C023BAC3C52192BE30B37C43123 /* UIFoundation-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "UIFoundation-Info.plist"; sourceTree = "<group>"; };
@@ -284,34 +283,34 @@
 		C7FA746D0F2991A3704BE4303DB4E7FE /* SITP-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SITP-umbrella.h"; sourceTree = "<group>"; };
 		D00FC8E0163A3112E2DC00C74A7A586B /* SITP.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SITP.modulemap; sourceTree = "<group>"; };
 		D07D92FFA6F6CE553036285F6C7E4AB6 /* SITP-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SITP-Info.plist"; sourceTree = "<group>"; };
-		D14271AA4CB96A77FFC9B7920C8485C0 /* CCFoundation.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = CCFoundation.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		D32D535F38A940AA01E0CF44256E79A5 /* CCBase.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCBase.c; sourceTree = "<group>"; };
+		D14271AA4CB96A77FFC9B7920C8485C0 /* CCFoundation.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = CCFoundation.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		D32D535F38A940AA01E0CF44256E79A5 /* CCBase.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCBase.c; sourceTree = "<group>"; };
 		D37DDDA0B2D2A2C0AA31BDDE29B79C56 /* CBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CBridge.swift; sourceTree = "<group>"; };
-		D4048D9EE145B99BF97357F43FFBE820 /* SITPIndexShift.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = SITPIndexShift.c; sourceTree = "<group>"; };
+		D4048D9EE145B99BF97357F43FFBE820 /* SITPIndexShift.c */ = {isa = PBXFileReference; includeInIndex = 1; path = SITPIndexShift.c; sourceTree = "<group>"; };
 		D5915D8992798DB9E487F8A95B62914D /* DrawingBoard-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DrawingBoard-prefix.pch"; sourceTree = "<group>"; };
 		D5A6D58AEAC1A2E1AE4D93A9F2750902 /* UIFoundation.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = UIFoundation.modulemap; sourceTree = "<group>"; };
 		D669AB04E8365DEFBE94CC7A55D2ADD2 /* CCFoundation-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CCFoundation-prefix.pch"; sourceTree = "<group>"; };
 		D864CB4C3E688F8FB0B0F29E8F910C3B /* ContentDiscardable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentDiscardable.swift; sourceTree = "<group>"; };
 		DB98509EB836A7B61EF9D90D01CDC20F /* FileService.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = FileService.modulemap; sourceTree = "<group>"; };
-		DC8598F6E8FECB19D431F693A7D34170 /* DrawingBoard.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = DrawingBoard.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		DC8598F6E8FECB19D431F693A7D34170 /* DrawingBoard.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = DrawingBoard.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		DD5251F699E5C645594341597EA0BAA9 /* UIFoundation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = UIFoundation.h; sourceTree = "<group>"; };
+		DDEA5B222A2B194F3C08D45DDB0B8147 /* Controller.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		DEA9AB486866E94DCB05121E69EF0B44 /* Pods-LiveTeaching-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-LiveTeaching-frameworks.sh"; sourceTree = "<group>"; };
-		DF5C80C4A22D058A7DC93898E2798566 /* CCInteger.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCInteger.c; sourceTree = "<group>"; };
+		DF5C80C4A22D058A7DC93898E2798566 /* CCInteger.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCInteger.c; sourceTree = "<group>"; };
 		E0368E4AC901073C6DA03705739B506A /* Manager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
-		E4C5CE20233B3DC1E2301D8715AC8FC2 /* SITP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SITP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E54B0F344DA9088A790C05A759DF05C8 /* CCAllocator.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCAllocator.c; sourceTree = "<group>"; };
+		E3ED7021F20DF8A3BF30979E1A3FF39F /* DrawingBoardController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingBoardController.swift; sourceTree = "<group>"; };
+		E48010673956AE9E25C8A2862AB16868 /* DrawingContentController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingContentController.swift; sourceTree = "<group>"; };
+		E4C5CE20233B3DC1E2301D8715AC8FC2 /* SITP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SITP.framework; path = SITP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E54B0F344DA9088A790C05A759DF05C8 /* CCAllocator.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCAllocator.c; sourceTree = "<group>"; };
 		E5EC4AC34FA551536DC01668708BC216 /* View.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
-		E88C517F3340C8A8B2E687E32C172AC6 /* Pods_LiveTeaching.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LiveTeaching.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E88C517F3340C8A8B2E687E32C172AC6 /* Pods_LiveTeaching.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_LiveTeaching.framework; path = "Pods-LiveTeaching.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB020D5FE0523939C6E949697AAB34F8 /* GestureRecognizer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GestureRecognizer.swift; sourceTree = "<group>"; };
-		EB177068487337C8864B374AA955DDD9 /* Controller.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
-		F10C2CB30E23317532A4B5907CBBE0A2 /* DrawingContentController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingContentController.swift; sourceTree = "<group>"; };
+		EC00B9CC4A81B905545805FF67E18C88 /* DrawingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
 		F3A058DB232CCCF6C6D3DDED7983E79B /* CCFoundation.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = CCFoundation.modulemap; sourceTree = "<group>"; };
 		F7A4D4248B4D7B69BBD0C912D9001C54 /* Log.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
-		F7B4FD738BF7D792155CECE7B619B771 /* DrawingBoard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingBoard.swift; sourceTree = "<group>"; };
 		F7E371FFEFD142C26B751E1F506805D4 /* SITP-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SITP-dummy.m"; sourceTree = "<group>"; };
 		F80F7557E4BF1C6187063F500BDFFED1 /* UnsafeCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnsafeCache.swift; sourceTree = "<group>"; };
 		F93A9BD165294BAFB1FC7B38F97D6981 /* DrawingBoard-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DrawingBoard-umbrella.h"; sourceTree = "<group>"; };
-		FE79A2BA2AD4BE82FD796E4695ADC9D2 /* DrawingContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrawingContainer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -467,6 +466,7 @@
 				74CE4D0A2C16E8E58382D909E1FBA2E3 /* SITPType.c */,
 				08703318A8290F8B479FEBF9619AC807 /* SITPType.h */,
 			);
+			name = Source;
 			path = Source;
 			sourceTree = "<group>";
 		};
@@ -487,6 +487,7 @@
 			children = (
 				A055E6C1836E5158E97124FC99CE6193 /* Object.swift */,
 			);
+			name = Source;
 			path = Source;
 			sourceTree = "<group>";
 		};
@@ -513,6 +514,7 @@
 				88880EF9AC4F18226EFD8A2C99DD2A87 /* CCType.c */,
 				0ED354F57B8A466122056A3598F95944 /* CCType.h */,
 			);
+			name = Core;
 			path = Core;
 			sourceTree = "<group>";
 		};
@@ -555,6 +557,7 @@
 			children = (
 				45BC16F76367152E6573093A33BA0CB5 /* Core */,
 			);
+			name = Source;
 			path = Source;
 			sourceTree = "<group>";
 		};
@@ -575,6 +578,7 @@
 				E0368E4AC901073C6DA03705739B506A /* Manager.swift */,
 				83562B57C4A7817B57E9472C6AE45434 /* UserGroup.swift */,
 			);
+			name = Source;
 			path = Source;
 			sourceTree = "<group>";
 		};
@@ -611,6 +615,7 @@
 				885F6A395E207AF08AA201338422540B /* MainWindowManager.swift */,
 				1FCDE85170EDB3D77DDBC9458B6D7A6E /* UIViewControllerExtension.swift */,
 			);
+			name = Source;
 			path = Source;
 			sourceTree = "<group>";
 		};
@@ -699,23 +704,6 @@
 			);
 			sourceTree = "<group>";
 		};
-		D05D924D848664A163F0CCE2C9B60BF8 /* DrawingBoard */ = {
-			isa = PBXGroup;
-			children = (
-				FE79A2BA2AD4BE82FD796E4695ADC9D2 /* DrawingContainer.swift */,
-				8198422F19B660744F71EA19DDF22450 /* DrawingController.swift */,
-				BD04E97D04CD7A8BADE892A0884A8990 /* DrawingBackgroundController.swift */,
-				F7B4FD738BF7D792155CECE7B619B771 /* DrawingBoard.swift */,
-				55FE30537E18FA20D2D30D609A309C6F /* DrawingBoardView.swift */,
-				BE50AF717B8FE5E98690D557D88CD845 /* DrawingBoardController.swift */,
-				F10C2CB30E23317532A4B5907CBBE0A2 /* DrawingContentController.swift */,
-				554611BCF6543CE466437339AAB3BE3C /* DrawingPageContext.swift */,
-				7AC5833E898C9FE7EE3D304CE3EAA799 /* DrawingSliceController.swift */,
-				EB177068487337C8864B374AA955DDD9 /* Controller.swift */,
-			);
-			path = DrawingBoard;
-			sourceTree = "<group>";
-		};
 		E24BD3AB0F882752C18AC610E3984A4D /* Pod */ = {
 			isa = PBXGroup;
 			children = (
@@ -744,8 +732,9 @@
 				B3B6EA1BADFF280A5DCCC726984EA9A0 /* SamplePointView.swift */,
 				F80F7557E4BF1C6187063F500BDFFED1 /* UnsafeCache.swift */,
 				E5EC4AC34FA551536DC01668708BC216 /* View.swift */,
-				D05D924D848664A163F0CCE2C9B60BF8 /* DrawingBoard */,
+				FD2FFE7E6DC4491D10D8ED23011770E1 /* DrawingBoard */,
 			);
+			name = Source;
 			path = Source;
 			sourceTree = "<group>";
 		};
@@ -778,6 +767,24 @@
 				53686D3158F626E04828FAAD3F558FF5 /* iOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FD2FFE7E6DC4491D10D8ED23011770E1 /* DrawingBoard */ = {
+			isa = PBXGroup;
+			children = (
+				DDEA5B222A2B194F3C08D45DDB0B8147 /* Controller.swift */,
+				5FCEA6129A3009227B39C703B38F3DE5 /* DrawingBackgroundController.swift */,
+				94A8390B57DC072CD4466CB12CCA12CD /* DrawingBoard.swift */,
+				E3ED7021F20DF8A3BF30979E1A3FF39F /* DrawingBoardController.swift */,
+				972BF317FA88ABFA8AA742552284B293 /* DrawingContainer.swift */,
+				E48010673956AE9E25C8A2862AB16868 /* DrawingContentController.swift */,
+				48BCA615435FDCD3E0178791B2C0A692 /* DrawingController.swift */,
+				23E196088305F0E4BB10331D223BDEC8 /* DrawingPageContext.swift */,
+				A2E9E2E5161D40D3EFBF7747910BBF50 /* DrawingSliceController.swift */,
+				EC00B9CC4A81B905545805FF67E18C88 /* DrawingView.swift */,
+			);
+			name = DrawingBoard;
+			path = DrawingBoard;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -945,7 +952,7 @@
 			buildConfigurationList = 74E82A754EE85E64FD29B0E82251ECD5 /* Build configuration list for PBXNativeTarget "DrawingBoard" */;
 			buildPhases = (
 				007F68D0544FF2045522DF422BC3DFFE /* Headers */,
-				BE856A07141FA0C411D012FD38201DA9 /* Sources */,
+				9F2F9A154B16EDDA7340926C34FA1350 /* Sources */,
 				3FC47DF0F952DBC38430639504F1A5FD /* Frameworks */,
 				3F3B149E02C22DA99EE05E29F7E03CCA /* Resources */,
 			);
@@ -1007,7 +1014,7 @@
 				LastUpgradeCheck = 1100;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1131,45 +1138,45 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9F2F9A154B16EDDA7340926C34FA1350 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A480D9DD523485750075A24B2B19314 /* BitmapBlock.swift in Sources */,
+				94CE7B0B4708D857BB920F04C2F6A508 /* Box.swift in Sources */,
+				E7BA7F890D6610CC99E948B917ACF2F7 /* CBridge.swift in Sources */,
+				29957DBECE93237042065963BC3147E1 /* ContentDiscardable.swift in Sources */,
+				89487CB21D116E4B9CD4AFF438B345D1 /* Controller.swift in Sources */,
+				B35E400C3184B8FC57927A8B1BBA05F1 /* CoreBitMap.c in Sources */,
+				2B1E8B5A0A16F91920F7554AFEF11FCE /* DrawingBackgroundController.swift in Sources */,
+				AB7031C068ABA0AD5674553478CD6C35 /* DrawingBoard-dummy.m in Sources */,
+				A90049B1E84E308B87881C3124FC0DB7 /* DrawingBoard.swift in Sources */,
+				073DBEFE747D2F6637DB9C08B1FF1A56 /* DrawingBoardController.swift in Sources */,
+				19B346D732ECBA57547A23FA37C94F5F /* DrawingContainer.swift in Sources */,
+				6B8DA1D5A24CFD1ECD89CAD0F1491138 /* DrawingContentController.swift in Sources */,
+				561551F26B502D8F699ACCB304519D3C /* DrawingContext.swift in Sources */,
+				85881A55CEF7D11EAD623ED573454920 /* DrawingController.swift in Sources */,
+				B72E85320B31FBD782B9488A2341CC94 /* DrawingPageContext.swift in Sources */,
+				9918E7612689C893768B30F47042DC37 /* DrawingSliceController.swift in Sources */,
+				0F8B1C4952F490D4E22AC7ED320A7217 /* DrawingView.swift in Sources */,
+				0F8B1C4952F490D4E22AC7ED320A7217 /* DrawingView.swift in Sources */,
+				B3E78C18118FCE6C9D878BE5AF920486 /* FileWritingQueue.swift in Sources */,
+				AE83ABF05E4C727A93E7564DB623DCE4 /* GestureRecognizer.swift in Sources */,
+				555B9425E36FEF0950E99541CE216EBF /* GLES.swift in Sources */,
+				B2CFD7E92AD409E4969E4DE3284624AE /* Log.swift in Sources */,
+				6BBFF737AB32CFE75E00E6A28C97336F /* Responder.swift in Sources */,
+				F4559799F7CAED27C7D227EB816E4F85 /* SamplePointView.swift in Sources */,
+				2235619C025B49E57F53B79BB23E522E /* UnsafeCache.swift in Sources */,
+				E8BB641A04A747B25E532615B04BAD08 /* View.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3CF8F2BFF6013196626ABE41E281363 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				177E1DCE003527D5F49B6517EE57B5F5 /* Basic-dummy.m in Sources */,
 				ACF1FBAB86F81ACC06AB2A6A4C34C186 /* Object.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BE856A07141FA0C411D012FD38201DA9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8FDB14839935B3D02C372D27840A715D /* BitmapBlock.swift in Sources */,
-				D72631026C01039E50DEC7AFDDC16AD8 /* Box.swift in Sources */,
-				68791803F8B0B11371307A79FA9277F8 /* CBridge.swift in Sources */,
-				62CBBFEE6FCE8AE6BA7712196D68327A /* ContentDiscardable.swift in Sources */,
-				AA35643C9EDDE361CADC6C6C58172860 /* Controller.swift in Sources */,
-				DF419B09BC1642CC32443502EBC395C6 /* CoreBitMap.c in Sources */,
-				82D8E24527FDBC1E0F175CDA890650FB /* DrawingBackgroundController.swift in Sources */,
-				04C70D7D3A39BD9A42F5490989149FAC /* DrawingBoard-dummy.m in Sources */,
-				310D4AE0E4A1160918E661BAC6CA0761 /* DrawingBoard.swift in Sources */,
-				CC2B037FC4E5FDE8E59E6354099C8D31 /* DrawingBoardController.swift in Sources */,
-				A48BB28DD75B7C0E6E3FED8C933AE37E /* DrawingBoardView.swift in Sources */,
-				0656D41C7B6770451E340935F1E2BAE6 /* DrawingContainer.swift in Sources */,
-				13820664C3DB95C34B2D10E5E990CA0B /* DrawingContentController.swift in Sources */,
-				1789C58893988D71257FBF42A7741985 /* DrawingContext.swift in Sources */,
-				B26A22D0824592201B00A757D1F87FBB /* DrawingController.swift in Sources */,
-				570D17C48463D341666B0C4AAD7D02DD /* DrawingPageContext.swift in Sources */,
-				630B75544D6D57C9AA6591F2C0FE3390 /* DrawingSliceController.swift in Sources */,
-				F13B9EDA73E4028874C9B57AAB666ED9 /* DrawingView.swift in Sources */,
-				A50DF7420B05241DA8FB5A7DACC0B086 /* FileWritingQueue.swift in Sources */,
-				177BF23914837E82C0889BFCC333D3B0 /* GestureRecognizer.swift in Sources */,
-				305EC81E22F5E9C6579F8521E898E089 /* GLES.swift in Sources */,
-				CAEA451DFD28A630DE22A27770A359B0 /* Log.swift in Sources */,
-				508B6F8C27E4B3527F85008124C3CDE3 /* Responder.swift in Sources */,
-				D18173895AC6B349FDAE454107082BCC /* SamplePointView.swift in Sources */,
-				1C2F3F5AAF6491A6D529A7313F4E80B2 /* UnsafeCache.swift in Sources */,
-				0E9F52BE5417F50FDD3754223F8E4B2D /* View.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

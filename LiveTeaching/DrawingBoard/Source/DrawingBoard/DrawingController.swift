@@ -9,7 +9,7 @@
 import UIKit
 
 
-public class DrawingController: BaseController<DrawingContainer> {
+public class DrawingController: BaseController<DrawingContainer>, DrawingViewDrawDelegate {
     
     public let backgroundController: DrawingBackgroundController
     public let drawingBoardController: DrawingBoardController
@@ -37,7 +37,7 @@ public class DrawingController: BaseController<DrawingContainer> {
     
     public override func contentDidLoad(_ content: DrawingContainer) {
         super.contentDidLoad(content)
-        
+        self.contentController.view.drawDelegate = self
         content.addSubview(self.contentController.view)
 //        content.layer.addSublayer(self.backgroundController.content)
 //        content.layer.addSublayer(self.contentController.content)
@@ -56,6 +56,20 @@ public class DrawingController: BaseController<DrawingContainer> {
     deinit {
         self.pageContext.removeObserver(self.observer)
     }
+    
+    
+    
+    //MARK: DrawingViewDrawDelegate
+    public func drawingView(_ view: DrawingView, beginDraw points:[TouchPoint]) {
+        
+    }
+    public func drawingView(_ view: DrawingView, draw to:TouchPoint) {
+        
+    }
+    public func drawingViewFinishDraw(_ view: DrawingView) {
+        
+    }
+
 }
 
 public class DrawingSectionController: BaseController<UIStackView> {

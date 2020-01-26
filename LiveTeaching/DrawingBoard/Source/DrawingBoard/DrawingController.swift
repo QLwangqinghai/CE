@@ -39,8 +39,8 @@ public class DrawingController: BaseController<DrawingContainer> {
         super.contentDidLoad(content)
         
         content.addSubview(self.contentController.view)
-        content.layer.addSublayer(self.backgroundController.content)
-        content.layer.addSublayer(self.contentController.content)
+//        content.layer.addSublayer(self.backgroundController.content)
+//        content.layer.addSublayer(self.contentController.content)
 
         self.observer.didUpdateOffset = {[weak self] (_ observer: DrawingPageContext.Observer, _ context: DrawingPageContext, _ from: Int32, _ to: Int32) in
             guard let `self` = self else {
@@ -60,7 +60,11 @@ public class DrawingController: BaseController<DrawingContainer> {
 
 public class DrawingSectionController: BaseController<UIStackView> {
     public private(set) var childs: [DrawingController]
-    public private(set) var frame: CGRect
+    public var frame: CGRect {
+        didSet {
+            self.content.frame = self.frame
+        }
+    }
     public private(set) var currentIndex: Int
     public var current: DrawingController {
         return self.childs[self.currentIndex]
@@ -98,6 +102,17 @@ public class DrawingSectionController: BaseController<UIStackView> {
         let top: DrawingController = self.childs[self.childs.count - 1]
         content.addSubview(top.content)
         top.pageContext.updateIsHidden(false)
+    }
+    
+    //TODO: fixme
+    public func updateIndex(_ to: Int) throws {
+        if to >= self.childs.count {
+            throw NSError(domain: "", code: 0, userInfo: ["" : "没有下一页了"])
+        } else if to < 0 {
+            throw NSError(domain: "", code: 0, userInfo: ["" : "没有上一页了"])
+        } else {
+            self.currentIndex = to
+        }
     }
     
     public func updateDataSource() {

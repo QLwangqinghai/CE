@@ -124,7 +124,7 @@ extension DrawingContext {
         case preset1440x1080
         case preset1920x1080
         
-        var size: Size {
+        public var size: Size {
             switch self {
             case .preset960x540: return Size(width: 960, height: 540)
             case .preset960x720: return Size(width: 960, height: 720)

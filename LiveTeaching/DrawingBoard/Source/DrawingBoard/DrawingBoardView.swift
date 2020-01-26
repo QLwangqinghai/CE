@@ -47,7 +47,7 @@ public final class DrawingEventRecognizer: NSObject {
     public override init() {
         super.init()
     }
-    public var isEnabled: Bool = false
+    public var isEnabled: Bool = true
 
     public enum State : Int {
         case possible
@@ -65,7 +65,8 @@ public final class DrawingEventRecognizer: NSObject {
     
     public var tapHandler: TapEventHandler?
     public var panHandler: PanEventHandler?
-
+    private var touches: Set<UITouch> = []
+    
     public func touchesBegan(view: UIView, touches: Set<UITouch>, with event: UIEvent?) {
         Log.logEvent(view: view, touches: touches, event: event)
 //        guard let context = self.context else {
@@ -143,9 +144,19 @@ public final class DrawingEventRecognizer: NSObject {
 
 
 public class DrawingBoardView: UIView {
-    public let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
+    private let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
     
     private var isDispatchEventToRecognizer: Bool = false
+        
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.backgroundColor = .green
+    }
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.backgroundColor = .green
+    }
+    
     
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if self.eventRecognizer.isEnabled {

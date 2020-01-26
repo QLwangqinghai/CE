@@ -8,15 +8,25 @@
 
 import UIKit
 
-public class DrawingContentController: DrawingSliceController<DrawingBoardView> {
-    public override func loadContent() -> DrawingBoardView {
-        let view: DrawingBoardView = DrawingBoardView(frame: self.pageContext.bounds)
+public class DrawingContentController: DrawingSliceController<CALayer> {
+    
+    public let view: DrawingBoardView
+
+    public override init(pageContext: DrawingPageContext, domain: String, dataSource: DrawingContentDataSource) {
+        self.view = DrawingBoardView(frame: pageContext.bounds)
+        super.init(pageContext: pageContext, domain: domain, dataSource: dataSource)
+    }
+    
+    public override func loadContent() -> CALayer {
+        let view: CALayer = CALayer()
+        view.frame = self.pageContext.bounds
         return view
     }
     
-    public override func contentDidLoad(_ content: DrawingBoardView) {
+    public override func contentDidLoad(_ content: CALayer) {
         super.contentDidLoad(content)
         self.dataSource.prepare(slices: self.slices)
+        
     }
     
 }

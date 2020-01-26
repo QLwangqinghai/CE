@@ -25,7 +25,7 @@
 		19F34FD28D8D3A2B9571EEA3 /* Pods-LiveTeaching.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LiveTeaching.debug.xcconfig"; path = "Target Support Files/Pods-LiveTeaching/Pods-LiveTeaching.debug.xcconfig"; sourceTree = "<group>"; };
 		ADAE9FE2BBFE5AE1760C8DAC /* Pods-LiveTeaching.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LiveTeaching.release.xcconfig"; path = "Target Support Files/Pods-LiveTeaching/Pods-LiveTeaching.release.xcconfig"; sourceTree = "<group>"; };
 		D2AB4090CBA0F7EFB33F9473 /* Pods_LiveTeaching.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LiveTeaching.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D6066FFD23DC957E009BA4B0 /* LiveTeaching.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveTeaching.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6066FFD23DC957E009BA4B0 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D606700923DC9581009BA4B0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D606700C23DC9581009BA4B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D606700E23DC9581009BA4B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -77,7 +77,7 @@
 		D6066FFE23DC957E009BA4B0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D6066FFD23DC957E009BA4B0 /* LiveTeaching.app */,
+				D6066FFD23DC957E009BA4B0 /* Demo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -177,7 +177,7 @@
 			);
 			name = LiveTeaching;
 			productName = LiveTeaching;
-			productReference = D6066FFD23DC957E009BA4B0 /* LiveTeaching.app */;
+			productReference = D6066FFD23DC957E009BA4B0 /* Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -427,8 +427,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.LiveTeaching;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.liveTeaching;
+				PRODUCT_NAME = Demo;
 				SWIFT_OBJC_BRIDGING_HEADER = "Modules/Common/LiveTeaching-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -450,8 +450,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.LiveTeaching;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.liveTeaching;
+				PRODUCT_NAME = Demo;
 				SWIFT_OBJC_BRIDGING_HEADER = "Modules/Common/LiveTeaching-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

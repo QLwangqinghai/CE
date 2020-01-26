@@ -38,5 +38,11 @@ class MainTabBarViewController: UITabBarController {
         self.view.backgroundColor = Resource.Color.background
     }
     
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        return .portrait
+    }
     
 }

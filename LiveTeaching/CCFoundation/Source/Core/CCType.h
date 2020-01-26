@@ -12,12 +12,27 @@
 #include <sys/types.h>
 #include <stdint.h>
 #include <assert.h>
-
+#include <stdio.h>
+#include <wchar.h>
+#include <stdlib.h>
+#include <time.h>
+#include <limits.h>
+#include <math.h>
 #include <string.h>
+#include <errno.h>
+
 #if defined(__GNUC__)
 #include <stdbool.h>
 #endif
 #include "CCConfig.h"
+
+#pragma mark - log
+
+#define CCLogError(format, ...) do {\
+fprintf(stderr, format, ##__VA_ARGS__);                                               \
+fflush(stderr);\
+} while(0)
+
 
 #pragma mark - base
 

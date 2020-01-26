@@ -9,7 +9,12 @@
 #ifndef CCAllocator_h
 #define CCAllocator_h
 
-#include "CCBase.h"
+#include "CCType.h"
+#include <stdio.h>
+#include <wchar.h>
+#include <stdatomic.h>
+#include <stdlib.h>
+
 
 static inline CCPtr _Nonnull CCMalloc(size_t size) {
     assert(size >= 0);

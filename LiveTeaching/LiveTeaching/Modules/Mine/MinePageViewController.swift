@@ -11,12 +11,11 @@ import UIFoundation
 public class MinePageViewController: BaseViewController {
     public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.hidesBottomBarWhenPushed = true
+        self.hidesBottomBarWhenPushed = false
     }
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.hidesBottomBarWhenPushed = false
     }
-    
-    
+
 }

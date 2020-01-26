@@ -13,13 +13,21 @@ public class DrawingController: BaseController<DrawingContainer> {
     
     public let backgroundController: DrawingBackgroundController
     public let drawingBoardController: DrawingBoardController
-    public let pageContext: DrawingPageContext
+    public let contentController: DrawingContentController
     
-    public init(ownerIdentifier: String, domain: String, contentSize: Size, offset: Int32, bitmapLayout: BitmapLayout, zoomScale: CGFloat, backgroundDataSource: DrawingContentDataSource) {
+    public let pageContext: DrawingPageContext
+    public let observer: DrawingPageContext.Observer
+
+    public init(ownerIdentifier: String, domain: String, contentSize: Size, offset: Int32, bitmapLayout: BitmapLayout, zoomScale: CGFloat, backgroundDataSource: DrawingContentDataSource, contentDataSource: DrawingContentDataSource) {
         let pageContext = DrawingPageContext(ownerIdentifier: ownerIdentifier, domain: domain, contentSize: contentSize, offset: offset, bitmapLayout: bitmapLayout, zoomScale: zoomScale)
         self.pageContext = pageContext
         self.drawingBoardController = DrawingBoardController(pageContext: pageContext, size: Size(width: contentSize.width, height: contentSize.width))
         self.backgroundController = DrawingBackgroundController(pageContext: pageContext, domain: "background", dataSource: backgroundDataSource)
+        self.contentController = DrawingContentController(pageContext: pageContext, domain: "content", dataSource: contentDataSource)
+
+        let observer = DrawingPageContext.Observer(identifier: pageContext.identifier)
+        pageContext.addObserver(observer)
+        self.observer = observer
     }
     
     public override func loadContent() -> DrawingContainer {
@@ -29,8 +37,25 @@ public class DrawingController: BaseController<DrawingContainer> {
     
     public override func contentDidLoad(_ content: DrawingContainer) {
         super.contentDidLoad(content)
+        
+        content.addSubview(self.contentController.view)
+        content.layer.addSublayer(self.backgroundController.content)
+        content.layer.addSublayer(self.contentController.content)
+
+        self.observer.didUpdateOffset = {[weak self] (_ observer: DrawingPageContext.Observer, _ context: DrawingPageContext, _ from: Int32, _ to: Int32) in
+            guard let `self` = self else {
+                return
+            }
+            self.content.bounds.origin.y = CGFloat(to) / self.pageContext.zoomScale
+        }
+        self.pageContext.addObserver(self.observer)
+        
+        
+        self.content.bounds.origin.y = CGFloat(self.pageContext.offset) / self.pageContext.zoomScale
     }
-    
+    deinit {
+        self.pageContext.removeObserver(self.observer)
+    }
 }
 
 public class DrawingSectionController: BaseController<UIStackView> {
@@ -64,6 +89,7 @@ public class DrawingSectionController: BaseController<UIStackView> {
     
     public override func loadContent() -> UIStackView {
         let container: UIStackView = UIStackView(frame: self.frame)
+        container.clipsToBounds = true
         return container
     }
     

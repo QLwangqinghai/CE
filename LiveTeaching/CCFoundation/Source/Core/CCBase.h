@@ -9,20 +9,13 @@
 #ifndef CCBase_h
 #define CCBase_h
 
-#include <stdio.h>
-#include <wchar.h>
 #include <stdatomic.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <time.h>
-#include <limits.h>
-#include <math.h>
-#include <string.h>
-#include <errno.h>
+
 
 #include "CCInteger.h"
 #include "CCType.h"
 #include "CCConfig.h"
+#include "CCAllocator.h"
 
 #pragma mark - mach
 
@@ -33,14 +26,6 @@
 #if !defined(MAX)
     #define MAX(A,B)    ({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __b : __a; })
 #endif
-
-
-#pragma mark - log
-
-#define CCLogError(format, ...) do {\
-fprintf(stderr, format, ##__VA_ARGS__);                                               \
-fflush(stderr);\
-} while(0)
 
 #pragma mark - CCIndex
 

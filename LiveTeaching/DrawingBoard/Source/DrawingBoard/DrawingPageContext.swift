@@ -58,6 +58,17 @@ public class DrawingPageContext {
         self.isHidden = true
     }
     
+    public func addObserver(_ observer: Observer) {
+        self.observers.append(observer)
+    }
+    public func removeObserver(_ observer: Observer) {
+        self.observers.removeAll(where: { (item) -> Bool in
+            return item === observer
+        })
+    }
+    
+    
+    
     public func updateOffset(_ offset: Int32) {
         if self.offset != offset {
         

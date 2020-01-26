@@ -8,6 +8,13 @@
 
 import UIKit
 
+class V: UIView {
+
+    
+    
+}
+
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

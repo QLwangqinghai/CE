@@ -17,5 +17,11 @@ class ViewController: BaseViewController {
         // Do any additional setup after loading the view.
     }
     
-
+    
+    public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+    public override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        return .portrait
+    }
 }

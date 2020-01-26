@@ -24,5 +24,4 @@ FOUNDATION_EXPORT const unsigned char CCFoundationVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <CCFoundation/PublicHeader.h>
 
 #include <CCFoundation/CCBase.h>
-#include <CCFoundation/CCAllocator.h>
 

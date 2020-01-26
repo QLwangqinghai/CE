@@ -85,19 +85,6 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         return true
     }
     
-    
-//    - (BOOL)shouldAutorotate {
-//        //是否支持转屏
-//        return true;
-//    }
-//
-//    - (BOOL)prefersHomeIndicatorAutoHidden {
-//        return NO;
-//    }
-//
-//    - (BOOL)prefersStatusBarHidden {
-//        return NO;
-//    }
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .landscapeRight
     }

@@ -104,6 +104,7 @@ open class View: Responder {
     }
     
     
+    
     public init(origin: Point, size: Size) {
         _origin = origin
         _size = size
@@ -127,6 +128,7 @@ open class View: Responder {
             })
             view.superview = nil
         }
+        
     }
     
     open func removeFromSuperview() {

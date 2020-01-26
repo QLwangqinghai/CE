@@ -69,8 +69,6 @@ public class DrawingContext {
         displaylink?.invalidate()
         displaylink = nil
     }
-    
-    
     init() {
         self.links = []
         self.createDisplayLink()

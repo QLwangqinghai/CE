@@ -29,11 +29,13 @@ open class BaseViewController: UIViewController {
     public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         self.hidesBottomBarWhenPushed = true
+        self.modalPresentationStyle = .fullScreen
     }
     
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
         self.hidesBottomBarWhenPushed = true
+        self.modalPresentationStyle = .fullScreen
     }
     
     

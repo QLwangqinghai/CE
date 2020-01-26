@@ -702,16 +702,16 @@
 		D05D924D848664A163F0CCE2C9B60BF8 /* DrawingBoard */ = {
 			isa = PBXGroup;
 			children = (
+				FE79A2BA2AD4BE82FD796E4695ADC9D2 /* DrawingContainer.swift */,
 				8198422F19B660744F71EA19DDF22450 /* DrawingController.swift */,
-				EB177068487337C8864B374AA955DDD9 /* Controller.swift */,
 				BD04E97D04CD7A8BADE892A0884A8990 /* DrawingBackgroundController.swift */,
 				F7B4FD738BF7D792155CECE7B619B771 /* DrawingBoard.swift */,
-				BE50AF717B8FE5E98690D557D88CD845 /* DrawingBoardController.swift */,
 				55FE30537E18FA20D2D30D609A309C6F /* DrawingBoardView.swift */,
-				FE79A2BA2AD4BE82FD796E4695ADC9D2 /* DrawingContainer.swift */,
+				BE50AF717B8FE5E98690D557D88CD845 /* DrawingBoardController.swift */,
 				F10C2CB30E23317532A4B5907CBBE0A2 /* DrawingContentController.swift */,
 				554611BCF6543CE466437339AAB3BE3C /* DrawingPageContext.swift */,
 				7AC5833E898C9FE7EE3D304CE3EAA799 /* DrawingSliceController.swift */,
+				EB177068487337C8864B374AA955DDD9 /* Controller.swift */,
 			);
 			path = DrawingBoard;
 			sourceTree = "<group>";

@@ -13,7 +13,6 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
     
 //    public let drawingBoard: DrawingBoard
 
-    
     public let sectionController: DrawingSectionController = {
         let scale = UIScreen.main.scale
         let screenSize: CGSize = UIScreen.main.size

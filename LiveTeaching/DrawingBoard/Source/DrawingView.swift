@@ -10,21 +10,6 @@ import UIKit
 
 
 
-
-public struct TouchPoint {
-    public var location: CGPoint
-    public var velocity: CGPoint
-    public var time: TimeInterval
-    
-    public init(location: CGPoint = CGPoint(), velocity: CGPoint = CGPoint(), time: TimeInterval = 0) {
-        self.location = location
-        self.velocity = velocity
-        self.time = time
-    }
-}
-
-
-
 public protocol Drawable: class {
     func getFrame() -> CGRect
     

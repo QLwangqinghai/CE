@@ -27,17 +27,39 @@ extension Log {
     }
 }
 
+public struct TouchPoint {
+    public var location: CGPoint
+    public var time: TimeInterval
+    
+    public init(location: CGPoint = CGPoint(), time: TimeInterval = 0) {
+        self.location = location
+        self.time = time
+    }
+}
 
-public class TapEventHandler: NSObject {
-    open var isEnabled: Bool = false
-
+public class BaseDrawEventHandler: NSObject {
+    public var isEnabled: Bool = true
+    
     override init() {
         super.init()
     }
 }
-public class PanEventHandler: NSObject {
-    open var isEnabled: Bool = false
-
+public class TapEventHandler: BaseDrawEventHandler {
+    override init() {
+        super.init()
+    }
+}
+public class DrawHandler: BaseDrawEventHandler {
+    public private(set) var points: [TouchPoint] = []
+    
+    public enum State : Int {
+        case possible
+        case pending
+        case moving
+        case finished
+    }
+    
+    
     override init() {
         super.init()
     }
@@ -64,11 +86,39 @@ public final class DrawingEventRecognizer: NSObject {
     
     
     public var tapHandler: TapEventHandler?
-    public var panHandler: PanEventHandler?
+    public var drawHandler: DrawHandler?
     private var touches: Set<UITouch> = []
+    
+    private var timeoutHandler: DispatchWorkItem?
+
+    
     
     public func touchesBegan(view: UIView, touches: Set<UITouch>, with event: UIEvent?) {
         Log.logEvent(view: view, touches: touches, event: event)
+        
+        if self.touches.isEmpty {
+            if let handler = self.timeoutHandler {
+                handler.cancel()
+                self.timeoutHandler = nil
+            }
+            
+            if touches.count == 1 {
+                let item = DispatchWorkItem(block: {
+                    print("item.timeout")
+                })
+                self.timeoutHandler = item
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.08, execute: item)
+            }
+            
+            
+            
+            
+        }
+        
+        for item in touches {
+            self.touches.insert(item)
+        }
+        
 //        guard let context = self.context else {
 //            self.drawingHandler = nil
 ////            super.touchesBegan(touches, with: event)
@@ -151,10 +201,12 @@ public class DrawingBoardView: UIView {
     public override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .green
+        self.isMultipleTouchEnabled = true
     }
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.backgroundColor = .green
+        self.isMultipleTouchEnabled = true
     }
     
     

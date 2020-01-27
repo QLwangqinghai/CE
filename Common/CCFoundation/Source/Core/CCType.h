@@ -23,6 +23,9 @@
 #include <string.h>
 #include <errno.h>
 
+#include <stdatomic.h>
+
+
 #if defined(__GNUC__)
 #include <stdbool.h>
 #endif

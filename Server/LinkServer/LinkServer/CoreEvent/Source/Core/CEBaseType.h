@@ -10,19 +10,8 @@
 #define CEBaseType_h
 
 //c
-#include <CCFoundation/CCFoundation.h>
+#include <CCFoundation/CCBase.h>
 
-
-#include <stdio.h>
-#include <stdatomic.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <unistd.h>
-#include <time.h>
-#include <limits.h>
-#include <math.h>
-#include <string.h>
-#include <errno.h>
 #include <pthread.h>
 #include <semaphore.h>
 

@@ -1,0 +1,33 @@
+# Uncomment the next line to define a global platform for your project
+platform :osx, '10.10'
+source 'https://github.com/QLwangqinghai/pod.git’
+
+#inhibit_all_warnings!
+
+target 'CoreEvent' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for CoreEvent
+
+
+    pod 'CCFoundation', :path => '../../../Common/CCFoundation'
+    pod 'Basic', :path => '../../../Common/Basic'
+    pod 'SITP', :path => '../../../Common/SITP'
+    pod 'FileService', :path => '../../../Common/FileService'
+
+end
+
+target 'LinkServer' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for Demo
+
+
+    pod 'CCFoundation', :path => '../../../Common/CCFoundation'
+    pod 'Basic', :path => '../../../Common/Basic'
+    pod 'SITP', :path => '../../../Common/SITP'
+    pod 'FileService', :path => '../../../Common/FileService'
+
+end

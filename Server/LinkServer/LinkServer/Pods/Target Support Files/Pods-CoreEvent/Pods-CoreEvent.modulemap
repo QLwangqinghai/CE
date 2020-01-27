@@ -1,0 +1,6 @@
+framework module Pods_CoreEvent {
+  umbrella header "Pods-CoreEvent-umbrella.h"
+
+  export *
+  module * { export * }
+}

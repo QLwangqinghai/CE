@@ -1,0 +1,29 @@
+{
+  "name": "CCFoundation",
+  "version": "0.1.0",
+  "summary": "CCFoundation.",
+  "description": "CCFoundation.",
+  "homepage": "https://github.com/QLwangqinghai/CE.git",
+  "license": {
+    "type": "MIT"
+  },
+  "authors": {
+    "": ""
+  },
+  "source": {
+    "git": "https://github.com/QLwangqinghai/CE.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "9.0",
+    "osx": "10.10"
+  },
+  "source_files": [
+    "*.h",
+    "Source/**/*.{h,c,m,cpp,swift}"
+  ],
+  "public_header_files": [
+    "Source/Core/*.h",
+    "*.h"
+  ]
+}

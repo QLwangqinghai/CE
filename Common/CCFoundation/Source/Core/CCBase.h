@@ -58,7 +58,7 @@ extern const CCChar __CCBase64ByteToCharMappings[64];
 #pragma mark - CCMicrosecondTime
 
 extern CCMicrosecondTime CCMicrosecondTimeGetCurrent(void);
-
+extern CCMicrosecondTime CCBootInterval(void);
 
 #pragma mark - Atomic
 

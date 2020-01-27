@@ -96,3 +96,39 @@ CCMicrosecondTime CCMicrosecondTimeGetCurrent(void) {
  ktime_get_boottime
  CLOCK_TAI    原子时钟时间
  */
+
+#if __APPLE__
+
+#include <stdlib.h>
+#include <mach/mach_time.h>
+#include <sys/time.h>
+
+CCMicrosecondTime CCBootInterval(void) {
+    mach_timebase_info_data_t timeBaseInfo = {};
+    assert(0 == mach_timebase_info(&timeBaseInfo));
+    uint64_t t = mach_continuous_time();
+    return t / 1000 * timeBaseInfo.numer / timeBaseInfo.denom;
+}
+
+#else
+
+#include <string.h>
+#include <sys/time.h>
+#include <sys/times.h>
+#include <stdlib.h>
+
+CCMicrosecondTime CCBootInterval(void) {
+
+#if !defined(CLOCK_BOOTTIME_ALARM)
+#error "CLOCK_BOOTTIME_ALARM undefined"
+#endif
+    
+    struct timespec ts;
+    assert(0 == clock_gettime(CLOCK_BOOTTIME_ALARM, &ts));
+    return ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
+}
+
+#endif
+
+
+

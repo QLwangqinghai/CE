@@ -7,3 +7,5 @@
 //
 
 #include "CCReferenceBase.h"
+
+const CCType CCTypeClosure = 0x80000101;

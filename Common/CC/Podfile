@@ -1,0 +1,17 @@
+# Uncomment the next line to define a global platform for your project
+platform :osx, '10.12'
+source 'https://github.com/QLwangqinghai/pod.git’
+
+#inhibit_all_warnings!
+
+target 'CC' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for CC
+
+
+    pod 'CCFoundation', :path => '../CCFoundation'
+    pod 'SITP', :path => '../SITP'
+
+end

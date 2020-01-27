@@ -9,51 +9,40 @@
 #ifndef CCReferenceBase_h
 #define CCReferenceBase_h
 
-#include "CCFoundation.h"
+#include "CCBase.h"
 
 typedef CCPtr CCRef;
-typedef CCPtr CCValueRef;
+typedef uintptr_t CCType;
 
-typedef CCValueRef CCDataRef;
-typedef CCValueRef CCStringRef;
-typedef CCValueRef CCTypeRef;
+
+extern const CCType CCTypeClosure;
 
 
 typedef struct __CCRefBase {
-    CCTypeRef _Nonnull type;
+    CCType type;
 
 #if CCBuild64Bit
-    _Atomic(uint_fast64_t) ref;
+    _Atomic(uint_fast64_t) counter;
 #else
-    _Atomic(uint_fast32_t) ref;
+    _Atomic(uint_fast32_t) counter;
 #endif
 } CCRefBase;
 
 
-#if CCBuild64Bit
-static inline _Atomic(uint_fast64_t) * _Nonnull CCGetRefPtr(void * _Nonnull ref) {
-    return &(((CCRefBase *)ref)->ref);
+static inline CCPtr _Nonnull CCRefGetContentPtr(CCRef _Nonnull ref) {
+    CCRefBase * base = (CCRefBase *)ref;
+    return base + 1;
 }
-#else
-static inline _Atomic(uint_fast32_t) * _Nonnull CCGetRefPtr(void * _Nonnull ref) {
-    return &(((CCRefBase *)ref)->ref);
-}
-#endif
-
-static inline void __CCRefInit(CCRefBase * _Nonnull ref, CCTypeRef _Nonnull type) {
-    assert(ref);
-    assert(type);
-    ref->type = type;
 
 #if CCBuild64Bit
-    uint_fast64_t rcInfo = 2;
-    _Atomic(uint_fast64_t) * rcInfoPtr = CCGetRefPtr(ref);
-#else
-    uint_fast32_t rcInfo = 2;
-    _Atomic(uint_fast32_t) * rcInfoPtr = CCGetRefPtr(ref);
-#endif
-    atomic_store(rcInfoPtr, rcInfo);
+static inline _Atomic(uint_fast64_t) * _Nonnull CCRefGetCounterPtr(CCRef _Nonnull ref) {
+    return &(((CCRefBase *)ref)->counter);
 }
+#else
+static inline _Atomic(uint_fast32_t) * _Nonnull CCRefGetCounterPtr(CCRef * _Nonnull ref) {
+    return &(((CCRefBase *)ref)->counter);
+}
+#endif
 
 static inline _Bool __CCRefRetain(CCRef _Nonnull ref) {
     if (NULL == ref) {
@@ -68,11 +57,11 @@ static inline _Bool __CCRefRetain(CCRef _Nonnull ref) {
 #if CCBuild64Bit
         uint_fast64_t rcInfo = 0;
         uint_fast64_t newRcInfo = 0;
-        _Atomic(uint_fast64_t) * rcInfoPtr = CCGetRefPtr(ref);
+        _Atomic(uint_fast64_t) * rcInfoPtr = CCRefGetCounterPtr(ref);
 #else
         uint_fast32_t rcInfo = 0;
         uint_fast32_t newRcInfo = 0;
-        _Atomic(uint_fast32_t) * rcInfoPtr = CCGetRefPtr(ref);
+        _Atomic(uint_fast32_t) * rcInfoPtr = CCRefGetCounterPtr(ref);
 #endif
         do {
             rcInfo = atomic_load(rcInfoPtr);
@@ -97,11 +86,11 @@ static inline _Bool __CCRefRelease(CCRef _Nonnull ref) {
 #if CCBuild64Bit
     uint_fast64_t rcInfo = 0;
     uint_fast64_t newRcInfo = 0;
-    _Atomic(uint_fast64_t) * rcInfoPtr = CCGetRefPtr(ref);
+    _Atomic(uint_fast64_t) * rcInfoPtr = CCRefGetCounterPtr(ref);
 #else
     uint_fast32_t rcInfo = 0;
     uint_fast32_t newRcInfo = 0;
-    _Atomic(uint_fast32_t) * rcInfoPtr = CCGetRefPtr(ref);
+    _Atomic(uint_fast32_t) * rcInfoPtr = CCRefGetCounterPtr(ref);
 #endif
     do {
         rcInfo = atomic_load(rcInfoPtr);
@@ -129,6 +118,42 @@ static inline _Bool __CCRefRelease(CCRef _Nonnull ref) {
 //    assert(v & 0x1);
 //    return (v >> 4) & 0x7;
 //}
+
+
+
+static inline void __CCRefInit(CCRefBase * _Nonnull ref, CCType type) {
+    assert(ref);
+    assert(type);
+    ref->type = type;
+
+#if CCBuild64Bit
+    uint_fast64_t rcInfo = 2;
+    _Atomic(uint_fast64_t) * rcInfoPtr = CCRefGetCounterPtr(ref);
+#else
+    uint_fast32_t rcInfo = 2;
+    _Atomic(uint_fast32_t) * rcInfoPtr = CCRefGetCounterPtr(ref);
+#endif
+    atomic_store(rcInfoPtr, rcInfo);
+}
+static inline CCRef _Nonnull CCRefAllocate(CCType type, size_t contentSize) {
+    assert(contentSize >= 0);
+
+    size_t size = sizeof(CCRefBase) + contentSize;
+    CCPtr ptr = CCMalloc(size);
+    if (NULL == ptr) {
+        CCLogError("CCRefAllocate ptr is NULL\n");
+        abort();
+    }
+    CCRefBase * _Nonnull baseRef = ptr;
+    __CCRefInit(baseRef, type);
+    return ptr;
+}
+
+
+static inline void CCRefDeallocate(CCRef _Nonnull ref) {
+    assert(ref);
+    CCDeallocate(ref);
+}
 
 
 #endif /* CCReferenceBase_h */

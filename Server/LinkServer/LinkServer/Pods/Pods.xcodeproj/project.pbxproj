@@ -3,58 +3,62 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		026A6365D669CC81B67158874E8755F7 /* CCByte.c in Sources */ = {isa = PBXBuildFile; fileRef = 6839841221112AC6EC1697C9B3CAF6EA /* CCByte.c */; };
 		118609F933F3EB08DAA62ED57507B685 /* SITPType.h in Headers */ = {isa = PBXBuildFile; fileRef = 484E162029140E7108ED5A5B19193ECB /* SITPType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		148AB909E029CBF758EF47CE67FA120E /* CCTime.c in Sources */ = {isa = PBXBuildFile; fileRef = EC744915D26797A94D76853F8A1A504A /* CCTime.c */; };
 		177E1DCE003527D5F49B6517EE57B5F5 /* Basic-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A214CEA2640AE5F9B43B11C8B06F73 /* Basic-dummy.m */; };
-		184498A10594C2D1AA196B3AFD3DD3AB /* CCBase.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AC2FEA17F081DAD729A5043D6D008AF /* CCBase.c */; };
 		27FAE235189C7929927B9515CD757B03 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39358256203F40075BC7B97FCC5E2E47 /* Cocoa.framework */; };
+		2C52031A9C6295A5EC2307295261B211 /* CCClosure.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B6373CD38810C71F00ECC3949E4333 /* CCClosure.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3076787FA05752D8DA0D2D7EE933A4A5 /* CCAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = C3497CA873109033D22FEC443FD548A2 /* CCAllocator.c */; };
 		35751E5E1851304FC38198E0FEA1D8E4 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA2F5AF2BDEDADCB3BE18EDAE7DC8DD /* Manager.swift */; };
-		38882D6DD851088CCAE0EF1B2D35F47A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39358256203F40075BC7B97FCC5E2E47 /* Cocoa.framework */; };
-		3B0A989ECEE6A7C51FC602E8A0032AFE /* CCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DDE06C096DC8D91D0EABB7055C07541 /* CCConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CD04E42F27E9B6C9B80F7CF553F5766 /* CCFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C8E5D05C975DB0740F56605FBCEC71F /* CCFoundation.framework */; };
-		43B0B28A38A43B9A0C616CC0DD1FC55A /* CCAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CFA53CEFD7BD41F8BB1DC7169C64052 /* CCAllocator.c */; };
+		4662E4E5469E10D5557CC90056623FC2 /* CCReferenceBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BAC8E996AD4B0B08F436679BDB06AA3 /* CCReferenceBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		493F91BF9FB674AB4B0624EC1C9D0739 /* CCClosure.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BC14A577A7A03041B752A9B7E814BC /* CCClosure.c */; };
+		4B96726E8869451B7A642B830AD869E9 /* CCInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F86384D4649A58EBAAA0B98FED01549 /* CCInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4E7F272182C4E0B542318CAB6BB19C1B /* Basic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA84D7AE062BA4CC086C8BBFF9BCD96 /* Basic.framework */; };
 		4EDBB3FFC2F1528C427D835D24B1E4EF /* FileManagerBase.c in Sources */ = {isa = PBXBuildFile; fileRef = 823721FC7AF2FE3AECF4786966DBBEC5 /* FileManagerBase.c */; };
 		54C4BEEE0A4148F776FE0105F25A9E77 /* SITPParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 16450C3C2C2E3044B710133F8B59D560 /* SITPParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5916B856D6D26758464550417AC43813 /* Pods-LinkServer-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8931B8415A1B242546E7FE665A76956B /* Pods-LinkServer-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		62900F6C1350A2B14A9A925D4F4D6BCD /* CCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = FF447984591A9B78337CC6E1E93050F4 /* CCConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		62F5A32A7860C82EEE4360AFC9A31480 /* CCFoundation-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = BD7C891A68620DD06E548800D2CDD9E3 /* CCFoundation-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		68781604CA56E875CD8D8BD071F836A4 /* CCFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C8E5D05C975DB0740F56605FBCEC71F /* CCFoundation.framework */; };
-		6962A77AA90768E361BC8094DE85555C /* CCInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = A13EDF55D5BACCB9D1B2073FE45DF4C1 /* CCInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		69A6F647E5445C6A7D9B21B4972C3941 /* SITPParser.c in Sources */ = {isa = PBXBuildFile; fileRef = 969B1AB4E43FE434F22612964D978D75 /* SITPParser.c */; };
 		6C4CBC1CCB011BD1B0A829B76A918314 /* SITPIndexShift.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C7492492D7BB0D108CAC211551178 /* SITPIndexShift.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6C6EA596F7A4D4D314F181BC9798BB4E /* CCFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1918BA39B9C7FCBC5FF3633842E513 /* CCFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		73B92AD4CDFD67F5807AFB9F41E1CDEA /* FileService.h in Headers */ = {isa = PBXBuildFile; fileRef = 79275AEB57DC21F7BCF2499B6A59816B /* FileService.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		76A5BDB0A2CBDDB81ED36FE4B47A5E70 /* CCBase.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F5C3EB2D0E35EB8FB6F3735067A8E35 /* CCBase.c */; };
 		7D18A2767AF303E5A07B429B5B5B974E /* Basic-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A8EA5F217DFE5350C9CE54CC837667 /* Basic-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		898597DBD1B0FA7B9C0429EA81F4C777 /* CCAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7621508DC3730A098594E891545DCD92 /* CCAllocator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		89EA3DFE0C1916CDABDD6B41CF5BFC42 /* FileManagerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7502CD0020402DC870E5BA9F7DF2148 /* FileManagerBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8A638442E645A5914CCEB947A01EAF7A /* CCType.c in Sources */ = {isa = PBXBuildFile; fileRef = 67BC29BFE635C434EF88D71A256ACA90 /* CCType.c */; };
-		8DDFFC0CD1976B9B60705182B170BA0E /* CCInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F6A3430F00647B2A677088F4196DBEF /* CCInteger.c */; };
 		8E7C1367F0321BFA662E716C12F90859 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39358256203F40075BC7B97FCC5E2E47 /* Cocoa.framework */; };
 		934073116564CC5B57B90A79CB2C65DB /* Pods-CoreEvent-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 81EC979AD93B6FDA5CA9151516D38D70 /* Pods-CoreEvent-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9391A6A1DF719CC4BB724585DB9BB7EF /* CCFoundation-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = BD7C891A68620DD06E548800D2CDD9E3 /* CCFoundation-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		942DC001148832264F51922970ADB498 /* FileService-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = AF48615657FD5E99DD0D34A6865F66AB /* FileService-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		98642D357BA8061B8FD5BEEAB03A1E25 /* CCFoundation-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 563BB9D3411DD836FD96ACC5412691B5 /* CCFoundation-dummy.m */; };
 		99444C6D4D7F52996FBDB16734838951 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39358256203F40075BC7B97FCC5E2E47 /* Cocoa.framework */; };
 		9E9761393AE7746D0070A063C0954C43 /* UserGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A87132EE06844EAC3DC73696A019C11 /* UserGroup.swift */; };
 		A0D3AB40E1A0D09E9BF08247FBE9D2C3 /* FileService-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C20B897C70DFB2BA39650D333EC6AAAC /* FileService-dummy.m */; };
 		A2C27720E591177A62A5929583C740BA /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0722B37B1BDC5091B5947307C343ACF7 /* FileItem.swift */; };
-		A3B02237A801984DDD90A29355E0CBC9 /* CCTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 580DAA05B466AD81DC7F95FB9C96695F /* CCTime.c */; };
 		A88B72AE9D06078140CFB70744E0EFFA /* Basic.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D42F399A6740D729127080F9B7C5EB3 /* Basic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AA3D86C888EC17FC8E0D86ABAF5084C5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39358256203F40075BC7B97FCC5E2E47 /* Cocoa.framework */; };
 		ACF1FBAB86F81ACC06AB2A6A4C34C186 /* Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE79D82AF2661D7EE1593284948AB258 /* Object.swift */; };
 		B0F56C8974213F367DBBA3E456FD7118 /* Pods-LinkServer-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 33B455230397D49466C47F511066C3DC /* Pods-LinkServer-dummy.m */; };
 		B53103788C785B6E0DDDC5C7C216AB61 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39358256203F40075BC7B97FCC5E2E47 /* Cocoa.framework */; };
+		BAA8EB00B39C9F54792D7934EF08DAA1 /* CCFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1918BA39B9C7FCBC5FF3633842E513 /* CCFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BD8F7BD1777B588018709889B495E905 /* SITP-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = DC27AA2BE19B1FB02FCA374BA9CAE577 /* SITP-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BF57CDB471F3CC083CA95735E5C945D6 /* CCAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 972D211CA874B267AD1D627EA0D24D4F /* CCAllocator.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C6A0A8F9EFB986E7923851C0FCB31125 /* CCFoundation-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 563BB9D3411DD836FD96ACC5412691B5 /* CCFoundation-dummy.m */; };
+		C13C2612B271803E9DFA00B6C708B4D2 /* CCType.h in Headers */ = {isa = PBXBuildFile; fileRef = F0A00FD4E22FAE8DC5D956AB8EB28E14 /* CCType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C8C4EE785AF44DBE04A0876A4F48481E /* SITP-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C90683BFBC11CA2EE7425A1111471C72 /* SITP-dummy.m */; };
 		CA8750A8921600CAA4E575BA37AF9921 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39358256203F40075BC7B97FCC5E2E47 /* Cocoa.framework */; };
 		CEB07E7825F6FA6086B9B8C7B0EA6772 /* SITPType.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F500D040C053DC928DD6F94BA919EC7 /* SITPType.c */; };
-		CF80491735FC06690EA55477B05D3AE4 /* CCByte.c in Sources */ = {isa = PBXBuildFile; fileRef = FB190D832A3B30633663974B310A839E /* CCByte.c */; };
 		D2D73D7AFE170E57706888EFFE1C55F4 /* SITP.h in Headers */ = {isa = PBXBuildFile; fileRef = A57A00FF8371E6EF1057681AC2C42FA0 /* SITP.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D3B4FBD514D54F885028ED4EE360D995 /* CCInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = D2681D4CD644FF281A10BED92558B1C5 /* CCInteger.c */; };
 		D531C789E2D2B80663DF99805C619695 /* SITPIndexShift.c in Sources */ = {isa = PBXBuildFile; fileRef = ABCEE31DDF9F25719B0EB3FC722F2F4B /* SITPIndexShift.c */; };
-		DDD3A15D778BE75B267AD676309F1829 /* CCBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 525F83853B68CFB3E71633896F31766C /* CCBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E1DA63AE45B377F1BA16A6515FFFA250 /* CCReferenceBase.c in Sources */ = {isa = PBXBuildFile; fileRef = 7994EDA08D0E4C99996BF558F15C1FB1 /* CCReferenceBase.c */; };
 		EB6F8BAD1DEADE19D493C4ED1B2D24BE /* Pods-CoreEvent-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A2F81D4F7FCB72EE7EDD43DFB0C9F7 /* Pods-CoreEvent-dummy.m */; };
-		F1B981B992D2716D5F6630BDA8E6471A /* CCType.h in Headers */ = {isa = PBXBuildFile; fileRef = A5455C9B89492E68668D89BDE26A87EC /* CCType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F96412978CB67AF4E82FFA07FF163D6B /* CCBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 934738FE8210AA09B141C268C9BF12C1 /* CCBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDDE697283E489BD841CC7B0DC797AF8 /* CCType.c in Sources */ = {isa = PBXBuildFile; fileRef = EC435516F412090FE38C2900FE82BC65 /* CCType.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,9 +145,7 @@
 		0722B37B1BDC5091B5947307C343ACF7 /* FileItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
 		0C8E5D05C975DB0740F56605FBCEC71F /* CCFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CCFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		16450C3C2C2E3044B710133F8B59D560 /* SITPParser.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITPParser.h; sourceTree = "<group>"; };
-		1F6A3430F00647B2A677088F4196DBEF /* CCInteger.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCInteger.c; sourceTree = "<group>"; };
 		216E7FE2C751317325F3CB6AC72C76C7 /* Basic-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Basic-Info.plist"; sourceTree = "<group>"; };
-		2AC2FEA17F081DAD729A5043D6D008AF /* CCBase.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCBase.c; sourceTree = "<group>"; };
 		2B28B6A4E718710329A5FB42E7C84FF5 /* SITP.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = SITP.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		2CBAA93AC9DAA784A4735DCF0D589CAC /* Pods-LinkServer-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-LinkServer-acknowledgements.plist"; sourceTree = "<group>"; };
 		336B6DEC3E9C7E47C8891CFDC5F11847 /* Pods_LinkServer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_LinkServer.framework; path = "Pods-LinkServer.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,19 +153,18 @@
 		349188E3C74D31EA4E9FAE8BAEAB0C8F /* FileService.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = FileService.modulemap; sourceTree = "<group>"; };
 		35368285D8501FD2E59E2146D6FD272A /* CCFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = CCFoundation.framework; path = CCFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		39358256203F40075BC7B97FCC5E2E47 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		3BAC8E996AD4B0B08F436679BDB06AA3 /* CCReferenceBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCReferenceBase.h; sourceTree = "<group>"; };
 		3D42F399A6740D729127080F9B7C5EB3 /* Basic.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Basic.h; sourceTree = "<group>"; };
 		41B1C54DD25D625B4C99123834D278FC /* FileService.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = FileService.xcconfig; sourceTree = "<group>"; };
 		44BFEBD6B3DBADE8B10EE324932EC806 /* Pods-CoreEvent-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-CoreEvent-acknowledgements.markdown"; sourceTree = "<group>"; };
 		484E162029140E7108ED5A5B19193ECB /* SITPType.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITPType.h; sourceTree = "<group>"; };
 		49A214CEA2640AE5F9B43B11C8B06F73 /* Basic-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Basic-dummy.m"; sourceTree = "<group>"; };
-		525F83853B68CFB3E71633896F31766C /* CCBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCBase.h; sourceTree = "<group>"; };
+		4F5C3EB2D0E35EB8FB6F3735067A8E35 /* CCBase.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCBase.c; sourceTree = "<group>"; };
 		53829FEEDDB31302CF365CCF36043DEC /* SITP.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SITP.modulemap; sourceTree = "<group>"; };
 		563BB9D3411DD836FD96ACC5412691B5 /* CCFoundation-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CCFoundation-dummy.m"; sourceTree = "<group>"; };
-		580DAA05B466AD81DC7F95FB9C96695F /* CCTime.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCTime.c; sourceTree = "<group>"; };
 		59F54CF6CB1A81C8CE779025A377795D /* Basic.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Basic.modulemap; sourceTree = "<group>"; };
 		5A87132EE06844EAC3DC73696A019C11 /* UserGroup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UserGroup.swift; sourceTree = "<group>"; };
 		5CE277C90BFFEB52CAAFE8A6407DCC88 /* Pods-LinkServer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-LinkServer.release.xcconfig"; sourceTree = "<group>"; };
-		5DDE06C096DC8D91D0EABB7055C07541 /* CCConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCConfig.h; sourceTree = "<group>"; };
 		5EDB57C0AA603D545D80F45036C28F60 /* Basic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Basic.framework; path = Basic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F500D040C053DC928DD6F94BA919EC7 /* SITPType.c */ = {isa = PBXFileReference; includeInIndex = 1; path = SITPType.c; sourceTree = "<group>"; };
 		60CA87CADF7BCE4D5C8E00A4E0350306 /* FileService.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = FileService.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -171,8 +172,10 @@
 		60FA026184604E26C028674330D2D1CA /* CCFoundation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CCFoundation.xcconfig; sourceTree = "<group>"; };
 		6118AD7DC6CE45FBFF430CB11B4E8502 /* Basic.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Basic.xcconfig; sourceTree = "<group>"; };
 		63AE84ED4DF25117FD9B2E511AC080C3 /* CCFoundation.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = CCFoundation.modulemap; sourceTree = "<group>"; };
-		67BC29BFE635C434EF88D71A256ACA90 /* CCType.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCType.c; sourceTree = "<group>"; };
+		6839841221112AC6EC1697C9B3CAF6EA /* CCByte.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCByte.c; sourceTree = "<group>"; };
+		7621508DC3730A098594E891545DCD92 /* CCAllocator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCAllocator.h; sourceTree = "<group>"; };
 		79275AEB57DC21F7BCF2499B6A59816B /* FileService.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = FileService.h; sourceTree = "<group>"; };
+		7994EDA08D0E4C99996BF558F15C1FB1 /* CCReferenceBase.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCReferenceBase.c; sourceTree = "<group>"; };
 		81A8EA5F217DFE5350C9CE54CC837667 /* Basic-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Basic-umbrella.h"; sourceTree = "<group>"; };
 		81EC979AD93B6FDA5CA9151516D38D70 /* Pods-CoreEvent-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-CoreEvent-umbrella.h"; sourceTree = "<group>"; };
 		823721FC7AF2FE3AECF4786966DBBEC5 /* FileManagerBase.c */ = {isa = PBXFileReference; includeInIndex = 1; path = FileManagerBase.c; sourceTree = "<group>"; };
@@ -181,14 +184,12 @@
 		8931B8415A1B242546E7FE665A76956B /* Pods-LinkServer-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-LinkServer-umbrella.h"; sourceTree = "<group>"; };
 		8C8D4E43118C74A9159E232962C46C07 /* FileService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = FileService.framework; path = FileService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5DC90D15B39065DB15F88A45472D7F /* FileService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "FileService-Info.plist"; sourceTree = "<group>"; };
+		934738FE8210AA09B141C268C9BF12C1 /* CCBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCBase.h; sourceTree = "<group>"; };
 		969B1AB4E43FE434F22612964D978D75 /* SITPParser.c */ = {isa = PBXFileReference; includeInIndex = 1; path = SITPParser.c; sourceTree = "<group>"; };
-		972D211CA874B267AD1D627EA0D24D4F /* CCAllocator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCAllocator.h; sourceTree = "<group>"; };
 		99B8325B364C36F427A39F7B732C2806 /* SITP-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SITP-Info.plist"; sourceTree = "<group>"; };
-		9CFA53CEFD7BD41F8BB1DC7169C64052 /* CCAllocator.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCAllocator.c; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9F86384D4649A58EBAAA0B98FED01549 /* CCInteger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCInteger.h; sourceTree = "<group>"; };
 		A0E597B2E10B2592A482FE9E7F83DA6A /* CCFoundation-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CCFoundation-prefix.pch"; sourceTree = "<group>"; };
-		A13EDF55D5BACCB9D1B2073FE45DF4C1 /* CCInteger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCInteger.h; sourceTree = "<group>"; };
-		A5455C9B89492E68668D89BDE26A87EC /* CCType.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCType.h; sourceTree = "<group>"; };
 		A57A00FF8371E6EF1057681AC2C42FA0 /* SITP.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITP.h; sourceTree = "<group>"; };
 		A7502CD0020402DC870E5BA9F7DF2148 /* FileManagerBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = FileManagerBase.h; sourceTree = "<group>"; };
 		ABCEE31DDF9F25719B0EB3FC722F2F4B /* SITPIndexShift.c */ = {isa = PBXFileReference; includeInIndex = 1; path = SITPIndexShift.c; sourceTree = "<group>"; };
@@ -198,13 +199,17 @@
 		B269545FD79F6C98489FC39C588E52B4 /* Pods-CoreEvent-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CoreEvent-Info.plist"; sourceTree = "<group>"; };
 		B323F70F89CA673D2E43269572F4CB96 /* SITP-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SITP-prefix.pch"; sourceTree = "<group>"; };
 		B63F260C52F6EECA380DE39A3B305FBA /* SITP.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SITP.xcconfig; sourceTree = "<group>"; };
+		B7BC14A577A7A03041B752A9B7E814BC /* CCClosure.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCClosure.c; sourceTree = "<group>"; };
 		BC1918BA39B9C7FCBC5FF3633842E513 /* CCFoundation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCFoundation.h; sourceTree = "<group>"; };
 		BC599C85262ECFC11AC07CE29025F2F2 /* Basic-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Basic-prefix.pch"; sourceTree = "<group>"; };
 		BCF2AEBE0073C7529E40670A27533C89 /* CCFoundation-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "CCFoundation-Info.plist"; sourceTree = "<group>"; };
 		BD7C891A68620DD06E548800D2CDD9E3 /* CCFoundation-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CCFoundation-umbrella.h"; sourceTree = "<group>"; };
 		C20B897C70DFB2BA39650D333EC6AAAC /* FileService-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "FileService-dummy.m"; sourceTree = "<group>"; };
+		C3497CA873109033D22FEC443FD548A2 /* CCAllocator.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCAllocator.c; sourceTree = "<group>"; };
 		C90683BFBC11CA2EE7425A1111471C72 /* SITP-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SITP-dummy.m"; sourceTree = "<group>"; };
 		CEA2F5AF2BDEDADCB3BE18EDAE7DC8DD /* Manager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
+		D0B6373CD38810C71F00ECC3949E4333 /* CCClosure.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCClosure.h; sourceTree = "<group>"; };
+		D2681D4CD644FF281A10BED92558B1C5 /* CCInteger.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCInteger.c; sourceTree = "<group>"; };
 		DC27AA2BE19B1FB02FCA374BA9CAE577 /* SITP-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SITP-umbrella.h"; sourceTree = "<group>"; };
 		DC4D2A786F5C538C08F8DBB350B1BFE6 /* FileService-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "FileService-prefix.pch"; sourceTree = "<group>"; };
 		DE79D82AF2661D7EE1593284948AB258 /* Object.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Object.swift; sourceTree = "<group>"; };
@@ -212,14 +217,17 @@
 		DEBBD4136F8E25FAE7D8E9A871EAC696 /* Pods-CoreEvent.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-CoreEvent.modulemap"; sourceTree = "<group>"; };
 		E4C5CE20233B3DC1E2301D8715AC8FC2 /* SITP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SITP.framework; path = SITP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBA1505E9E0FFE941DFE80A77C37B827 /* Pods-CoreEvent.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CoreEvent.debug.xcconfig"; sourceTree = "<group>"; };
+		EC435516F412090FE38C2900FE82BC65 /* CCType.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCType.c; sourceTree = "<group>"; };
+		EC744915D26797A94D76853F8A1A504A /* CCTime.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCTime.c; sourceTree = "<group>"; };
+		F0A00FD4E22FAE8DC5D956AB8EB28E14 /* CCType.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCType.h; sourceTree = "<group>"; };
 		F28F5537963EC0224E69807C9A27F000 /* Pods-LinkServer.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-LinkServer.modulemap"; sourceTree = "<group>"; };
 		F5A2F81D4F7FCB72EE7EDD43DFB0C9F7 /* Pods-CoreEvent-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-CoreEvent-dummy.m"; sourceTree = "<group>"; };
 		F7F0A78D386F6109175C96589D1DB751 /* Pods_CoreEvent.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_CoreEvent.framework; path = "Pods-CoreEvent.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8954480DB596AA37582DA7B744A9B7A /* Pods-LinkServer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-LinkServer.debug.xcconfig"; sourceTree = "<group>"; };
 		FAA72883440D2CE80A4BF415A6B3A970 /* Basic.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = Basic.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		FB190D832A3B30633663974B310A839E /* CCByte.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCByte.c; sourceTree = "<group>"; };
 		FCA84D7AE062BA4CC086C8BBFF9BCD96 /* Basic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Basic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE8C5A2CE32F8E695F8E44DF05C7A664 /* CCFoundation.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = CCFoundation.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		FF447984591A9B78337CC6E1E93050F4 /* CCConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCConfig.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,19 +250,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7170C91EBAD45B76FE94EA215308A294 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA3D86C888EC17FC8E0D86ABAF5084C5 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D7BBA906F09E69AE6CE87CDA6361EAA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				CA8750A8921600CAA4E575BA37AF9921 /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C2DA2E1B5382F4EF65A165C30B513E38 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				38882D6DD851088CCAE0EF1B2D35F47A /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,20 +285,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		04D9A0E42D7EC3A0765A5236CFD6D7DC /* Core */ = {
+		01FBB1FA6E88A739CE25CA73236ECD1E /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				9CFA53CEFD7BD41F8BB1DC7169C64052 /* CCAllocator.c */,
-				972D211CA874B267AD1D627EA0D24D4F /* CCAllocator.h */,
-				2AC2FEA17F081DAD729A5043D6D008AF /* CCBase.c */,
-				525F83853B68CFB3E71633896F31766C /* CCBase.h */,
-				FB190D832A3B30633663974B310A839E /* CCByte.c */,
-				5DDE06C096DC8D91D0EABB7055C07541 /* CCConfig.h */,
-				1F6A3430F00647B2A677088F4196DBEF /* CCInteger.c */,
-				A13EDF55D5BACCB9D1B2073FE45DF4C1 /* CCInteger.h */,
-				580DAA05B466AD81DC7F95FB9C96695F /* CCTime.c */,
-				67BC29BFE635C434EF88D71A256ACA90 /* CCType.c */,
-				A5455C9B89492E68668D89BDE26A87EC /* CCType.h */,
+				C3497CA873109033D22FEC443FD548A2 /* CCAllocator.c */,
+				7621508DC3730A098594E891545DCD92 /* CCAllocator.h */,
+				4F5C3EB2D0E35EB8FB6F3735067A8E35 /* CCBase.c */,
+				934738FE8210AA09B141C268C9BF12C1 /* CCBase.h */,
+				6839841221112AC6EC1697C9B3CAF6EA /* CCByte.c */,
+				B7BC14A577A7A03041B752A9B7E814BC /* CCClosure.c */,
+				D0B6373CD38810C71F00ECC3949E4333 /* CCClosure.h */,
+				FF447984591A9B78337CC6E1E93050F4 /* CCConfig.h */,
+				D2681D4CD644FF281A10BED92558B1C5 /* CCInteger.c */,
+				9F86384D4649A58EBAAA0B98FED01549 /* CCInteger.h */,
+				7994EDA08D0E4C99996BF558F15C1FB1 /* CCReferenceBase.c */,
+				3BAC8E996AD4B0B08F436679BDB06AA3 /* CCReferenceBase.h */,
+				EC744915D26797A94D76853F8A1A504A /* CCTime.c */,
+				EC435516F412090FE38C2900FE82BC65 /* CCType.c */,
+				F0A00FD4E22FAE8DC5D956AB8EB28E14 /* CCType.h */,
 			);
 			name = Core;
 			path = Core;
@@ -408,15 +420,6 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		73EF53E968161690772D8ADF4BD40E95 /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				04D9A0E42D7EC3A0765A5236CFD6D7DC /* Core */,
-			);
-			name = Source;
-			path = Source;
-			sourceTree = "<group>";
-		};
 		74A45957B5D87D8E06007FBEE6E2FE57 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -450,7 +453,7 @@
 			children = (
 				BC1918BA39B9C7FCBC5FF3633842E513 /* CCFoundation.h */,
 				3D49A31F706FC8D113FCB6073F306BD0 /* Pod */,
-				73EF53E968161690772D8ADF4BD40E95 /* Source */,
+				9B6C9B6047AF178AC5E97D5184C3207F /* Source */,
 				773465155FD82116C4F1606DF587F979 /* Support Files */,
 			);
 			name = CCFoundation;
@@ -485,6 +488,15 @@
 				9335C154D580CE4726A901AC00B5B485 /* OS X */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9B6C9B6047AF178AC5E97D5184C3207F /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				01FBB1FA6E88A739CE25CA73236ECD1E /* Core */,
+			);
+			name = Source;
+			path = Source;
 			sourceTree = "<group>";
 		};
 		C6E3ADCFD405D47C878616711CEFC544 /* Pod */ = {
@@ -614,17 +626,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D3AF777E67F9729AC102E5A318B1F0A5 /* Headers */ = {
+		DA8496498A630D257A8F1AF6103413F4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF57CDB471F3CC083CA95735E5C945D6 /* CCAllocator.h in Headers */,
-				DDD3A15D778BE75B267AD676309F1829 /* CCBase.h in Headers */,
-				3B0A989ECEE6A7C51FC602E8A0032AFE /* CCConfig.h in Headers */,
-				9391A6A1DF719CC4BB724585DB9BB7EF /* CCFoundation-umbrella.h in Headers */,
-				6C6EA596F7A4D4D314F181BC9798BB4E /* CCFoundation.h in Headers */,
-				6962A77AA90768E361BC8094DE85555C /* CCInteger.h in Headers */,
-				F1B981B992D2716D5F6630BDA8E6471A /* CCType.h in Headers */,
+				898597DBD1B0FA7B9C0429EA81F4C777 /* CCAllocator.h in Headers */,
+				F96412978CB67AF4E82FFA07FF163D6B /* CCBase.h in Headers */,
+				2C52031A9C6295A5EC2307295261B211 /* CCClosure.h in Headers */,
+				62900F6C1350A2B14A9A925D4F4D6BCD /* CCConfig.h in Headers */,
+				62F5A32A7860C82EEE4360AFC9A31480 /* CCFoundation-umbrella.h in Headers */,
+				BAA8EB00B39C9F54792D7934EF08DAA1 /* CCFoundation.h in Headers */,
+				4B96726E8869451B7A642B830AD869E9 /* CCInteger.h in Headers */,
+				4662E4E5469E10D5557CC90056623FC2 /* CCReferenceBase.h in Headers */,
+				C13C2612B271803E9DFA00B6C708B4D2 /* CCType.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -679,12 +693,12 @@
 		};
 		6D5CBA257CADC5A51DE8D77CFF6D1861 /* CCFoundation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 328E42BBAFF26C77A5E752061EEF2998 /* Build configuration list for PBXNativeTarget "CCFoundation" */;
+			buildConfigurationList = 898876A189C4A15755AF1C9F8CD1BE59 /* Build configuration list for PBXNativeTarget "CCFoundation" */;
 			buildPhases = (
-				D3AF777E67F9729AC102E5A318B1F0A5 /* Headers */,
-				2A8A3299876EC607408912B6A28E5FB6 /* Sources */,
-				C2DA2E1B5382F4EF65A165C30B513E38 /* Frameworks */,
-				7F13CD3D90165F86E41C64627BA3F09F /* Resources */,
+				DA8496498A630D257A8F1AF6103413F4 /* Headers */,
+				EB3931667F78BDE1C50AD562C093135E /* Sources */,
+				7170C91EBAD45B76FE94EA215308A294 /* Frameworks */,
+				F4484B607A1F31345C18AF4E8C9D99FC /* Resources */,
 			);
 			buildRules = (
 			);
@@ -768,7 +782,7 @@
 				LastUpgradeCheck = 1100;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -812,13 +826,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7F13CD3D90165F86E41C64627BA3F09F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		DFF9809C01F062FBDC48347B8111F75B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -827,6 +834,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F26847764DB8A20E236D65B2100F7E18 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4484B607A1F31345C18AF4E8C9D99FC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -844,20 +858,6 @@
 				D531C789E2D2B80663DF99805C619695 /* SITPIndexShift.c in Sources */,
 				69A6F647E5445C6A7D9B21B4972C3941 /* SITPParser.c in Sources */,
 				CEB07E7825F6FA6086B9B8C7B0EA6772 /* SITPType.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2A8A3299876EC607408912B6A28E5FB6 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				43B0B28A38A43B9A0C616CC0DD1FC55A /* CCAllocator.c in Sources */,
-				184498A10594C2D1AA196B3AFD3DD3AB /* CCBase.c in Sources */,
-				CF80491735FC06690EA55477B05D3AE4 /* CCByte.c in Sources */,
-				C6A0A8F9EFB986E7923851C0FCB31125 /* CCFoundation-dummy.m in Sources */,
-				8DDFFC0CD1976B9B60705182B170BA0E /* CCInteger.c in Sources */,
-				A3B02237A801984DDD90A29355E0CBC9 /* CCTime.c in Sources */,
-				8A638442E645A5914CCEB947A01EAF7A /* CCType.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -895,6 +895,22 @@
 				A0D3AB40E1A0D09E9BF08247FBE9D2C3 /* FileService-dummy.m in Sources */,
 				35751E5E1851304FC38198E0FEA1D8E4 /* Manager.swift in Sources */,
 				9E9761393AE7746D0070A063C0954C43 /* UserGroup.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB3931667F78BDE1C50AD562C093135E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3076787FA05752D8DA0D2D7EE933A4A5 /* CCAllocator.c in Sources */,
+				76A5BDB0A2CBDDB81ED36FE4B47A5E70 /* CCBase.c in Sources */,
+				026A6365D669CC81B67158874E8755F7 /* CCByte.c in Sources */,
+				493F91BF9FB674AB4B0624EC1C9D0739 /* CCClosure.c in Sources */,
+				98642D357BA8061B8FD5BEEAB03A1E25 /* CCFoundation-dummy.m in Sources */,
+				D3B4FBD514D54F885028ED4EE360D995 /* CCInteger.c in Sources */,
+				E1DA63AE45B377F1BA16A6515FFFA250 /* CCReferenceBase.c in Sources */,
+				148AB909E029CBF758EF47CE67FA120E /* CCTime.c in Sources */,
+				FDDE697283E489BD841CC7B0DC797AF8 /* CCType.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1010,82 +1026,6 @@
 			};
 			name = Debug;
 		};
-		072D123D374D34323DC4822CAFBAB6D4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 60FA026184604E26C028674330D2D1CA /* CCFoundation.xcconfig */;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				GCC_PREFIX_HEADER = "Target Support Files/CCFoundation/CCFoundation-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/CCFoundation/CCFoundation-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MODULEMAP_FILE = "Target Support Files/CCFoundation/CCFoundation.modulemap";
-				PRODUCT_MODULE_NAME = CCFoundation;
-				PRODUCT_NAME = CCFoundation;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		0A1E22278FC9EFA1613A4ACE5E27F0E1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 60FA026184604E26C028674330D2D1CA /* CCFoundation.xcconfig */;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				GCC_PREFIX_HEADER = "Target Support Files/CCFoundation/CCFoundation-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/CCFoundation/CCFoundation-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MODULEMAP_FILE = "Target Support Files/CCFoundation/CCFoundation.modulemap";
-				PRODUCT_MODULE_NAME = CCFoundation;
-				PRODUCT_NAME = CCFoundation;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
 		0A4E8437AC7C5E8A6E80920A6EEE3954 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1146,6 +1086,120 @@
 			};
 			name = Release;
 		};
+		128A03B21FC555470B1243D688B69AF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41B1C54DD25D625B4C99123834D278FC /* FileService.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_PREFIX_HEADER = "Target Support Files/FileService/FileService-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/FileService/FileService-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MODULEMAP_FILE = "Target Support Files/FileService/FileService.modulemap";
+				PRODUCT_MODULE_NAME = FileService;
+				PRODUCT_NAME = FileService;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		19FC1E151311777DA924257B2D6288F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B63F260C52F6EECA380DE39A3B305FBA /* SITP.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_PREFIX_HEADER = "Target Support Files/SITP/SITP-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SITP/SITP-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MODULEMAP_FILE = "Target Support Files/SITP/SITP.modulemap";
+				PRODUCT_MODULE_NAME = SITP;
+				PRODUCT_NAME = SITP;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		1AD9200AADD75CA6E01D8F44263AE970 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B63F260C52F6EECA380DE39A3B305FBA /* SITP.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_PREFIX_HEADER = "Target Support Files/SITP/SITP-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SITP/SITP-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MODULEMAP_FILE = "Target Support Files/SITP/SITP.modulemap";
+				PRODUCT_MODULE_NAME = SITP;
+				PRODUCT_NAME = SITP;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
 		2F57974F7DC5B8CA41834BB707D75BD8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F8954480DB596AA37582DA7B744A9B7A /* Pods-LinkServer.debug.xcconfig */;
@@ -1186,9 +1240,9 @@
 			};
 			name = Debug;
 		};
-		356063BFC751E61656EF5AA01B084878 /* Debug */ = {
+		439F554BFC3406ABF631CA8BFDF21DFE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41B1C54DD25D625B4C99123834D278FC /* FileService.xcconfig */;
+			baseConfigurationReference = 60FA026184604E26C028674330D2D1CA /* CCFoundation.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1203,18 +1257,18 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				GCC_PREFIX_HEADER = "Target Support Files/FileService/FileService-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/FileService/FileService-Info.plist";
+				GCC_PREFIX_HEADER = "Target Support Files/CCFoundation/CCFoundation-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/CCFoundation/CCFoundation-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MODULEMAP_FILE = "Target Support Files/FileService/FileService.modulemap";
-				PRODUCT_MODULE_NAME = FileService;
-				PRODUCT_NAME = FileService;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MODULEMAP_FILE = "Target Support Files/CCFoundation/CCFoundation.modulemap";
+				PRODUCT_MODULE_NAME = CCFoundation;
+				PRODUCT_NAME = CCFoundation;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
@@ -1222,7 +1276,7 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Debug;
+			name = Release;
 		};
 		5F14B856CAD788D737965259A3024EA6 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1366,9 +1420,9 @@
 			};
 			name = Debug;
 		};
-		A807297D2F63E1468537B782CD40F4A7 /* Release */ = {
+		AFCAA39476E1B26A3217E3B5065C531E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41B1C54DD25D625B4C99123834D278FC /* FileService.xcconfig */;
+			baseConfigurationReference = 60FA026184604E26C028674330D2D1CA /* CCFoundation.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1383,56 +1437,18 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				GCC_PREFIX_HEADER = "Target Support Files/FileService/FileService-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/FileService/FileService-Info.plist";
+				GCC_PREFIX_HEADER = "Target Support Files/CCFoundation/CCFoundation-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/CCFoundation/CCFoundation-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MODULEMAP_FILE = "Target Support Files/FileService/FileService.modulemap";
-				PRODUCT_MODULE_NAME = FileService;
-				PRODUCT_NAME = FileService;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		B5D7319BA3D3B09C04CAD8F9BE3254A5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B63F260C52F6EECA380DE39A3B305FBA /* SITP.xcconfig */;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				GCC_PREFIX_HEADER = "Target Support Files/SITP/SITP-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SITP/SITP-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MODULEMAP_FILE = "Target Support Files/SITP/SITP.modulemap";
-				PRODUCT_MODULE_NAME = SITP;
-				PRODUCT_NAME = SITP;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MODULEMAP_FILE = "Target Support Files/CCFoundation/CCFoundation.modulemap";
+				PRODUCT_MODULE_NAME = CCFoundation;
+				PRODUCT_NAME = CCFoundation;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
@@ -1482,9 +1498,9 @@
 			};
 			name = Release;
 		};
-		DE6732A157E331DDF10F7854961DD1FF /* Release */ = {
+		DBAE9DE6C1D412EB863FA8C2C6819B0F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B63F260C52F6EECA380DE39A3B305FBA /* SITP.xcconfig */;
+			baseConfigurationReference = 41B1C54DD25D625B4C99123834D278FC /* FileService.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1499,18 +1515,18 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				GCC_PREFIX_HEADER = "Target Support Files/SITP/SITP-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SITP/SITP-Info.plist";
+				GCC_PREFIX_HEADER = "Target Support Files/FileService/FileService-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/FileService/FileService-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MODULEMAP_FILE = "Target Support Files/SITP/SITP.modulemap";
-				PRODUCT_MODULE_NAME = SITP;
-				PRODUCT_NAME = SITP;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MODULEMAP_FILE = "Target Support Files/FileService/FileService.modulemap";
+				PRODUCT_MODULE_NAME = FileService;
+				PRODUCT_NAME = FileService;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
@@ -1518,7 +1534,7 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = Debug;
 		};
 		FD5F95983B80BF4113DE506D50A0DD0E /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1564,8 +1580,8 @@
 		05651E816A5DF7A2E778BF2B474C44F2 /* Build configuration list for PBXNativeTarget "FileService" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				356063BFC751E61656EF5AA01B084878 /* Debug */,
-				A807297D2F63E1468537B782CD40F4A7 /* Release */,
+				DBAE9DE6C1D412EB863FA8C2C6819B0F /* Debug */,
+				128A03B21FC555470B1243D688B69AF8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1573,17 +1589,8 @@
 		2AE4B0C499942C17D24D0B7A227D23BD /* Build configuration list for PBXNativeTarget "SITP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B5D7319BA3D3B09C04CAD8F9BE3254A5 /* Debug */,
-				DE6732A157E331DDF10F7854961DD1FF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		328E42BBAFF26C77A5E752061EEF2998 /* Build configuration list for PBXNativeTarget "CCFoundation" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0A1E22278FC9EFA1613A4ACE5E27F0E1 /* Debug */,
-				072D123D374D34323DC4822CAFBAB6D4 /* Release */,
+				1AD9200AADD75CA6E01D8F44263AE970 /* Debug */,
+				19FC1E151311777DA924257B2D6288F0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1593,6 +1600,15 @@
 			buildConfigurations = (
 				5F14B856CAD788D737965259A3024EA6 /* Debug */,
 				0A4E8437AC7C5E8A6E80920A6EEE3954 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		898876A189C4A15755AF1C9F8CD1BE59 /* Build configuration list for PBXNativeTarget "CCFoundation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AFCAA39476E1B26A3217E3B5065C531E /* Debug */,
+				439F554BFC3406ABF631CA8BFDF21DFE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

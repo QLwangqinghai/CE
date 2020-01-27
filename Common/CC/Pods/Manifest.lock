@@ -1,0 +1,22 @@
+PODS:
+  - CCFoundation (0.1.0)
+  - SITP (0.1.0):
+    - CCFoundation
+
+DEPENDENCIES:
+  - CCFoundation (from `../CCFoundation`)
+  - SITP (from `../SITP`)
+
+EXTERNAL SOURCES:
+  CCFoundation:
+    :path: "../CCFoundation"
+  SITP:
+    :path: "../SITP"
+
+SPEC CHECKSUMS:
+  CCFoundation: d67ab48ffab7215b5151081c993ec2372782b321
+  SITP: 53f0f994b1a61937c97ef9a9665a01bbf128ed74
+
+PODFILE CHECKSUM: 9d4d9638329b4246a18c83a2c49831b30bbc8f58
+
+COCOAPODS: 1.8.4

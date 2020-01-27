@@ -1,0 +1,3 @@
+${PODS_ROOT}/Target Support Files/Pods-CC/Pods-CC-frameworks.sh
+${BUILT_PRODUCTS_DIR}/CCFoundation/CCFoundation.framework
+${BUILT_PRODUCTS_DIR}/SITP/SITP.framework

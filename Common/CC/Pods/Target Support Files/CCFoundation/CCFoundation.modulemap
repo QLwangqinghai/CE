@@ -1,0 +1,6 @@
+framework module CCFoundation {
+  umbrella header "CCFoundation-umbrella.h"
+
+  export *
+  module * { export * }
+}

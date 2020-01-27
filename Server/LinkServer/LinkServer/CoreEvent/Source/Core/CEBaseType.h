@@ -120,13 +120,14 @@ typedef struct _CEFileEventTimer {
 
 /* File event structure 32b-32B 64b-40B */
 typedef struct _CEFileEvent {
+    uint32_t isInvalid: 1;
     uint32_t readable: 1;
     uint32_t writable: 1;
     uint32_t mask: 2;
     uint32_t isReadTimeout: 1;
     uint32_t isWriteTimeout: 1;
-    uint32_t readTimeoutInterval: 13;//单位为(1/8)秒
-    uint32_t writeTimeoutInterval: 13;//单位为(1/8)秒
+    uint32_t readTimeoutInterval: 12;//单位为(1/8)秒
+    uint32_t writeTimeoutInterval: 12;//单位为(1/8)秒
     uint32_t fdTag;
     
     CEFileEventTimer_s readTimer;

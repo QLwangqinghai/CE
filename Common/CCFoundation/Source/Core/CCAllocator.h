@@ -22,7 +22,6 @@ static inline CCPtr _Nonnull CCMalloc(size_t size) {
         size = 4;
     }
     CCPtr ptr = malloc(size);
-    assert((((uintptr_t)ptr) & 0x3) == 0);
     return ptr;
 }
 static inline void CCFree(CCPtr _Nonnull ptr) {
@@ -62,7 +61,6 @@ static inline void CCDeallocate(void * _Nonnull ptr) {
 }
 
 size_t CCGetCachelineSize(void);
-
 
 
 

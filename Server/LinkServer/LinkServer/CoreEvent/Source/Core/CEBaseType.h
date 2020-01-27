@@ -52,14 +52,6 @@ extern const CEFileEventMask_es CEFileEventMaskReadWritable;
 
 typedef CEFileEventMask_es (*CEApiPoolGetEventMask_f)(void * _Nullable context, void * _Nonnull api, int fd);
 
-typedef void (*CEApiPoolCallback_f)(void * _Nullable context, void * _Nonnull api);
-typedef void (*CEApiPoolFileEventCallback_f)(void * _Nullable context, void * _Nonnull api, int fd, CEFileEventMask_es mask);
-
-typedef struct _CEApiPoolCallback {
-    CEApiPoolFileEventCallback_f _Nonnull fileEventCallback;
-    CEApiPoolCallback_f _Nonnull pipeCallback;
-} CEApiPoolCallback_s;
-
 typedef struct _CEFileDescription {
     uint32_t tag;
     int fd;
@@ -96,9 +88,9 @@ typedef struct _CETimeDescription {
 typedef _Bool (*CETimeEventHandler_f)(CERunLoop_s * _Nonnull eventLoop, CETimeDescription_s td, void * _Nullable context);
 typedef void (*CETimeEventClearContextHandler_f)(CERunLoop_s * _Nonnull eventLoop, CETimeDescription_s td, void * _Nullable context);
 typedef void (*CEStateChangeHandler_f)(CERunLoop_s * _Nonnull eventLoop);
-typedef struct _CEFileEventHandler {
-    CEFileEventHandler_f _Nonnull func;
-} CEFileEventHandler_s;
+//typedef struct _CEFileEventHandler {
+//    CEFileEventHandler_f _Nonnull func;
+//} CEFileEventHandler_s;
 
 
 /* File event structure 8B*/
@@ -623,51 +615,6 @@ static inline void CEAtomicMemorySet(CEAtomicMemoryBlock_t * _Nonnull dst, CEAto
         atomic_store(dst, src);
     }
 }
-
-typedef void (*CEClosureExecute_f)(uintptr_t closure, const void * _Nullable params);
-typedef void (*CEClosureClearData_f)(uintptr_t closure, const void * _Nullable data, size_t dataSize);
-
-
-//typedef struct _CEBlockStorage {
-//    //    _Atomic(uintptr_t) execute;
-//    //    _Atomic(uintptr_t) executeResult;
-//    //    _Atomic(uintptr_t) dealloc;
-//
-//    CEClosureExecute_f _Nonnull execute;
-//    CEClosureExecute_f _Nonnull executeResult;
-//    CEClosureClearData_f _Nullable dealloc;
-//    _Atomic(uint_fast32_t) contextSize;
-//    _Atomic(uint_fast32_t) resultSize;
-//    CEAtomicMemoryBlock_t context[0];
-//} CEBlockStorage_s;
-
-typedef struct _CEClosureType {
-    CEClosureExecute_f _Nonnull execute;
-    CEClosureClearData_f _Nullable clearData;
-    uint32_t dataSize;
-    uint32_t paramsSize;
-    uint32_t resultSize;
-} CEClosureType_s;
-
-//typedef struct _CEClosure {
-//    CEThreadWaiter_s * _Nullable waiter;
-//    CEClosureExecute_f _Nonnull execute;
-//    CEClosureClearData_f _Nullable clearData;
-//    uint32_t dataSize;
-//    uint32_t paramsSize;
-//    uint32_t resultSize;
-//} CEClosure_s;
-
-typedef struct _CEClosure {
-    const CEClosureType_s * _Nonnull type;
-    const CEThreadWaiter_s * _Nullable waiter;
-    
-} CEClosure_s;
-
-typedef struct _CEClosureInfo {
-    CEClosure_s closure;
-    
-} CEClosureInfo_s;
 
 #define CEBlockQueuePageSize 2046
 typedef struct _CEBlockQueuePage {

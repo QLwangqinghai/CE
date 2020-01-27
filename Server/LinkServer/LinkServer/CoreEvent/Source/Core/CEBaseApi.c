@@ -35,12 +35,14 @@ typedef struct kevent CEEvent_s;
 
 #endif
 
+size_t CEApiCreateGetEventSize(void) {
+    return sizeof(CEEvent_s);
+}
+
 struct _CEApiState {
     int fd;
     int pread;
     int pwrite;
-    int xxxx;
-    CEEvent_s * _Nonnull events;
 };
 
 
@@ -77,58 +79,26 @@ static void CEApiPollHandlePipeInput(CEApiState_s * _Nonnull api, void * _Nullab
 //#define EPOLLHUP 2
 
 
-void * _Nullable CEApiCreate(int setsize, int pread) {
+CCPtr _Nonnull CEApiCreate(void) {
     int pio[2] = {};
     int result = pipe(pio);
-    if (0 != result) {
-        return NULL;
-    }
+    assert(0 != result);
     
     int flags = fcntl(pio[0], F_GETFL, 0);
     int fresult = fcntl(pio[0], F_SETFL, flags | O_NONBLOCK);
-    if (fresult != 0) {
-        close(pio[0]);
-        close(pio[1]);
-        return NULL;
-    }
+    assert(fresult != 0);
     
     int flags1 = fcntl(pio[1], F_GETFL, 0);
     int fresult1 = fcntl(pio[1], F_SETFL, flags1 | O_NONBLOCK);
-    if (fresult1 != 0) {
-        close(pio[0]);
-        close(pio[1]);
-        return NULL;
-    }
+    assert(fresult1 != 0);
     
     int fd = epoll_create(1024); /* 1024 is just a hint for the kernel */
-    if (fd == -1) {
-        close(pio[0]);
-        close(pio[1]);
-        return NULL;
-    }
-
-    CEApiState_s *state = CEAllocateClear(sizeof(CEApiState_s));
+    assert(fd >= 0);
+    CEApiState_s * state = CEAllocateClear(sizeof(CEApiState_s));
+    assert(state);
     state->fd = fd;
     state->pread = pio[0];
     state->pwrite = pio[1];
-    state->xxxx = 0;
-
-    if (!state) {
-        close(pio[0]);
-        close(pio[1]);
-        close(fd);
-        return NULL;
-    };
-
-    state->events = CEAllocateClear(sizeof(CEEvent_s)*setsize);
-    if (!state->events) {
-        close(pio[0]);
-        close(pio[1]);
-        close(fd);
-        zfree(state);
-        return NULL;
-    }
-    
     return state;
 }
 
@@ -177,14 +147,18 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es delmask) {
     }
 }
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, int setsize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback) {
+int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback) {
     assert(api);
     assert(callback);
+    assert(buffer);
+    int setsize = bufferSize / sizeof(CEEvent_s);
+    assert(setsize > 0);
+    CEEvent_s * events = buffer;
 
     CEApiState_s *state = api;
     int retval, numevents = 0;
     
-    retval = epoll_wait(state->fd, state->events, setsize,
+    retval = epoll_wait(state->fd, events, setsize,
                         tvp ? (int)(tvp->tv_sec*1000 + tvp->tv_usec/1000) : -1);
     if (retval > 0) {
         numevents = retval;
@@ -219,57 +193,26 @@ char * _Nonnull CEApiName(void) {
 #if CORE_EVENT_USE_KQUEUE
 
 
-void * _Nullable CEApiCreate(unsigned int setsize) {
+CCPtr _Nonnull CEApiCreate(void) {
     int pio[2] = {};
     int result = pipe(pio);
-    if (0 != result) {
-        return NULL;
-    }
+    assert(0 != result);
     
     int flags = fcntl(pio[0], F_GETFL, 0);
     int fresult = fcntl(pio[0], F_SETFL, flags | O_NONBLOCK);
-    if (fresult != 0) {
-        close(pio[0]);
-        close(pio[1]);
-        return NULL;
-    }
+    assert(fresult != 0);
     
     int flags1 = fcntl(pio[1], F_GETFL, 0);
     int fresult1 = fcntl(pio[1], F_SETFL, flags1 | O_NONBLOCK);
-    if (fresult1 != 0) {
-        close(pio[0]);
-        close(pio[1]);
-        return NULL;
-    }
+    assert(fresult1 != 0);
     
     int fd = kqueue(); /* 1024 is just a hint for the kernel */
-    if (fd == -1) {
-        close(pio[0]);
-        close(pio[1]);
-        return NULL;
-    }
+    assert(fd >= 0);
     CEApiState_s *state = CEAllocateClear(sizeof(CEApiState_s));
-    
-    if (!state) {
-        close(fd);
-        close(pio[0]);
-        close(pio[1]);
-        return NULL;
-    };
-    
-    state->events = CEAllocateClear(sizeof(CEEvent_s)*setsize);
-    if (!state->events) {
-        close(fd);
-        close(pio[0]);
-        close(pio[1]);
-        CEDeallocate(state);
-        return NULL;
-    }
+    assert(state);
     state->fd = fd;
     state->pread = pio[0];
     state->pwrite = pio[1];
-    state->xxxx = 0;
-
     return state;
 }
 
@@ -314,10 +257,14 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
     }
 }
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, int setsize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback) {
+int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback) {
     assert(api);
     assert(callback);
-
+    assert(buffer);
+    int setsize = bufferSize / sizeof(CEEvent_s);
+    assert(setsize > 0);
+    CEEvent_s * events = buffer;
+    
     CEApiState_s *state = api;
 
     int retval, numevents = 0;
@@ -326,16 +273,16 @@ int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, int setsize, 
         struct timespec timeout;
         timeout.tv_sec = tvp->tv_sec;
         timeout.tv_nsec = tvp->tv_usec * 1000 + 500;
-        retval = kevent(state->fd, NULL, 0, state->events, setsize, &timeout);
+        retval = kevent(state->fd, NULL, 0, events, setsize, &timeout);
     } else {
-        retval = kevent(state->fd, NULL, 0, state->events, setsize, NULL);
+        retval = kevent(state->fd, NULL, 0, events, setsize, NULL);
     }
     
     if (retval > 0) {
         numevents = retval;
         for(int j = 0; j < numevents; j++) {
             CEFileEventMask_es mask = CEFileEventMaskNone;
-            struct kevent *e = state->events+j;
+            struct kevent *e = events + j;
             if (e->ident == state->pread) {
                 CEApiPollHandlePipeInput(state, context, callback);
             } else {
@@ -356,15 +303,6 @@ char * _Nonnull CEApiName(void) {
 
 #endif
 
-
-void CEApiResize(void * _Nonnull api, uint32_t setsize) {
-    assert(api);
-    CEApiState_s *state = api;
-    
-    state->events = CEReallocate(state->events, sizeof(CEEvent_s) * setsize);
-}
-
-
 void CEApiFree(void * _Nonnull api) {
     assert(api);
     CEApiState_s *state = api;
@@ -372,10 +310,8 @@ void CEApiFree(void * _Nonnull api) {
     close(state->pread);
     close(state->pwrite);
     close(state->fd);
-    CEDeallocate(state->events);
     CEDeallocate(state);
 }
-
 
 void _CEApiWakeUp(CEApiState_s * _Nonnull state, uint32_t count) {
     if (count > 1000) {

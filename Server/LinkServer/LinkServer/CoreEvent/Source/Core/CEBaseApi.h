@@ -9,18 +9,26 @@
 #ifndef CEBaseApi_h
 #define CEBaseApi_h
 
-
 #include "CEBaseType.h"
+
+typedef void (*CEApiPoolCallback_f)(void * _Nullable context, void * _Nonnull api);
+typedef void (*CEApiPoolFileEventCallback_f)(void * _Nullable context, void * _Nonnull api, int fd, CEFileEventMask_es mask);
+
+typedef struct _CEApiPoolCallback {
+    CEApiPoolFileEventCallback_f _Nonnull fileEventCallback;
+    CEApiPoolCallback_f _Nonnull pipeCallback;
+} CEApiPoolCallback_s;
+
 
 typedef int CEApiResult_t;
 
 static const CEApiResult_t CEApiResultSuccess = 0;
 static const CEApiResult_t CEApiResultErrorSystemCall = 2;
 
-void * _Nullable CEApiCreate(unsigned int setsize);
 
+size_t CEApiCreateGetEventSize(void);
 
-void CEApiResize(void * _Nonnull api, uint32_t setsize);
+CCPtr _Nonnull CEApiCreate(void);
 
 void CEApiFree(void * _Nonnull api);
 
@@ -36,7 +44,7 @@ void CEApiUpdateEvents(void * _Nonnull api, int * _Nonnull fdPtrs, uint32_t swan
 
 
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, int setsize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback);
+int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback);
 
 void CEApiWakeUp(void * _Nonnull api);
 

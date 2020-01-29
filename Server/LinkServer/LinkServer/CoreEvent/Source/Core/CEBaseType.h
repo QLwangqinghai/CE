@@ -11,6 +11,7 @@
 
 //c
 #include <CCFoundation/CCBase.h>
+#include <CCFoundation/CCClosure.h>
 
 #include <pthread.h>
 #include <semaphore.h>
@@ -26,6 +27,20 @@
 #endif
 
 
+typedef uint64_t CEMicrosecondTime;
+typedef CCPtr CEPollPtr;
+
+#pragma pack(push, 2)
+typedef struct {
+    uint32_t fd: 16;
+    uint32_t sequence: 16;
+} CEFileId;
+#pragma pack(pop)
+
+
+
+
+
 typedef struct _CEThreadWaiter {
     _Atomic(uintptr_t) whoWakeUp;
 #if __APPLE__
@@ -38,7 +53,8 @@ typedef struct _CEThreadWaiter {
 } CEThreadWaiter_s;
 
 
-static const uint64_t CETimeBetweenFrames = 125000;//每秒钟8帧
+static const CEMicrosecondTime CEFrameIntervalPer32 = 61;//每32个链接 时间间隔减少 (1000000 - 0xF4200)
+static const CEMicrosecondTime CEFrameIntervalDefault = 125000;//每秒钟8帧
 
 typedef int CEResult_t;
 
@@ -620,7 +636,7 @@ static inline void CEAtomicMemorySet(CEAtomicMemoryBlock_t * _Nonnull dst, CEAto
 typedef struct _CEBlockQueuePage {
     struct _CEBlockQueuePage * _Nullable next;
     size_t used;
-    uintptr_t buffer[CEBlockQueuePageSize];
+    CCClosureRef _Nonnull buffer[CEBlockQueuePageSize];
 } CEBlockQueuePage_s;
 
 
@@ -635,6 +651,22 @@ typedef struct _CEBlockQueue CEBlockQueue_s;
 
 #define CERunLoopFileTimerPageSize 0x4000
 #define CEFileEventTimeoutMillisecondMax 2047875
+
+
+
+typedef uint32_t CEPollProgress_t;
+
+static const CEPollProgress_t CEPollProgressDoSource = 0;
+static const CEPollProgress_t CEPollProgressDoSourceTimeout = 1;
+static const CEPollProgress_t CEPollProgressDoBlock = 2;
+static const CEPollProgress_t CEPollProgressDoTimer = 3;
+
+typedef uint32_t CEPollObserverMask_t;
+
+static const CEPollObserverMask_t CEPollObserverMaskBeforeDoSource = 0x1;
+static const CEPollObserverMask_t CEPollObserverMaskBeforeSourceTimeout = 0x2;
+static const CEPollObserverMask_t CEPollObserverMaskAfterDoBlock = 0x4;
+static const CEPollObserverMask_t CEPollObserverMaskBeforeDoTimer = 0x8;
 
 
 typedef uint32_t CERunLoopProgress_t;

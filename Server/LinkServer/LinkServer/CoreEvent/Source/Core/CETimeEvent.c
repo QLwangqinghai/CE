@@ -14,7 +14,7 @@ void CETimeEventSourceStop(CETimeEvent_s * _Nonnull te, CERunLoop_s * _Nonnull e
 
 
 static uint64_t CEAddMicrosecondsToNow(uint64_t milliseconds) {
-    uint64_t time = CEGetMicrosecondsTime();
+    uint64_t time = CEGetCurrentTime();
     return time + milliseconds;
 }
 

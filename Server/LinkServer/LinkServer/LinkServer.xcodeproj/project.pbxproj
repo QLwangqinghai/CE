@@ -9,8 +9,10 @@
 /* Begin PBXBuildFile section */
 		207055E61554CA95715F896B /* Pods_CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CFAD904B2BC253E0E1BD91E /* Pods_CoreEvent.framework */; };
 		BF0FA29B9D8377C3C8ABAA65 /* Pods_LinkServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8081401C46F4166053DFE5C9 /* Pods_LinkServer.framework */; };
-		D64DD12023DEBDA400BEBBBE /* CEPool.h in Headers */ = {isa = PBXBuildFile; fileRef = D64DD11E23DEBDA400BEBBBE /* CEPool.h */; };
-		D64DD12123DEBDA400BEBBBE /* CEPool.c in Sources */ = {isa = PBXBuildFile; fileRef = D64DD11F23DEBDA400BEBBBE /* CEPool.c */; };
+		D64DD12023DEBDA400BEBBBE /* CEPoll.h in Headers */ = {isa = PBXBuildFile; fileRef = D64DD11E23DEBDA400BEBBBE /* CEPoll.h */; };
+		D64DD12123DEBDA400BEBBBE /* CEPoll.c in Sources */ = {isa = PBXBuildFile; fileRef = D64DD11F23DEBDA400BEBBBE /* CEPoll.c */; };
+		D64DD14423E0CA4B00BEBBBE /* CETimeEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = D64DD14223E0CA4B00BEBBBE /* CETimeEvent.c */; };
+		D64DD14523E0CA4B00BEBBBE /* CETimeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D64DD14323E0CA4B00BEBBBE /* CETimeEvent.h */; };
 		D6B2F6E523DE63A700781CA8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F6E423DE63A700781CA8 /* AppDelegate.swift */; };
 		D6B2F6E723DE63A700781CA8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F6E623DE63A700781CA8 /* ViewController.swift */; };
 		D6B2F6E923DE63A900781CA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6B2F6E823DE63A900781CA8 /* Assets.xcassets */; };
@@ -60,8 +62,10 @@
 		8081401C46F4166053DFE5C9 /* Pods_LinkServer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LinkServer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A38E94BD893D05003CFD32A /* Pods-CoreEvent.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreEvent.release.xcconfig"; path = "Target Support Files/Pods-CoreEvent/Pods-CoreEvent.release.xcconfig"; sourceTree = "<group>"; };
 		C270896BA8B2D6ECF82F4151 /* Pods-LinkServer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LinkServer.debug.xcconfig"; path = "Target Support Files/Pods-LinkServer/Pods-LinkServer.debug.xcconfig"; sourceTree = "<group>"; };
-		D64DD11E23DEBDA400BEBBBE /* CEPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEPool.h; sourceTree = "<group>"; };
-		D64DD11F23DEBDA400BEBBBE /* CEPool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEPool.c; sourceTree = "<group>"; };
+		D64DD11E23DEBDA400BEBBBE /* CEPoll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEPoll.h; sourceTree = "<group>"; };
+		D64DD11F23DEBDA400BEBBBE /* CEPoll.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEPoll.c; sourceTree = "<group>"; };
+		D64DD14223E0CA4B00BEBBBE /* CETimeEvent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CETimeEvent.c; sourceTree = "<group>"; };
+		D64DD14323E0CA4B00BEBBBE /* CETimeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CETimeEvent.h; sourceTree = "<group>"; };
 		D6B2F6E123DE63A700781CA8 /* LinkServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinkServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6B2F6E423DE63A700781CA8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6B2F6E623DE63A700781CA8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -169,6 +173,8 @@
 		D6B2F70723DE647000781CA8 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				D64DD14223E0CA4B00BEBBBE /* CETimeEvent.c */,
+				D64DD14323E0CA4B00BEBBBE /* CETimeEvent.h */,
 				D6B2F75E23DE8CE100781CA8 /* CERunLoop.c */,
 				D6B2F75F23DE8CE100781CA8 /* CERunLoop.h */,
 				D6B2F75B23DE72A500781CA8 /* CEMemory.c */,
@@ -180,8 +186,8 @@
 				D6B2F71523DE647100781CA8 /* CEBaseApi.h */,
 				D6B2F75623DE70CF00781CA8 /* CEBase.h */,
 				D6B2F75723DE70CF00781CA8 /* CEBase.c */,
-				D64DD11E23DEBDA400BEBBBE /* CEPool.h */,
-				D64DD11F23DEBDA400BEBBBE /* CEPool.c */,
+				D64DD11E23DEBDA400BEBBBE /* CEPoll.h */,
+				D64DD11F23DEBDA400BEBBBE /* CEPoll.c */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -204,10 +210,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D64DD12023DEBDA400BEBBBE /* CEPool.h in Headers */,
+				D64DD12023DEBDA400BEBBBE /* CEPoll.h in Headers */,
 				D6B2F75823DE70CF00781CA8 /* CEBase.h in Headers */,
 				D6B2F75C23DE72A500781CA8 /* CEMemory.h in Headers */,
 				D6B2F6FD23DE63C100781CA8 /* CoreEvent.h in Headers */,
+				D64DD14523E0CA4B00BEBBBE /* CETimeEvent.h in Headers */,
 				D6B2F74B23DE661500781CA8 /* CEBaseType.h in Headers */,
 				D6B2F73623DE647100781CA8 /* CEBaseApi.h in Headers */,
 				D6B2F75323DE663C00781CA8 /* CEConfig.h in Headers */,
@@ -392,10 +399,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6B2F75D23DE72A500781CA8 /* CEMemory.c in Sources */,
+				D64DD14423E0CA4B00BEBBBE /* CETimeEvent.c in Sources */,
 				D6B2F74A23DE661500781CA8 /* CEBaseType.c in Sources */,
 				D6B2F72923DE647100781CA8 /* CEBaseApi.c in Sources */,
 				D6B2F75923DE70CF00781CA8 /* CEBase.c in Sources */,
-				D64DD12123DEBDA400BEBBBE /* CEPool.c in Sources */,
+				D64DD12123DEBDA400BEBBBE /* CEPoll.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

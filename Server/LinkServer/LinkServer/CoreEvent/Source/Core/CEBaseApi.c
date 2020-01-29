@@ -46,7 +46,7 @@ struct _CEApiState {
 };
 
 
-static void CEApiPollHandlePipeInput(CEApiState_s * _Nonnull api, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback) {
+static void CEApiPollHandlePipeInput(CEApiState_s * _Nonnull api, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
     uint8_t buffer[1024] = {};
     recv(api->pread, buffer, 1024, MSG_DONTWAIT);
     
@@ -147,10 +147,11 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es delmask) {
     }
 }
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback) {
+int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
     assert(api);
     assert(callback);
     assert(buffer);
+    assert(itemSize <= sizeof(CEEvent_s));
     int setsize = bufferSize / sizeof(CEEvent_s);
     assert(setsize > 0);
     CEEvent_s * events = buffer;
@@ -162,6 +163,7 @@ int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnul
                         tvp ? (int)(tvp->tv_sec*1000 + tvp->tv_usec/1000) : -1);
     if (retval > 0) {
         numevents = retval;
+        uint8_t * ptr = buffer;
         for (int j = 0; j < numevents; j++) {
             CEFileEventMask_es mask = CEFileEventMaskNone;
             struct epoll_event *e = state->events+j;
@@ -173,7 +175,8 @@ int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnul
                 if (e->events & EPOLLERR) mask |= CEFileEventMaskReadWritable;
                 if (e->events & EPOLLHUP) mask |= CEFileEventMaskReadWritable;
                 if (mask != CEFileEventMaskNone) {
-                    callback->fileEventCallback(context, api, (int)(e->ident), mask);
+                    ptr += itemSize;
+                    callback->mapper(context, api, ptr, (int)(e->ident), mask);
                 }
             }
         }
@@ -257,10 +260,11 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
     }
 }
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback) {
+int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
     assert(api);
     assert(callback);
     assert(buffer);
+    assert(itemSize <= sizeof(CEEvent_s));
     int setsize = bufferSize / sizeof(CEEvent_s);
     assert(setsize > 0);
     CEEvent_s * events = buffer;
@@ -280,6 +284,8 @@ int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnul
     
     if (retval > 0) {
         numevents = retval;
+        uint8_t * ptr = buffer;
+        
         for(int j = 0; j < numevents; j++) {
             CEFileEventMask_es mask = CEFileEventMaskNone;
             struct kevent *e = events + j;
@@ -289,7 +295,8 @@ int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnul
                 if (e->filter == EVFILT_READ) mask |= CEFileEventMaskReadable;
                 if (e->filter == EVFILT_WRITE) mask |= CEFileEventMaskWritable;
                 if (mask != CEFileEventMaskNone) {
-                    callback->fileEventCallback(context, api, (int)(e->ident), mask);
+                    ptr += itemSize;
+                    callback->mapper(context, api, ptr, (int)(e->ident), mask);
                 }
             }
         }

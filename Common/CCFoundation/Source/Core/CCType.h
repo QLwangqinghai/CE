@@ -82,6 +82,7 @@ typedef CCSInt64 CCMicrosecondTime;
 
 #pragma mark - CCIndex
 
+#define CCConstantIndex16NotFound UINT16_MAX
 #define CCConstantIndex32NotFound UINT32_MAX
 #define CCConstantIndex64NotFound UINT64_MAX
 
@@ -89,10 +90,12 @@ typedef CCSInt64 CCMicrosecondTime;
 typedef CCUInt CCIndex;
 #define CCConstantIndexNotFound CCUInt_MAX
 
+typedef CCUInt16 CCIndex16;
 typedef CCUInt32 CCIndex32;
 typedef CCUInt64 CCIndex64;
 
 extern const CCIndex CCIndexNotFound;
+extern const CCIndex16 CCIndex16NotFound;
 extern const CCIndex32 CCIndex32NotFound;
 extern const CCIndex64 CCIndex64NotFound;
 
@@ -235,6 +238,18 @@ static inline CCBool CCRect64IsValid(CCRect32 rect) {
 
 
 #pragma mark - CCRange
+
+typedef struct {
+    CCIndex16 location;
+    CCIndex16 length;
+} CCRange16;
+static inline CCRange16 CCRange16Make(CCIndex16 location, CCIndex16 length) {
+    CCRange16 range = {
+        .location = location,
+        .length = length,
+    };
+    return range;
+}
 
 typedef struct {
     CCIndex32 location;

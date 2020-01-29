@@ -11,7 +11,7 @@
 
 #pragma mark - time
 
-CCMicrosecondTime CESystemBootInterval(void) {
+CEMicrosecondTime CEGetCurrentTime(void) {
     return CCBootInterval();
 }
 

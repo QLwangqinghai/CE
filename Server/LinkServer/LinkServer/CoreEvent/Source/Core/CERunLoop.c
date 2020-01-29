@@ -767,7 +767,7 @@ void CERunLoopDoCheckSource(CERunLoop_s * _Nonnull eventLoop) {
         }
     }
     
-    static const CEApiPoolCallback_s callback = {
+    static const CEApiPollCallback_s callback = {
         .fileEventCallback = CEApiFileEventCallback,
         .pipeCallback = CEApiPipeEventCallback,
     };

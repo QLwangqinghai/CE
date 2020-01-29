@@ -13,7 +13,7 @@
 
 #pragma mark - time
 
-CCMicrosecondTime CESystemBootInterval(void);
+CEMicrosecondTime CEGetCurrentTime(void);
 
 
 #pragma mark - log
@@ -41,14 +41,14 @@ extern uint32_t CELogVerboseLevel;
 #if CELogVerbosable
 
 #define CELogVerbose(format, ...) if (CELogMask & CELogMaskVerbose) {\
-uint64_t __ce_log_time = CESystemBootInterval(); \
+uint64_t __ce_log_time = CEGetCurrentTime(); \
 fprintf(stdout, "%08llu.%03llu_%03llu: ", __ce_log_time / 1000000ull,  __ce_log_time % 1000000ull / 1000ull, __ce_log_time % 1000ull);                                          \
 fprintf(stdout, format, ##__VA_ARGS__);                                               \
 fprintf(stdout, "\n");                                          \
 }
 
 #define CELogVerbose2(level, format, ...) if ((CELogMask & CELogMaskVerbose) && level >= CELogVerboseLevel) {\
-uint64_t __ce_log_time = CESystemBootInterval(); \
+uint64_t __ce_log_time = CEGetCurrentTime(); \
 fprintf(stdout, "%08llu.%03llu_%03llu: ", __ce_log_time / 1000000ull,  __ce_log_time % 1000000ull / 1000ull, __ce_log_time % 1000ull);                                          \
 fprintf(stdout, format, ##__VA_ARGS__);                                               \
 fprintf(stdout, "\n");                                          \
@@ -65,7 +65,7 @@ fprintf(stdout, "\n");                                          \
 #if CELogDebugable
 
 #define CELogDebug(format, ...) if (CELogMask & CELogMaskDebug) {\
-uint64_t __ce_log_time = CESystemBootInterval(); \
+uint64_t __ce_log_time = CEGetCurrentTime(); \
 fprintf(stdout, "%08llu.%03llu_%03llu: ", __ce_log_time / 1000000ull,  __ce_log_time % 1000000ull / 1000ull, __ce_log_time % 1000ull);                                          \
 fprintf(stdout, format, ##__VA_ARGS__);                                               \
 fprintf(stdout, "\n");                                          \
@@ -82,7 +82,7 @@ fprintf(stdout, "\n");                                          \
 #if CELogInfoable
 
 #define CELogInfo(format, ...) if (CELogMask & CELogMaskInfo) {\
-uint64_t __ce_log_time = CESystemBootInterval(); \
+uint64_t __ce_log_time = CEGetCurrentTime(); \
 fprintf(stdout, "%08llu.%03llu_%03llu: ", __ce_log_time / 1000000ull,  __ce_log_time % 1000000ull / 1000ull, __ce_log_time % 1000ull);                                          \
 fprintf(stdout, format, ##__VA_ARGS__);                                               \
 fprintf(stdout, "\n");                                          \
@@ -100,7 +100,7 @@ fprintf(stdout, "\n");                                          \
 
 
 #define CELogWarning(format, ...) if (CELogMask & CELogMaskWarning) {\
-uint64_t __ce_log_time = CESystemBootInterval(); \
+uint64_t __ce_log_time = CEGetCurrentTime(); \
 fprintf(stdout, "%08llu.%03llu_%03llu: ", __ce_log_time / 1000000ull,  __ce_log_time % 1000000ull / 1000ull, __ce_log_time % 1000ull);                                          \
 fprintf(stdout, format, ##__VA_ARGS__);                                               \
 fprintf(stdout, "\n");                                          \
@@ -116,7 +116,7 @@ fprintf(stdout, "\n");                                          \
 #if CELogErrorable
 
 #define CELogError(format, ...) if (CELogMask & CELogMaskError) {\
-uint64_t __ce_log_time = CESystemBootInterval(); \
+uint64_t __ce_log_time = CEGetCurrentTime(); \
 fprintf(stderr, "%08llu.%03llu_%03llu: ", __ce_log_time / 1000000ull,  __ce_log_time % 1000000ull / 1000ull, __ce_log_time % 1000ull);                                          \
 fprintf(stderr, format, ##__VA_ARGS__);                                               \
 fprintf(stderr, "\n");                                          \

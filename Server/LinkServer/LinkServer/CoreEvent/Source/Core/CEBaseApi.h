@@ -9,15 +9,15 @@
 #ifndef CEBaseApi_h
 #define CEBaseApi_h
 
+
 #include "CEBaseType.h"
 
-typedef void (*CEApiPoolCallback_f)(void * _Nullable context, void * _Nonnull api);
-typedef void (*CEApiPoolFileEventCallback_f)(void * _Nullable context, void * _Nonnull api, int fd, CEFileEventMask_es mask);
-
+typedef void (*CEApiPollCallback_f)(void * _Nullable context, void * _Nonnull api);
+typedef void (*CEApiPollFileEventMapperCallback_f)(void * _Nullable context, void * _Nonnull api, void * _Nonnull buffer, int fd, CEFileEventMask_es mask);
 typedef struct _CEApiPoolCallback {
-    CEApiPoolFileEventCallback_f _Nonnull fileEventCallback;
-    CEApiPoolCallback_f _Nonnull pipeCallback;
-} CEApiPoolCallback_s;
+    CEApiPollFileEventMapperCallback_f _Nonnull mapper;
+    CEApiPollCallback_f _Nonnull pipeCallback;
+} CEApiPollCallback_s;
 
 
 typedef int CEApiResult_t;
@@ -44,7 +44,7 @@ void CEApiUpdateEvents(void * _Nonnull api, int * _Nonnull fdPtrs, uint32_t swan
 
 
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPoolCallback_s * _Nonnull callback);
+int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback);
 
 void CEApiWakeUp(void * _Nonnull api);
 

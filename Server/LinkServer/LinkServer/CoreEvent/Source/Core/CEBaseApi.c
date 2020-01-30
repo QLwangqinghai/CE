@@ -49,7 +49,7 @@ typedef struct kevent CEEvent_s;
 
 #endif
 
-size_t CEApiCreateGetEventSize(void) {
+size_t CEApiGetEventItemSize(void) {
     return sizeof(CEEvent_s);
 }
 
@@ -96,15 +96,19 @@ static void CEApiPollHandlePipeInput(CEApiState_s * _Nonnull api, void * _Nullab
 CCPtr _Nonnull CEApiCreate(void) {
     int pio[2] = {};
     int result = pipe(pio);
-    assert(0 != result);
+    if (0 != result) {
+        fprintf(stderr, "CEApiCreate error %s; \n", strerror(errno));
+        fflush(stderr);
+        abort();
+    }
     
     int flags = fcntl(pio[0], F_GETFL, 0);
     int fresult = fcntl(pio[0], F_SETFL, flags | O_NONBLOCK);
-    assert(fresult != 0);
+    assert(fresult == 0);
     
     int flags1 = fcntl(pio[1], F_GETFL, 0);
     int fresult1 = fcntl(pio[1], F_SETFL, flags1 | O_NONBLOCK);
-    assert(fresult1 != 0);
+    assert(fresult1 == 0);
     
     int fd = epoll_create(1024); /* 1024 is just a hint for the kernel */
     assert(fd >= 0);
@@ -161,7 +165,7 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es delmask) {
     }
 }
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
+int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
     assert(api);
     assert(callback);
     assert(buffer);
@@ -173,8 +177,9 @@ int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnul
     CEApiState_s *state = api;
     int retval, numevents = 0;
     
-    retval = epoll_wait(state->fd, events, setsize,
-                        tvp ? (int)(tvp->tv_sec*1000 + tvp->tv_usec/1000) : -1);
+    uint64_t t = timeout / 1000;
+    assert(t <= INT_MAX);
+    retval = epoll_wait(state->fd, events, setsize, t);
     if (retval > 0) {
         numevents = retval;
         uint8_t * ptr = buffer;
@@ -214,15 +219,20 @@ char * _Nonnull CEApiName(void) {
 CCPtr _Nonnull CEApiCreate(void) {
     int pio[2] = {};
     int result = pipe(pio);
-    assert(0 != result);
+    
+    if (0 != result) {
+        fprintf(stderr, "CEApiCreate error %s; \n", strerror(errno));
+        fflush(stderr);
+        abort();
+    }
     
     int flags = fcntl(pio[0], F_GETFL, 0);
     int fresult = fcntl(pio[0], F_SETFL, flags | O_NONBLOCK);
-    assert(fresult != 0);
+    assert(fresult == 0);
     
     int flags1 = fcntl(pio[1], F_GETFL, 0);
     int fresult1 = fcntl(pio[1], F_SETFL, flags1 | O_NONBLOCK);
-    assert(fresult1 != 0);
+    assert(fresult1 == 0);
     
     int fd = kqueue(); /* 1024 is just a hint for the kernel */
     assert(fd >= 0);
@@ -275,7 +285,16 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
     }
 }
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
+int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, uint32_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
+    
+    struct timespec tv = {};
+    if (timeout <= 0) {
+        tv.tv_nsec = 1;
+    } else {
+        tv.tv_sec = timeout / 1000000;
+        tv.tv_nsec = timeout % 1000000 * 1000;
+    }
+    
     assert(api);
     assert(callback);
     assert(buffer);
@@ -286,17 +305,8 @@ int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnul
     
     CEApiState_s *state = api;
 
-    int retval, numevents = 0;
-    
-    if (tvp != NULL) {
-        struct timespec timeout;
-        timeout.tv_sec = tvp->tv_sec;
-        timeout.tv_nsec = tvp->tv_usec * 1000 + 500;
-        retval = kevent(state->fd, NULL, 0, events, setsize, &timeout);
-    } else {
-        retval = kevent(state->fd, NULL, 0, events, setsize, NULL);
-    }
-    
+    int numevents = 0;
+    int retval = kevent(state->fd, NULL, 0, events, setsize, &tv);    
     if (retval > 0) {
         numevents = retval;
         uint8_t * ptr = buffer;
@@ -340,9 +350,8 @@ void _CEApiWakeUp(CEApiState_s * _Nonnull state, uint32_t count) {
     if (count > 1000) {
         abort();
     }
-
-    uintptr_t value = 0;
-    ssize_t sendResult = send(state->pwrite, &value, sizeof(uintptr_t), MSG_DONTWAIT);
+    uint8_t value = (uint8_t)count;
+    ssize_t sendResult = send(state->pwrite, &value, sizeof(uint8_t), MSG_DONTWAIT);
     if (sendResult <= 0) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
                //缓冲区满，不做任何事
@@ -364,14 +373,11 @@ void _CEApiWakeUp(CEApiState_s * _Nonnull state, uint32_t count) {
     }
 }
 
-
 void CEApiWakeUp(void * _Nonnull api) {
     assert(api);
     CEApiState_s *state = api;
-
     _CEApiWakeUp(state, 0);
 }
-
 
 CEFileEventMask_es CEApiWait(int fd, CEFileEventMask_es mask, int milliseconds) {
     struct pollfd pfd = {};

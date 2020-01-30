@@ -12,13 +12,6 @@
 #include "CEBase.h"
 #include <CCFoundation/CCClosure.h>
 
-
-
-void CEPollIsValidFileIndex(uint16_t fid) {
-    assert(<#e#>)
-}
-
-
 #pragma mark - share
 CEPollPtr _Nonnull CEPollShared(void);
 

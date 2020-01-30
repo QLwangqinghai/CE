@@ -8,6 +8,31 @@
 
 #include "CEPollInternal.h"
 
+
+int _CEPollRemoveFileReadTimersByIndex(CEPoll_s * _Nonnull p, uint16_t index, uint16_t * _Nonnull buffer) {
+    assert(buffer);
+    CEFileTimerMap_s * map = &(p->readTimerMap);
+    uint16_t head = map->table[index];
+    map->table[index] = CEFileIndexInvalid;
+
+    uint16_t iter = head;
+    int count = 0;
+
+    while (iter != CEFileIndexInvalid) {
+        CEFile_s * file = CEPollGetFile(p, iter);
+        assert(1 == file->checkReadTimeout);
+        iter = file->readTimer.next;
+        file->readTimer.prev = CEFileIndexInvalid;
+        file->readTimer.next = CEFileIndexInvalid;
+        file->checkReadTimeout = 0;
+        count += 1;
+        assert(count < 0x10000);
+    }
+    return count;
+}
+
+
+
 //不做任何参数校验
 
 void _CEPollRemoveFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file) {

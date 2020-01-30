@@ -26,7 +26,7 @@ static const CEApiResult_t CEApiResultSuccess = 0;
 static const CEApiResult_t CEApiResultErrorSystemCall = 2;
 
 
-size_t CEApiCreateGetEventSize(void);
+size_t CEApiGetEventItemSize(void);
 
 CCPtr _Nonnull CEApiCreate(void);
 
@@ -44,7 +44,7 @@ void CEApiUpdateEvents(void * _Nonnull api, int * _Nonnull fdPtrs, uint32_t swan
 
 
 
-int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnull buffer, uint32_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback);
+int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, uint32_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback);
 
 void CEApiWakeUp(void * _Nonnull api);
 

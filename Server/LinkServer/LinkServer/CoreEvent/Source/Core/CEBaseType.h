@@ -53,8 +53,8 @@ typedef struct _CEThreadWaiter {
 } CEThreadWaiter_s;
 
 
-static const CEMicrosecondTime CEFrameIntervalPer32 = 61;//每32个链接 时间间隔减少 (1000000 - 0xF4200)
-static const CEMicrosecondTime CEFrameIntervalDefault = 125000;//每秒钟8帧
+static const CEMicrosecondTime CEFrameIntervalPer32 = 61 * 40;//每32个链接 时间间隔减少 (1000000 - 0xF4200)
+static const CEMicrosecondTime CEFrameIntervalDefault = 125000 * 40;
 
 typedef int CEResult_t;
 

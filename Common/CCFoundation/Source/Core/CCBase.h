@@ -9,9 +9,6 @@
 #ifndef CCBase_h
 #define CCBase_h
 
-#include <stdatomic.h>
-
-
 #include "CCInteger.h"
 #include "CCType.h"
 #include "CCConfig.h"
@@ -62,7 +59,6 @@ extern CCMicrosecondTime CCBootInterval(void);
 
 #pragma mark - Atomic
 
-#include <stdatomic.h>
 static inline void CCAtomicUInt32Init(_Atomic(uint_fast32_t) * _Nonnull ref, uint_fast32_t v) {
     atomic_init(ref, v);
 }

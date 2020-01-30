@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/QLwangqinghai/CE.git', :tag => "#{s.version}"}
 
   s.ios.deployment_target = '9.0'
-  s.osx.deployment_target = "10.12"
+  s.osx.deployment_target = "10.14"
 
   s.source_files = "*.h", "Source/**/*.{h,c,m,cpp,swift}"
 

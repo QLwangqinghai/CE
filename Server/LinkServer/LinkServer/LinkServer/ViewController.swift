@@ -13,6 +13,8 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        OBBridge.test()
+        
         // Do any additional setup after loading the view.
     }
 

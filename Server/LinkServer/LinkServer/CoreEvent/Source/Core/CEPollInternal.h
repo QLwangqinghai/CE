@@ -112,7 +112,7 @@ typedef struct {
     CCMicrosecondTime currentTime;//单位 微秒
     
     uint32_t fileTableSize;
-    uint32_t fileEventHandlerCount;
+    uint32_t maxHandlerId;
 
     CEFile_s * _Nonnull fileTable;
 
@@ -121,10 +121,7 @@ typedef struct {
 //    uint32_t observerBufferCount;
 //
 //    CERunLoopObserver_s * _Nullable * _Nonnull observers;
-    
     CEFileEventHandler_s fileEventHandlers[CEPollFileHandlerTableSize];
-    CCRange16 firedFileCounts[CEPollFileHandlerTableSize];
-
     CEFileTimerMap_s readTimerMap;
     CEFileTimerMap_s writeTimerMap;
 } CEPoll_s;

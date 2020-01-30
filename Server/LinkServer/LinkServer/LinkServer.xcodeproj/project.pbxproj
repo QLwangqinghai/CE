@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		207055E61554CA95715F896B /* Pods_CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CFAD904B2BC253E0E1BD91E /* Pods_CoreEvent.framework */; };
 		BF0FA29B9D8377C3C8ABAA65 /* Pods_LinkServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8081401C46F4166053DFE5C9 /* Pods_LinkServer.framework */; };
-		D64DD12023DEBDA400BEBBBE /* CEPoll.h in Headers */ = {isa = PBXBuildFile; fileRef = D64DD11E23DEBDA400BEBBBE /* CEPoll.h */; };
+		D64DD12023DEBDA400BEBBBE /* CEPoll.h in Headers */ = {isa = PBXBuildFile; fileRef = D64DD11E23DEBDA400BEBBBE /* CEPoll.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D64DD12123DEBDA400BEBBBE /* CEPoll.c in Sources */ = {isa = PBXBuildFile; fileRef = D64DD11F23DEBDA400BEBBBE /* CEPoll.c */; };
 		D64DD14423E0CA4B00BEBBBE /* CETimeEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = D64DD14223E0CA4B00BEBBBE /* CETimeEvent.c */; };
-		D64DD14523E0CA4B00BEBBBE /* CETimeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D64DD14323E0CA4B00BEBBBE /* CETimeEvent.h */; };
+		D64DD14523E0CA4B00BEBBBE /* CETimeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D64DD14323E0CA4B00BEBBBE /* CETimeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6B2F6E523DE63A700781CA8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F6E423DE63A700781CA8 /* AppDelegate.swift */; };
 		D6B2F6E723DE63A700781CA8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F6E623DE63A700781CA8 /* ViewController.swift */; };
 		D6B2F6E923DE63A900781CA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6B2F6E823DE63A900781CA8 /* Assets.xcassets */; };
@@ -21,17 +21,18 @@
 		D6B2F70023DE63C100781CA8 /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B2F6F923DE63C100781CA8 /* CoreEvent.framework */; };
 		D6B2F70123DE63C100781CA8 /* CoreEvent.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6B2F6F923DE63C100781CA8 /* CoreEvent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D6B2F72923DE647100781CA8 /* CEBaseApi.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F70823DE647000781CA8 /* CEBaseApi.c */; };
-		D6B2F73623DE647100781CA8 /* CEBaseApi.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F71523DE647100781CA8 /* CEBaseApi.h */; };
+		D6B2F73623DE647100781CA8 /* CEBaseApi.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F71523DE647100781CA8 /* CEBaseApi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6B2F74A23DE661500781CA8 /* CEBaseType.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F74823DE661500781CA8 /* CEBaseType.c */; };
-		D6B2F74B23DE661500781CA8 /* CEBaseType.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F74923DE661500781CA8 /* CEBaseType.h */; };
-		D6B2F75323DE663C00781CA8 /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F74E23DE663C00781CA8 /* CEConfig.h */; };
-		D6B2F75823DE70CF00781CA8 /* CEBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F75623DE70CF00781CA8 /* CEBase.h */; };
+		D6B2F74B23DE661500781CA8 /* CEBaseType.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F74923DE661500781CA8 /* CEBaseType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6B2F75323DE663C00781CA8 /* CEConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F74E23DE663C00781CA8 /* CEConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6B2F75823DE70CF00781CA8 /* CEBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F75623DE70CF00781CA8 /* CEBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6B2F75923DE70CF00781CA8 /* CEBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F75723DE70CF00781CA8 /* CEBase.c */; };
-		D6B2F75C23DE72A500781CA8 /* CEMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F75A23DE72A400781CA8 /* CEMemory.h */; };
+		D6B2F75C23DE72A500781CA8 /* CEMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F75A23DE72A400781CA8 /* CEMemory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6B2F75D23DE72A500781CA8 /* CEMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F75B23DE72A500781CA8 /* CEMemory.c */; };
-		D6F5428E23E1BBE2008B2D65 /* CEFileEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F5428C23E1BBE2008B2D65 /* CEFileEvent.h */; };
+		D6BD24BD23E2BDB500B3A57D /* OBBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D6BD24BC23E2BDB500B3A57D /* OBBridge.m */; };
+		D6F5428E23E1BBE2008B2D65 /* CEFileEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F5428C23E1BBE2008B2D65 /* CEFileEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6F5428F23E1BBE2008B2D65 /* CEFileEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = D6F5428D23E1BBE2008B2D65 /* CEFileEvent.c */; };
-		D6F5429123E1BD07008B2D65 /* CEPollInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F5429023E1BD07008B2D65 /* CEPollInternal.h */; };
+		D6F5429123E1BD07008B2D65 /* CEPollInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F5429023E1BD07008B2D65 /* CEPollInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6F5429523E1C0A7008B2D65 /* CEPollFile.c in Sources */ = {isa = PBXBuildFile; fileRef = D6F5429323E1C0A7008B2D65 /* CEPollFile.c */; };
 /* End PBXBuildFile section */
 
@@ -91,6 +92,9 @@
 		D6B2F75B23DE72A500781CA8 /* CEMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEMemory.c; sourceTree = "<group>"; };
 		D6B2F75E23DE8CE100781CA8 /* CERunLoop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CERunLoop.c; sourceTree = "<group>"; };
 		D6B2F75F23DE8CE100781CA8 /* CERunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CERunLoop.h; sourceTree = "<group>"; };
+		D6BD24BA23E2BDB400B3A57D /* LinkServer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LinkServer-Bridging-Header.h"; sourceTree = "<group>"; };
+		D6BD24BB23E2BDB500B3A57D /* OBBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OBBridge.h; sourceTree = "<group>"; };
+		D6BD24BC23E2BDB500B3A57D /* OBBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OBBridge.m; sourceTree = "<group>"; };
 		D6F5428C23E1BBE2008B2D65 /* CEFileEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEFileEvent.h; sourceTree = "<group>"; };
 		D6F5428D23E1BBE2008B2D65 /* CEFileEvent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEFileEvent.c; sourceTree = "<group>"; };
 		D6F5429023E1BD07008B2D65 /* CEPollInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPollInternal.h; sourceTree = "<group>"; };
@@ -156,6 +160,9 @@
 				D6B2F6EA23DE63A900781CA8 /* Main.storyboard */,
 				D6B2F6ED23DE63A900781CA8 /* Info.plist */,
 				D6B2F6EE23DE63A900781CA8 /* LinkServer.entitlements */,
+				D6BD24BB23E2BDB500B3A57D /* OBBridge.h */,
+				D6BD24BC23E2BDB500B3A57D /* OBBridge.m */,
+				D6BD24BA23E2BDB400B3A57D /* LinkServer-Bridging-Header.h */,
 			);
 			path = LinkServer;
 			sourceTree = "<group>";
@@ -290,6 +297,7 @@
 				TargetAttributes = {
 					D6B2F6E023DE63A700781CA8 = {
 						CreatedOnToolsVersion = 11.1;
+						LastSwiftMigration = 1110;
 					};
 					D6B2F6F823DE63C100781CA8 = {
 						CreatedOnToolsVersion = 11.1;
@@ -405,6 +413,7 @@
 			files = (
 				D6B2F6E723DE63A700781CA8 /* ViewController.swift in Sources */,
 				D6B2F6E523DE63A700781CA8 /* AppDelegate.swift in Sources */,
+				D6BD24BD23E2BDB500B3A57D /* OBBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -563,6 +572,7 @@
 			baseConfigurationReference = C270896BA8B2D6ECF82F4151 /* Pods-LinkServer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = LinkServer/LinkServer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -575,6 +585,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.LinkServer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "LinkServer/LinkServer-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -584,6 +596,7 @@
 			baseConfigurationReference = 27ADA417CEDD3AEA36AB3DEA /* Pods-LinkServer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = LinkServer/LinkServer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -596,6 +609,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.LinkServer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "LinkServer/LinkServer-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

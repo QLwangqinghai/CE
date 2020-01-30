@@ -13,9 +13,9 @@
 #include "CEBaseType.h"
 
 typedef void (*CEApiPollCallback_f)(void * _Nullable context, void * _Nonnull api);
-typedef void (*CEApiPollFileEventMapperCallback_f)(void * _Nullable context, void * _Nonnull api, void * _Nonnull buffer, int fd, CEFileEventMask_es mask);
+typedef _Bool (*CEApiPollFileEventFilterMapper_f)(void * _Nullable context, void * _Nonnull api, void * _Nonnull buffer, int fd, CEFileEventMask_es mask);
 typedef struct _CEApiPoolCallback {
-    CEApiPollFileEventMapperCallback_f _Nonnull mapper;
+    CEApiPollFileEventFilterMapper_f _Nonnull filterMapper;
     CEApiPollCallback_f _Nonnull pipeCallback;
 } CEApiPollCallback_s;
 

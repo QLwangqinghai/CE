@@ -528,7 +528,7 @@ CEResult_t CERunLoopRemoveFileEventMask(CERunLoop_s * _Nonnull eventLoop, CEFile
 }
 
 
-//timeout  单位为毫妙 数值必须大于0 且 小于等于CEFileEventTimeoutMillisecondMax
+//timeout  单位为毫妙 数值必须大于0 且 小于等于CEFileEventTimeoutMax
 CEResult_t CERunLoopSetFileEventReadTimeout(CERunLoop_s * _Nonnull eventLoop, CEFileDescription_s fd, uint32_t initialTimeout, uint32_t timeout) {
     return CEFileEventSourceSetReadTimeout(eventLoop, fd, initialTimeout, timeout);
 }

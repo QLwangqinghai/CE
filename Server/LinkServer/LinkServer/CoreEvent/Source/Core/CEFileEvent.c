@@ -11,12 +11,6 @@
 #include "CEConfig.h"
 
 
-void CEFileEventRemoveFromReadTimer(CERunLoop_s * _Nonnull eventLoop, CEFileEvent_s * _Nonnull fileEvent);
-void CEFileEventRemoveFromWriteTimer(CERunLoop_s * _Nonnull eventLoop, CEFileEvent_s * _Nonnull fileEvent);
-void CEFileEventAddToReadTimer(CERunLoop_s * _Nonnull eventLoop, int feid, uint32_t timerId);
-void CEFileEventAddToWriteTimer(CERunLoop_s * _Nonnull eventLoop, int feid, uint32_t timerId);
-void CEFileEventUpdateReadTimer(CERunLoop_s * _Nonnull eventLoop, int feid, uint32_t timerId);
-void CEFileEventUpdateWriteTimer(CERunLoop_s * _Nonnull eventLoop, int feid, uint32_t timerId);
 
 
 

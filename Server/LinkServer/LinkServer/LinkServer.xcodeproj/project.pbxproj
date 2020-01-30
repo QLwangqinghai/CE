@@ -29,6 +29,10 @@
 		D6B2F75923DE70CF00781CA8 /* CEBase.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F75723DE70CF00781CA8 /* CEBase.c */; };
 		D6B2F75C23DE72A500781CA8 /* CEMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F75A23DE72A400781CA8 /* CEMemory.h */; };
 		D6B2F75D23DE72A500781CA8 /* CEMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F75B23DE72A500781CA8 /* CEMemory.c */; };
+		D6F5428E23E1BBE2008B2D65 /* CEFileEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F5428C23E1BBE2008B2D65 /* CEFileEvent.h */; };
+		D6F5428F23E1BBE2008B2D65 /* CEFileEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = D6F5428D23E1BBE2008B2D65 /* CEFileEvent.c */; };
+		D6F5429123E1BD07008B2D65 /* CEPollInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F5429023E1BD07008B2D65 /* CEPollInternal.h */; };
+		D6F5429523E1C0A7008B2D65 /* CEPollFile.c in Sources */ = {isa = PBXBuildFile; fileRef = D6F5429323E1C0A7008B2D65 /* CEPollFile.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +91,10 @@
 		D6B2F75B23DE72A500781CA8 /* CEMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEMemory.c; sourceTree = "<group>"; };
 		D6B2F75E23DE8CE100781CA8 /* CERunLoop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CERunLoop.c; sourceTree = "<group>"; };
 		D6B2F75F23DE8CE100781CA8 /* CERunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CERunLoop.h; sourceTree = "<group>"; };
+		D6F5428C23E1BBE2008B2D65 /* CEFileEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEFileEvent.h; sourceTree = "<group>"; };
+		D6F5428D23E1BBE2008B2D65 /* CEFileEvent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEFileEvent.c; sourceTree = "<group>"; };
+		D6F5429023E1BD07008B2D65 /* CEPollInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPollInternal.h; sourceTree = "<group>"; };
+		D6F5429323E1C0A7008B2D65 /* CEPollFile.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEPollFile.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +181,8 @@
 		D6B2F70723DE647000781CA8 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				D6F5428D23E1BBE2008B2D65 /* CEFileEvent.c */,
+				D6F5428C23E1BBE2008B2D65 /* CEFileEvent.h */,
 				D64DD14223E0CA4B00BEBBBE /* CETimeEvent.c */,
 				D64DD14323E0CA4B00BEBBBE /* CETimeEvent.h */,
 				D6B2F75E23DE8CE100781CA8 /* CERunLoop.c */,
@@ -186,8 +196,10 @@
 				D6B2F71523DE647100781CA8 /* CEBaseApi.h */,
 				D6B2F75623DE70CF00781CA8 /* CEBase.h */,
 				D6B2F75723DE70CF00781CA8 /* CEBase.c */,
+				D6F5429023E1BD07008B2D65 /* CEPollInternal.h */,
 				D64DD11E23DEBDA400BEBBBE /* CEPoll.h */,
 				D64DD11F23DEBDA400BEBBBE /* CEPoll.c */,
+				D6F5429323E1C0A7008B2D65 /* CEPollFile.c */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -212,6 +224,8 @@
 			files = (
 				D64DD12023DEBDA400BEBBBE /* CEPoll.h in Headers */,
 				D6B2F75823DE70CF00781CA8 /* CEBase.h in Headers */,
+				D6F5429123E1BD07008B2D65 /* CEPollInternal.h in Headers */,
+				D6F5428E23E1BBE2008B2D65 /* CEFileEvent.h in Headers */,
 				D6B2F75C23DE72A500781CA8 /* CEMemory.h in Headers */,
 				D6B2F6FD23DE63C100781CA8 /* CoreEvent.h in Headers */,
 				D64DD14523E0CA4B00BEBBBE /* CETimeEvent.h in Headers */,
@@ -399,8 +413,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6B2F75D23DE72A500781CA8 /* CEMemory.c in Sources */,
+				D6F5428F23E1BBE2008B2D65 /* CEFileEvent.c in Sources */,
 				D64DD14423E0CA4B00BEBBBE /* CETimeEvent.c in Sources */,
 				D6B2F74A23DE661500781CA8 /* CEBaseType.c in Sources */,
+				D6F5429523E1C0A7008B2D65 /* CEPollFile.c in Sources */,
 				D6B2F72923DE647100781CA8 /* CEBaseApi.c in Sources */,
 				D6B2F75923DE70CF00781CA8 /* CEBase.c in Sources */,
 				D64DD12123DEBDA400BEBBBE /* CEPoll.c in Sources */,

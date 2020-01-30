@@ -9,7 +9,7 @@
 #ifndef CEFileEvent_h
 #define CEFileEvent_h
 
-#include "CEBaseType.h"
+#include "CEPollInternal.h"
 
 
 //timeout  单位为毫妙 数值必须大于0 且 小于等于CEFileEventTimeoutMillisecondMax

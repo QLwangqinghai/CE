@@ -21,6 +21,20 @@ typedef struct _CEApiState CEApiState_s;
 
 #include <sys/epoll.h>
 
+/*
+ typedef union epoll_data {
+    void *ptr;
+     int fd;
+     __uint32_t u32;
+     __uint64_t u64;
+ } epoll_data_t;//保存触发事件的某个文件描述符相关的数据
+
+ struct epoll_event {
+     __uint32_t events;      /* epoll event */
+     epoll_data_t data;      /* User data variable */
+ };
+ */
+
 typedef struct epoll_event CEEvent_s;
 
 #endif
@@ -175,8 +189,9 @@ int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnul
                 if (e->events & EPOLLERR) mask |= CEFileEventMaskReadWritable;
                 if (e->events & EPOLLHUP) mask |= CEFileEventMaskReadWritable;
                 if (mask != CEFileEventMaskNone) {
-                    ptr += itemSize;
-                    callback->mapper(context, api, ptr, (int)(e->ident), mask);
+                    if (callback->filterMapper(context, api, ptr, (int)(e->ident), mask)) {
+                        ptr += itemSize;
+                    };
                 }
             }
         }
@@ -295,8 +310,9 @@ int CEApiPoll(void * _Nonnull api, struct timeval * _Nullable tvp, CCPtr _Nonnul
                 if (e->filter == EVFILT_READ) mask |= CEFileEventMaskReadable;
                 if (e->filter == EVFILT_WRITE) mask |= CEFileEventMaskWritable;
                 if (mask != CEFileEventMaskNone) {
-                    ptr += itemSize;
-                    callback->mapper(context, api, ptr, (int)(e->ident), mask);
+                    if (callback->filterMapper(context, api, ptr, (int)(e->ident), mask)) {
+                        ptr += itemSize;
+                    };
                 }
             }
         }

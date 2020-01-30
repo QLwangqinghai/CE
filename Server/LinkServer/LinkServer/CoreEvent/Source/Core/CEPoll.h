@@ -14,8 +14,15 @@
 
 
 
+void CEPollIsValidFileIndex(uint16_t fid) {
+    assert(<#e#>)
+}
+
+
 #pragma mark - share
 CEPollPtr _Nonnull CEPollShared(void);
+
+
 
 
 #pragma mark - time event api
@@ -63,9 +70,7 @@ CEResult_t CEPollAddFileEventMask(CEPollPtr _Nonnull poll, CEFileId fd, CEFileEv
 
 CEResult_t CEPollRemoveFileEventMask(CEPollPtr _Nonnull poll, CEFileId fd, CEFileEventMask_es mask);
 
-//timeout  单位为毫妙 数值必须大于0 且 小于等于CEFileEventTimeoutMillisecondMax
-
-
+//timeout  单位为微妙 数值必须大于0 且 小于等于CEFileEventTimeoutMax
 CEResult_t CEPollSetFileEventReadTimeout(CEPollPtr _Nonnull poll, CEFileId fd, CEMicrosecondTime timeout);
 CEResult_t CEPollSetFileEventWriteTimeout(CEPollPtr _Nonnull poll, CEFileId fd, CEMicrosecondTime timeout);
 

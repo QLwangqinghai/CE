@@ -32,8 +32,8 @@ typedef CCPtr CEPollPtr;
 
 #pragma pack(push, 2)
 typedef struct {
-    uint32_t fd: 16;
-    uint32_t sequence: 16;
+    uint16_t fd;
+    uint16_t sequence;
 } CEFileId;
 #pragma pack(pop)
 
@@ -650,7 +650,7 @@ typedef struct _CEBlockQueue CEBlockQueue_s;
 
 
 #define CERunLoopFileTimerPageSize 0x4000
-#define CEFileEventTimeoutMillisecondMax 2047875
+#define CEFileEventTimeoutMax 2047875
 
 
 
@@ -667,6 +667,8 @@ static const CEPollObserverMask_t CEPollObserverMaskBeforeDoSource = 0x1;
 static const CEPollObserverMask_t CEPollObserverMaskBeforeSourceTimeout = 0x2;
 static const CEPollObserverMask_t CEPollObserverMaskAfterDoBlock = 0x4;
 static const CEPollObserverMask_t CEPollObserverMaskBeforeDoTimer = 0x8;
+
+
 
 
 typedef uint32_t CERunLoopProgress_t;

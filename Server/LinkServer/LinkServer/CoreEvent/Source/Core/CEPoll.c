@@ -6,7 +6,7 @@
 //  Copyright © 2020 vector. All rights reserved.
 //
 
-#import "CEPoll.h"
+#include "CEPollInternal.h"
 
 #include "CEMemory.h"
 #include "CEConfig.h"
@@ -16,137 +16,14 @@
 #include "CEBaseApi.h"
 
 
-typedef uint32_t CETimerTimeInterval;
+//不做任何参数校验
+extern void _CEPollRemoveFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid);
+extern void _CEPollRemoveFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid);
+extern void _CEPollAddFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, uint16_t timeout);
+extern void _CEPollAddFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, uint16_t timeout);
+extern void _CEPollUpdateFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, uint16_t timeout);
+extern void _CEPollUpdateFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, uint16_t timeout);
 
-#define CEPollFileTimerHashShift 2
-#define CEPollFileTimerTableSize 0x10000
-#define CEPollFileHandlerTableSize 0x1000
-
-#pragma pack(push, 2)
-typedef struct {
-    uint16_t prev;
-    uint16_t next;
-} CEFileLink_s;
-
-
-/*
- none
- checking
- timeout
- */
-//typedef uint32_t CEFileTimerStatus_t;
-//const CEFileTimerStatus_t CEFileTimerStatusNone = 0;
-//const CEFileTimerStatus_t CEFileTimerStatusNormal = 1;
-//const CEFileTimerStatus_t CEFileTimerStatusTimeout = 2;
-
-
-
-/* File event structure 16B*/
-typedef struct {
-    uint32_t sequence: 16;
-    uint32_t handler: 12;
-    uint32_t isValid: 1;
-    uint32_t isFired: 1;
-    uint32_t mask: 2;
-    
-    uint32_t status: 2;
-    uint32_t checkReadTimeout: 1;
-    uint32_t checkWriteTimout: 1;
-    uint32_t isReadTimeout: 1;
-    uint32_t isWriteTimeout: 1;
-
-    uint32_t hashOfReadTimer: 13;
-    uint32_t hashOfWriteTimer: 13;
-
-    CEFileLink_s readTimer;
-    CEFileLink_s writeTimer;
-} CEFile_s;
-
-typedef struct {
-    CEFileId id;
-    uint32_t handler;
-} CEFileFiredInfo;
-
-typedef void (*CEPollTimeoutCallback_f)(void * _Nullable context, CEFileId * _Nonnull ids, uint32_t count);
-typedef void (*CEPollFileEventCallback_f)(void * _Nullable context, CEFileId * _Nonnull ids, uint32_t count);
-
-typedef struct {
-    CEPollTimeoutCallback_f handleTimeout;
-    CEPollFileEventCallback_f handleFileEvent;
-    CCPtr _Nullable context;
-} CEFileEventHandler_s;
-
-//typedef struct {
-//    CCRange32 range;
-//    CEFileEventHandler_s handler;
-//} CEFileHandler_s;
-
-typedef struct {
-    uint32_t handlerId;
-    uint32_t count;
-    CEFileId items[1023];
-} CEFileEventBuffer_s;
-
-typedef struct {
-    uint16_t table[CEPollFileTimerTableSize];
-} CEFileTimerMap_s;
-
-
-typedef struct {
-    pthread_t _Nullable thread;
-    void * _Nullable api; /* This is used for polling API specific data */
-
-#if __APPLE__
-    os_unfair_lock blockQueueLock;
-#else
-    pthread_spinlock_t blockQueueLock;
-#endif
-    uint64_t fdSequence;
-
-    uint32_t blockEvent;
-    uint32_t timerTableOffset;//source timer 的 游标
-    uint32_t tmpBufferSize;
-    CEBlockQueue_s blockQueue;
-    CCPtr _Nonnull tmpBuffer;
-    CETimeEventManager_s timeEventManager;
-    
-    CCMicrosecondTime currentTime;//单位 微秒
-    uint64_t fileTimerSeconds8;//单位为(1/8)秒
-    
-    uint32_t fileTableSize;
-    uint32_t fileEventHandlerCount;
-
-    CEFile_s * _Nonnull fileTable;
-
-    
-//    uint32_t observerBufferSize;
-//    uint32_t observerBufferCount;
-//
-//    CERunLoopObserver_s * _Nullable * _Nonnull observers;
-    
-    CEFileEventHandler_s fileEventHandlers[CEPollFileHandlerTableSize];
-    CCRange16 firedFileCounts[CEPollFileHandlerTableSize];
-
-    CEFileTimerMap_s readTimerMap;
-    CEFileTimerMap_s writeTimerMap;
-} CEPoll_s;
-#pragma pack(pop)
-
-static inline CEFile_s * _Nonnull CEPollGetFile(CEPoll_s * p, int index) {
-    assert(index >= 0);
-    assert(index < 0xffff);
-    CEFile_s * file = p->fileTable;
-    file += index;
-    return file;
-}
-
-static inline CEFileId CEFileIdMake(uint16_t fd, uint16_t seq) {
-    CEFileId f = {
-        .fd = fd,
-        .sequence = seq,
-    };
-    return f;
-}
 
 typedef struct {
     CCByte16 deviceToken;
@@ -272,7 +149,7 @@ CEResult_t CEPollAddFile(CEPollPtr _Nonnull poll, uint32_t handlerId, int fd, CE
     file->mask = 0;
 
     file->checkReadTimeout = 0;
-    file->checkWriteTimout = 0;
+    file->checkWriteTimeout = 0;
     file->isReadTimeout = 0;
     file->isWriteTimeout = 0;
 
@@ -298,7 +175,7 @@ CEResult_t CEPollRemoveFile(CEPollPtr _Nonnull poll, CEFileId fd) {
         if (file->checkReadTimeout) {
             CEPollCancelFileEventReadTimeout(p, fd);
         }
-        if (file->checkWriteTimout) {
+        if (file->checkWriteTimeout) {
             CEPollCancelFileEventWriteTimeout(p, fd);
         }
         file->isValid = 0;
@@ -343,9 +220,7 @@ CEResult_t CEPollRemoveFileEventMask(CEPollPtr _Nonnull poll, CEFileId fd, CEFil
     return CEResultSuccess;
 }
 
-//timeout  单位为毫妙 数值必须大于0 且 小于等于CEFileEventTimeoutMillisecondMax
-
-
+//timeout  单位为微妙 数值必须大于0 且 小于等于CEFileEventTimeoutMax
 CEResult_t CEPollSetFileEventReadTimeout(CEPollPtr _Nonnull poll, CEFileId fd, CEMicrosecondTime timeout) {
     //todo
 
@@ -509,32 +384,32 @@ int64_t _CEPollDoBlocks(CEPoll_s * _Nonnull p) {
 int64_t _CEPollDoTimers(CEPoll_s * _Nonnull p) {
     int64_t processed = 0;
     
-    CETimeEventManager_s * tem = &(p->timeEventManager);
-    CETimeEventQueue_s * teq = &(p->timeEventManager.timerQueue);
-    
-    CETimeEvent_s * te = CETimeEventQueueGetFirst(teq);
-    CEMicrosecondTime now = p->currentTime;
-    int64_t fired = 0;
-    while (NULL != te) {
-        if (te->when <= now) {
-            tem->executingTimeEvent = te;
-            CETimeEventSourceExecute(te, eventLoop);
-            if (CETimeEventStatesWait == te->states) {
-                CETimeEventQueueShiftDown(teq, te->qIndex);
-            } else {
-                CETimeEvent_s * removed = CETimeEventQueueRemoveFirst(teq);
-                CETimeEventSourceDeinit(removed, eventLoop);
-            }
-
-            te = CETimeEventQueueGetFirst(teq);
-
-            tem->executingTimeEvent = NULL;
-            fired += 1;
-        } else {
-            break;
-        }
-    }
-    tem->executingTimeEvent = NULL;
+//    CETimeEventManager_s * tem = &(p->timeEventManager);
+//    CETimeEventQueue_s * teq = &(p->timeEventManager.timerQueue);
+//
+//    CETimeEvent_s * te = CETimeEventQueueGetFirst(teq);
+//    CEMicrosecondTime now = p->currentTime;
+//    int64_t fired = 0;
+//    while (NULL != te) {
+//        if (te->when <= now) {
+//            tem->executingTimeEvent = te;
+//            CETimeEventSourceExecute(te, eventLoop);
+//            if (CETimeEventStatesWait == te->states) {
+//                CETimeEventQueueShiftDown(teq, te->qIndex);
+//            } else {
+//                CETimeEvent_s * removed = CETimeEventQueueRemoveFirst(teq);
+//                CETimeEventSourceDeinit(removed, eventLoop);
+//            }
+//
+//            te = CETimeEventQueueGetFirst(teq);
+//
+//            tem->executingTimeEvent = NULL;
+//            fired += 1;
+//        } else {
+//            break;
+//        }
+//    }
+//    tem->executingTimeEvent = NULL;
     
     return processed;
 }
@@ -651,7 +526,7 @@ int64_t CEPollProcessEvents(CEPoll_s * _Nonnull p) {
 
     _CEPollProcessBeginNew(p, CEPollProgressDoBlock);
     processed += _CEPollDoBlocks(p);
-
+    
     _CEPollProcessBeginNew(p, CEPollProgressDoTimer);
     processed += _CEPollDoTimers(p);
 

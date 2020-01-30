@@ -13,12 +13,12 @@
 
 typedef CCRef CCClosureRef;
 
-typedef void (*CCClosureExecute_f)(const CCPtr _Nullable context, const CCPtr _Nullable input, CCPtr _Nullable output);
-typedef void (*CCClosureClearContext_f)(const CCPtr _Nullable context);
+typedef void (*CCClosureExecute_f)(uintptr_t context, const CCPtr _Nullable input, CCPtr _Nullable output);
+typedef void (*CCClosureClearContext_f)(uintptr_t context);
 
 CCClosureRef _Nonnull CCClosureCreate(CCClosureExecute_f _Nonnull execute,
                                       CCClosureClearContext_f _Nullable clear,
-                                      const CCPtr _Nullable context);
+                                      uintptr_t context);
 
 void CCClosurePerform(CCClosureRef _Nonnull closure, const CCPtr _Nullable input, CCPtr _Nullable output);
 

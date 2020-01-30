@@ -11,20 +11,19 @@
 typedef struct {
     CCClosureExecute_f _Nonnull execute;
     CCClosureClearContext_f _Nullable clear;
-    CCPtr _Nullable context;
+    uintptr_t context;
 } CCClosure;
-
 
 
 CCClosureRef _Nonnull CCClosureCreate(CCClosureExecute_f _Nonnull execute,
                                       CCClosureClearContext_f _Nullable clear,
-                                      const CCPtr _Nullable context) {
+                                      uintptr_t context) {
     assert(execute);
     CCClosureRef ref = CCRefAllocate(CCTypeClosure, sizeof(CCClosure));
     CCClosure * content = CCRefGetContentPtr(ref);
     content->execute = execute;
     content->clear = clear;
-    content->context = (CCPtr)context;
+    content->context = context;
     return ref;
 }
 

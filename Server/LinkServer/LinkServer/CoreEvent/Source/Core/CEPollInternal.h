@@ -65,14 +65,7 @@ typedef struct {
 /* File event structure 16B*/
 
 
-typedef void (*CEPollTimeoutCallback_f)(void * _Nullable context, CEFileId * _Nonnull ids, uint32_t count);
-typedef void (*CEPollFileEventCallback_f)(void * _Nullable context, CEFileId * _Nonnull ids, uint32_t count);
 
-typedef struct {
-    CEPollTimeoutCallback_f handleTimeout;
-    CEPollFileEventCallback_f handleFileEvent;
-    CCPtr _Nullable context;
-} CEFileEventHandler_s;
 
 //typedef struct {
 //    CCRange32 range;
@@ -130,7 +123,7 @@ typedef struct {
 #define CEFileIndexInvalid 0xffff
 
 
-static inline CEFile_s * _Nonnull CEPollGetFile(CEPoll_s * _Nonnull p, uint16_t index) {
+static inline CEFile_s * _Nonnull _CEPollGetFile(CEPoll_s * _Nonnull p, uint16_t index) {
     CEFile_s * file = p->fileTable;
     file += index;
     return file;

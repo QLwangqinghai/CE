@@ -12,10 +12,23 @@
 #include "CEBase.h"
 #include <CCFoundation/CCClosure.h>
 
+
+typedef void (*CEPollTimeoutCallback_f)(void * _Nullable context, CEFileId * _Nonnull ids, uint32_t count);
+typedef void (*CEPollFileEventCallback_f)(void * _Nullable context, CEFileId * _Nonnull ids, uint32_t count);
+
+typedef struct {
+    CEPollTimeoutCallback_f _Nonnull handleTimeout;
+    CEPollFileEventCallback_f _Nonnull handleFileEvent;
+    CCPtr _Nullable context;
+} CEFileEventHandler_s;
+
+
 #pragma mark - share
 CEPollPtr _Nonnull CEPollShared(void);
 
+uint32_t CEPollRegister(CEPollPtr _Nonnull poll, CEFileEventHandler_s handler);
 
+CEFileEventMask_es CEPollGetFileStatus(CEPollPtr _Nonnull poll, CEFileId id);
 
 
 #pragma mark - time event api

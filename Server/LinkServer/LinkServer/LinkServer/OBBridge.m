@@ -131,7 +131,6 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
     CEPollPtr poll = CEPollShared();
     uint32_t handlerId = CEPollRegisterHandler(poll, NULL, CEHandleSocket, CEHandleSocketTimeout);
 
-    
     struct sockaddr_in6 clientAddress = {};
     struct sockaddr_in6 server_addr = {};
     socklen_t len6 = sizeof(struct sockaddr_in6);

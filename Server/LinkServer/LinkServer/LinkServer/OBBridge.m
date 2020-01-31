@@ -76,12 +76,7 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
 + (void)test {
     CEPollPtr poll = CEPollShared();
     
-    CEFileEventHandler_s handler = {
-        .handleTimeout = CEHandleSocketTimeout,
-        .handleFileEvent = CEHandleSocket,
-        .context = NULL,
-    };
-    uint32_t handlerId = CEPollRegister(poll, handler);
+    uint32_t handlerId = CEPollRegisterHandler(poll, NULL, CEHandleSocket, CEHandleSocketTimeout);
 
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         struct sockaddr_in6 clientAddress = {};
@@ -134,12 +129,7 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
 
 + (void)testIpv6 {
     CEPollPtr poll = CEPollShared();
-    CEFileEventHandler_s handler = {
-        .handleTimeout = CEHandleSocketTimeout,
-        .handleFileEvent = CEHandleSocket,
-        .context = NULL,
-    };
-    uint32_t handlerId = CEPollRegister(poll, handler);
+    uint32_t handlerId = CEPollRegisterHandler(poll, NULL, CEHandleSocket, CEHandleSocketTimeout);
 
     
     struct sockaddr_in6 clientAddress = {};

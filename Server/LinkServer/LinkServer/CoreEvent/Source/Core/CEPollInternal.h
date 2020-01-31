@@ -28,22 +28,11 @@ typedef struct {
 
 extern const CEFileSource_s CEFileSourceInit;
 
-
 typedef struct {
     uint16_t sequence;
     uint16_t handler: 11;
     uint16_t type: 3;
     uint16_t mask: 2;
-    CEFileSource_s read;
-    CEFileSource_s write;
-} CEFile2_s;
-
-typedef struct {
-    uint16_t sequence;
-    uint16_t handler: 11;
-    uint16_t type: 3;
-    uint16_t mask: 2;
-
     CEFileSource_s read;
     CEFileSource_s write;
 } CEFile_s;
@@ -52,8 +41,6 @@ typedef struct {
     CEFileId id;
     uint32_t handler;
 } CEFileFiredInfo;
-
-
 
 
 /*
@@ -66,12 +53,7 @@ typedef struct {
 //const CEFileTimerStatus_t CEFileTimerStatusNormal = 1;
 //const CEFileTimerStatus_t CEFileTimerStatusTimeout = 2;
 
-
-
 /* File event structure 16B*/
-
-
-
 
 //typedef struct {
 //    CCRange32 range;
@@ -99,7 +81,6 @@ typedef struct {
     pthread_spinlock_t blockQueueLock;
 #endif
     uint64_t fdSequence;
-
     uint32_t progress;//
     uint32_t timerTableOffset;//source timer 的 游标
     uint32_t blockEvent;
@@ -107,15 +88,11 @@ typedef struct {
     CEBlockQueue_s blockQueue;
     CCPtr _Nonnull tmpBuffer;
     CETimeEventManager_s timeEventManager;
-    
     CCMicrosecondTime currentTime;//单位 微秒
-    
     uint32_t fileTableSize;
     uint32_t maxHandlerId;
-
     CEFile_s * _Nonnull fileTable;
 
-    
 //    uint32_t observerBufferSize;
 //    uint32_t observerBufferCount;
 //

@@ -570,11 +570,9 @@ static const char * const _Nullable CEPollProgressName[4] = {
     "CEPollProgress.doTimer",
 };
 static inline void _CEPollProcessBeginNew(CEPoll_s * _Nonnull p, CEPollProgress_t new) {
-//    p->progress = new;
+    p->progress = new;
     CELogVerbose2(0, "%s begin", CEPollProgressName[new]);
 }
-
-
 
 int64_t CEPollProcessEvents(CEPoll_s * _Nonnull p) {
     int64_t processed = 0;
@@ -774,11 +772,14 @@ CEPollPtr _Nonnull CEPollShared(void) {
     return __CEPollShared;
 }
 
-uint32_t CEPollRegister(CEPollPtr _Nonnull poll, CEFileEventHandler_s handler) {
+uint32_t CEPollRegisterHandler(CEPollPtr _Nonnull poll, CCPtr _Nullable context, CEPollFileEventCallback_f _Nonnull handleFileEvent, CEPollTimeoutCallback_f _Nonnull handleTimeout) {
     CEPoll_s * p = poll;
     if (p->maxHandlerId < CEPollFileHandlerTableSize-1) {
         p->maxHandlerId += 1;
-        p->fileEventHandlers[p->maxHandlerId] = handler;
+        CEFileEventHandler_s * handler = &(p->fileEventHandlers[p->maxHandlerId]);
+        handler->context = context;
+        handler->handleFileEvent = handleFileEvent;
+        handler->handleTimeout = handleTimeout;
         return p->maxHandlerId;
     } else {
         return 0;

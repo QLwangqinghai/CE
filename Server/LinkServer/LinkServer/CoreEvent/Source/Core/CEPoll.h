@@ -26,7 +26,7 @@ typedef struct {
 #pragma mark - share
 CEPollPtr _Nonnull CEPollShared(void);
 
-uint32_t CEPollRegister(CEPollPtr _Nonnull poll, CEFileEventHandler_s handler);
+uint32_t CEPollRegisterHandler(CEPollPtr _Nonnull poll, CCPtr _Nullable context, CEPollFileEventCallback_f _Nonnull handleFileEvent, CEPollTimeoutCallback_f _Nonnull handleTimeout);
 
 CEFileEventMask_es CEPollGetFileStatus(CEPollPtr _Nonnull poll, CEFileId id);
 

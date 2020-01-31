@@ -106,10 +106,6 @@ typedef struct _CETimeDescription {
 typedef _Bool (*CETimeEventHandler_f)(CERunLoop_s * _Nonnull eventLoop, CETimeDescription_s td, void * _Nullable context);
 typedef void (*CETimeEventClearContextHandler_f)(CERunLoop_s * _Nonnull eventLoop, CETimeDescription_s td, void * _Nullable context);
 typedef void (*CEStateChangeHandler_f)(CERunLoop_s * _Nonnull eventLoop);
-//typedef struct _CEFileEventHandler {
-//    CEFileEventHandler_f _Nonnull func;
-//} CEFileEventHandler_s;
-
 
 /* File event structure 8B*/
 typedef struct _CEFileEventTimer {
@@ -144,7 +140,6 @@ typedef struct _CEFileEvent {
 
 //当前模式下会在上次timer 应该触发的时间基础上 添加 间隔时间 作为下次触发的时间， 比如  触发时间为 10000， 间隔时间 为 1000， 当前执行的时间 为 10234， 则下次触发 在 11000 之后
 #define CETimeEventRepeatModeNone 0
-
 
 typedef struct _CEThread {
     pthread_t _Nullable thread;

@@ -8,12 +8,9 @@
 
 #import "OBBridge.h"
 #import <CoreEvent/CoreEvent.h>
+#import <CoreEvent/CCNet.h>
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
+
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -40,7 +37,10 @@ void CEHandleSocketTimeout(void * _Nullable context, CEFileId * _Nonnull ids, ui
 }
 void CEHandleSocket(void * _Nullable context, CEFileId * _Nonnull ids, uint32_t count) {
     CEPollPtr poll = CEPollShared();
-
+    
+    struct sockaddr_un aa;
+//    if_nametoindex("eth0")
+    
     uint8_t buffer[4096] = {};
     for (uint32_t i=0; i<count; i++) {
         CEFileId * id = ids + i;
@@ -94,6 +94,11 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
 
         int newFd = accept(fd, (struct sockaddr *)&clientAddress, &len6);
         
+        struct sockaddr_in serverAddr2 = {};
+        
+        socklen_t currLen = sizeof(struct sockaddr_in);
+        int result = getsockname(newFd, &serverAddr2, &currLen);
+getpeername(<#int#>, <#struct sockaddr *restrict#>, <#socklen_t *restrict#>)
         if (-1 == newFd) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 //no connections没有新连接请求；
@@ -158,7 +163,6 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
 
 
 + (void)test2 {
-    
     
 }
 

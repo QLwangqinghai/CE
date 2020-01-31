@@ -15,6 +15,7 @@
 #import "CCClosure.h"
 #import "CCConfig.h"
 #import "CCInteger.h"
+#import "CCNet.h"
 #import "CCReferenceBase.h"
 #import "CCType.h"
 #import "CCFoundation.h"

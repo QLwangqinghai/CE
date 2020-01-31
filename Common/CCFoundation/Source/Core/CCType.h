@@ -431,36 +431,7 @@ static inline CCByte128 CCByte128Make(const CCUInt8 * _Nonnull buffer) {
 
 #pragma mark - net
 
-
-/*
-
- #include <net/if.h>
- 
- //指定网络接口名称字符串作为参数；若该接口存在，则返回相应的索引，否则返回0
- unsigned if_nametoindex(const char *ifname);
- 
- //指定网络接口索引以及一块长度至少为IF_NAMESIZE(16)字节的内存区域作为参数；若索引对应的网络接口存在，则在内存区域中返回该接口的名称字符串，否则返回NULL，并将errno设置为相应的值
- char *if_indextoname(unsigned ifindex, char *ifname);
- 
- //返回动态分配的struct if_nameindex结构数组，数组中的每一个元素分别对应一个本地网络接口；struct if_nameindex结构的if_index字段为接口索引，if_name字段为接口名称字符串；索引为0且名称字符串为NULL表示结构数组的末尾；调用出错时，返回NULL，并将errno设置为相应的值
- struct if_nameindex *if_nameindex(void);
- 
- //通过if_nameindex()获取完毕接口名称与索引后，调用该函数以释放动态分配的内存区域。
- void if_freenameindex(struct if_nameindex *ptr);
- */
-
-
-
-typedef struct {
-    CCUInt16 family;
-    CCUInt16 port;
-    
-    CCUInt32 flowinfo;//字段分为2个字段：低序20位是flow label，高序12位保留, IPV6报头中的通信流类别字段和流标签字段
-    CCUInt32 scopeId;//指定了使用哪个网络接口 eg: .scopeId = if_nametoindex("eth0")
-    CCByte16 address;
-} CCSocketAddress;
-
-
+typedef CCByte16 CCIpAddress;
 
 #pragma mark - other
 
@@ -492,6 +463,9 @@ typedef enum {
 static inline _Bool CTypeIsValid(CType_e t) {
     return (t >= CTypeBool && t <= CTypeBuffer);
 }
+
+
+
 
 
 

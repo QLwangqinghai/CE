@@ -30,8 +30,7 @@ extern const CEFileSource_s CEFileSourceInit;
 
 typedef struct {
     uint16_t sequence;
-    uint16_t handler: 11;
-    uint16_t type: 3;
+    uint16_t handler: 14;
     uint16_t mask: 2;
     CEFileSource_s read;
     CEFileSource_s write;

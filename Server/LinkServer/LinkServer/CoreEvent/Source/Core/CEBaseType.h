@@ -41,6 +41,8 @@ typedef struct {
 typedef uint16_t CEFileType;
 extern const CEFileType CEFileTypeTcpClient;
 extern const CEFileType CEFileTypeTcpServer;
+extern const CEFileType CEFileTypeLocalClient;
+extern const CEFileType CEFileTypeLocalServer;
 
 
 typedef struct _CEThreadWaiter {

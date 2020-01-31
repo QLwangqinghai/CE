@@ -7,9 +7,10 @@
 //
 
 #import "OBBridge.h"
+ 
 #import <CoreEvent/CoreEvent.h>
-#import <CoreEvent/CCNet.h>
-
+#import <CCFoundation/CCFoundation.h>
+#import <CCFoundation/CCNet.h>
 
 #include <stdio.h>
 #include <errno.h>
@@ -87,7 +88,7 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
         server_addr.sin_addr.s_addr = INADDR_ANY;
         
         int struct_len = sizeof(struct sockaddr_in);
-        int fd = socket(AF_INET, SOCK_STREAM, 0);
+        int fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
         assert(fd >= 0);
         assert(bind(fd, (struct sockaddr *)&server_addr, struct_len) == 0);
         assert(listen(fd, 1024) == 0);
@@ -98,7 +99,7 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
         
         socklen_t currLen = sizeof(struct sockaddr_in);
         int result = getsockname(newFd, &serverAddr2, &currLen);
-getpeername(<#int#>, <#struct sockaddr *restrict#>, <#socklen_t *restrict#>)
+//getpeername(<#int#>, struct sockaddr *restrict, <#socklen_t *restrict#>)
         if (-1 == newFd) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 //no connections没有新连接请求；

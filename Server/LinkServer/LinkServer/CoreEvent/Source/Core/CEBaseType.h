@@ -38,25 +38,6 @@ typedef struct {
 #pragma pack(pop)
 
 
-typedef uint16_t CEFileType;
-extern const CEFileType CEFileTypeTcpClient;
-extern const CEFileType CEFileTypeTcpServer;
-extern const CEFileType CEFileTypeLocalClient;
-extern const CEFileType CEFileTypeLocalServer;
-
-
-typedef struct _CEThreadWaiter {
-    _Atomic(uintptr_t) whoWakeUp;
-#if __APPLE__
-    char name[1024];
-#endif
-    sem_t * _Nonnull lock;
-    
-    sem_t lockValue;//private
-    
-} CEThreadWaiter_s;
-
-
 static const CEMicrosecondTime CEFrameIntervalPer32 = 61 * 40;//每32个链接 时间间隔减少 (1000000 - 0xF4200)
 static const CEMicrosecondTime CEFrameIntervalDefault = 125000 * 40;
 
@@ -648,10 +629,7 @@ struct _CEBlockQueue {
 typedef struct _CEBlockQueue CEBlockQueue_s;
 
 
-#define CERunLoopFileTimerPageSize 0x4000
 #define CEFileEventTimeoutMax 2047875
-
-
 
 typedef uint32_t CEPollProgress_t;
 
@@ -668,118 +646,14 @@ static const CEPollObserverMask_t CEPollObserverMaskAfterDoBlock = 0x4;
 static const CEPollObserverMask_t CEPollObserverMaskBeforeDoTimer = 0x8;
 
 
-
-
-typedef uint32_t CERunLoopProgress_t;
-
-static const CERunLoopProgress_t CERunLoopProgressDoBlock0 = 1;
-static const CERunLoopProgress_t CERunLoopProgressDoTimer0 = 2;
-static const CERunLoopProgress_t CERunLoopProgressDoCheckSource = 3;
-static const CERunLoopProgress_t CERunLoopProgressDoBlock1 = 4;
-static const CERunLoopProgress_t CERunLoopProgressDoTimer1 = 5;
-static const CERunLoopProgress_t CERunLoopProgressDoSource = 6;
-static const CERunLoopProgress_t CERunLoopProgressDoCheckSourceTimeout = 7;
-static const CERunLoopProgress_t CERunLoopProgressDoSourceTimeout = 8;
-
-
-typedef uint32_t CERunLoopObserverMask_t;
-
-static const CERunLoopObserverMask_t ERunLoopObserverMaskFrameBegin = 0x80000000;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskFrameFinish = 0x40000000;
-
-static const CERunLoopObserverMask_t ERunLoopObserverMaskBeforeDoBlock0 = 0x1;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskAfterDoBlock0 = 0x2;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskBeforeDoTimer0 = 0x4;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskAfterDoTimer0 = 0x8;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskBeforeDoCheckSource = 0x10;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskAfterDoCheckSource = 0x20;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskBeforeDoBlock1 = 0x40;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskAfterDoBlock1 = 0x80;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskBeforeDoTimer1 = 0x100;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskAfterDoTimer1 = 0x200;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskBeforeDoSource = 0x400;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskAfterDoSource = 0x800;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskBeforeCheckSourceTimeout = 0x1000;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskAfterCheckSourceTimeout = 0x2000;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskBeforeDoSourceTimeout = 0x4000;
-static const CERunLoopObserverMask_t ERunLoopObserverMaskAfterDoSourceTimeout = 0x8000;
-
-
-typedef void (*CERunLoopObseverHandler_f)(CERunLoop_s * _Nonnull eventLoop, CERunLoopObserverMask_t mask, void * _Nullable context);
+typedef void (*CEPollObseverHandler_f)(CEPollPtr _Nonnull poll, CEPollObserverMask_t mask, void * _Nullable context);
 
 /* State of an event based program */
 typedef struct _CERunLoopObserver {
-    CERunLoopObserverMask_t mask;
-    CERunLoopObseverHandler_f _Nonnull handler;
-    void * _Nullable context;
-} CERunLoopObserver_s;
-
-
-/* State of an event based program */
-struct _CERunLoop {
-    _Atomic(uintptr_t) runInThread;
-    _Atomic(uint_fast32_t) runningStates;// 0 is stopped , 1 running, 2 is will stopped
-    CERunLoopProgress_t progress;//
-    CEThread_s thread;
-
-    int maxfd;   /* highest file descriptor currently registered */
-    int maxIndex;
-    unsigned int setsize; /* max number of file descriptors tracked */
-    int firedCount;
-
-#if __APPLE__
-    os_unfair_lock blockQueueLock;
-#else
-    pthread_spinlock_t blockQueueLock;
-#endif
-    uint32_t blockEvent;
-    uint32_t timerFiredIndex;//source timer 的 游标
-    uint32_t fdTagSequence;
-    uint32_t xxxx;
-    CEBlockQueue_s blockQueue;
-    
-    CETimeEventManager_s timeEventManager;
-    
-    uint64_t microsecondsTime;//单位 微秒
-    uint64_t fileTimerSeconds8;//单位为(1/8)秒
-    
-    CEFileEvent_s * _Nullable fileEventsPages[32768]; /* Registered events, 0x10000 count peer page */
-    CEFiredEvent_s * _Nullable firedPages[32768]; /* Fired events, 0x10000 count peer page  */
-
-    int readTimerPages[CERunLoopFileTimerPageSize];
-    int writeTimerPages[CERunLoopFileTimerPageSize];
-    
-    void * _Nullable api; /* This is used for polling API specific data */
-    uint32_t observerBufferSize;
-    uint32_t observerBufferCount;
-
-    CERunLoopObserver_s * _Nullable * _Nonnull observers;
-};
-
-static inline uint32_t CERunLoopNextFdTag(CERunLoop_s * _Nonnull eventLoop) {
-    eventLoop->fdTagSequence ++;
-    if (0 == eventLoop->fdTagSequence) {
-        eventLoop->fdTagSequence ++;
-    }
-    return eventLoop->fdTagSequence;
-}
-
-
-
-static inline int CERunLoopSize(int size) {
-    if (size <= 0x10000) {
-        return 0x10000;
-    } else {
-        uint32_t tmp = size;
-        int count = 0x10000;
-        int pageCount = (int)(tmp >> 16);
-        
-        if ((tmp & 0xffff) != 0) {
-            pageCount += 1;
-        }
-        return count * pageCount;
-    }
-}
+    CEPollObserverMask_t mask;
+    CEPollObseverHandler_f _Nonnull handler;
+    CCPtr _Nullable context;
+} CEPollObserver_s;
 
 
 static const CEResult_t CEResultSuccess = 0;

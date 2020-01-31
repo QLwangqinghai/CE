@@ -487,8 +487,10 @@ class ViewController: UIViewController {
         
         UserDefaultsInfo.saveString(ip.text!, forKey: UserDefaultsInfo.IPKey)
         UserDefaultsInfo.saveString(portTextField.text!, forKey: UserDefaultsInfo.PortKey)
+        let ip = self.ip.text ?? ""
+        let port = self.portTextField.text ?? ""
         SocketQueue.async {
-            self.connect.tryConnect(self.ip.text!, port: Int(self.portTextField.text!)!, tlsSettings: nil)
+            self.connect.tryConnect(ip, port: Int(port)!, tlsSettings: nil)
         }
     }
     

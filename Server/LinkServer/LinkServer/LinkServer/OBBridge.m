@@ -88,7 +88,7 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
         struct sockaddr_in server_addr = {};
         socklen_t len6 = sizeof(struct sockaddr_in6);
         server_addr.sin_family = AF_INET;
-        server_addr.sin_port = htons(8001);
+        server_addr.sin_port = htons(8000);
         server_addr.sin_addr.s_addr = INADDR_ANY;
         
         int struct_len = sizeof(struct sockaddr_in);
@@ -107,9 +107,47 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
         CEPollAsync(poll, closure);
         CCClosureRelease(closure);
         
-
         
     });
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [self testIpv6];
+    });
+    
+    
+}
+
++ (void)testIpv6 {
+    CEPollPtr poll = CEPollShared();
+    CEFileEventHandler_s handler = {
+        .handleTimeout = CEHandleSocketTimeout,
+        .handleFileEvent = CEHandleSocket,
+        .context = NULL,
+    };
+    uint32_t handlerId = CEPollRegister(poll, handler);
+
+    
+    struct sockaddr_in6 clientAddress = {};
+    struct sockaddr_in6 server_addr = {};
+    socklen_t len6 = sizeof(struct sockaddr_in6);
+    server_addr.sin6_family = AF_INET6;
+    server_addr.sin6_port = htons(8000);
+    struct in6_addr anyaddr = IN6ADDR_ANY_INIT;
+    server_addr.sin6_addr = anyaddr;
+    int fd = socket(AF_INET6, SOCK_STREAM, 0);
+    assert(fd >= 0);
+    assert(bind(fd, (struct sockaddr *)&server_addr, len6) == 0);
+    assert(listen(fd, 1024) == 0);
+
+    int new_fd = accept(fd, (struct sockaddr *)&clientAddress, &len6);
+    assert(new_fd >= 0);
+    assert(new_fd < 0x10000);
+    
+    uint32_t h = handlerId << 16;
+    uint32_t context = h + new_fd;
+    CCClosureRef closure = CCClosureCreate(CEAddSocket, NULL, context);
+    CEPollAsync(poll, closure);
+    CCClosureRelease(closure);
     
     
 }

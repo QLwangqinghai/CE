@@ -20,11 +20,11 @@ int _CEPollRemoveFileReadTimersByIndex(CEPoll_s * _Nonnull p, uint16_t index, ui
 
     while (iter != CEFileIndexInvalid) {
         CEFile_s * file = _CEPollGetFile(p, iter);
-        assert(1 == file->checkReadTimeout);
-        iter = file->readTimer.next;
-        file->readTimer.prev = CEFileIndexInvalid;
-        file->readTimer.next = CEFileIndexInvalid;
-        file->checkReadTimeout = 0;
+        assert(1 == file->read.isWaitingTimeout);
+        iter = file->read.next;
+        file->read.prev = CEFileIndexInvalid;
+        file->read.next = CEFileIndexInvalid;
+        file->read.isWaitingTimeout = 0;
         count += 1;
         assert(count < 0x10000);
     }
@@ -36,10 +36,10 @@ int _CEPollRemoveFileReadTimersByIndex(CEPoll_s * _Nonnull p, uint16_t index, ui
 //不做任何参数校验
 
 void _CEPollRemoveFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file) {
-    assert(1 == file->checkReadTimeout);
-    uint16_t hash = file->hashOfReadTimer;
+    assert(1 == file->read.isWaitingTimeout);
+    uint16_t hash = file->read.hashOfTimer;
     CEFileTimerMap_s * map = &(p->readTimerMap);
-    CEFileLink_s * link = &(file->readTimer);
+    CEFileSource_s * link = &(file->read);
     uint16_t prev = link->prev;
     uint16_t next = link->next;
     link->prev = CEFileIndexInvalid;
@@ -71,19 +71,19 @@ void _CEPollRemoveFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * 
         abort();
     } else {
         CEFile_s * prevFile = _CEPollGetFile(p, prev);
-        prevFile->readTimer.next = next;
+        prevFile->read.next = next;
         if (CEFileIndexInvalid != next) {
             CEFile_s * nextFile = _CEPollGetFile(p, next);
-            nextFile->readTimer.prev = prev;
+            nextFile->read.prev = prev;
         }
     }
-    file->checkReadTimeout = 0;
+    file->read.isWaitingTimeout = 0;
 }
 void _CEPollRemoveFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file) {
-    assert(1 == file->checkWriteTimeout);
-    uint16_t hash = file->hashOfWriteTimer;
+    assert(1 == file->write.isWaitingTimeout);
+    uint16_t hash = file->write.hashOfTimer;
     CEFileTimerMap_s * map = &(p->writeTimerMap);
-    CEFileLink_s * link = &(file->writeTimer);
+    CEFileSource_s * link = &(file->write);
     uint16_t prev = link->prev;
     uint16_t next = link->next;
     link->prev = CEFileIndexInvalid;
@@ -115,18 +115,18 @@ void _CEPollRemoveFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s *
         abort();
     } else {
         CEFile_s * prevFile = _CEPollGetFile(p, prev);
-        prevFile->writeTimer.next = next;
+        prevFile->write.next = next;
         if (CEFileIndexInvalid != next) {
             CEFile_s * nextFile = _CEPollGetFile(p, next);
-            nextFile->writeTimer.prev = prev;
+            nextFile->write.prev = prev;
         }
     }
-    file->checkWriteTimeout = 0;
+    file->write.isWaitingTimeout = 0;
 }
 void _CEPollAddFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file, uint16_t index) {
-    assert(0 == file->checkReadTimeout);
+    assert(0 == file->read.isWaitingTimeout);
     CEFileTimerMap_s * map = &(p->readTimerMap);
-    CEFileLink_s * link = &(file->readTimer);
+    CEFileSource_s * link = &(file->read);
     link->prev = CEFileIndexInvalid;
     link->next = CEFileIndexInvalid;
     uint16_t prev = map->table[index];
@@ -134,32 +134,32 @@ void _CEPollAddFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _No
     
     if (CEFileIndexInvalid != prev) {
         CEFile_s * nextFile = _CEPollGetFile(p, prev);
-        nextFile->readTimer.prev = fid;
+        nextFile->read.prev = fid;
     }
-    file->checkReadTimeout = 1;
+    file->read.isWaitingTimeout = 1;
 }
 void _CEPollAddFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file, uint16_t index) {
-    assert(0 == file->checkWriteTimeout);
+    assert(0 == file->write.isWaitingTimeout);
     CEFileTimerMap_s * map = &(p->writeTimerMap);
-    CEFileLink_s * link = &(file->writeTimer);
+    CEFileSource_s * link = &(file->write);
     link->prev = CEFileIndexInvalid;
     link->next = CEFileIndexInvalid;
     uint16_t prev = map->table[index];
     map->table[index] = fid;
     if (CEFileIndexInvalid != prev) {
         CEFile_s * nextFile = _CEPollGetFile(p, prev);
-        nextFile->writeTimer.prev = fid;
+        nextFile->write.prev = fid;
     }
-    file->checkReadTimeout = 1;
+    file->write.isWaitingTimeout = 1;
 }
 void _CEPollUpdateFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file, uint16_t index) {
-    if (0 == file->checkReadTimeout) {
+    if (0 == file->read.isWaitingTimeout) {
         _CEPollRemoveFileReadTimer(p, fid, file);
     }
     _CEPollAddFileReadTimer(p, fid, file, index);
 }
 void _CEPollUpdateFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file, uint16_t index) {
-    if (0 == file->checkWriteTimeout) {
+    if (0 == file->write.isWaitingTimeout) {
         _CEPollRemoveFileWriteTimer(p, fid, file);
     }
     _CEPollAddFileWriteTimer(p, fid, file, index);

@@ -38,7 +38,9 @@ typedef struct {
 #pragma pack(pop)
 
 
-
+typedef uint16_t CEFileType;
+extern const CEFileType CEFileTypeTcpClient;
+extern const CEFileType CEFileTypeTcpServer;
 
 
 typedef struct _CEThreadWaiter {

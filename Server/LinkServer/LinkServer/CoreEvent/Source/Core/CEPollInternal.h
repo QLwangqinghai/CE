@@ -18,28 +18,34 @@
 #pragma pack(push, 2)
 
 typedef struct {
+    uint16_t isFired: 1;
+    uint16_t isWaitingTimeout: 1;
+    uint16_t isTimeout: 1;
+    uint16_t hashOfTimer: 13;
     uint16_t prev;
     uint16_t next;
-} CEFileLink_s;
+} CEFileSource_s;
+
+extern const CEFileSource_s CEFileSourceInit;
+
 
 typedef struct {
     uint16_t sequence;
-    uint16_t handler: 12;
-    uint16_t isValid: 1;
-    uint16_t isFired: 1;
+    uint16_t handler: 11;
+    uint16_t type: 3;
     uint16_t mask: 2;
-    
-    uint32_t status: 2;
-    uint32_t checkReadTimeout: 1;
-    uint32_t checkWriteTimeout: 1;
-    uint32_t isReadTimeout: 1;
-    uint32_t isWriteTimeout: 1;
+    CEFileSource_s read;
+    CEFileSource_s write;
+} CEFile2_s;
 
-    uint32_t hashOfReadTimer: 13;
-    uint32_t hashOfWriteTimer: 13;
+typedef struct {
+    uint16_t sequence;
+    uint16_t handler: 11;
+    uint16_t type: 3;
+    uint16_t mask: 2;
 
-    CEFileLink_s readTimer;
-    CEFileLink_s writeTimer;
+    CEFileSource_s read;
+    CEFileSource_s write;
 } CEFile_s;
 
 typedef struct {

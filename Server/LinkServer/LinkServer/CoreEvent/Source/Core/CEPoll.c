@@ -15,6 +15,16 @@
 #include "CEFileEvent.h"
 #include "CEBaseApi.h"
 
+const CEFileSource_s CEFileSourceInit = {
+    .isFired = 0,
+    .isWaitingTimeout = 0,
+    .isTimeout = 0,
+    .hashOfTimer = 0,
+    .prev = CEFileIndexInvalid,
+    .next = CEFileIndexInvalid,
+};
+
+
 
 //不做任何参数校验
 extern void _CEPollRemoveFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file);
@@ -145,16 +155,9 @@ CEResult_t CEPollAddFile(CEPollPtr _Nonnull poll, uint32_t handlerId, int fd, CE
     CEFile_s * file = _CEPollGetFile(p, index);
     file->sequence = sequence;
     file->handler = handlerId;
-    file->isValid = 1;
-    file->isFired = 0;
-    file->status = 0;
     file->mask = 0;
-
-    file->checkReadTimeout = 0;
-    file->checkWriteTimeout = 0;
-    file->isReadTimeout = 0;
-    file->isWriteTimeout = 0;
-
+    file->read = CEFileSourceInit;
+    file->write = CEFileSourceInit;
     return CEResultSuccess;
 }
 CEResult_t CEPollRemoveFile(CEPollPtr _Nonnull poll, CEFileId fd) {
@@ -168,20 +171,20 @@ CEResult_t CEPollRemoveFile(CEPollPtr _Nonnull poll, CEFileId fd) {
     
     CEFile_s * file = _CEPollGetFile(p, fd.fd);
     
-    if (0 == file->isValid) {
+    if (0 == file->handler) {
         CELogWarning("CEPollRemoveFile error 2, fd error: (%d, %d)\n", fd.fd, fd.sequence);
         return CEResultErrorFileDescription;
     };
     
     if (file->sequence == fd.sequence) {
-        if (file->checkReadTimeout) {
+        if (file->read.isWaitingTimeout) {
             CEPollCancelFileEventReadTimeout(p, fd);
         }
-        if (file->checkWriteTimeout) {
+        if (file->write.isWaitingTimeout) {
             CEPollCancelFileEventWriteTimeout(p, fd);
         }
         CEApiRemoveEvent(p->api, fd.fd, CEFileEventMaskReadWritable);
-        file->isValid = 0;
+        file->handler = 0;
         return CEResultSuccess;
     } else {
         CELogWarning("CEPollRemoveFile error, fd error: (%d, %d)\n", fd.fd, fd.sequence);
@@ -332,13 +335,18 @@ _Bool CEApiFileEventMapperCallback(void * _Nullable context, void * _Nonnull api
     assert(ranges);
     
     CEFile_s * file = _CEPollGetFile(p, fd);
-    assert(file->isValid == 1);
     assert(file->handler > 0);
     
     if (CEFileEventMaskReadWritable & mask) {
-        file->status = file->status | mask;
+        _Bool isFired = file->read.isFired || file->write.isFired;
         
-        if (0 == file->isFired) {
+        if (CEFileEventMaskReadable & mask) {
+            file->read.isFired = 1;
+        }
+        if (CEFileEventMaskWritable & mask) {
+            file->write.isFired = 1;
+        }
+        if (!isFired) {
             CEFileFiredInfo info = {
                 .id = CEFileIdMake(fd, file->sequence),
                 .handler = file->handler,
@@ -349,7 +357,6 @@ _Bool CEApiFileEventMapperCallback(void * _Nullable context, void * _Nonnull api
             assert(file->handler <= p->maxHandlerId);
             ranges[file->handler].length += 1;
             ((struct CEApiPollContext *)context)->count += 1;
-            file->isFired = 1;
         }
     }
     return true;
@@ -473,10 +480,6 @@ int64_t _CEPollDoSource(CEPoll_s * _Nonnull p) {
     
     for (int j = 0; j < context.count; j++) {
         CEFileFiredInfo * infoItem = info + j;
-
-        CEFile_s * file = _CEPollGetFile(p, infoItem->id.fd);
-        file->isFired = 0;
-        
         CEFileId * item = ids + ranges[infoItem->handler].location + counts[infoItem->handler];
         *item = infoItem->id;
         counts[infoItem->handler] += 1;
@@ -492,6 +495,16 @@ int64_t _CEPollDoSource(CEPoll_s * _Nonnull p) {
             handler->handleFileEvent(handler->context, item, counts[i]);
         }
     }
+    
+    for (int j = 0; j < context.count; j++) {
+        CEFileId * id = ids + j;
+        CEFile_s * file = _CEPollGetFile(p, id->fd);
+        file->read.isFired = 0;
+        file->write.isFired = 0;
+    }
+    
+    
+    
 //    for (int j = 0; j < processed; j++) {
 //        CEFileFiredInfo * item = info + j;
 //
@@ -787,7 +800,14 @@ CEFile_s * _Nullable CEPollGetFile(CEPollPtr _Nonnull poll, CEFileId id) {
 CEFileEventMask_es CEPollGetFileStatus(CEPollPtr _Nonnull poll, CEFileId id) {
     CEFile_s * file = CEPollGetFile(poll, id);
     if (file) {
-        return file->status;
+        CEFileEventMask_es result = CEFileEventMaskNone;
+        if (1 == file->read.isFired) {
+            result |= CEFileEventMaskReadable;
+        }
+        if (1 == file->write.isFired) {
+            result |= CEFileEventMaskWritable;
+        }
+        return result;
     } else {
         return CEFileEventMaskNone;
     }

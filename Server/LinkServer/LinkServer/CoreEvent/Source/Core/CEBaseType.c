@@ -8,6 +8,9 @@
 
 #include "CEBaseType.h"
 
+const CEFileType CEFileTypeTcpClient = 0;
+const CEFileType CEFileTypeTcpServer = 1;
+
 
 const CEFileEventMask_es CEFileEventMaskNone = 0;
 const CEFileEventMask_es CEFileEventMaskReadable = 1;

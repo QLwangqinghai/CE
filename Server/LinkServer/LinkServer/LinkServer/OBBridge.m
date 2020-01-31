@@ -97,12 +97,27 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
         assert(bind(fd, (struct sockaddr *)&server_addr, struct_len) == 0);
         assert(listen(fd, 1024) == 0);
 
-        int new_fd = accept(fd, (struct sockaddr *)&clientAddress, &len6);
-        assert(new_fd >= 0);
-        assert(new_fd < 0x10000);
+        int newFd = accept(fd, (struct sockaddr *)&clientAddress, &len6);
+        
+        if (-1 == newFd) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                //no connections没有新连接请求；
+            } else {
+                //其他错误
+            }
+        } else {
+            //正常的
+            
+        }
+        
+
+        
+        
+        assert(newFd >= 0);
+        assert(newFd < 0x10000);
         
         uint32_t h = handlerId << 16;
-        uint32_t context = h + new_fd;
+        uint32_t context = h + newFd;
         CCClosureRef closure = CCClosureCreate(CEAddSocket, NULL, context);
         CEPollAsync(poll, closure);
         CCClosureRelease(closure);
@@ -148,6 +163,12 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
     CCClosureRef closure = CCClosureCreate(CEAddSocket, NULL, context);
     CEPollAsync(poll, closure);
     CCClosureRelease(closure);
+    
+    
+}
+
+
++ (void)test2 {
     
     
 }

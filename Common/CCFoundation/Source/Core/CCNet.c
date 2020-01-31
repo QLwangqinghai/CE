@@ -31,3 +31,14 @@ int CCSocketBind(int socket, const struct sockaddr * _Nonnull address, socklen_t
 int CCSocketListen(int socket, int backlog) {
     return listen(socket, backlog);
 }
+int CCSocketAccept(int socket, struct sockaddr * _Nonnull address, socklen_t * _Nonnull addressLength) {
+    return accept(socket, address, addressLength);
+}
+
+int CCSocketGetAddress(int socket, struct sockaddr * _Nonnull address, socklen_t * _Nonnull addressLength) {
+    return getsockname(socket, address, addressLength);
+}
+
+int CCSocketGetPeerAddress(int socket, struct sockaddr * _Nonnull address, socklen_t * _Nonnull addressLength) {
+    return getpeername(socket, address, addressLength);
+}

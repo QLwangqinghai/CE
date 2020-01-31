@@ -98,5 +98,40 @@ int CCSocketBind(int socket, const struct sockaddr * _Nonnull address, socklen_t
 */
 int CCSocketListen(int socket, int backlog);
 
+/**
+* 接受新的链接
+* socket 文件描述符
+* backlog The maximum length for the queue of pending connections.
+* 返回值 != -1 成功, 非阻塞socket errno == EAGAIN || errno == EWOULDBLOCK 时， 没有新连接请求；
+*/
+int CCSocketAccept(int socket, struct sockaddr * _Nonnull address, socklen_t * _Nonnull addressLength);
+
+
+/**
+ * 获取socket本机地址
+ * socket 文件描述符
+ * address 可以是 struct sockaddr_in, struct sockaddr_in6,  struct sockaddr_un
+ * 返回值 ==0 成功
+ */
+int CCSocketGetAddress(int socket, struct sockaddr * _Nonnull address, socklen_t * _Nonnull addressLength);
+
+/**
+* 获取socket对端地址
+* socket 文件描述符
+* address 可以是 struct sockaddr_in, struct sockaddr_in6,  struct sockaddr_un
+* 返回值 ==0 成功
+*/
+int CCSocketGetPeerAddress(int socket, struct sockaddr * _Nonnull address, socklen_t * _Nonnull addressLength);
+
+
+//int flags = fcntl(pio[0], F_GETFL, 0);
+//int fresult = fcntl(pio[0], F_SETFL, flags | O_NONBLOCK);
+//assert(fresult == 0);
+//
+//int flags1 = fcntl(pio[1], F_GETFL, 0);
+//int fresult1 = fcntl(pio[1], F_SETFL, flags1 | O_NONBLOCK);
+//assert(fresult1 == 0);
+
+
 
 #endif /* CCNet_h */

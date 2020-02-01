@@ -164,6 +164,9 @@ typedef struct _CETimeEvent {
     uint32_t qIndex: 16;
 } CETimeEvent_s;
 
+typedef CCRef CETimeEventRef;
+
+
 static inline _Bool CETimeEventIsRunning(CETimeEvent_s * _Nonnull event) {
     return event->qIndex <= CETimeEventQueueIndexMax;
 }
@@ -255,10 +258,19 @@ static inline void CETimeEventTableAddItem(CETimeEventTable_s * _Nonnull table, 
     table->buffer[index] = item;
 }
 
+typedef struct _CETimeEventPage {
+    CETimeEventRef _Nullable buffer[4096];
+} CETimeEventPage_s;
+
+
+#define CETimeEventQueuePagesSize 16
 typedef struct _CETimeEventQueue {
-    CETimeEvent_s * _Nullable * _Nonnull buffer;
     uint32_t capacity;
     uint32_t count;
+    CETimeEventPage_s * _Nullable pages[CETimeEventQueuePagesSize];
+
+    
+//    CETimeEvent_s * _Nullable * _Nonnull buffer;
 } CETimeEventQueue_s;
 
 typedef struct _CETimeEventManager {
@@ -456,7 +468,7 @@ static inline void CETimeEventManagerFreeId(CETimeEventManager_s * _Nonnull mana
     uint64_t n1 = manager->tdSet.n1[index1];
 
     uint32_t index2 = offset1 + (index1 << 6);
-    uint32_t offset2 = id & 0x3F;;
+    uint32_t offset2 = id & 0x3F;
     uint64_t n2 = manager->tdSet.n2[index2];
     
     assert( n2 & (mask >> offset2));

@@ -30,6 +30,7 @@ typedef struct __CCRefBase {
 
 
 static inline CCPtr _Nonnull CCRefGetContentPtr(CCRef _Nonnull ref) {
+    assert(ref);
     CCRefBase * base = (CCRefBase *)ref;
     return base + 1;
 }

@@ -364,8 +364,6 @@ _Bool CEApiFileEventMapperCallback(void * _Nullable context, void * _Nonnull api
 
 void CEApiPipeEventCallback(void * _Nullable context, void * _Nonnull api) {
     assert(context);
-    CERunLoop_s * eventLoop = (CERunLoop_s *)context;
-    eventLoop->blockEvent = 1;
     CELogVerbose2(128, "CEApiPipeEventCallback");
 }
 
@@ -402,7 +400,7 @@ int64_t _CEPollDoTimers(CEPoll_s * _Nonnull p) {
 //    CETimeEventManager_s * tem = &(p->timeEventManager);
 //    CETimeEventQueue_s * teq = &(p->timeEventManager.timerQueue);
 //
-//    CETimeEvent_s * te = CETimeEventQueueGetFirst(teq);
+//    CETimeEvent_s * te = CETimeEventQueueGetFirstItem(teq);
 //    CEMicrosecondTime now = p->currentTime;
 //    int64_t fired = 0;
 //    while (NULL != te) {
@@ -416,7 +414,7 @@ int64_t _CEPollDoTimers(CEPoll_s * _Nonnull p) {
 //                CETimeEventSourceDeinit(removed, eventLoop);
 //            }
 //
-//            te = CETimeEventQueueGetFirst(teq);
+//            te = CETimeEventQueueGetFirstItem(teq);
 //
 //            tem->executingTimeEvent = NULL;
 //            fired += 1;
@@ -442,7 +440,7 @@ int __CEPollDoCheckSource(CEPoll_s * _Nonnull p, struct CEApiPollContext * _Nonn
     CEMicrosecondTime now = CEGetCurrentTime();
     CEMicrosecondTime timeout = 1;
     if (now < p->currentTime + CEFrameIntervalDefault) {
-        CETimeEvent_s * te = CETimeEventQueueGetFirst(&(p->timeEventManager.timerQueue));
+        CETimeEvent_s * te = CETimeEventQueueGetFirstItem(&(p->timeEventManager.timerQueue));
         if (NULL != te) {
             if (te->when > now) {
                 timeout = 1;

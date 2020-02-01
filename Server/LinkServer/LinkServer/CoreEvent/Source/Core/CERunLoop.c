@@ -711,7 +711,7 @@ int64_t _CERunLoopDoTimers(CERunLoop_s * _Nonnull eventLoop) {
     CETimeEventManager_s * tem = &(eventLoop->timeEventManager);
     CETimeEventQueue_s * teq = &(eventLoop->timeEventManager.timerQueue);
     
-    CETimeEvent_s * te = CETimeEventQueueGetFirst(teq);
+    CETimeEvent_s * te = CETimeEventQueueGetFirstItem(teq);
     
     uint64_t now = CEGetMicrosecondsTime();
     eventLoop->microsecondsTime = now;
@@ -729,7 +729,7 @@ int64_t _CERunLoopDoTimers(CERunLoop_s * _Nonnull eventLoop) {
                 CETimeEventSourceDeinit(removed, eventLoop);
             }
 
-            te = CETimeEventQueueGetFirst(teq);
+            te = CETimeEventQueueGetFirstItem(teq);
 
             tem->executingTimeEvent = NULL;
             fired += 1;
@@ -753,7 +753,7 @@ void CERunLoopDoCheckSource(CERunLoop_s * _Nonnull eventLoop) {
     uint64_t now = CEGetMicrosecondsTime();
     eventLoop->microsecondsTime = now;
     
-    CETimeEvent_s * te = CETimeEventQueueGetFirst(&(eventLoop->timeEventManager.timerQueue));
+    CETimeEvent_s * te = CETimeEventQueueGetFirstItem(&(eventLoop->timeEventManager.timerQueue));
     if (NULL != te) {
         if (te->when <= now) {
             tv.tv_sec = 0;

@@ -15,6 +15,6 @@ Pod::Spec.new do |s|
 
   s.source_files = "*.h", "Source/**/*.{h,c,m,cpp,swift}"
 
-  s.public_header_files = "Source/Core/*.h", "*.h"
+  s.public_header_files = "Source/Core/*.h", "Source/Crypto/*.h", "*.h"
 
 end

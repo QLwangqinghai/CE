@@ -3,43 +3,55 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		026A6365D669CC81B67158874E8755F7 /* CCByte.c in Sources */ = {isa = PBXBuildFile; fileRef = 1FB7C595938B24B1DE2B38FBAD59803B /* CCByte.c */; };
+		08E93795402426A15A6A6204F9BAA4CB /* CCBase.c in Sources */ = {isa = PBXBuildFile; fileRef = DC9E1D764F140D2FE6D3DE428931F4CF /* CCBase.c */; };
+		0B79F58680CF715F4B4EE8E036B77963 /* CCReferenceBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DB86D085EC5C14968D80BA94844B4D /* CCReferenceBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0F8008189689B15EC8501880DBAD846C /* CCFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 67BE5F4D406DBA8E8C8287352F077485 /* CCFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		118609F933F3EB08DAA62ED57507B685 /* SITPType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D911D9BD036F030FB7E094A0267033F /* SITPType.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		148AB909E029CBF758EF47CE67FA120E /* CCTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 08B5BDB65476B367D041973186ECDEF1 /* CCTime.c */; };
 		17EED5F9FFFEF4518CE82AE2E80F67FE /* Pods-CC-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 91A11261E5864941987B4C3E56C21048 /* Pods-CC-dummy.m */; };
 		1D7ED4C2173AF4595756F26CE298EDD8 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A341F45C584F8F9CB8781BA742A58C /* Cocoa.framework */; };
+		26D0B3D34E15CF20C27B4682F3B00BB4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A341F45C584F8F9CB8781BA742A58C /* Cocoa.framework */; };
 		27FAE235189C7929927B9515CD757B03 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A341F45C584F8F9CB8781BA742A58C /* Cocoa.framework */; };
-		2C52031A9C6295A5EC2307295261B211 /* CCClosure.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E5A64E088FFB2D759609B277EF36B39 /* CCClosure.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3076787FA05752D8DA0D2D7EE933A4A5 /* CCAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3763A6A311036A35F547C94EA254BDB /* CCAllocator.c */; };
-		4662E4E5469E10D5557CC90056623FC2 /* CCReferenceBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5149EDEFBB445CD24879B6D4963E9179 /* CCReferenceBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		493F91BF9FB674AB4B0624EC1C9D0739 /* CCClosure.c in Sources */ = {isa = PBXBuildFile; fileRef = 36EC3D0D527EBB4EEA902E88540E8C2A /* CCClosure.c */; };
-		4B96726E8869451B7A642B830AD869E9 /* CCInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F472BB028071CD0DA41D28BD1A79D6 /* CCInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		30DEEEBD4FA8E609ACB42F229F961D77 /* CCFoundation-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C8E6905BE2C8EDFAA2C134D6DBB527 /* CCFoundation-dummy.m */; };
+		41B4903C71C010EB3BC381AA90A0B5AE /* CCInit.c in Sources */ = {isa = PBXBuildFile; fileRef = C4B8309DFF54B5A1B8B7AB8939814364 /* CCInit.c */; };
+		4461B796814B14F678C28C3239F689EE /* CCNet.c in Sources */ = {isa = PBXBuildFile; fileRef = EC45C145A63A0A1DFC53964AB01953E6 /* CCNet.c */; };
+		4576048878162987970A16D22A8F95D3 /* CCAes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4042FAD80BBB4FFE0090D33BF3A06F8B /* CCAes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B019FA4E2653EF27D90197B3203862A /* CCReferenceBase.c in Sources */ = {isa = PBXBuildFile; fileRef = FAA8B3A68FA5967D30EC9958394094C0 /* CCReferenceBase.c */; };
+		529B2584BB4C1265DF5A15D0889D7E9B /* CCClosure.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CEE087B5F3CA415ED642FE3366C5B83 /* CCClosure.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54C4BEEE0A4148F776FE0105F25A9E77 /* SITPParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 98C0F6BC2C04E2880C4CFB9EFD06E5E8 /* SITPParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		62900F6C1350A2B14A9A925D4F4D6BCD /* CCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = F6CC3558D88F9E6BB8A2C373A5550257 /* CCConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		62F5A32A7860C82EEE4360AFC9A31480 /* CCFoundation-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D84BD5C9DC30E504CE3BBC8E576ABD1 /* CCFoundation-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		68781604CA56E875CD8D8BD071F836A4 /* CCFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DE324BCE99FEF6B316EBE45EE6AA94C /* CCFoundation.framework */; };
 		69A6F647E5445C6A7D9B21B4972C3941 /* SITPParser.c in Sources */ = {isa = PBXBuildFile; fileRef = EAFDB939A6D1B7A9360AC181635D1C8D /* SITPParser.c */; };
 		6C4CBC1CCB011BD1B0A829B76A918314 /* SITPIndexShift.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E4057627A487825FE6F1DDF124130C1 /* SITPIndexShift.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		76A5BDB0A2CBDDB81ED36FE4B47A5E70 /* CCBase.c in Sources */ = {isa = PBXBuildFile; fileRef = 5E4F4A013CAB389D37155A1F998C80BE /* CCBase.c */; };
-		898597DBD1B0FA7B9C0429EA81F4C777 /* CCAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 30326804E94C0A31A5957D3461927B24 /* CCAllocator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8140C9DE2AE277D3D55821C6F7DA18B6 /* CCTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 214613F9B9521CA558B28CDFA6E7FE9C /* CCTime.c */; };
+		83C980FDA41A0C9BAE2871E75CE4FBB9 /* CCType.c in Sources */ = {isa = PBXBuildFile; fileRef = AE743FD6EB3D372E1DBA09CC11DB4409 /* CCType.c */; };
+		84429C6EBFEEB4673EB066F0D9757078 /* CCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC2565CA962A92589B77AAB42F67562 /* CCConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		892CFCD61D70EACDF974419603174C6B /* CCInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = 1249032FEEF77CA4CBEDE5D1E3989508 /* CCInteger.c */; };
+		8B0CD8D5AB49CAA261E650AECCF24C70 /* CCAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A73DEF3C14CF309497784DC806BDE0FC /* CCAllocator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		947837AA1B7AF3F1C6B708052366D6FF /* Pods-CC-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = F71A18D63053A7EF67A2F260B9AABA53 /* Pods-CC-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		98642D357BA8061B8FD5BEEAB03A1E25 /* CCFoundation-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 718F8464E5EEF7BFF209ECF1A6911F4A /* CCFoundation-dummy.m */; };
-		AA3D86C888EC17FC8E0D86ABAF5084C5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A341F45C584F8F9CB8781BA742A58C /* Cocoa.framework */; };
-		BAA8EB00B39C9F54792D7934EF08DAA1 /* CCFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 94EB69138CA167E5B909E863AE875DB1 /* CCFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		98E56C78D258CAD50A04EC7160C88236 /* CCClosure.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EB4CB69CE62EC8F20F5B761DBB8D80 /* CCClosure.c */; };
+		A1123B4F91EC2FDACAC4B0DB43325A3E /* CCFoundation-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA6E9BCD53F6F465BA0A412C786D454 /* CCFoundation-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A27E1D64CFCC6A331DBA8182619573DB /* aes_cfb.c in Sources */ = {isa = PBXBuildFile; fileRef = C24B40D0824BA9F7526A664E6C1D2FDE /* aes_cfb.c */; };
+		A370E0856A45A367EB2A6D0C015BD8B7 /* aes_ecb.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C64EA8BE458E7161BE137E994B86AB6 /* aes_ecb.c */; };
+		A929D5B6AE6AF2C1F24109198A32E58E /* aes_ofb.c in Sources */ = {isa = PBXBuildFile; fileRef = 386FC66332D23FB72E4983FAE87BDDB5 /* aes_ofb.c */; };
+		AAFF3A438191538FF0FCE3C18A39AC3B /* CCAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 08D65FC677E0C7763ED395AE3CEB5726 /* CCAllocator.c */; };
+		B4CEF3653A6F151745EC6FB245B1C0F7 /* CCAesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C11578AF9FD81E7F1128324E91E25DD /* CCAesInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B99154147AA04B5351A360ADDC2FA8FC /* CCByte.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E6230BAD0C7CC5036750CFB270CBB8 /* CCByte.c */; };
 		BD8F7BD1777B588018709889B495E905 /* SITP-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C353209D306547FEAB05660355A79B2 /* SITP-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C13C2612B271803E9DFA00B6C708B4D2 /* CCType.h in Headers */ = {isa = PBXBuildFile; fileRef = DA0BCEFBD8B2721C922208CC2D3EE42E /* CCType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C036AEEBFE07A26373ED1DA2A3DB2856 /* CCNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C0F15D39EDF2CDC1A0BEE3526D8E562 /* CCNet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C8C4EE785AF44DBE04A0876A4F48481E /* SITP-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F6A39C72E9D70F426C2EF4A5CBEA481 /* SITP-dummy.m */; };
+		C97ADFDCCF30459C7BB9AF1C8AD06E7E /* CCInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 42EB30E4BAB7D07473C0202923ADC517 /* CCInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CAC240E10480321ABB310CB94A381D01 /* CCType.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CD04AF8465E6266DB9E23E199DFB1E /* CCType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEB07E7825F6FA6086B9B8C7B0EA6772 /* SITPType.c in Sources */ = {isa = PBXBuildFile; fileRef = 38013BF4BC8EF0DBD8E7FCCF652451DE /* SITPType.c */; };
+		D1A05A62DD256EC7CF0BA45ECE888868 /* aes_cbc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2520D2F8369EA4AE588F4F08F87B66F7 /* aes_cbc.c */; };
 		D2D73D7AFE170E57706888EFFE1C55F4 /* SITP.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D823955C679E7EF518A4795897545E1 /* SITP.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D3B4FBD514D54F885028ED4EE360D995 /* CCInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = CCF8598146F3713E7B0ACA678F738EC6 /* CCInteger.c */; };
 		D531C789E2D2B80663DF99805C619695 /* SITPIndexShift.c in Sources */ = {isa = PBXBuildFile; fileRef = 323733DB8844A715D51788C0C31AF2F2 /* SITPIndexShift.c */; };
-		E1DA63AE45B377F1BA16A6515FFFA250 /* CCReferenceBase.c in Sources */ = {isa = PBXBuildFile; fileRef = F9FF9F61A54BC4FFFD07FD7770EC2EB7 /* CCReferenceBase.c */; };
-		F96412978CB67AF4E82FFA07FF163D6B /* CCBase.h in Headers */ = {isa = PBXBuildFile; fileRef = C1F6AB2349603CD17F109FAECA3A8379 /* CCBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FDDE697283E489BD841CC7B0DC797AF8 /* CCType.c in Sources */ = {isa = PBXBuildFile; fileRef = D3482D89DE68DE82BECC78D9FCDBBC3A /* CCType.c */; };
+		ED18C43ADB8559E4DEA4A0C6707128B7 /* CCBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A4D55BC23F95CC7D398D1943880BF38F /* CCBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EFA95BC9FFC091EBC796DA9238896572 /* CCAes.c in Sources */ = {isa = PBXBuildFile; fileRef = D1B2E2375CE1BA6C3075018155CB8187 /* CCAes.c */; };
+		F07976586A7B876148314B47DC1B05C2 /* aes_locl.h in Headers */ = {isa = PBXBuildFile; fileRef = 98A72CA5F2D927BA7EF73C12EAF08726 /* aes_locl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F1529ED294383E7E12FC25102E6E303D /* aes_ctr.c in Sources */ = {isa = PBXBuildFile; fileRef = BA72A288BB4F43FE60B3AFA53FD916FA /* aes_ctr.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,57 +79,69 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		08B5BDB65476B367D041973186ECDEF1 /* CCTime.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCTime.c; sourceTree = "<group>"; };
+		07EB4CB69CE62EC8F20F5B761DBB8D80 /* CCClosure.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCClosure.c; sourceTree = "<group>"; };
+		08D65FC677E0C7763ED395AE3CEB5726 /* CCAllocator.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCAllocator.c; sourceTree = "<group>"; };
 		0D823955C679E7EF518A4795897545E1 /* SITP.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITP.h; sourceTree = "<group>"; };
 		0D911D9BD036F030FB7E094A0267033F /* SITPType.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITPType.h; sourceTree = "<group>"; };
-		11F03A40796518574B84047B1C249A4B /* CCFoundation.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = CCFoundation.modulemap; sourceTree = "<group>"; };
+		1249032FEEF77CA4CBEDE5D1E3989508 /* CCInteger.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCInteger.c; sourceTree = "<group>"; };
+		14CD04AF8465E6266DB9E23E199DFB1E /* CCType.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCType.h; sourceTree = "<group>"; };
 		1DE324BCE99FEF6B316EBE45EE6AA94C /* CCFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CCFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1FB7C595938B24B1DE2B38FBAD59803B /* CCByte.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCByte.c; sourceTree = "<group>"; };
-		2810E8BB0F2BE9BC328D4CA3956A3834 /* SITP.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = SITP.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		30326804E94C0A31A5957D3461927B24 /* CCAllocator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCAllocator.h; sourceTree = "<group>"; };
-		323733DB8844A715D51788C0C31AF2F2 /* SITPIndexShift.c */ = {isa = PBXFileReference; includeInIndex = 1; path = SITPIndexShift.c; sourceTree = "<group>"; };
-		35368285D8501FD2E59E2146D6FD272A /* CCFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = CCFoundation.framework; path = CCFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		214613F9B9521CA558B28CDFA6E7FE9C /* CCTime.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCTime.c; sourceTree = "<group>"; };
+		2520D2F8369EA4AE588F4F08F87B66F7 /* aes_cbc.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = aes_cbc.c; sourceTree = "<group>"; };
+		2810E8BB0F2BE9BC328D4CA3956A3834 /* SITP.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = SITP.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		2CEE087B5F3CA415ED642FE3366C5B83 /* CCClosure.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCClosure.h; sourceTree = "<group>"; };
+		323733DB8844A715D51788C0C31AF2F2 /* SITPIndexShift.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = SITPIndexShift.c; sourceTree = "<group>"; };
+		35368285D8501FD2E59E2146D6FD272A /* CCFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CCFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		35FF79E0CBAC1E02A5E86780047A5B18 /* SITP.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SITP.xcconfig; sourceTree = "<group>"; };
-		36EC3D0D527EBB4EEA902E88540E8C2A /* CCClosure.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCClosure.c; sourceTree = "<group>"; };
-		38013BF4BC8EF0DBD8E7FCCF652451DE /* SITPType.c */ = {isa = PBXFileReference; includeInIndex = 1; path = SITPType.c; sourceTree = "<group>"; };
+		37E6230BAD0C7CC5036750CFB270CBB8 /* CCByte.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCByte.c; sourceTree = "<group>"; };
+		38013BF4BC8EF0DBD8E7FCCF652451DE /* SITPType.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = SITPType.c; sourceTree = "<group>"; };
+		386FC66332D23FB72E4983FAE87BDDB5 /* aes_ofb.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = aes_ofb.c; sourceTree = "<group>"; };
+		389A000F5B9BA25C7B6E282C520CAD73 /* CCFoundation.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = CCFoundation.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		3A7D98A1756A17E396473893D25DF571 /* Pods-CC-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CC-acknowledgements.plist"; sourceTree = "<group>"; };
 		3AFCD6D29CC085CFCA605ABE07411478 /* Pods-CC-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CC-Info.plist"; sourceTree = "<group>"; };
 		3C353209D306547FEAB05660355A79B2 /* SITP-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SITP-umbrella.h"; sourceTree = "<group>"; };
-		5149EDEFBB445CD24879B6D4963E9179 /* CCReferenceBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCReferenceBase.h; sourceTree = "<group>"; };
-		5E4F4A013CAB389D37155A1F998C80BE /* CCBase.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCBase.c; sourceTree = "<group>"; };
-		671DFECFCC10DBD0F9BBE80212DE359C /* CCFoundation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CCFoundation.xcconfig; sourceTree = "<group>"; };
-		6999E8F505D241F9B2814FFEDA21F258 /* CCFoundation-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CCFoundation-prefix.pch"; sourceTree = "<group>"; };
+		4042FAD80BBB4FFE0090D33BF3A06F8B /* CCAes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCAes.h; sourceTree = "<group>"; };
+		42EB30E4BAB7D07473C0202923ADC517 /* CCInteger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCInteger.h; sourceTree = "<group>"; };
+		4DC2565CA962A92589B77AAB42F67562 /* CCConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCConfig.h; sourceTree = "<group>"; };
+		5E7C6B538B82409EFA2D887AC8FD13B8 /* CCFoundation.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = CCFoundation.modulemap; sourceTree = "<group>"; };
+		67BE5F4D406DBA8E8C8287352F077485 /* CCFoundation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCFoundation.h; sourceTree = "<group>"; };
 		6B40A7C46A1AB60759C178C1F274044F /* Pods-CC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CC.debug.xcconfig"; sourceTree = "<group>"; };
 		6F6A39C72E9D70F426C2EF4A5CBEA481 /* SITP-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SITP-dummy.m"; sourceTree = "<group>"; };
-		718F8464E5EEF7BFF209ECF1A6911F4A /* CCFoundation-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CCFoundation-dummy.m"; sourceTree = "<group>"; };
+		7C64EA8BE458E7161BE137E994B86AB6 /* aes_ecb.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = aes_ecb.c; sourceTree = "<group>"; };
 		814822E87E62D55FD6AF6B47B1AC7C0F /* SITP.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SITP.modulemap; sourceTree = "<group>"; };
 		84A341F45C584F8F9CB8781BA742A58C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		84C8E6905BE2C8EDFAA2C134D6DBB527 /* CCFoundation-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CCFoundation-dummy.m"; sourceTree = "<group>"; };
 		89A5C1370E43CFA419560C937F86807B /* SITP-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SITP-Info.plist"; sourceTree = "<group>"; };
+		8C0F15D39EDF2CDC1A0BEE3526D8E562 /* CCNet.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCNet.h; sourceTree = "<group>"; };
+		8C11578AF9FD81E7F1128324E91E25DD /* CCAesInternal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCAesInternal.h; sourceTree = "<group>"; };
 		8E3E9708B3E92E7D2557533D4DDDA89E /* Pods-CC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CC.release.xcconfig"; sourceTree = "<group>"; };
 		8E4057627A487825FE6F1DDF124130C1 /* SITPIndexShift.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITPIndexShift.h; sourceTree = "<group>"; };
 		91A11261E5864941987B4C3E56C21048 /* Pods-CC-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-CC-dummy.m"; sourceTree = "<group>"; };
-		93E3E56F22C78344E16B815E5AC7E25C /* CCFoundation-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "CCFoundation-Info.plist"; sourceTree = "<group>"; };
-		94EB69138CA167E5B909E863AE875DB1 /* CCFoundation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCFoundation.h; sourceTree = "<group>"; };
-		96F472BB028071CD0DA41D28BD1A79D6 /* CCInteger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCInteger.h; sourceTree = "<group>"; };
+		98A72CA5F2D927BA7EF73C12EAF08726 /* aes_locl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = aes_locl.h; sourceTree = "<group>"; };
 		98C0F6BC2C04E2880C4CFB9EFD06E5E8 /* SITPParser.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SITPParser.h; sourceTree = "<group>"; };
-		9D84BD5C9DC30E504CE3BBC8E576ABD1 /* CCFoundation-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CCFoundation-umbrella.h"; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		9E5A64E088FFB2D759609B277EF36B39 /* CCClosure.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCClosure.h; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		A4D55BC23F95CC7D398D1943880BF38F /* CCBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCBase.h; sourceTree = "<group>"; };
+		A5DB86D085EC5C14968D80BA94844B4D /* CCReferenceBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCReferenceBase.h; sourceTree = "<group>"; };
+		A73DEF3C14CF309497784DC806BDE0FC /* CCAllocator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCAllocator.h; sourceTree = "<group>"; };
+		AE743FD6EB3D372E1DBA09CC11DB4409 /* CCType.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCType.c; sourceTree = "<group>"; };
 		BA13C07303973B1F0C9DFF19520D2294 /* Pods-CC-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-CC-acknowledgements.markdown"; sourceTree = "<group>"; };
-		C1F6AB2349603CD17F109FAECA3A8379 /* CCBase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCBase.h; sourceTree = "<group>"; };
-		C378150748EB357D88DDEA952C541AD0 /* CCFoundation.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = CCFoundation.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		BA72A288BB4F43FE60B3AFA53FD916FA /* aes_ctr.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = aes_ctr.c; sourceTree = "<group>"; };
+		BCA6E9BCD53F6F465BA0A412C786D454 /* CCFoundation-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CCFoundation-umbrella.h"; sourceTree = "<group>"; };
+		C24B40D0824BA9F7526A664E6C1D2FDE /* aes_cfb.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = aes_cfb.c; sourceTree = "<group>"; };
+		C4B8309DFF54B5A1B8B7AB8939814364 /* CCInit.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCInit.c; sourceTree = "<group>"; };
 		C7CD49F5D091A83A49B94C696824E84B /* Pods-CC-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-CC-frameworks.sh"; sourceTree = "<group>"; };
-		CCF8598146F3713E7B0ACA678F738EC6 /* CCInteger.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCInteger.c; sourceTree = "<group>"; };
-		D3482D89DE68DE82BECC78D9FCDBBC3A /* CCType.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCType.c; sourceTree = "<group>"; };
+		D1B2E2375CE1BA6C3075018155CB8187 /* CCAes.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCAes.c; sourceTree = "<group>"; };
 		D3E493D0CA5D97F824DC950281A3DC5E /* Pods-CC.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-CC.modulemap"; sourceTree = "<group>"; };
-		DA0BCEFBD8B2721C922208CC2D3EE42E /* CCType.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCType.h; sourceTree = "<group>"; };
-		DE41E3896A633F496DD4A3ACE8DC4FC5 /* Pods_CC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_CC.framework; path = "Pods-CC.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E4C5CE20233B3DC1E2301D8715AC8FC2 /* SITP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SITP.framework; path = SITP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EAFDB939A6D1B7A9360AC181635D1C8D /* SITPParser.c */ = {isa = PBXFileReference; includeInIndex = 1; path = SITPParser.c; sourceTree = "<group>"; };
-		F3763A6A311036A35F547C94EA254BDB /* CCAllocator.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCAllocator.c; sourceTree = "<group>"; };
-		F6CC3558D88F9E6BB8A2C373A5550257 /* CCConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CCConfig.h; sourceTree = "<group>"; };
+		DC9E1D764F140D2FE6D3DE428931F4CF /* CCBase.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCBase.c; sourceTree = "<group>"; };
+		DE41E3896A633F496DD4A3ACE8DC4FC5 /* Pods_CC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4C5CE20233B3DC1E2301D8715AC8FC2 /* SITP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SITP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E83E17D93FD746A0DC7AFD248DB03D03 /* CCFoundation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CCFoundation.xcconfig; sourceTree = "<group>"; };
+		EA9FC492D2181853FC51F9CE97233025 /* CCFoundation-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CCFoundation-prefix.pch"; sourceTree = "<group>"; };
+		EAFDB939A6D1B7A9360AC181635D1C8D /* SITPParser.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = SITPParser.c; sourceTree = "<group>"; };
+		EC45C145A63A0A1DFC53964AB01953E6 /* CCNet.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCNet.c; sourceTree = "<group>"; };
+		F1AE63641FD1014985A2A1F7B34F8A1F /* CCFoundation-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "CCFoundation-Info.plist"; sourceTree = "<group>"; };
 		F71A18D63053A7EF67A2F260B9AABA53 /* Pods-CC-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-CC-umbrella.h"; sourceTree = "<group>"; };
-		F9FF9F61A54BC4FFFD07FD7770EC2EB7 /* CCReferenceBase.c */ = {isa = PBXFileReference; includeInIndex = 1; path = CCReferenceBase.c; sourceTree = "<group>"; };
+		FAA8B3A68FA5967D30EC9958394094C0 /* CCReferenceBase.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = CCReferenceBase.c; sourceTree = "<group>"; };
 		FDE3EC2E7F10C021FE6610DB6660240B /* SITP-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SITP-prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,11 +155,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7170C91EBAD45B76FE94EA215308A294 /* Frameworks */ = {
+		3935982C1EB0A21F5CB6D3CA9093695D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA3D86C888EC17FC8E0D86ABAF5084C5 /* Cocoa.framework in Frameworks */,
+				26D0B3D34E15CF20C27B4682F3B00BB4 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,12 +183,12 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		14727C9876B9068980D13443E47FA1D7 /* Source */ = {
+		0CD4EE1B7E5D8F3A2EAA1AA2171EC990 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				498CF6AD36EB600245B72F3DF7E4E503 /* Core */,
+				19F9AA250539BB8F7E640C923A6D0273 /* Core */,
+				60086CA57809B70155ADD6A12017AAF6 /* Crypto */,
 			);
-			name = Source;
 			path = Source;
 			sourceTree = "<group>";
 		};
@@ -178,8 +202,32 @@
 				38013BF4BC8EF0DBD8E7FCCF652451DE /* SITPType.c */,
 				0D911D9BD036F030FB7E094A0267033F /* SITPType.h */,
 			);
-			name = Source;
 			path = Source;
+			sourceTree = "<group>";
+		};
+		19F9AA250539BB8F7E640C923A6D0273 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				08D65FC677E0C7763ED395AE3CEB5726 /* CCAllocator.c */,
+				A73DEF3C14CF309497784DC806BDE0FC /* CCAllocator.h */,
+				DC9E1D764F140D2FE6D3DE428931F4CF /* CCBase.c */,
+				A4D55BC23F95CC7D398D1943880BF38F /* CCBase.h */,
+				37E6230BAD0C7CC5036750CFB270CBB8 /* CCByte.c */,
+				07EB4CB69CE62EC8F20F5B761DBB8D80 /* CCClosure.c */,
+				2CEE087B5F3CA415ED642FE3366C5B83 /* CCClosure.h */,
+				4DC2565CA962A92589B77AAB42F67562 /* CCConfig.h */,
+				C4B8309DFF54B5A1B8B7AB8939814364 /* CCInit.c */,
+				1249032FEEF77CA4CBEDE5D1E3989508 /* CCInteger.c */,
+				42EB30E4BAB7D07473C0202923ADC517 /* CCInteger.h */,
+				EC45C145A63A0A1DFC53964AB01953E6 /* CCNet.c */,
+				8C0F15D39EDF2CDC1A0BEE3526D8E562 /* CCNet.h */,
+				FAA8B3A68FA5967D30EC9958394094C0 /* CCReferenceBase.c */,
+				A5DB86D085EC5C14968D80BA94844B4D /* CCReferenceBase.h */,
+				214613F9B9521CA558B28CDFA6E7FE9C /* CCTime.c */,
+				AE743FD6EB3D372E1DBA09CC11DB4409 /* CCType.c */,
+				14CD04AF8465E6266DB9E23E199DFB1E /* CCType.h */,
+			);
+			path = Core;
 			sourceTree = "<group>";
 		};
 		335317ED32AA93712C5EA13E5D0E7B8D /* SITP */ = {
@@ -192,29 +240,6 @@
 			);
 			name = SITP;
 			path = ../../SITP;
-			sourceTree = "<group>";
-		};
-		498CF6AD36EB600245B72F3DF7E4E503 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				F3763A6A311036A35F547C94EA254BDB /* CCAllocator.c */,
-				30326804E94C0A31A5957D3461927B24 /* CCAllocator.h */,
-				5E4F4A013CAB389D37155A1F998C80BE /* CCBase.c */,
-				C1F6AB2349603CD17F109FAECA3A8379 /* CCBase.h */,
-				1FB7C595938B24B1DE2B38FBAD59803B /* CCByte.c */,
-				36EC3D0D527EBB4EEA902E88540E8C2A /* CCClosure.c */,
-				9E5A64E088FFB2D759609B277EF36B39 /* CCClosure.h */,
-				F6CC3558D88F9E6BB8A2C373A5550257 /* CCConfig.h */,
-				CCF8598146F3713E7B0ACA678F738EC6 /* CCInteger.c */,
-				96F472BB028071CD0DA41D28BD1A79D6 /* CCInteger.h */,
-				F9FF9F61A54BC4FFFD07FD7770EC2EB7 /* CCReferenceBase.c */,
-				5149EDEFBB445CD24879B6D4963E9179 /* CCReferenceBase.h */,
-				08B5BDB65476B367D041973186ECDEF1 /* CCTime.c */,
-				D3482D89DE68DE82BECC78D9FCDBBC3A /* CCType.c */,
-				DA0BCEFBD8B2721C922208CC2D3EE42E /* CCType.h */,
-			);
-			name = Core;
-			path = Core;
 			sourceTree = "<group>";
 		};
 		4F0CD72FE601395DFAF70981F1F5C5B3 /* Support Files */ = {
@@ -239,23 +264,51 @@
 			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
-		7708AC09F3E04DBAD3FD69B4937C5F97 /* Pod */ = {
+		60086CA57809B70155ADD6A12017AAF6 /* Crypto */ = {
 			isa = PBXGroup;
 			children = (
-				C378150748EB357D88DDEA952C541AD0 /* CCFoundation.podspec */,
+				2520D2F8369EA4AE588F4F08F87B66F7 /* aes_cbc.c */,
+				C24B40D0824BA9F7526A664E6C1D2FDE /* aes_cfb.c */,
+				BA72A288BB4F43FE60B3AFA53FD916FA /* aes_ctr.c */,
+				7C64EA8BE458E7161BE137E994B86AB6 /* aes_ecb.c */,
+				98A72CA5F2D927BA7EF73C12EAF08726 /* aes_locl.h */,
+				386FC66332D23FB72E4983FAE87BDDB5 /* aes_ofb.c */,
+				D1B2E2375CE1BA6C3075018155CB8187 /* CCAes.c */,
+				4042FAD80BBB4FFE0090D33BF3A06F8B /* CCAes.h */,
+				8C11578AF9FD81E7F1128324E91E25DD /* CCAesInternal.h */,
+			);
+			path = Crypto;
+			sourceTree = "<group>";
+		};
+		86C7701A788A342E619300FF6582A2BB /* CCFoundation */ = {
+			isa = PBXGroup;
+			children = (
+				67BE5F4D406DBA8E8C8287352F077485 /* CCFoundation.h */,
+				8D9BEF540D9C2DBC39D0543FA96315DB /* Pod */,
+				0CD4EE1B7E5D8F3A2EAA1AA2171EC990 /* Source */,
+				8FE2E99CAB9E4CCA078516E674BC457C /* Support Files */,
+			);
+			name = CCFoundation;
+			path = ../../CCFoundation;
+			sourceTree = "<group>";
+		};
+		8D9BEF540D9C2DBC39D0543FA96315DB /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				389A000F5B9BA25C7B6E282C520CAD73 /* CCFoundation.podspec */,
 			);
 			name = Pod;
 			sourceTree = "<group>";
 		};
-		8A4ECDB92CF3C9FBF65023B3BA2C67EA /* Support Files */ = {
+		8FE2E99CAB9E4CCA078516E674BC457C /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				11F03A40796518574B84047B1C249A4B /* CCFoundation.modulemap */,
-				671DFECFCC10DBD0F9BBE80212DE359C /* CCFoundation.xcconfig */,
-				718F8464E5EEF7BFF209ECF1A6911F4A /* CCFoundation-dummy.m */,
-				93E3E56F22C78344E16B815E5AC7E25C /* CCFoundation-Info.plist */,
-				6999E8F505D241F9B2814FFEDA21F258 /* CCFoundation-prefix.pch */,
-				9D84BD5C9DC30E504CE3BBC8E576ABD1 /* CCFoundation-umbrella.h */,
+				5E7C6B538B82409EFA2D887AC8FD13B8 /* CCFoundation.modulemap */,
+				E83E17D93FD746A0DC7AFD248DB03D03 /* CCFoundation.xcconfig */,
+				84C8E6905BE2C8EDFAA2C134D6DBB527 /* CCFoundation-dummy.m */,
+				F1AE63641FD1014985A2A1F7B34F8A1F /* CCFoundation-Info.plist */,
+				EA9FC492D2181853FC51F9CE97233025 /* CCFoundation-prefix.pch */,
+				BCA6E9BCD53F6F465BA0A412C786D454 /* CCFoundation-umbrella.h */,
 			);
 			name = "Support Files";
 			path = "../CC/Pods/Target Support Files/CCFoundation";
@@ -276,18 +329,6 @@
 			);
 			name = "Pods-CC";
 			path = "Target Support Files/Pods-CC";
-			sourceTree = "<group>";
-		};
-		B5A520900232B5D58B213F88103A43E1 /* CCFoundation */ = {
-			isa = PBXGroup;
-			children = (
-				94EB69138CA167E5B909E863AE875DB1 /* CCFoundation.h */,
-				7708AC09F3E04DBAD3FD69B4937C5F97 /* Pod */,
-				14727C9876B9068980D13443E47FA1D7 /* Source */,
-				8A4ECDB92CF3C9FBF65023B3BA2C67EA /* Support Files */,
-			);
-			name = CCFoundation;
-			path = ../../CCFoundation;
 			sourceTree = "<group>";
 		};
 		CA5F22B262B6CA6CF7B5B5460C793887 /* Products */ = {
@@ -330,7 +371,7 @@
 		F68395DD5CF229886CA01D832548FBDA /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B5A520900232B5D58B213F88103A43E1 /* CCFoundation */,
+				86C7701A788A342E619300FF6582A2BB /* CCFoundation */,
 				335317ED32AA93712C5EA13E5D0E7B8D /* SITP */,
 			);
 			name = "Development Pods";
@@ -351,6 +392,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8FBAB42397833A1C7A6E4D9EE0258166 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F07976586A7B876148314B47DC1B05C2 /* aes_locl.h in Headers */,
+				4576048878162987970A16D22A8F95D3 /* CCAes.h in Headers */,
+				B4CEF3653A6F151745EC6FB245B1C0F7 /* CCAesInternal.h in Headers */,
+				8B0CD8D5AB49CAA261E650AECCF24C70 /* CCAllocator.h in Headers */,
+				ED18C43ADB8559E4DEA4A0C6707128B7 /* CCBase.h in Headers */,
+				529B2584BB4C1265DF5A15D0889D7E9B /* CCClosure.h in Headers */,
+				84429C6EBFEEB4673EB066F0D9757078 /* CCConfig.h in Headers */,
+				A1123B4F91EC2FDACAC4B0DB43325A3E /* CCFoundation-umbrella.h in Headers */,
+				0F8008189689B15EC8501880DBAD846C /* CCFoundation.h in Headers */,
+				C97ADFDCCF30459C7BB9AF1C8AD06E7E /* CCInteger.h in Headers */,
+				C036AEEBFE07A26373ED1DA2A3DB2856 /* CCNet.h in Headers */,
+				0B79F58680CF715F4B4EE8E036B77963 /* CCReferenceBase.h in Headers */,
+				CAC240E10480321ABB310CB94A381D01 /* CCType.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9C47970342BF2C04ABCE4580DADFE111 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -359,33 +420,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DA8496498A630D257A8F1AF6103413F4 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				898597DBD1B0FA7B9C0429EA81F4C777 /* CCAllocator.h in Headers */,
-				F96412978CB67AF4E82FFA07FF163D6B /* CCBase.h in Headers */,
-				2C52031A9C6295A5EC2307295261B211 /* CCClosure.h in Headers */,
-				62900F6C1350A2B14A9A925D4F4D6BCD /* CCConfig.h in Headers */,
-				62F5A32A7860C82EEE4360AFC9A31480 /* CCFoundation-umbrella.h in Headers */,
-				BAA8EB00B39C9F54792D7934EF08DAA1 /* CCFoundation.h in Headers */,
-				4B96726E8869451B7A642B830AD869E9 /* CCInteger.h in Headers */,
-				4662E4E5469E10D5557CC90056623FC2 /* CCReferenceBase.h in Headers */,
-				C13C2612B271803E9DFA00B6C708B4D2 /* CCType.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		6D5CBA257CADC5A51DE8D77CFF6D1861 /* CCFoundation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 898876A189C4A15755AF1C9F8CD1BE59 /* Build configuration list for PBXNativeTarget "CCFoundation" */;
+			buildConfigurationList = 00C6C015EE6F36FFD197D1B43A4AEA4F /* Build configuration list for PBXNativeTarget "CCFoundation" */;
 			buildPhases = (
-				DA8496498A630D257A8F1AF6103413F4 /* Headers */,
-				EB3931667F78BDE1C50AD562C093135E /* Sources */,
-				7170C91EBAD45B76FE94EA215308A294 /* Frameworks */,
-				F4484B607A1F31345C18AF4E8C9D99FC /* Resources */,
+				8FBAB42397833A1C7A6E4D9EE0258166 /* Headers */,
+				EBC433EE3949EF0D21C1C53135982A5C /* Sources */,
+				3935982C1EB0A21F5CB6D3CA9093695D /* Frameworks */,
+				18038B0214B47A3DDDF6139C24252097 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -445,7 +490,7 @@
 				LastUpgradeCheck = 1100;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -472,14 +517,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1B33010C3DFF18DA93C65EC16A53748C /* Resources */ = {
+		18038B0214B47A3DDDF6139C24252097 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F4484B607A1F31345C18AF4E8C9D99FC /* Resources */ = {
+		1B33010C3DFF18DA93C65EC16A53748C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -508,19 +553,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EB3931667F78BDE1C50AD562C093135E /* Sources */ = {
+		EBC433EE3949EF0D21C1C53135982A5C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3076787FA05752D8DA0D2D7EE933A4A5 /* CCAllocator.c in Sources */,
-				76A5BDB0A2CBDDB81ED36FE4B47A5E70 /* CCBase.c in Sources */,
-				026A6365D669CC81B67158874E8755F7 /* CCByte.c in Sources */,
-				493F91BF9FB674AB4B0624EC1C9D0739 /* CCClosure.c in Sources */,
-				98642D357BA8061B8FD5BEEAB03A1E25 /* CCFoundation-dummy.m in Sources */,
-				D3B4FBD514D54F885028ED4EE360D995 /* CCInteger.c in Sources */,
-				E1DA63AE45B377F1BA16A6515FFFA250 /* CCReferenceBase.c in Sources */,
-				148AB909E029CBF758EF47CE67FA120E /* CCTime.c in Sources */,
-				FDDE697283E489BD841CC7B0DC797AF8 /* CCType.c in Sources */,
+				D1A05A62DD256EC7CF0BA45ECE888868 /* aes_cbc.c in Sources */,
+				A27E1D64CFCC6A331DBA8182619573DB /* aes_cfb.c in Sources */,
+				F1529ED294383E7E12FC25102E6E303D /* aes_ctr.c in Sources */,
+				A370E0856A45A367EB2A6D0C015BD8B7 /* aes_ecb.c in Sources */,
+				A929D5B6AE6AF2C1F24109198A32E58E /* aes_ofb.c in Sources */,
+				EFA95BC9FFC091EBC796DA9238896572 /* CCAes.c in Sources */,
+				AAFF3A438191538FF0FCE3C18A39AC3B /* CCAllocator.c in Sources */,
+				08E93795402426A15A6A6204F9BAA4CB /* CCBase.c in Sources */,
+				B99154147AA04B5351A360ADDC2FA8FC /* CCByte.c in Sources */,
+				98E56C78D258CAD50A04EC7160C88236 /* CCClosure.c in Sources */,
+				30DEEEBD4FA8E609ACB42F229F961D77 /* CCFoundation-dummy.m in Sources */,
+				41B4903C71C010EB3BC381AA90A0B5AE /* CCInit.c in Sources */,
+				892CFCD61D70EACDF974419603174C6B /* CCInteger.c in Sources */,
+				4461B796814B14F678C28C3239F689EE /* CCNet.c in Sources */,
+				4B019FA4E2653EF27D90197B3203862A /* CCReferenceBase.c in Sources */,
+				8140C9DE2AE277D3D55821C6F7DA18B6 /* CCTime.c in Sources */,
+				83C980FDA41A0C9BAE2871E75CE4FBB9 /* CCType.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -724,9 +777,9 @@
 			};
 			name = Release;
 		};
-		439F554BFC3406ABF631CA8BFDF21DFE /* Release */ = {
+		61A9DAE4246F18B46A3406E3DCCC1749 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 671DFECFCC10DBD0F9BBE80212DE359C /* CCFoundation.xcconfig */;
+			baseConfigurationReference = E83E17D93FD746A0DC7AFD248DB03D03 /* CCFoundation.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -749,7 +802,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MODULEMAP_FILE = "Target Support Files/CCFoundation/CCFoundation.modulemap";
 				PRODUCT_MODULE_NAME = CCFoundation;
 				PRODUCT_NAME = CCFoundation;
@@ -760,7 +813,7 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = Debug;
 		};
 		816C679D58750316935F7386A438309D /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -826,9 +879,9 @@
 			};
 			name = Debug;
 		};
-		AFCAA39476E1B26A3217E3B5065C531E /* Debug */ = {
+		9F774016196AE27E457F4D59AF7363D1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 671DFECFCC10DBD0F9BBE80212DE359C /* CCFoundation.xcconfig */;
+			baseConfigurationReference = E83E17D93FD746A0DC7AFD248DB03D03 /* CCFoundation.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -851,7 +904,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MODULEMAP_FILE = "Target Support Files/CCFoundation/CCFoundation.modulemap";
 				PRODUCT_MODULE_NAME = CCFoundation;
 				PRODUCT_NAME = CCFoundation;
@@ -862,7 +915,7 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Debug;
+			name = Release;
 		};
 		B0DE8A4FEEE047C6A3F5AE5F8284732F /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -907,6 +960,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		00C6C015EE6F36FFD197D1B43A4AEA4F /* Build configuration list for PBXNativeTarget "CCFoundation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61A9DAE4246F18B46A3406E3DCCC1749 /* Debug */,
+				9F774016196AE27E457F4D59AF7363D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		25A2E697BD59BE47D18796839BEEDF11 /* Build configuration list for PBXNativeTarget "Pods-CC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -930,15 +992,6 @@
 			buildConfigurations = (
 				816C679D58750316935F7386A438309D /* Debug */,
 				2AE0D8B39827576460938522CAB2F560 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		898876A189C4A15755AF1C9F8CD1BE59 /* Build configuration list for PBXNativeTarget "CCFoundation" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AFCAA39476E1B26A3217E3B5065C531E /* Debug */,
-				439F554BFC3406ABF631CA8BFDF21DFE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

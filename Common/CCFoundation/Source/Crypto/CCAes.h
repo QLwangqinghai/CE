@@ -85,7 +85,7 @@ CCResult_t CCAesContextInit(CCAesContextPtr _Nonnull context,
                             const uint8_t * _Nonnull userKey,
                             const int bits,
                             const uint8_t * _Nullable vi,
-                            const CCAesOperation_t op,
+                            CCAesOperation_t op,
                             CCAesCryptMode_t mode,
                             CCAesPaddingMode_t padding);
 

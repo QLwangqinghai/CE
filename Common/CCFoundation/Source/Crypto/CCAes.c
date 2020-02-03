@@ -784,7 +784,7 @@ CCResult_t CCAesContextInit(CCAesContextPtr _Nonnull context,
                             const uint8_t * _Nonnull userKey,
                             const int bits,
                             const uint8_t * _Nullable vi,
-                            const CCAesOperation_t op,
+                            CCAesOperation_t op,
                             CCAesCryptMode_t mode,
                             CCAesPaddingMode_t padding) {
     if (NULL == context || NULL == userKey) {
@@ -1265,7 +1265,7 @@ CCResult_t CCAesCrypt(CCAesContextPtr _Nonnull context,
                       const size_t inSize,
                       uint8_t * _Nonnull out,
                       const size_t outSize,
-                      size_t * _Nonnull outMoved) {
+                      size_t * _Nonnull outMoved) __attribute__((optimize("O0"))) {
     
     CCResult_t ck = CCAesContextCheck(context);
     if (CCResultSuccess != ck) {

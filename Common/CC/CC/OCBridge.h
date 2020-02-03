@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface OCBridge : NSObject
 
+
++ (void)testAes;
 @end
 
 NS_ASSUME_NONNULL_END

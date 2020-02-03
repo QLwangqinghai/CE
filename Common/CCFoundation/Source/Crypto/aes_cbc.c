@@ -59,7 +59,6 @@
 #include "CCAesInternal.h"
 #include "aes_locl.h"
 
-#if !defined(OPENSSL_FIPS_AES_ASM)
 void CCAesCbcCrypt(const unsigned char *in, unsigned char *out,
 		     const unsigned long length, const CCAesContext_s *key,
 		     unsigned char *ivec, const int enc) {
@@ -130,4 +129,3 @@ void CCAesCbcCrypt(const unsigned char *in, unsigned char *out,
 		}
 	}
 }
-#endif

@@ -52,9 +52,6 @@
 #ifndef HEADER_AES_LOCL_H
 #define HEADER_AES_LOCL_H
 
-//#include <openssl/e_os2.h>
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -80,5 +77,6 @@ typedef unsigned char u8;
 
 /* This controls loop-unrolling in aes_core.c */
 #undef FULL_UNROLL
+//#define FULL_UNROLL
 
 #endif /* !HEADER_AES_LOCL_H */

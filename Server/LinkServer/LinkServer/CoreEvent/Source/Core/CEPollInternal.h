@@ -21,17 +21,17 @@ typedef struct {
     uint16_t isFired: 1;
     uint16_t isWaitingTimeout: 1;
     uint16_t isTimeout: 1;
-    uint16_t hashOfTimer: 13;
-    uint16_t prev;
-    uint16_t next;
+    uint16_t hashOfTimer: 15;
+    uint32_t prev: 23;
+    uint32_t next: 23;
 } CEFileSource_s;
 
 extern const CEFileSource_s CEFileSourceInit;
 
 typedef struct {
-    uint16_t sequence;
-    uint16_t handler: 14;
-    uint16_t mask: 2;
+    uint64_t sequence: 41;
+    uint64_t handler: 21;
+    uint64_t mask: 2;
     CEFileSource_s read;
     CEFileSource_s write;
 } CEFile_s;
@@ -66,7 +66,7 @@ typedef struct {
 } CEFileEventBuffer_s;
 
 typedef struct {
-    uint16_t table[0x10000];
+    uint32_t table[0x10000];
 } CEFileTimerMap_s;
 
 
@@ -86,7 +86,7 @@ typedef struct {
     uint32_t tmpBufferSize;
     CEBlockQueue_s blockQueue;
     CCPtr _Nonnull tmpBuffer;
-    CETimeEventManager_s timeEventManager;
+    CETimeEventQueue_s timerQueue;
     CCMicrosecondTime currentTime;//单位 微秒
     uint32_t fileTableSize;
     uint32_t maxHandlerId;
@@ -105,12 +105,12 @@ typedef struct {
 #define CEFileIndexInvalid 0xffff
 
 
-static inline CEFile_s * _Nonnull _CEPollGetFile(CEPoll_s * _Nonnull p, uint16_t index) {
+static inline CEFile_s * _Nonnull _CEPollGetFile(CEPoll_s * _Nonnull p, uint32_t index) {
     CEFile_s * file = p->fileTable;
     file += index;
     return file;
 }
-static inline CEFileId CEFileIdMake(uint16_t fd, uint16_t seq) {
+static inline CEFileId CEFileIdMake(uint64_t fd, uint64_t seq) {
     CEFileId f = {
         .fd = fd,
         .sequence = seq,

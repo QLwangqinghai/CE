@@ -13,21 +13,36 @@
 
 typedef CCRef CCClosureRef;
 
-typedef void (*CCClosureExecute_f)(uintptr_t context, const CCPtr _Nullable input, CCPtr _Nullable output);
-typedef void (*CCClosureClearContext_f)(uintptr_t context);
+typedef void (*CCClosureClearContext_f)(CCPtr _Nonnull contextBuffer, size_t contextBuffertSize);
+typedef void (*CCClosureExecute_f)(const CCPtr _Nullable input, CCPtr _Nullable output, CCPtr _Nullable contextBuffer, size_t contextBuffertSize);
 
-CCClosureRef _Nonnull CCClosureCreate(CCClosureExecute_f _Nonnull execute,
-                                      CCClosureClearContext_f _Nullable clear,
-                                      uintptr_t context);
+
+/*
+ 内存布局
+ CCRef header ;1 word
+ CCClosureExecute_f _Nonnull ; 1word
+ size_t contextSize; 1word
+ 
+ 
+ // contextSize <= 0 时以下没有内容
+ CCClosureClearContext_f _Nullable clear; optional
+ uint8_t context[0]; contextSize
+ */
+
+
+CCClosureRef _Nonnull CCClosureCreate(CCClosureExecute_f _Nonnull execute);
+
+CCClosureRef _Nonnull CCClosureCreateWithContext(CCClosureExecute_f _Nonnull execute,
+                                                 CCClosureClearContext_f _Nullable clear,
+                                                 CCPtr _Nonnull contextBuffer,
+                                                 size_t contextBuffertSize);
 
 void CCClosurePerform(CCClosureRef _Nonnull closure, const CCPtr _Nullable input, CCPtr _Nullable output);
 
 
 
 
-void CCClosureRelease(CCClosureRef _Nonnull closure);
-void CCClosureRetain(CCClosureRef _Nonnull closure);
-
+void _CCClosureDeinit(CCClosureRef _Nonnull closure);
 
 
 

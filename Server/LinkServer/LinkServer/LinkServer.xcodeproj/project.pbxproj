@@ -13,6 +13,7 @@
 		D64DD12123DEBDA400BEBBBE /* CEPoll.c in Sources */ = {isa = PBXBuildFile; fileRef = D64DD11F23DEBDA400BEBBBE /* CEPoll.c */; };
 		D64DD14423E0CA4B00BEBBBE /* CETimeEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = D64DD14223E0CA4B00BEBBBE /* CETimeEvent.c */; };
 		D64DD14523E0CA4B00BEBBBE /* CETimeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D64DD14323E0CA4B00BEBBBE /* CETimeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6A01AC523E70B94008AF988 /* CEInit.c in Sources */ = {isa = PBXBuildFile; fileRef = D6A01AC423E70B94008AF988 /* CEInit.c */; };
 		D6B2F6E523DE63A700781CA8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F6E423DE63A700781CA8 /* AppDelegate.swift */; };
 		D6B2F6E723DE63A700781CA8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F6E623DE63A700781CA8 /* ViewController.swift */; };
 		D6B2F6E923DE63A900781CA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6B2F6E823DE63A900781CA8 /* Assets.xcassets */; };
@@ -71,6 +72,7 @@
 		D64DD11F23DEBDA400BEBBBE /* CEPoll.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEPoll.c; sourceTree = "<group>"; };
 		D64DD14223E0CA4B00BEBBBE /* CETimeEvent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CETimeEvent.c; sourceTree = "<group>"; };
 		D64DD14323E0CA4B00BEBBBE /* CETimeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CETimeEvent.h; sourceTree = "<group>"; };
+		D6A01AC423E70B94008AF988 /* CEInit.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEInit.c; sourceTree = "<group>"; };
 		D6B2F6E123DE63A700781CA8 /* LinkServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinkServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6B2F6E423DE63A700781CA8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6B2F6E623DE63A700781CA8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -207,6 +209,7 @@
 				D64DD11E23DEBDA400BEBBBE /* CEPoll.h */,
 				D64DD11F23DEBDA400BEBBBE /* CEPoll.c */,
 				D6F5429323E1C0A7008B2D65 /* CEPollFile.c */,
+				D6A01AC423E70B94008AF988 /* CEInit.c */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -428,6 +431,7 @@
 				D6F5429523E1C0A7008B2D65 /* CEPollFile.c in Sources */,
 				D6B2F72923DE647100781CA8 /* CEBaseApi.c in Sources */,
 				D6B2F75923DE70CF00781CA8 /* CEBase.c in Sources */,
+				D6A01AC523E70B94008AF988 /* CEInit.c in Sources */,
 				D64DD12123DEBDA400BEBBBE /* CEPoll.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -19,6 +19,78 @@
 #include <unistd.h>
 
 
+typedef void(^CEClosureBridgeBlock)(CCPtr _Nullable input, CCPtr _Nullable output);
+
+
+void CEClosureManagerClearContext(CCPtr _Nonnull contextBuffer, size_t contextBuffertSize);
+void CEClosureManagerExecute(const CCPtr _Nullable input, CCPtr _Nullable output, CCPtr _Nullable contextBuffer, size_t contextBuffertSize);
+
+@interface CEClosureContext : NSObject
+@property (nonatomic, copy) CEClosureBridgeBlock block;
+@end
+
+
+@interface CEClosureManager : NSObject
+@property (nonatomic, assign) uint64_t sequence;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, CEClosureContext *> * map;
+@end
+@implementation CEClosureManager
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _map = [NSMutableDictionary dictionary];
+    }
+    return self;
+}
+
++ (instancetype)shared {
+    static CEClosureManager * __shared = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __shared = [[CEClosureManager alloc] init];
+    });
+    return __shared;
+}
+
+- (CCClosureRef)makeClosure:(CEClosureBridgeBlock)block {
+    uint64_t sequence = self.sequence;
+    self.sequence += 1;
+    CEClosureContext * obj = [[CEClosureContext alloc] init];
+    obj.block = block;
+    self.map[[NSString stringWithFormat:@"%llu", sequence]] = obj;
+    return CCClosureCreateWithContext(CEClosureManagerExecute, CEClosureManagerClearContext, &sequence, sizeof(uint64_t));
+}
+
+
+@end
+
+
+
+@implementation CEClosureContext
+
+
+
+@end
+
+
+
+void CEClosureManagerClearContext(CCPtr _Nonnull contextBuffer, size_t contextBuffertSize) {
+    assert(contextBuffertSize == sizeof(uint64_t));
+    uint64_t * sequence = (uint64_t *)contextBuffer;
+    [[CEClosureManager shared].map removeObjectForKey:[NSString stringWithFormat:@"%llu", *sequence]];
+}
+void CEClosureManagerExecute(const CCPtr _Nullable input, CCPtr _Nullable output, CCPtr _Nullable contextBuffer, size_t contextBuffertSize) {
+    assert(contextBuffertSize == sizeof(uint64_t));
+    uint64_t * sequence = (uint64_t *)contextBuffer;
+    CEClosureContext * obj = [CEClosureManager shared].map[[NSString stringWithFormat:@"%llu", *sequence]];
+    assert(obj);
+    obj.block(input, output);
+}
+
+
+
+
 void CEHandleSocketTimeout(void * _Nullable context, CEFileId * _Nonnull ids, uint32_t count) {
     CEPollPtr poll = CEPollShared();
 
@@ -58,16 +130,14 @@ void CEHandleSocket(void * _Nullable context, CEFileId * _Nonnull ids, uint32_t 
 }
 
 
-void CEAddSocket(uintptr_t context, const CCPtr _Nullable input, CCPtr _Nullable output) {
-    uint16_t sfd = context & 0xffff;
-    uint16_t hid = (context & 0xffff0000) >> 16;
+void CEAddSocket(uint32_t handlerId, int socket) {
+//    uint16_t sfd = contextBuffer & 0xffff;
+//    uint16_t hid = (contextBuffer & 0xffff0000) >> 16;
     CEPollPtr poll = CEPollShared();
     CEFileId fd = {};
-    CEPollAddFile(poll, hid, sfd, &fd);
+    CEPollAddFile(poll, handlerId, socket, &fd);
     CEPollAddFileEventMask(poll, fd, CEFileEventMaskReadable);
 }
-
-typedef void (*CCClosureClearContext_f)(uintptr_t context);
 
 
 
@@ -111,19 +181,15 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
             
         }
         
-
-        
-        
         assert(newFd >= 0);
         assert(newFd < 0x10000);
-        
-        uint32_t h = handlerId << 16;
-        uint32_t context = h + newFd;
-        CCClosureRef closure = CCClosureCreate(CEAddSocket, NULL, context);
+
+        CCClosureRef closure = [[CEClosureManager shared] makeClosure:^(CCPtr  _Nullable input, CCPtr  _Nullable output) {
+            CEAddSocket(handlerId, newFd);
+
+        }];
         CEPollAsync(poll, closure);
-        CCClosureRelease(closure);
-        
-        
+        CCRefRelease(closure);
     });
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
@@ -149,15 +215,15 @@ typedef void (*CCClosureClearContext_f)(uintptr_t context);
     assert(bind(fd, (struct sockaddr *)&server_addr, len6) == 0);
     assert(listen(fd, 1024) == 0);
 
-    int new_fd = accept(fd, (struct sockaddr *)&clientAddress, &len6);
-    assert(new_fd >= 0);
-    assert(new_fd < 0x10000);
+    int newFd = accept(fd, (struct sockaddr *)&clientAddress, &len6);
+    assert(newFd >= 0);
+    assert(newFd < 0x10000);
     
-    uint32_t h = handlerId << 16;
-    uint32_t context = h + new_fd;
-    CCClosureRef closure = CCClosureCreate(CEAddSocket, NULL, context);
+    CCClosureRef closure = [[CEClosureManager shared] makeClosure:^(CCPtr  _Nullable input, CCPtr  _Nullable output) {
+        CEAddSocket(handlerId, newFd);
+    }];
     CEPollAsync(poll, closure);
-    CCClosureRelease(closure);
+    CCRefRelease(closure);
     
     
 }

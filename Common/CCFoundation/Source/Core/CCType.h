@@ -54,12 +54,22 @@ typedef _Bool CCBool;
 typedef CCUInt8 CCChar;
 typedef CCUInt16 CCU16Char;
 
+#define CCUIntFast64 uint_fast64_t
+#define CCUIntFast32 uint_fast32_t
+#define CCUIntFast64Max UINT_FAST64_MAX
+#define CCUIntFast32Max UINT_FAST32_MAX
+
+
 #if CCBuild64Bit
 typedef CCSInt64 CCInt;
 typedef CCUInt64 CCUInt;
+#define CCUIntFast CCUIntFast64
+#define CCUIntFastMax CCUIntFast64Max
 #else
 typedef CCSInt32 CCInt;
 typedef CCUInt32 CCUInt;
+#define CCUIntFast CCUIntFast32
+#define CCUIntFastMax CCUIntFast32Max
 #endif
 
 #if CCBuild64Bit
@@ -83,6 +93,9 @@ typedef CCUInt CCHashCode;
 
 typedef CCSInt64 CCMicrosecondTime;
 
+#pragma mark - atomic
+
+
 
 #pragma mark - CCIndex
 
@@ -102,7 +115,6 @@ extern const CCIndex CCIndexNotFound;
 extern const CCIndex16 CCIndex16NotFound;
 extern const CCIndex32 CCIndex32NotFound;
 extern const CCIndex64 CCIndex64NotFound;
-
 
 #pragma mark - CCPoint
 typedef struct {

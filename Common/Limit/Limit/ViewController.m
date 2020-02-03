@@ -11,6 +11,15 @@
 #include <sys/sysctl.h>
 #include <fcntl.h>
 
+typedef struct {
+    uintptr_t flag: 1;
+    uintptr_t type: 12;
+    uintptr_t count: 50;
+    uintptr_t hasWeak: 1;
+} CCRefDecreasedBaseInfo;
+
+
+void testtest() {}
 
 @implementation ViewController
 
@@ -18,7 +27,12 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
-
+    uintptr_t p = 0x8000000000004001ULL;
+    
+    CCRefDecreasedBaseInfo * i = &p;
+    
+    assert(sizeof(CCRefDecreasedBaseInfo) == sizeof(uintptr_t));
+    UINT_FAST32_MAX
     struct rlimit limit;
     if(getrlimit(RLIMIT_NOFILE,&limit) != 0) {
         printf("getrlimit RLIMIT_NOFILE error %s; \n", strerror(errno));
@@ -40,6 +54,7 @@
     printf("maxFilesPerProc: %ld\n", maxFilesPerProc);
 
     
+    printf("func address: %p\n", testtest);
     
     if (limit.rlim_cur < maxFilesPerProc) {
         limit.rlim_cur = maxFilesPerProc;

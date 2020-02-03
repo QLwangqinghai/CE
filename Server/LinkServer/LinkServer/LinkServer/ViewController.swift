@@ -16,7 +16,7 @@ class ViewController: NSViewController {
         OBBridge.test2()
 
         OBBridge.test()
-        
+        let time = DispatchSource.makeTimerSource()
         // Do any additional setup after loading the view.
     }
 

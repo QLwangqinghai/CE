@@ -26,6 +26,9 @@ const CEFileSource_s CEFileSourceInit = {
 
 
 
+extern void CETimeEventPerform(CETimeEventRef _Nonnull ref);
+
+
 //不做任何参数校验
 extern void _CEPollRemoveFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file);
 extern void _CEPollRemoveFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file);
@@ -123,6 +126,58 @@ typedef struct {
 
  */
 
+
+#pragma mark - file event api
+
+CCBool CEPollTimerQueueIfFull(CEPollPtr _Nonnull poll) {
+    assert(poll);
+    CEPoll_s * p = poll;
+    return p->timerQueue.count < CETimeEventQueueSizeMax;
+}
+
+CETimeEventRef _Nonnull CEPollAddTimeEvent(CEPollPtr _Nonnull poll,
+                                           uint32_t mode,
+                                           CEMicrosecondTime deadline,
+                                           CEMicrosecondTime repeating,
+                                           CCClosureRef _Nonnull closure) {
+    assert(poll);
+    CEPoll_s * p = poll;
+    assert(mode <= 2);//0, 1, 2 有效
+    CETimeEventRef ref = CCRefAllocate(CCDomain, CERefTypeTimeEvent, sizeof(CETimeEvent_s));
+    CETimeEvent_s * content = CCRefGetContentPtr(ref);
+    CCRefRetain(closure);
+    content->isCanceled = 0;
+    content->closure = closure;
+    content->when = deadline;
+    content->mode = mode;
+    content->states = CETimeEventStatesWait;
+    content->qIndex = CETimeEventQueueIndexInvalid;
+    content->duration = repeating;
+    assert(CETimeEventQueueInsert(&(p->timerQueue), ref));
+    CCRefRetain(ref);
+    return ref;
+}
+
+void CEPollCancelTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull ref) {
+    assert(poll);
+    assert(ref);
+    CEPoll_s * p = poll;
+    CETimeEvent_s * content = CCRefGetContentPtr(ref);
+    if (CETimeEventStatesFinished != content->states) {
+        content->isCanceled = 1;
+    }
+    if (CETimeEventQueueRemove(&(p->timerQueue), ref)) {
+        CCRefRelease(ref);
+    }
+}
+CCBool CEPollIsValidTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull ref) {
+    assert(poll);
+    assert(ref);
+    CEPoll_s * p = poll;
+    CETimeEvent_s * content = (CETimeEvent_s *)CCRefGetContentPtr(ref);
+    uint32_t index = content->qIndex;
+    return (index < p->timerQueue.count);
+}
 
 
 #pragma mark - file event api
@@ -309,7 +364,7 @@ void CEPollAsync(CEPollPtr _Nonnull poll, CCClosureRef _Nonnull closure) {
     assert(closure);
     CEPoll_s * p = poll;
 
-    CCClosureRetain(closure);
+    CCRefRetain(closure);
     CEPollBlockQueueLock(p);
     CEBlockQueueAppend(&(p->blockQueue), closure);
     CEPollBlockQueueUnlock(p);
@@ -386,7 +441,7 @@ int64_t _CEPollDoBlocks(CEPoll_s * _Nonnull p) {
             
             CCClosureRef closure = page->buffer[i];
             CCClosurePerform(closure, NULL, NULL);
-            CCClosureRelease(closure);
+            CCRefRelease(closure);
         }
         CEDeallocate(page);
         page = nextPage;
@@ -411,6 +466,7 @@ int64_t _CEPollDoTimers(CEPoll_s * _Nonnull p) {
 //                CETimeEventQueueShiftDown(teq, te->qIndex);
 //            } else {
 //                CETimeEvent_s * removed = CETimeEventQueueRemoveFirst(teq);
+//                CCRefRelease
 //                CETimeEventSourceDeinit(removed, eventLoop);
 //            }
 //
@@ -440,7 +496,7 @@ int __CEPollDoCheckSource(CEPoll_s * _Nonnull p, struct CEApiPollContext * _Nonn
     CEMicrosecondTime now = CEGetCurrentTime();
     CEMicrosecondTime timeout = 1;
     if (now < p->currentTime + CEFrameIntervalDefault) {
-        CETimeEvent_s * te = CETimeEventQueueGetFirstItem(&(p->timeEventManager.timerQueue));
+        CETimeEvent_s * te = CETimeEventQueueGetFirstItem(&(p->timerQueue));
         if (NULL != te) {
             if (te->when > now) {
                 timeout = 1;
@@ -730,7 +786,7 @@ CEPoll_s * _Nonnull CEPollCreate(uint32_t setsize) {
     
     poll->api = api;
 
-    CETimeEventQueueInit(&(poll->timeEventManager.timerQueue));
+    CETimeEventQueueInit(&(poll->timerQueue));
     //pipe
     //https://www.cnblogs.com/kunhu/p/3608109.html
     
@@ -811,6 +867,11 @@ CEFileEventMask_es CEPollGetFileStatus(CEPollPtr _Nonnull poll, CEFileId id) {
         return CEFileEventMaskNone;
     }
 }
+
+
+
+
+
 
 
 

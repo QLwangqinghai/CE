@@ -34,37 +34,24 @@ CEFileEventMask_es CEPollGetFileStatus(CEPollPtr _Nonnull poll, CEFileId id);
 #pragma mark - time event api
 
 
-////时间单位都是microseconds
-//CEResult_t CEPollAddTimeEvent(CEPollPtr _Nonnull poll,
-//                                 CETimeDescription_s * _Nullable tdPtr,
-//                                 uint64_t delay,
-//                                 uint64_t leeway,
-//                                 _Bool repeat,
-//                                 _Bool repeatModeAfter,
-//                                 uint64_t interval,
-//                                 CETimeEventHandler_f _Nonnull execute,
-//                                 void * _Nullable context,
-//                                 CETimeEventClearContextHandler_f _Nullable clearContext);
-//
-//CEResult_t CEPollAddRepeatTimer(CEPollPtr _Nonnull poll,
-//                                   CETimeDescription_s * _Nullable tdPtr,
-//                                   uint64_t delay,
-//                                   uint64_t leeway,
-//                                   _Bool repeatModeAfter,
-//                                   uint64_t interval,
-//                                   CETimeEventHandler_f _Nonnull execute,
-//                                   void * _Nullable context,
-//                                   CETimeEventClearContextHandler_f _Nullable clearContext);
-//
-//CEResult_t CEPollAddDelayTimer(CEPollPtr _Nonnull poll,
-//                                  CETimeDescription_s * _Nullable tdPtr,
-//                                  uint64_t delay,
-//                                  uint64_t leeway,
-//                                  CETimeEventHandler_f _Nonnull execute,
-//                                  void * _Nullable context,
-//                                  CETimeEventClearContextHandler_f _Nullable clearContext);
-//
-//CEResult_t CEPollRemoveTimeEvent(CEPollPtr _Nonnull poll, CETimeDescription_s td);
+CCBool CEPollTimerQueueIfFull(CEPollPtr _Nonnull poll);
+
+/**
+ * mode CETimeEventModeDelay、CETimeEventModeRepeatFixedRate、CETimeEventModeRepeatFixedDelay
+ * deadline 第一次触发时间
+ * repeating 间隔时间 (mode 为  CETimeEventModeRepeatFixedRate、CETimeEventModeRepeatFixedDelay 时有效)
+ * closure timer 会作为input传入
+ * timerQueue 满了 时会崩溃
+ * 返回一个retain的对象
+ */
+CETimeEventRef _Nonnull CEPollAddTimeEvent(CEPollPtr _Nonnull poll,
+                                           uint32_t mode,
+                                           CEMicrosecondTime deadline,
+                                           CEMicrosecondTime repeating,
+                                           CCClosureRef _Nonnull closure);
+
+void CEPollCancelTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull ref);
+CCBool CEPollIsValidTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull ref);
 
 
 #pragma mark - file event api

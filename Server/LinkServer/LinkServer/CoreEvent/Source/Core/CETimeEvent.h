@@ -11,7 +11,7 @@
 
 #include "CEBase.h"
 
-
+extern CCRefType CERefTypeTimeEvent;
 
 void CETimeEventQueueInit(CETimeEventQueue_s * _Nonnull queue);
 void CETimeEventQueueShiftDown(CETimeEventQueue_s * _Nonnull queue, uint32_t index);
@@ -30,8 +30,14 @@ static inline CETimeEventRef _Nullable CETimeEventQueueGetFirstItem(CETimeEventQ
 }
 
 CETimeEvent_s * _Nullable CETimeEventQueueRemoveFirst(CETimeEventQueue_s * _Nonnull queue);
-_Bool CETimeEventQueueRemove(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event);
-_Bool CETimeEventQueueInsert(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event);
+CCBool CETimeEventQueueRemove(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event);
+CCBool CETimeEventQueueInsert(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event);
+
+
+
+void _CETimeEventDeinit(CETimeEventRef _Nonnull ref);
+
+
 
 
 #endif /* CETimeEvent_h */

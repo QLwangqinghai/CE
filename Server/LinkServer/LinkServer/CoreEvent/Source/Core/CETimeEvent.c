@@ -9,6 +9,9 @@
 #include "CETimeEvent.h"
 #include "CEMemory.h"
 
+
+CCRefType CERefTypeTimeEvent = UINTPTR_MAX;
+
 void CETimeEventSourceDeinit(CETimeEvent_s * _Nonnull te, CEPollPtr _Nonnull poll);
 void CETimeEventSourceStop(CETimeEvent_s * _Nonnull te, CEPollPtr _Nonnull poll);
 
@@ -16,122 +19,6 @@ void CETimeEventSourceStop(CETimeEvent_s * _Nonnull te, CEPollPtr _Nonnull poll)
 static CEMicrosecondTime CEAddMicrosecondsToNow(CEMicrosecondTime milliseconds) {
     CEMicrosecondTime time = CEGetCurrentTime();
     return time + milliseconds;
-}
-
-CETimeEvent_s * _Nullable CETimeEventSourceInit(CETimeEventManager_s * _Nonnull manager,
-                                                uint64_t delay,
-                                                uint64_t leeway,
-                                                _Bool repeat,
-                                                _Bool repeatModeAfter,
-                                                uint64_t interval,
-                                                CETimeEventHandler_f _Nonnull execute,
-                                                void * _Nullable context,
-                                                CETimeEventClearContextHandler_f _Nullable clearContext) {
-    CETimeDescription_s td = {};
-    if (!CETimeEventManagerMakeTd(manager, &td)) {
-        return NULL;
-    }
-    
-    CETimeEvent_s * e = NULL;
-    e = CETimeEventManagerGetEventById(manager, td.id);
-    
-    if (td.id < 4096) {
-#if DEBUG
-        assert(NULL != e);
-#endif
-        e->isStatic = 1;
-        CETimeEventSetTd(e, td);
-    } else {
-        CETimeEventContainer_s * c = CEAllocate(sizeof(CETimeEventContainer_s));
-        c->left = NULL;
-        c->right = NULL;
-        e = &(c->te);
-        e->isStatic = 0;
-        CETimeEventSetTd(e, td);
-        CETimeEventTableAddItem(&(manager->table), c);
-    }
-    e->repeat = repeat ? 1 : 0;
-    e->repeatMode = repeatModeAfter ? 1 : 0;
-    e->states = CETimeEventStatesWait;
-    e->interval = interval;
-    e->execute = execute;
-    e->clearContext = clearContext;
-    e->context = context;
-    e->qIndex = CETimeEventQueueIndexInvalid;
-    e->when = CEAddMicrosecondsToNow(delay);
-    CETimeEventSetLeeway(e, leeway);
-    
-    return e;
-}
-
-void CETimeEventSourceDeinit(CETimeEvent_s * _Nonnull te, CEPollPtr _Nonnull poll) {
-    assert(!CETimeEventIsRunning(te));
-    CETimeEventSourceStop(te, poll);
-    CETimeEventManager_s * tem = &(eventLoop->timeEventManager);
-    if (0 == te->isStatic) {
-        assert(te->tdId >= 4096);
-        CETimeEventContainer_s * c = CETimeEventTableGetItem(&(tem->table), te->tdId);
-        assert(&(c->te) == te);
-        CETimeEventTableRemoveItem(&(tem->table), c);
-        CETimeEventManagerFreeId(&(eventLoop->timeEventManager), te->tdId);
-        CEDeallocate(c);
-    } else {
-        assert(te->tdId < 4096);
-        CETimeEventManagerFreeId(&(eventLoop->timeEventManager), te->tdId);
-    }
-}
-
-
-static inline void CETimeEventSourceClearContext(CETimeEvent_s * _Nonnull te, CEPollPtr _Nonnull poll, CETimeDescription_s td) {
-    if (te->clearContext) {
-        te->clearContext(eventLoop, td, te->context);
-        te->clearContext = NULL;
-        te->context = NULL;
-    }
-}
-
-
-void CETimeEventSourceExecute(CETimeEvent_s * _Nonnull te, CEPollPtr _Nonnull poll) {
-    if (CETimeEventStatesWait != te->states) {
-        return;
-    }
-    te->states = CETimeEventStatesExecuting;
-    
-    CETimeDescription_s td = CETimeEventGetTd(te);
-    _Bool result = te->execute(eventLoop, td, te->context);
-    if (CETimeEventStatesExecuting == te->states) {
-        if (1 == te->repeat) {
-            if (result) {
-                if (te->repeatMode == CETimeEventRepeatModeAfter) {
-                    te->when = eventLoop->microsecondsTime + te->interval;
-                } else {
-                    te->when += te->interval;
-                }
-                te->states = CETimeEventStatesWait;
-            } else {
-                te->states = CETimeEventStatesCancel;
-                CETimeEventSourceClearContext(te, eventLoop, td);
-            }
-        } else {
-            te->states = CETimeEventStatesFinished;
-            CETimeEventSourceClearContext(te, eventLoop, td);
-        }
-    }
-}
-
-
-void CETimeEventSourceStop(CETimeEvent_s * _Nonnull te, CEPollPtr _Nonnull poll) {
-    CETimeDescription_s td = CETimeEventGetTd(te);
-    if (CETimeEventStatesExecuting == te->states) {
-        if (1 == te->repeat) {
-            te->states = CETimeEventStatesCancel;
-        } else {
-            te->states = CETimeEventStatesFinished;
-        }
-    } else {
-        te->states = CETimeEventStatesCancel;
-    }
-    CETimeEventSourceClearContext(te, eventLoop, td);
 }
 
 
@@ -173,7 +60,7 @@ CETimeEvent_s * _Nullable CETimeEventQueueRemoveFirst(CETimeEventQueue_s * _Nonn
     return CETimeEventQueueRemoveIndex(queue, 0);
 }
 
-_Bool CETimeEventQueueRemove(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event) {
+CCBool CETimeEventQueueRemove(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event) {
     assert(queue);
     assert(event);
     uint32_t index = ((CETimeEvent_s *)CCRefGetContentPtr(event))->qIndex;
@@ -188,7 +75,7 @@ _Bool CETimeEventQueueRemove(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef
     return true;
 }
 
-_Bool CETimeEventQueueInsert(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event) {
+CCBool CETimeEventQueueInsert(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event) {
     if (queue->count == queue->capacity) {
         CETimeEventQueueAddSize(queue);
     }
@@ -202,6 +89,7 @@ _Bool CETimeEventQueueInsert(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef
     queue->pages[(index >> 12)]->buffer[(index & 0xfff)] = event;
     e->qIndex = index;
     CETimeEventQueueShiftUp(queue, index);
+    return true;
 }
 
 static inline void CETimeEventQueueSwap(CETimeEventQueue_s * _Nonnull queue, uint32_t index, uint32_t aindex) {
@@ -219,7 +107,7 @@ static inline _Bool CETimeEventQueueNeedSwap(CETimeEventQueue_s * _Nonnull queue
     CETimeEvent_s * parent = CCRefGetContentPtr(CETimeEventQueueGetItem(queue, parentIndex));
     CETimeEvent_s * child = CCRefGetContentPtr(CETimeEventQueueGetItem(queue, childIndex));
     if (parent->when == child->when) {
-        return parent->leeway > child->leeway;
+        return false;
     } else {
         return parent->when > child->when;
     }
@@ -266,4 +154,50 @@ void CETimeEventQueueShiftUp(CETimeEventQueue_s * _Nonnull queue, uint32_t index
         }
         i = parentIndex;
     }
+}
+
+void CETimeEventPerform(CETimeEventRef _Nonnull ref) {
+    assert(ref);
+    CETimeEvent_s * content = CCRefGetContentPtr(ref);
+
+    if (CETimeEventStatesWait != content->states) {
+        CELogError("CETimeEventPerform error");
+        abort();
+    }
+    content->states = CETimeEventStatesExecuting;
+    CCClosurePerform(content->closure, ref, NULL);
+    
+    if (CETimeEventStatesExecuting == content->states) {
+        if (CETimeEventModeRepeatFixedRate == content->mode) {
+            content->when = content->when + content->duration;
+            content->states = CETimeEventStatesWait;
+        } else if (CETimeEventModeRepeatFixedDelay == content->mode) {
+            content->when = CEGetCurrentTime() + content->duration;
+            content->states = CETimeEventStatesWait;
+        } else if (CETimeEventModeDelay == content->mode) {
+            content->states = CETimeEventStatesFinished;
+        } else {
+            CELogError("CETimeEventPerform error");
+            abort();
+        }
+    } else if (CETimeEventStatesWait == content->states) {
+        CELogError("CETimeEventPerform error");
+        abort();
+    } else if (CETimeEventStatesFinished == content->states) {
+        CELogError("CETimeEventPerform error");
+        abort();
+    } else {
+        CELogError("CETimeEventPerform error");
+        abort();
+    }
+}
+
+
+void _CETimeEventDeinit(CETimeEventRef _Nonnull ref) {
+    assert(ref);
+    CETimeEvent_s * content = CCRefGetContentPtr(ref);
+    assert(content->qIndex = CETimeEventQueueIndexInvalid);
+    assert(content->closure);
+    CCRefRelease(content->closure);
+    content->closure = NULL;
 }

@@ -30,12 +30,12 @@ extern void CETimeEventPerform(CETimeEventRef _Nonnull ref);
 
 
 //不做任何参数校验
-extern void _CEPollRemoveFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file);
-extern void _CEPollRemoveFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file);
-extern void _CEPollAddFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file, uint16_t index);
-extern void _CEPollAddFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file, uint16_t index);
-extern void _CEPollUpdateFileReadTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file, uint16_t index);
-extern void _CEPollUpdateFileWriteTimer(CEPoll_s * _Nonnull p, uint16_t fid, CEFile_s * _Nonnull file, uint16_t index);
+extern void _CEPollRemoveFileReadTimer(CEPoll_s * _Nonnull p, uint32_t fid, CEFile_t * _Nonnull file);
+extern void _CEPollRemoveFileWriteTimer(CEPoll_s * _Nonnull p, uint32_t fid, CEFile_t * _Nonnull file);
+extern void _CEPollAddFileReadTimer(CEPoll_s * _Nonnull p, uint32_t fid, CEFile_t * _Nonnull file, uint32_t index);
+extern void _CEPollAddFileWriteTimer(CEPoll_s * _Nonnull p, uint32_t fid, CEFile_t * _Nonnull file, uint32_t index);
+extern void _CEPollUpdateFileReadTimer(CEPoll_s * _Nonnull p, uint32_t fid, CEFile_t * _Nonnull file, uint32_t index);
+extern void _CEPollUpdateFileWriteTimer(CEPoll_s * _Nonnull p, uint32_t fid, CEFile_t * _Nonnull file, uint32_t index);
 
 
 
@@ -183,7 +183,7 @@ CCBool CEPollIsValidTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull r
 #pragma mark - file event api
 
 
-CEResult_t CEPollAddFile(CEPollPtr _Nonnull poll, uint32_t handlerId, int fd, CEFileId * _Nonnull fdPtr) {
+CEResult_t CEPollAddFile(CEPollPtr _Nonnull poll, uint32_t handlerId, int fd, uint64_t context, CEFileId * _Nonnull fidPtr) {
     assert(poll);
     CEPoll_s * p = poll;
     if (fd < 0 || fd >= p->fileTableSize) {
@@ -195,87 +195,103 @@ CEResult_t CEPollAddFile(CEPollPtr _Nonnull poll, uint32_t handlerId, int fd, CE
         CELogWarning("CEPollAddFile error, unsupport with handleId: %d\n", handlerId);
         return CEResultErrorParams;
     };
-    if (NULL == fdPtr) {
-        CELogWarning("CEPollAddFile error, unsupport with fdPtr: null\n");
+    if (NULL == fidPtr) {
+        CELogWarning("CEPollAddFile error, unsupport with fidPtr: null\n");
         return CEResultErrorParams;
     };
     assert(poll);
-    uint16_t index = (uint16_t)fd;
-    uint16_t sequence = (uint16_t)p->fdSequence;
+//    static inline CEFileId CEFileInternalIdToFileId(CEFileInternalId fid) {}
+    CEFileInternalId fid = {
+        .index = (uint64_t)fd,
+        .sequence = (p->fdSequence & CEFileIdSequenceMask),
+    };
     p->fdSequence += 1;
 
-    fdPtr->fd = index;
-    fdPtr->sequence = sequence;
+    *fidPtr = CEFileInternalIdToFileId(fid);
 
-    CEFile_s * file = _CEPollGetFile(p, index);
-    file->sequence = sequence;
+    CEFile_t * file = __CEPollGetFileWithIndex(p, fid.index);
+    if (file->handler != 0) {
+        return CEResultErrorFileIdInvalid;
+    }
+    file->sequence = fid.sequence;
     file->handler = handlerId;
     file->mask = 0;
     file->read = CEFileSourceInit;
     file->write = CEFileSourceInit;
+    file->context = context;
     return CEResultSuccess;
 }
-CEResult_t CEPollRemoveFile(CEPollPtr _Nonnull poll, CEFileId fd) {
+
+static inline CEResult_t _CEPollAddFileEventMask(CEPoll_s * _Nonnull p, CEFileInternalId id, CEFileEventMask_es mask) {
+    assert(p);
+    CEFile_t * file = _CEPollGetFile(p, id);
+    if (NULL == file) {
+        return CEResultErrorFileId;
+    }
+    CEApiAddEvent(p->api, id.index, file->mask, mask);
+    file->mask |= mask;
+    return CEResultSuccess;
+}
+
+static inline CEResult_t _CEPollRemoveFileEventMask(CEPoll_s * _Nonnull p, CEFileInternalId id, CEFileEventMask_es mask) {
+    assert(p);
+    CEFile_t * file = _CEPollGetFile(p, id);
+    if (NULL == file) {
+        return CEResultErrorFileId;
+    }
+    if (file->mask == CEFileEventMaskNone) {
+        return CEResultSuccess;
+    };
+    file->mask = file->mask & (~mask);
+    CEApiRemoveEvent(p->api, id.index, mask);
+    return CEResultSuccess;
+}
+
+
+CEResult_t CEPollRemoveFile(CEPollPtr _Nonnull poll, CEFileId fid) {
     assert(poll);
     CEPoll_s * p = poll;
-
-    if (fd.fd < 0 || fd.fd >= p->fileTableSize) {
-        CELogWarning("CEPollRemoveFile error 1, fd error: (%d, %d)\n", fd.fd, fd.sequence);
-        return CEResultErrorFileDescription;
+    CEFileInternalId id = CEFileIdToFileInternalId(fid);
+    if (id.index >= p->fileTableSize) {
+        CELogWarning("CEPollRemoveFile error 1, fid error: %llu\n", fid);
+        return CEResultErrorFileId;
     };
     
-    CEFile_s * file = _CEPollGetFile(p, fd.fd);
-    
+    CEFile_t * file = __CEPollGetFileWithIndex(p, id.index);
     if (0 == file->handler) {
-        CELogWarning("CEPollRemoveFile error 2, fd error: (%d, %d)\n", fd.fd, fd.sequence);
-        return CEResultErrorFileDescription;
+        CELogWarning("CEPollRemoveFile error 2, fid error: %llu\n", fid);
+        return CEResultErrorFileId;
     };
     
-    if (file->sequence == fd.sequence) {
+    if (file->sequence == id.sequence) {
         if (file->read.isWaitingTimeout) {
-            CEPollCancelFileEventReadTimeout(p, fd);
+            CEPollCancelFileEventReadTimeout(p, fid);
         }
         if (file->write.isWaitingTimeout) {
-            CEPollCancelFileEventWriteTimeout(p, fd);
+            CEPollCancelFileEventWriteTimeout(p, fid);
         }
-        CEApiRemoveEvent(p->api, fd.fd, CEFileEventMaskReadWritable);
+        CEApiRemoveEvent(p->api, id.index, CEFileEventMaskReadWritable);
         file->handler = 0;
         return CEResultSuccess;
     } else {
-        CELogWarning("CEPollRemoveFile error, fd error: (%d, %d)\n", fd.fd, fd.sequence);
+        CELogWarning("CEPollRemoveFile error, fid error:%llu\n", fid);
         return CEResultErrorParams;
     }
 }
 
 
-CEResult_t CEPollAddFileEventMask(CEPollPtr _Nonnull poll, CEFileId fd, CEFileEventMask_es mask) {
+CEResult_t CEPollAddFileEventMask(CEPollPtr _Nonnull poll, CEFileId fid, CEFileEventMask_es mask) {
     assert(poll);
     CEPoll_s * p = poll;
-    if (fd.fd < 0 || fd.fd >= p->fileTableSize) {
-        CELogWarning("CEPollRemoveFile error 1, fd error: (%d, %d)\n", fd.fd, fd.sequence);
-        return CEResultErrorFileDescription;
-    };
-    
-    CEFile_s * file = _CEPollGetFile(p, fd.fd);
-    CEApiAddEvent(p->api, fd.fd, file->mask, mask);
-    file->mask |= mask;
-    return CEResultSuccess;
+    CEFileInternalId id = CEFileIdToFileInternalId(fid);
+    return _CEPollAddFileEventMask(p, id, mask);
 }
 
-CEResult_t CEPollRemoveFileEventMask(CEPollPtr _Nonnull poll, CEFileId fd, CEFileEventMask_es mask) {
+CEResult_t CEPollRemoveFileEventMask(CEPollPtr _Nonnull poll, CEFileId fid, CEFileEventMask_es mask) {
     assert(poll);
     CEPoll_s * p = poll;
-    if (fd.fd < 0 || fd.fd >= p->fileTableSize) {
-        CELogWarning("CEPollRemoveFile error 1, fd error: (%d, %d)\n", fd.fd, fd.sequence);
-        return CEResultErrorFileDescription;
-    };
-    CEFile_s * file = _CEPollGetFile(p, fd.fd);
-    if (file->mask == CEFileEventMaskNone) {
-        return CEResultSuccess;
-    };
-    file->mask = file->mask & (~mask);
-    CEApiRemoveEvent(p->api, fd.fd, mask);
-    return CEResultSuccess;
+    CEFileInternalId id = CEFileIdToFileInternalId(fid);
+    return _CEPollRemoveFileEventMask(p, id, mask);
 }
 
 //timeout  单位为微妙 数值必须大于0 且 小于等于CEFileEventTimeoutMax
@@ -389,7 +405,7 @@ _Bool CEApiFileEventMapperCallback(void * _Nullable context, void * _Nonnull api
     assert(p);
     assert(ranges);
     
-    CEFile_s * file = _CEPollGetFile(p, fd);
+    CEFile_t * file = __CEPollGetFileWithIndex(p, fd);
     assert(file->handler > 0);
     
     if (CEFileEventMaskReadWritable & mask) {
@@ -403,7 +419,7 @@ _Bool CEApiFileEventMapperCallback(void * _Nullable context, void * _Nonnull api
         }
         if (!isFired) {
             CEFileFiredInfo info = {
-                .id = CEFileIdMake(fd, file->sequence),
+                .id = __CEFileIdMake(fd, file->sequence),
                 .handler = file->handler,
             };
             CEFileFiredInfo * item = buffer;
@@ -551,8 +567,9 @@ int64_t _CEPollDoSource(CEPoll_s * _Nonnull p) {
     }
     
     for (int j = 0; j < context.count; j++) {
-        CEFileId * id = ids + j;
-        CEFile_s * file = _CEPollGetFile(p, id->fd);
+        CEFileId fid = ids[j];
+        CEFileInternalId id = CEFileIdToFileInternalId(fid);
+        CEFile_t * file = _CEPollGetFile(p, id);
         file->read.isFired = 0;
         file->write.isFired = 0;
     }
@@ -562,7 +579,7 @@ int64_t _CEPollDoSource(CEPoll_s * _Nonnull p) {
 //    for (int j = 0; j < processed; j++) {
 //        CEFileFiredInfo * item = info + j;
 //
-//        _CEPollGetFile(p, item->id.in);
+//        __CEPollGetFileWithIndex(p, item->id.in);
 //
 //        CEFileEvent_s *fe = CERunLoopGetFileEvent(eventLoop, fd);
 //        if (NULL != fe) {
@@ -757,7 +774,7 @@ CEPoll_s * _Nonnull CEPollCreate(uint32_t setsize) {
 
     CEPoll_s * poll = (CEPoll_s *)CEAllocateClear(sizeof(CEPoll_s));
     poll->fileTableSize = setsize;
-    poll->fileTable = CEAllocateClear(sizeof(CEFile_s) * setsize);
+    poll->fileTable = CEAllocateClear(sizeof(CEFile_t) * setsize);
     
     
     poll->tmpBufferSize = CEApiGetEventItemSize() * setsize;
@@ -840,20 +857,11 @@ uint32_t CEPollRegisterHandler(CEPollPtr _Nonnull poll, CCPtr _Nullable context,
     }
 }
 
-CEFile_s * _Nullable CEPollGetFile(CEPollPtr _Nonnull poll, CEFileId id) {
+CEFileEventMask_es CEPollGetFileStatus(CEPollPtr _Nonnull poll, CEFileId fid) {
+    assert(poll);
     CEPoll_s * p = poll;
-    if (id.fd < p->fileTableSize) {
-        CEFile_s * file = _CEPollGetFile(p, id.fd);
-        if (file->sequence == id.sequence) {
-            return file;
-        } else {
-            return NULL;
-        }
-    }
-    return NULL;
-}
-CEFileEventMask_es CEPollGetFileStatus(CEPollPtr _Nonnull poll, CEFileId id) {
-    CEFile_s * file = CEPollGetFile(poll, id);
+    CEFileInternalId id = CEFileIdToFileInternalId(fid);
+    CEFile_t * file = _CEPollGetFile(p, id);
     if (file) {
         CEFileEventMask_es result = CEFileEventMaskNone;
         if (1 == file->read.isFired) {

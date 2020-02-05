@@ -9,6 +9,10 @@
 #ifndef CCBase_h
 #define CCBase_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #include "CCInteger.h"
 #include "CCType.h"
 #include "CCConfig.h"
@@ -83,6 +87,8 @@ static inline CCBool CCAtomicUInt64CompareExchange(_Atomic(uint_fast64_t) * _Non
     return result;
 }
 
-
+#if defined(__cplusplus)
+}  // extern C
+#endif
 
 #endif /* CCBase_h */

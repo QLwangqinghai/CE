@@ -63,7 +63,7 @@
 //CEResult_t CEFileEventSourceSetReadTimeout(CERunLoop_s * _Nonnull eventLoop, CEFileDescription_s fd, uint32_t initialTimeout, uint32_t timeout) {
 //    CEFileEvent_s * fe = CERunLoopGetFileEvent(eventLoop, fd);
 //    if (NULL == fe) {
-//        return CEResultErrorFileDescription;
+//        return CEResultErrorFileId;
 //    }
 //    if (0 == timeout || timeout >= CEFileEventTimeoutMillisecondMax) {
 //        return CEResultErrorParams;
@@ -89,7 +89,7 @@
 //CEResult_t CEFileEventSourceSetWriteTimeout(CERunLoop_s * _Nonnull eventLoop, CEFileDescription_s fd, uint32_t initialTimeout, uint32_t timeout) {
 //    CEFileEvent_s * fe = CERunLoopGetFileEvent(eventLoop, fd);
 //    if (NULL == fe) {
-//        return CEResultErrorFileDescription;
+//        return CEResultErrorFileId;
 //    }
 //    if (0 == timeout || timeout >= CEFileEventTimeoutMillisecondMax) {
 //        return CEResultErrorParams;
@@ -115,7 +115,7 @@
 //CEResult_t CEFileEventSourceCancelReadTimeout(CERunLoop_s * _Nonnull eventLoop, CEFileDescription_s fd) {
 //    CEFileEvent_s * fe = CERunLoopGetFileEvent(eventLoop, fd);
 //    if (NULL == fe) {
-//        return CEResultErrorFileDescription;
+//        return CEResultErrorFileId;
 //    }
 //    if (0 != fe->readTimeoutInterval) {
 //        CEFileEventRemoveFromReadTimer(eventLoop, fe);
@@ -126,7 +126,7 @@
 //CEResult_t CEFileEventSourceCancelWriteTimeout(CERunLoop_s * _Nonnull eventLoop, CEFileDescription_s fd) {
 //    CEFileEvent_s * fe = CERunLoopGetFileEvent(eventLoop, fd);
 //    if (NULL == fe) {
-//        return CEResultErrorFileDescription;
+//        return CEResultErrorFileId;
 //    }
 //    if (0 != fe->writeTimeoutInterval) {
 //        CEFileEventRemoveFromWriteTimer(eventLoop, fe);
@@ -138,7 +138,7 @@
 //CEResult_t CEFileEventSourceUpdateReadTime(CERunLoop_s * _Nonnull eventLoop, CEFileDescription_s fd) {
 //    CEFileEvent_s * fe = CERunLoopGetFileEvent(eventLoop, fd);
 //    if (NULL == fe) {
-//        return CEResultErrorFileDescription;
+//        return CEResultErrorFileId;
 //    }
 //    if (0 == fe->readTimeoutInterval) {
 //        return CEResultSuccess;
@@ -153,7 +153,7 @@
 //CEResult_t CEFileEventSourceUpdateWriteTime(CERunLoop_s * _Nonnull eventLoop, CEFileDescription_s fd) {
 //    CEFileEvent_s * fe = CERunLoopGetFileEvent(eventLoop, fd);
 //    if (NULL == fe) {
-//        return CEResultErrorFileDescription;
+//        return CEResultErrorFileId;
 //    }
 //    if (0 == fe->writeTimeoutInterval) {
 //        return CEResultSuccess;

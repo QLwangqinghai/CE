@@ -9,6 +9,10 @@
 #ifndef CCInteger_h
 #define CCInteger_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #include "CCType.h"
 
 //找出为1的最高位
@@ -55,5 +59,8 @@ CCInt CCBytesToSInt64(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEn
 CCInt CCBytesToSInt32(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt32 * _Nonnull n);
 CCInt CCBytesToSInt16(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt16 * _Nonnull n);
 
+#if defined(__cplusplus)
+}  // extern C
+#endif
 
 #endif /* CInteger_h */

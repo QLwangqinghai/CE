@@ -13,10 +13,10 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        OBBridge.test2()
+//        OBBridge.test2()
 
         OBBridge.test()
-        let time = DispatchSource.makeTimerSource()
+//        let time = DispatchSource.makeTimerSource()
         // Do any additional setup after loading the view.
     }
 

@@ -9,6 +9,10 @@
 #ifndef CCAllocator_h
 #define CCAllocator_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #include "CCType.h"
 #include <stdio.h>
 #include <wchar.h>
@@ -62,6 +66,8 @@ static inline void CCDeallocate(void * _Nonnull ptr) {
 
 size_t CCGetCachelineSize(void);
 
-
+#if defined(__cplusplus)
+}  // extern C
+#endif
 
 #endif /* CFAllocator_h */

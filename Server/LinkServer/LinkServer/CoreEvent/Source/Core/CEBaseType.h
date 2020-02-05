@@ -30,13 +30,14 @@
 typedef uint64_t CEMicrosecondTime;
 typedef CCPtr CEPollPtr;
 
-#pragma pack(push, 2)
-typedef struct {
-    uint64_t fd: 23;
-    uint64_t sequence: 41;
-} CEFileId;
-#pragma pack(pop)
+//#pragma pack(push, 2)
+//typedef struct {
+//    uint64_t fd: 23;
+//    uint64_t sequence: 41;
+//} CEFileId;
+//#pragma pack(pop)
 
+typedef uint64_t CEFileId;
 
 static const CEMicrosecondTime CEFrameIntervalPer32 = 61 * 40;//每32个链接 时间间隔减少 (1000000 - 0xF4200)
 static const CEMicrosecondTime CEFrameIntervalDefault = 125000 * 40;
@@ -55,13 +56,6 @@ extern const CEFileEventMask_es CEFileEventMaskReadWritable;
 //return true for default， return false for cancel
 typedef void (*CEStateChangeHandler_f)(CEPollPtr _Nonnull poll);
 
-
-
-//当前模式下会在上次timer 执行的时间基础上 添加 间隔时间 作为下次触发的时间， 比如  触发时间为 10000， 间隔时间 为 1000， 当前执行的时间 为 10234， 则下次触发 在 11234 之后
-#define CETimeEventRepeatModeAfter 1
-
-//当前模式下会在上次timer 应该触发的时间基础上 添加 间隔时间 作为下次触发的时间， 比如  触发时间为 10000， 间隔时间 为 1000， 当前执行的时间 为 10234， 则下次触发 在 11000 之后
-#define CETimeEventRepeatModeNone 0
 
 typedef struct _CEThread {
     pthread_t _Nullable thread;
@@ -249,11 +243,11 @@ typedef struct _CERunLoopObserver {
 static const CEResult_t CEResultSuccess = 0;
 static const CEResult_t CEResultErrorParams = 1;
 static const CEResult_t CEResultErrorSystemCall = 2;
-static const CEResult_t CEResultErrorFileDescription = 3;
+static const CEResult_t CEResultErrorFileId = 3;
 static const CEResult_t CEResultErrorSourceReinit = 4;
 static const CEResult_t CEResultErrorShouldRemoveSource = 5;
 static const CEResult_t CEResultFailureResize = 6;
-static const CEResult_t CEResultErrorFileDescriptionInvalid = 7;
+static const CEResult_t CEResultErrorFileIdInvalid = 7;
 static const CEResult_t CEResultErrorTimeDescriptionInvalid = 8;
 static const CEResult_t CEResultErrorTimeDescriptionNotEnough = 9;
 

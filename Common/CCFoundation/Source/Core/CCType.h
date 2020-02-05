@@ -9,6 +9,11 @@
 #ifndef CCType_h
 #define CCType_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -477,10 +482,9 @@ static inline _Bool CTypeIsValid(CType_e t) {
 }
 
 
-
-
-
-
+#if defined(__cplusplus)
+}  // extern C
+#endif
 
 
 #endif /* CCType_h */

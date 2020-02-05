@@ -18,23 +18,30 @@
 #pragma pack(push, 2)
 
 typedef struct {
-    uint16_t isFired: 1;
-    uint16_t isWaitingTimeout: 1;
-    uint16_t isTimeout: 1;
-    uint16_t hashOfTimer: 15;
-    uint32_t prev: 23;
-    uint32_t next: 23;
+    uint64_t isFired: 1;
+    uint64_t isWaitingTimeout: 1;
+    uint64_t isTimeout: 1;
+    uint64_t hashOfTimer: 13;
+    uint64_t prev: 24;
+    uint64_t next: 24;
 } CEFileSource_s;
 
 extern const CEFileSource_s CEFileSourceInit;
 
 typedef struct {
-    uint64_t sequence: 41;
-    uint64_t handler: 21;
+    uint64_t index: 24;
+    uint64_t sequence: 40;
+} CEFileInternalId;
+
+//32B
+typedef struct {
+    uint64_t sequence: 40;
+    uint64_t handler: 22;
     uint64_t mask: 2;
     CEFileSource_s read;
     CEFileSource_s write;
-} CEFile_s;
+    uint64_t context;
+} CEFile_t;
 
 typedef struct {
     CEFileId id;
@@ -90,7 +97,7 @@ typedef struct {
     CCMicrosecondTime currentTime;//单位 微秒
     uint32_t fileTableSize;
     uint32_t maxHandlerId;
-    CEFile_s * _Nonnull fileTable;
+    CEFile_t * _Nonnull fileTable;
 
 //    uint32_t observerBufferSize;
 //    uint32_t observerBufferCount;
@@ -102,21 +109,54 @@ typedef struct {
 } CEPoll_s;
 #pragma pack(pop)
 
-#define CEFileIndexInvalid 0xffff
+#define CEFileHandlerInvalid 0x1FFFFF
+#define CEFileIndexInvalid 0x7FFFFF
+#define CEFileIndexMax 0x7FFFFFULL
+#define CEFileIndexShift 41
+
+#define CEFileIdSequenceMask 0x1FFFFFFFFFFULL
 
 
-static inline CEFile_s * _Nonnull _CEPollGetFile(CEPoll_s * _Nonnull p, uint32_t index) {
-    CEFile_s * file = p->fileTable;
+static inline CEFile_t * _Nonnull __CEPollGetFileWithIndex(CEPoll_s * _Nonnull p, uint64_t index) {
+    CEFile_t * file = p->fileTable;
     file += index;
     return file;
 }
-static inline CEFileId CEFileIdMake(uint64_t fd, uint64_t seq) {
-    CEFileId f = {
-        .fd = fd,
-        .sequence = seq,
-    };
-    return f;
+static inline CEFileId __CEFileIdMake(uint64_t index, uint64_t seq) {
+    assert(index <= CEFileIndexMax);
+    uint64_t result = index;
+    result = result << CEFileIndexShift;
+    result |= (seq & CEFileIdSequenceMask);
+    return result;
 }
 
+static inline CEFileId CEFileInternalIdToFileId(CEFileInternalId fid) {
+    uint64_t result = fid.index;
+    result = result << CEFileIndexShift;
+    result |= fid.sequence;
+    return result;
+}
+static inline CEFileInternalId CEFileIdToFileInternalId(CEFileId fid) {
+    CEFileInternalId result = {
+        .index = (fid >> CEFileIndexShift),
+        .sequence = (fid & CEFileIdSequenceMask),
+    };
+    return result;
+}
+
+static inline CEFile_t * _Nullable _CEPollGetFile(CEPoll_s * _Nonnull p, CEFileInternalId id) {
+    if (id.index >= p->fileTableSize) {
+        return NULL;
+    };
+    CEFile_t * file = __CEPollGetFileWithIndex(p, id.index);
+    if (file->sequence == id.sequence) {
+        if (file->handler >= p->maxHandlerId) {
+            return NULL;
+        }
+        return file;
+    } else {
+        return NULL;
+    }
+}
 
 #endif /* CEPollInternal_h */

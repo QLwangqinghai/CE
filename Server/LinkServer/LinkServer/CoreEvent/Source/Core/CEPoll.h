@@ -56,8 +56,8 @@ CCBool CEPollIsValidTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull r
 
 #pragma mark - file event api
 
-CEResult_t CEPollAddFile(CEPollPtr _Nonnull poll, uint32_t handleId, int fd, CEFileId * _Nonnull fdPtr);
-CEResult_t CEPollRemoveFile(CEPollPtr _Nonnull poll, CEFileId fd);
+CEResult_t CEPollAddFile(CEPollPtr _Nonnull poll, uint32_t handleId, int fd, uint64_t context, CEFileId * _Nonnull fidPtr);
+CEResult_t CEPollRemoveFile(CEPollPtr _Nonnull poll, CEFileId fid);
 
 CEResult_t CEPollAddFileEventMask(CEPollPtr _Nonnull poll, CEFileId fd, CEFileEventMask_es mask);
 

@@ -9,6 +9,12 @@
 #ifndef CCNet_h
 #define CCNet_h
 
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
 #include "CCBase.h"
 
 #include <sys/socket.h>
@@ -133,5 +139,8 @@ int CCSocketGetPeerAddress(int socket, struct sockaddr * _Nonnull address, sockl
 //assert(fresult1 == 0);
 
 
+#if defined(__cplusplus)
+}  // extern C
+#endif
 
 #endif /* CCNet_h */

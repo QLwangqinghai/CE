@@ -9,6 +9,9 @@
 #ifndef CCConfig_h
 #define CCConfig_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 #ifdef __APPLE__
 #include <AvailabilityMacros.h>
@@ -265,5 +268,8 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 
 
 
+#if defined(__cplusplus)
+}  // extern C
+#endif
 
 #endif /* CCConfig_h */

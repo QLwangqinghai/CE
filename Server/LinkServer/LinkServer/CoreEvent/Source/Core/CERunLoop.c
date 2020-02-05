@@ -491,7 +491,7 @@ CEResult_t CERunLoopAddFileEventMask(CERunLoop_s * _Nonnull eventLoop, CEFileDes
 CEResult_t CERunLoopRemoveFileEventMask(CERunLoop_s * _Nonnull eventLoop, CEFileDescription_s fd, CEFileEventMask_es mask) {
     CEFileEvent_s *fe = CERunLoopGetFileEvent(eventLoop, fd);
     if (NULL == fe) {
-        return CEResultErrorFileDescription;
+        return CEResultErrorFileId;
     }
     if (fe->mask == CEFileEventMaskNone) {
         return CEResultSuccess;
@@ -592,7 +592,7 @@ CEResult_t CERunLoopAddFileEvent(CERunLoop_s * _Nonnull eventLoop,
 CEResult_t CERunLoopRemoveFileEvent(CERunLoop_s * _Nonnull eventLoop, CEFileDescription_s fd) {
     CEFileEvent_s * fe = CERunLoopGetFileEvent(eventLoop, fd);
     if (NULL == fe) {
-        return CEResultErrorFileDescription;
+        return CEResultErrorFileId;
     }
     return CEFileEventSourceDeinit(eventLoop, fe);
 }

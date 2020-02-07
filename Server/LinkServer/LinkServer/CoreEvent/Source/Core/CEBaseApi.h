@@ -9,6 +9,9 @@
 #ifndef CEBaseApi_h
 #define CEBaseApi_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 #include "CEBaseType.h"
 
@@ -43,7 +46,7 @@ typedef struct __CEApiUpdateEventsItem {
 void CEApiUpdateEvents(void * _Nonnull api, int * _Nonnull fdPtrs, uint32_t swangqiangize, CEFileEventMask_es oldMask, CEFileEventMask_es mask);
 
 
-int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, uint32_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback);
+int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, size_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback);
 
 void CEApiWakeUp(void * _Nonnull api);
 
@@ -52,6 +55,8 @@ CEFileEventMask_es CEApiWait(int fd, CEFileEventMask_es mask, int milliseconds);
 char * _Nonnull CEApiName(void);
 
 
-
+#if defined(__cplusplus)
+}
+#endif
 
 #endif /* CEBaseApi_h */

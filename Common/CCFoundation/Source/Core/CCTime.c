@@ -11,7 +11,8 @@
 
 const CCMicrosecondTime kCCAbsoluteTimeIntervalSince1970 = 978307200000000LL;
 
-#if TARGET_OS_WIN32
+
+#if CC_TARGET_OS_WINDOWS
 static const CCMicrosecondTime kCCAbsoluteTimeIntervalSince1601 = 12622780800000000LL;
 
 CCMicrosecondTime CCMicrosecondTimeGetCurrent(void) {
@@ -27,6 +28,7 @@ CCMicrosecondTime CCMicrosecondTimeGetCurrent(void) {
     return result / 10 - kCCAbsoluteTimeIntervalSince1601;
 }
 #else
+
 CCMicrosecondTime CCMicrosecondTimeGetCurrent(void) {
     CCMicrosecondTime ret;
     struct timeval tv;

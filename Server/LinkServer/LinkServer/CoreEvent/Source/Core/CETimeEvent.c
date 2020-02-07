@@ -38,10 +38,10 @@ void CETimeEventQueueAddSize(CETimeEventQueue_s * _Nonnull queue) {
     queue->pages[(queue->capacity >> 12)] = CEAllocateClear(sizeof(CETimeEventPage_s));
 }
 
-CETimeEventRef _Nonnull CETimeEventQueueRemoveIndex(CETimeEventQueue_s * _Nonnull queue, uint32_t index) {
+CETimeEventId _Nonnull CETimeEventQueueRemoveIndex(CETimeEventQueue_s * _Nonnull queue, uint32_t index) {
     assert(index < queue->count);
     uint32_t lastIndex = queue->count - 1;
-    CETimeEventRef result = CETimeEventQueueGetItem(queue, index);
+    CETimeEventId result = CETimeEventQueueGetItem(queue, index);
     ((CETimeEvent_s *)CCRefGetContentPtr(result))->qIndex = CETimeEventQueueIndexInvalid;
     if (lastIndex == index) {
         queue->pages[(index >> 12)]->buffer[(index & 0xfff)] = NULL;
@@ -60,14 +60,14 @@ CETimeEvent_s * _Nullable CETimeEventQueueRemoveFirst(CETimeEventQueue_s * _Nonn
     return CETimeEventQueueRemoveIndex(queue, 0);
 }
 
-CCBool CETimeEventQueueRemove(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event) {
+CCBool CETimeEventQueueRemove(CETimeEventQueue_s * _Nonnull queue, CETimeEventId _Nonnull event) {
     assert(queue);
     assert(event);
     uint32_t index = ((CETimeEvent_s *)CCRefGetContentPtr(event))->qIndex;
     if (index >= queue->count) {
         return false;
     }
-    CETimeEventRef t = CETimeEventQueueGetItem(queue, index);
+    CETimeEventId t = CETimeEventQueueGetItem(queue, index);
     if (t != event) {
         return false;
     }
@@ -75,7 +75,7 @@ CCBool CETimeEventQueueRemove(CETimeEventQueue_s * _Nonnull queue, CETimeEventRe
     return true;
 }
 
-CCBool CETimeEventQueueInsert(CETimeEventQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event) {
+CCBool CETimeEventQueueInsert(CETimeEventQueue_s * _Nonnull queue, CETimeEventId _Nonnull event) {
     if (queue->count == queue->capacity) {
         CETimeEventQueueAddSize(queue);
     }
@@ -93,8 +93,8 @@ CCBool CETimeEventQueueInsert(CETimeEventQueue_s * _Nonnull queue, CETimeEventRe
 }
 
 static inline void CETimeEventQueueSwap(CETimeEventQueue_s * _Nonnull queue, uint32_t index, uint32_t aindex) {
-    CETimeEventRef t = queue->pages[(index >> 12)]->buffer[(index & 0xfff)];
-    CETimeEventRef at = queue->pages[(aindex >> 12)]->buffer[(aindex & 0xfff)];
+    CETimeEventId t = queue->pages[(index >> 12)]->buffer[(index & 0xfff)];
+    CETimeEventId at = queue->pages[(aindex >> 12)]->buffer[(aindex & 0xfff)];
     queue->pages[(index >> 12)]->buffer[(index & 0xfff)] = at;
     queue->pages[(aindex >> 12)]->buffer[(aindex & 0xfff)] = t;
     
@@ -156,7 +156,7 @@ void CETimeEventQueueShiftUp(CETimeEventQueue_s * _Nonnull queue, uint32_t index
     }
 }
 
-void CETimeEventPerform(CETimeEventRef _Nonnull ref) {
+void CETimeEventPerform(CETimeEventId _Nonnull ref) {
     assert(ref);
     CETimeEvent_s * content = CCRefGetContentPtr(ref);
 
@@ -193,7 +193,7 @@ void CETimeEventPerform(CETimeEventRef _Nonnull ref) {
 }
 
 
-void _CETimeEventDeinit(CETimeEventRef _Nonnull ref) {
+void _CETimeEventDeinit(CETimeEventId _Nonnull ref) {
     assert(ref);
     CETimeEvent_s * content = CCRefGetContentPtr(ref);
     assert(content->qIndex = CETimeEventQueueIndexInvalid);

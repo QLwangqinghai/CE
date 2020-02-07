@@ -28,9 +28,6 @@ extern "C" {
 #include <string.h>
 #include <errno.h>
 
-#include <stdatomic.h>
-
-
 #if defined(__GNUC__)
 #include <stdbool.h>
 #endif
@@ -97,9 +94,6 @@ typedef CCUInt CCHashCode;
 #pragma mark - CCMicrosecondTime
 
 typedef CCSInt64 CCMicrosecondTime;
-
-#pragma mark - atomic
-
 
 
 #pragma mark - CCIndex

@@ -11,6 +11,7 @@
 #endif
 
 #import "CCAllocator.h"
+#import "CCAtomic.h"
 #import "CCBase.h"
 #import "CCClosure.h"
 #import "CCConfig.h"
@@ -18,6 +19,9 @@
 #import "CCNet.h"
 #import "CCReferenceBase.h"
 #import "CCType.h"
+#import "aes_locl.h"
+#import "CCAes.h"
+#import "CCAesInternal.h"
 #import "CCFoundation.h"
 
 FOUNDATION_EXPORT double CCFoundationVersionNumber;

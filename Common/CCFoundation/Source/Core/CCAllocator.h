@@ -16,9 +16,28 @@ extern "C" {
 #include "CCType.h"
 #include <stdio.h>
 #include <wchar.h>
-#include <stdatomic.h>
 #include <stdlib.h>
 
+
+#if CC_TARGET_OS_WINDOWS
+
+#include<malloc.h>
+
+static inline CCPtr _Nonnull CCAlignedMalloc(size_t size, size_t alignment) {
+    assert(size > 0);
+    CCPtr ptr = _aligned_malloc(size, alignment);
+    return ptr;
+}
+
+#else
+
+static inline CCPtr _Nonnull CCAlignedMalloc(size_t size, size_t alignment) {
+    assert(size > 0);
+    CCPtr result = NULL;
+    posix_memalign(&result, alignment, size);
+    return result;
+}
+#endif
 
 static inline CCPtr _Nonnull CCMalloc(size_t size) {
     assert(size >= 0);
@@ -43,6 +62,8 @@ static inline CCPtr _Nullable CCTryAllocate(size_t size) {
     return ptr;
 }
 
+
+//默认清0
 static inline void * _Nonnull CCAllocate(size_t size) {
     if (size <= 0) {
         size = 4;
@@ -50,6 +71,19 @@ static inline void * _Nonnull CCAllocate(size_t size) {
     CCPtr ptr = CCMalloc(size);
     if (NULL == ptr) {
         CCLogError("CCAllocate ptr is NULL\n");
+        abort();
+    }
+    memset(ptr, 0, size);
+    return ptr;
+}
+
+static inline void * _Nonnull CCAlignedAllocate(size_t size, size_t alignment) {
+    if (size <= 0) {
+        size = 4;
+    }
+    CCPtr ptr = CCAlignedMalloc(size, alignment);
+    if (NULL == ptr) {
+        CCLogError("CCAlignedAllocate ptr is NULL\n");
         abort();
     }
     memset(ptr, 0, size);

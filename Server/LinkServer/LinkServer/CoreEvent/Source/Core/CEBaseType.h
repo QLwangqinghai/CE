@@ -9,6 +9,10 @@
 #ifndef CEBaseType_h
 #define CEBaseType_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 //c
 #include <CCFoundation/CCBase.h>
 #include <CCFoundation/CCClosure.h>
@@ -37,8 +41,6 @@ typedef CCPtr CEPollPtr;
 //} CEFileId;
 //#pragma pack(pop)
 
-typedef uint64_t CEFileId;
-
 static const CEMicrosecondTime CEFrameIntervalPer32 = 61 * 40;//每32个链接 时间间隔减少 (1000000 - 0xF4200)
 static const CEMicrosecondTime CEFrameIntervalDefault = 125000 * 40;
 
@@ -51,6 +53,13 @@ extern const CEFileEventMask_es CEFileEventMaskReadable;
 extern const CEFileEventMask_es CEFileEventMaskWritable;
 extern const CEFileEventMask_es CEFileEventMaskReadWritable;
 
+typedef struct {
+    int fd;
+    uint32_t status: 2;
+    uint32_t context: 16;
+} CEFileFiredInfo;
+
+typedef void (*CEPollFileEventCallback_f)(CCPtr _Nullable context, CEFileFiredInfo * _Nonnull infos, uint32_t count);
 
 
 //return true for default， return false for cancel
@@ -68,6 +77,7 @@ typedef struct _CEThread {
 #define CETimeEventLeewayMax 0x1FFFFull
 #define CETimeEventIntervalMax 0x3FFFFFFFFFFull
 
+#define CEFileHandlerInvalid 0x3FFF
 
 
 static const uint32_t CETimeEventQueueIndexMax = 0xFFFEul;
@@ -113,88 +123,8 @@ typedef struct _CETimeEventQueue {
 } CETimeEventQueue_s;
 
 
-#if __LLP64__ || __LP64__
-#define CEAtomicMemoryBlockSizeUse64 1
-#else
-#define CEAtomicMemoryBlockSizeUse64 0
-#endif
-
-#if CEAtomicMemoryBlockSizeUse64
-
-typedef uint64_t CEMemoryBlock_t;
-typedef _Atomic(uint_fast64_t) CEAtomicMemoryBlock_t;
-typedef uint64_t CEAtomicMemoryBlockBridgeType_t;
-#define CEMemoryBlockSize (8)
-#define CEAtomicMemoryBlockSize (8)
-#define CEAtomicMemoryBlockSizeShift (3)
-
-#else
-
-typedef uint32_t CEMemoryBlock_t;
-typedef _Atomic(uint_fast32_t) CEAtomicMemoryBlock_t;
-typedef uint32_t CEAtomicMemoryBlockBridgeType_t;
-#define CEMemoryBlockSize (4)
-#define CEAtomicMemoryBlockSize (4)
-#define CEAtomicMemoryBlockSizeShift 2
-
-#endif
 
 
-static inline size_t CEMemoryBlockCountFromSize(size_t size) {
-    return (size <= CEMemoryBlockSize) ? CEMemoryBlockSize
-    : (((size + CEMemoryBlockSize - 1) >> CEAtomicMemoryBlockSizeShift) << CEAtomicMemoryBlockSizeShift);
-}
-static inline size_t CEAtomicMemoryBlockCountFromSize(size_t size) {
-    size_t result = size / CEAtomicMemoryBlockSize;
-    if (size % CEAtomicMemoryBlockSize != 0) {
-        result += 1;
-    }
-    return result;
-}
-static inline void CEAtomicMemoryStore(CEAtomicMemoryBlock_t * _Nonnull dst, const void * _Nonnull src, size_t srcSize) {
-
-    size_t count = srcSize / CEAtomicMemoryBlockSize;
-    const CEAtomicMemoryBlockBridgeType_t * tmp = (const CEAtomicMemoryBlockBridgeType_t *)src;
-    for (size_t i=0; i<count; i++) {
-        atomic_store(dst, *tmp);
-        dst ++;
-        tmp ++;
-    }
-    
-    size_t remain = srcSize % CEAtomicMemoryBlockSize;
-    if (remain != 0) {
-        CEAtomicMemoryBlockBridgeType_t t = 0;
-        memcpy(&t, tmp, remain);
-        atomic_store(dst, t);
-    }
-}
-static inline void CEAtomicMemoryLoad(CEAtomicMemoryBlock_t * _Nonnull src, void * _Nonnull dst, size_t dstSize) {
-    
-    size_t count = dstSize / CEAtomicMemoryBlockSize;
-    CEAtomicMemoryBlockBridgeType_t * tmp = (CEAtomicMemoryBlockBridgeType_t *)dst;
-    for (size_t i=0; i<count; i++) {
-        *tmp = atomic_load(src);
-        src ++;
-        tmp ++;
-    }
-    
-    size_t remain = dstSize % CEAtomicMemoryBlockSize;
-    if (remain != 0) {
-        CEAtomicMemoryBlockBridgeType_t t = atomic_load(src);
-        memcpy(tmp, &t, remain);
-    }
-}
-static inline void CEAtomicMemorySet(CEAtomicMemoryBlock_t * _Nonnull dst, CEAtomicMemoryBlockBridgeType_t src, size_t size) {
-    size_t count = size / CEAtomicMemoryBlockSize;
-    for (size_t i=0; i<count; i++) {
-        atomic_store(dst, src);
-        dst ++;
-    }
-    size_t remain = size % CEAtomicMemoryBlockSize;
-    if (remain != 0) {
-        atomic_store(dst, src);
-    }
-}
 
 #define CEBlockQueuePageSize 2046
 typedef struct _CEBlockQueuePage {
@@ -218,16 +148,14 @@ typedef struct _CEBlockQueue CEBlockQueue_s;
 typedef uint32_t CEPollProgress_t;
 
 static const CEPollProgress_t CEPollProgressDoSource = 0;
-static const CEPollProgress_t CEPollProgressDoSourceTimeout = 1;
-static const CEPollProgress_t CEPollProgressDoBlock = 2;
-static const CEPollProgress_t CEPollProgressDoTimer = 3;
+static const CEPollProgress_t CEPollProgressDoBlock = 1;
+static const CEPollProgress_t CEPollProgressDoTimer = 2;
 
 typedef uint32_t CEPollObserverMask_t;
 
 static const CEPollObserverMask_t CEPollObserverMaskBeforeDoSource = 0x1;
-static const CEPollObserverMask_t CEPollObserverMaskBeforeSourceTimeout = 0x2;
-static const CEPollObserverMask_t CEPollObserverMaskAfterDoBlock = 0x4;
-static const CEPollObserverMask_t CEPollObserverMaskBeforeDoTimer = 0x8;
+static const CEPollObserverMask_t CEPollObserverMaskAfterDoBlock = 0x2;
+static const CEPollObserverMask_t CEPollObserverMaskBeforeDoTimer = 0x4;
 
 
 typedef void (*CEPollObseverHandler_f)(CEPollPtr _Nonnull poll, CEPollObserverMask_t mask, void * _Nullable context);
@@ -250,5 +178,9 @@ static const CEResult_t CEResultFailureResize = 6;
 static const CEResult_t CEResultErrorFileIdInvalid = 7;
 static const CEResult_t CEResultErrorTimeDescriptionInvalid = 8;
 static const CEResult_t CEResultErrorTimeDescriptionNotEnough = 9;
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif /* CEBaseType_h */

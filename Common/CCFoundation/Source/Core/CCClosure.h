@@ -9,6 +9,11 @@
 #ifndef CCClosure_h
 #define CCClosure_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
 #include "CCReferenceBase.h"
 
 typedef CCRef CCClosureRef;
@@ -45,5 +50,8 @@ void CCClosurePerform(CCClosureRef _Nonnull closure, const CCPtr _Nullable input
 void _CCClosureDeinit(CCClosureRef _Nonnull closure);
 
 
+#if defined(__cplusplus)
+}  // extern C
+#endif
 
 #endif /* CEClosur_h */

@@ -9,9 +9,11 @@
 #ifndef CEMemory_h
 #define CEMemory_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #include <stdio.h>
-
-
 
 void * _Nonnull CEAllocate(size_t size);
 void * _Nonnull CEAllocateClear(size_t size);
@@ -27,6 +29,8 @@ void CEMemoryManagerUpdateDeallocate(void (* _Nonnull func)(void * _Nonnull ptr)
 
 
 
-
+#if defined(__cplusplus)
+}
+#endif
 
 #endif /* CEMemory_h */

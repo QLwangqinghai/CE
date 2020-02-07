@@ -134,8 +134,6 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
 
 #pragma mark - thread key-specific
 
-static size_t __CCPageSizes[8] = {};
-
 #if !defined(PAGE_SIZE)
 #define PAGE_SIZE 4096
 #endif
@@ -169,6 +167,30 @@ static size_t __CCPageSizes[8] = {};
 //    int result = pthread_setspecific(CESharedKey(), loop);
 //    assert(result == 0);
 //}
+
+
+#if __APPLE__
+
+#include <mach-o/dyld.h>
+int CCGetExecutablePath(char * _Nonnull buf, uint32_t * _Nonnull bufsize) {
+    return _NSGetExecutablePath(buf, bufsize);
+}
+
+#else
+
+#include <unistd.h>
+int CCGetExecutablePath(char* buf, uint32_t * bufsize) {
+    if (NULL == buf || NULL == bufsize) {
+        return -1;
+    }
+    ssize_t ret = readlink("/proc/self/exe", path, (size_t)(*bufsize));
+    if (ret <= 0) {
+        return -1;
+    } else {
+        *bufsize = (uint32_t)ret;
+    }
+}
+#endif
 
 
 

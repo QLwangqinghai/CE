@@ -9,6 +9,10 @@
 #ifndef CEBase_h
 #define CEBase_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #include "CEBaseType.h"
 
 #pragma mark - time
@@ -129,6 +133,8 @@ fprintf(stderr, "\n");                                          \
 
 #endif
 
-
+#if defined(__cplusplus)
+}
+#endif
 
 #endif /* CEBase_h */

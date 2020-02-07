@@ -8,6 +8,7 @@
 
 #include "CCReferenceBase.h"
 #include "CCClosure.h"
+#include "CCAtomic.h"
 
 const uint32_t CCDomain = 0;
 

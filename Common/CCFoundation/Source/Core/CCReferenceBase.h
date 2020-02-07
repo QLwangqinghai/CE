@@ -9,6 +9,11 @@
 #ifndef CCReferenceBase_h
 #define CCReferenceBase_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
 #include "CCBase.h"
 
 typedef CCPtr CCRef;
@@ -45,5 +50,8 @@ void CCRefWeakContainerDestroy(CCRefWeakContainerPtr _Nonnull container);
 
 uint32_t CCDomainRefTypeTableRegister(const char * _Nonnull name, CCRefDeinit_f _Nonnull deinit);
 
+#if defined(__cplusplus)
+}  // extern C
+#endif
 
 #endif /* CCReferenceBase_h */

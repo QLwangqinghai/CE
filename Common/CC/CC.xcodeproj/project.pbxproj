@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		277C93AD50B94DA61328F5FD /* Pods_CC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90230C9079162051CF5D785A /* Pods_CC.framework */; };
-		D64DD11D23DEA18C00BEBBBE /* OCBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D64DD11C23DEA18C00BEBBBE /* OCBridge.m */; };
+		D64DD11D23DEA18C00BEBBBE /* OCBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = D64DD11C23DEA18C00BEBBBE /* OCBridge.mm */; };
+		D6AE6D6623EC24B800B0B15C /* CxxBridge.cc in Sources */ = {isa = PBXBuildFile; fileRef = D6AE6D6523EC24B800B0B15C /* CxxBridge.cc */; };
 		D6B2F76F23DE929100781CA8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F76E23DE929100781CA8 /* AppDelegate.swift */; };
 		D6B2F77123DE929100781CA8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F77023DE929100781CA8 /* ViewController.swift */; };
 		D6B2F77323DE929300781CA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6B2F77223DE929300781CA8 /* Assets.xcassets */; };
@@ -21,7 +22,9 @@
 		90230C9079162051CF5D785A /* Pods_CC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D64DD11A23DEA18B00BEBBBE /* CC-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CC-Bridging-Header.h"; sourceTree = "<group>"; };
 		D64DD11B23DEA18C00BEBBBE /* OCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCBridge.h; sourceTree = "<group>"; };
-		D64DD11C23DEA18C00BEBBBE /* OCBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OCBridge.m; sourceTree = "<group>"; };
+		D64DD11C23DEA18C00BEBBBE /* OCBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OCBridge.mm; sourceTree = "<group>"; };
+		D6AE6D6423EC24B800B0B15C /* CxxBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CxxBridge.h; sourceTree = "<group>"; };
+		D6AE6D6523EC24B800B0B15C /* CxxBridge.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CxxBridge.cc; sourceTree = "<group>"; };
 		D6B2F76B23DE929100781CA8 /* CC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6B2F76E23DE929100781CA8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6B2F77023DE929100781CA8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -88,8 +91,10 @@
 				D6B2F77723DE929300781CA8 /* Info.plist */,
 				D6B2F77823DE929300781CA8 /* CC.entitlements */,
 				D64DD11B23DEA18C00BEBBBE /* OCBridge.h */,
-				D64DD11C23DEA18C00BEBBBE /* OCBridge.m */,
+				D64DD11C23DEA18C00BEBBBE /* OCBridge.mm */,
 				D64DD11A23DEA18B00BEBBBE /* CC-Bridging-Header.h */,
+				D6AE6D6423EC24B800B0B15C /* CxxBridge.h */,
+				D6AE6D6523EC24B800B0B15C /* CxxBridge.cc */,
 			);
 			path = CC;
 			sourceTree = "<group>";
@@ -209,7 +214,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D64DD11D23DEA18C00BEBBBE /* OCBridge.m in Sources */,
+				D6AE6D6623EC24B800B0B15C /* CxxBridge.cc in Sources */,
+				D64DD11D23DEA18C00BEBBBE /* OCBridge.mm in Sources */,
 				D6B2F77123DE929100781CA8 /* ViewController.swift in Sources */,
 				D6B2F76F23DE929100781CA8 /* AppDelegate.swift in Sources */,
 			);

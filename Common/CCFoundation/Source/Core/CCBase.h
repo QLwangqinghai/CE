@@ -61,31 +61,8 @@ extern const CCChar __CCBase64ByteToCharMappings[64];
 extern CCMicrosecondTime CCMicrosecondTimeGetCurrent(void);
 extern CCMicrosecondTime CCBootInterval(void);
 
-#pragma mark - Atomic
-
-static inline void CCAtomicUInt32Init(_Atomic(uint_fast32_t) * _Nonnull ref, uint_fast32_t v) {
-    atomic_init(ref, v);
-}
-static inline uint_fast32_t CCAtomicUInt32Load(_Atomic(uint_fast32_t) * _Nonnull ref) {
-    uint_fast32_t v = atomic_load(ref);
-    return v;
-}
-static inline CCBool CCAtomicUInt32CompareExchange(_Atomic(uint_fast32_t) * _Nonnull ref, uint_fast32_t oldValue, uint_fast32_t newValue) {
-    CCBool result = atomic_compare_exchange_strong(ref, &oldValue, newValue);
-    return result;
-}
-
-static inline void CCAtomicUInt64Init(_Atomic(uint_fast64_t) * _Nonnull ref, uint_fast64_t v) {
-    atomic_init(ref, v);
-}
-static inline uint_fast64_t CCAtomicUInt64Load(_Atomic(uint_fast64_t) * _Nonnull ref) {
-    uint_fast64_t v = atomic_load(ref);
-    return v;
-}
-static inline CCBool CCAtomicUInt64CompareExchange(_Atomic(uint_fast64_t) * _Nonnull ref, uint_fast64_t oldValue, uint_fast64_t newValue) {
-    CCBool result = atomic_compare_exchange_strong(ref, &oldValue, newValue);
-    return result;
-}
+//返回0成功
+int CCGetExecutablePath(char * _Nonnull buf, uint32_t * _Nonnull bufsize);
 
 #if defined(__cplusplus)
 }  // extern C

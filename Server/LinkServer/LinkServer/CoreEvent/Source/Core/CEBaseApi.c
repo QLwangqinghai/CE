@@ -164,7 +164,7 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es delmask) {
     }
 }
 
-int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, uint32_t bufferSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
+int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, size_t bufferSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
     assert(api);
     assert(callback);
     assert(buffer);
@@ -283,7 +283,7 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
     }
 }
 
-int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, uint32_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
+int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, size_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
     
     struct timespec tv = {};
     if (timeout <= 0) {

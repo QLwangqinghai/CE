@@ -9,6 +9,9 @@
 #ifndef CEConfig_h
 #define CEConfig_h
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 #ifdef __APPLE__
 #include <AvailabilityMacros.h>
@@ -169,6 +172,11 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 /* Make sure we can test for SPARC just checking for __sparc__. */
 #if defined(__sparc) && !defined(__sparc__)
 #define __sparc__
+#endif
+
+
+#if defined(__cplusplus)
+}
 #endif
 
 #endif /* CEConfig_h */

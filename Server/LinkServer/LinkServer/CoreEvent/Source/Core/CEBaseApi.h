@@ -15,6 +15,12 @@ extern "C" {
 
 #include "CEBaseType.h"
 
+typedef struct {
+    int fd;
+    CEFileEventMask_es status;
+} CEEvent_s;
+
+
 typedef void (*CEApiPollCallback_f)(void * _Nullable context, void * _Nonnull api);
 typedef _Bool (*CEApiPollFileEventFilterMapper_f)(void * _Nullable context, void * _Nonnull api, void * _Nonnull buffer, int fd, CEFileEventMask_es mask);
 typedef struct _CEApiPoolCallback {
@@ -47,8 +53,6 @@ void CEApiUpdateEvents(void * _Nonnull api, int * _Nonnull fdPtrs, uint32_t size
 
 
 int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, size_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback);
-
-void CEApiWakeUp(void * _Nonnull api);
 
 CEFileEventMask_es CEApiWait(int fd, CEFileEventMask_es mask, int milliseconds);
 

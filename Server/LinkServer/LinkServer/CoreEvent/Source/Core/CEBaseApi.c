@@ -44,7 +44,7 @@ typedef struct _CEApiState CEApiState_s;
 //};
 
 
-typedef struct epoll_event CEEvent_s;
+typedef struct epoll_event CEApiEvent_s;
 
 #endif
 
@@ -54,27 +54,19 @@ typedef struct epoll_event CEEvent_s;
 #include <sys/event.h>
 #include <sys/time.h>
 
-typedef struct kevent CEEvent_s;
+typedef struct kevent CEApiEvent_s;
 
 #endif
 
 size_t CEApiGetEventItemSize(void) {
-    return sizeof(CEEvent_s);
+    return sizeof(CEApiEvent_s);
 }
 
 struct _CEApiState {
     int fd;
-    int pread;
-    int pwrite;
+    uint32_t setSize;
+    CEApiEvent_s * _Nonnull buffer;
 };
-
-
-static void CEApiPollHandlePipeInput(CEApiState_s * _Nonnull api, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback) {
-    uint8_t buffer[1024] = {};
-    read(api->pread, buffer, 1024);
-    callback->pipeCallback(context, api);
-}
-
 
 #if CORE_EVENT_USE_EPOLL
 
@@ -102,33 +94,16 @@ static void CEApiPollHandlePipeInput(CEApiState_s * _Nonnull api, void * _Nullab
 
 
 CCPtr _Nonnull CEApiCreate(uint32_t setSize) {
-    int pio[2] = {};
-    int result = pipe(pio);
-    if (0 != result) {
-        fprintf(stderr, "CEApiCreate error %s; \n", strerror(errno));
-        fflush(stderr);
-        abort();
-    }
-    
-    int flags = fcntl(pio[0], F_GETFL, 0);
-    int fresult = fcntl(pio[0], F_SETFL, flags | O_NONBLOCK);
-    assert(fresult == 0);
-    
-    int flags1 = fcntl(pio[1], F_GETFL, 0);
-    int fresult1 = fcntl(pio[1], F_SETFL, flags1 | O_NONBLOCK);
-    assert(fresult1 == 0);
-    
+    uint32_t size = setSize > 1024 ? setSize : 1024;
     int fd = epoll_create(1024); /* 1024 is just a hint for the kernel */
-    assert(fd >= 0);
+    assert(fd != -1);
     CEApiState_s * state = CEAllocateClear(sizeof(CEApiState_s));
     assert(state);
     state->fd = fd;
-    state->pread = pio[0];
-    state->pwrite = pio[1];
+    state->setSize = size;
+    state->buffer = CEAllocateClear(sizeof(CEApiEvent_s) * size);
     return state;
 }
-
-
 
 void CEApiAddEvent(void * _Nonnull api, int fd, CEFileEventMask_es oldMask, CEFileEventMask_es mask) {
     assert(api);
@@ -177,10 +152,10 @@ int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buf
     assert(api);
     assert(callback);
     assert(buffer);
-    assert(itemSize <= sizeof(CEEvent_s));
-    int setsize = bufferSize / sizeof(CEEvent_s);
+    assert(itemSize <= sizeof(CEApiEvent_s));
+    int setsize = bufferSize / sizeof(CEApiEvent_s);
     assert(setsize > 0);
-    CEEvent_s * events = buffer;
+    CEApiEvent_s * events = buffer;
 
     CEApiState_s *state = api;
     int retval, numevents = 0;
@@ -223,32 +198,37 @@ char * _Nonnull CEApiName(void) {
 
 #if CORE_EVENT_USE_KQUEUE
 
+/*
+ int pio[2] = {};
+ int result = pipe(pio);
+ 
+ if (0 != result) {
+     fprintf(stderr, "CEApiCreate error %s; \n", strerror(errno));
+     fflush(stderr);
+     abort();
+ }
+ 
+ int flags = fcntl(pio[0], F_GETFL, 0);
+ int fresult = fcntl(pio[0], F_SETFL, flags | O_NONBLOCK);
+ assert(fresult == 0);
+ 
+ int flags1 = fcntl(pio[1], F_GETFL, 0);
+ int fresult1 = fcntl(pio[1], F_SETFL, flags1 | O_NONBLOCK);
+ assert(fresult1 == 0);
+
+ state->pread = pio[0];
+ state->pwrite = pio[1];
+ */
 
 CCPtr _Nonnull CEApiCreate(uint32_t setSize) {
-    int pio[2] = {};
-    int result = pipe(pio);
-    
-    if (0 != result) {
-        fprintf(stderr, "CEApiCreate error %s; \n", strerror(errno));
-        fflush(stderr);
-        abort();
-    }
-    
-    int flags = fcntl(pio[0], F_GETFL, 0);
-    int fresult = fcntl(pio[0], F_SETFL, flags | O_NONBLOCK);
-    assert(fresult == 0);
-    
-    int flags1 = fcntl(pio[1], F_GETFL, 0);
-    int fresult1 = fcntl(pio[1], F_SETFL, flags1 | O_NONBLOCK);
-    assert(fresult1 == 0);
-    
-    int fd = kqueue(); /* 1024 is just a hint for the kernel */
-    assert(fd >= 0);
+    uint32_t size = setSize > 1024 ? setSize : 1024;
+    int fd = kqueue();
+    assert(fd != -1);
     CEApiState_s *state = CEAllocateClear(sizeof(CEApiState_s));
     assert(state);
     state->fd = fd;
-    state->pread = pio[0];
-    state->pwrite = pio[1];
+    state->setSize = size;
+    state->buffer = CEAllocateClear(sizeof(CEApiEvent_s) * size);
     return state;
 }
 
@@ -305,10 +285,10 @@ int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buf
     assert(api);
     assert(callback);
     assert(buffer);
-    assert(itemSize <= sizeof(CEEvent_s));
-    int setsize = bufferSize / sizeof(CEEvent_s);
+    assert(itemSize <= sizeof(CEApiEvent_s));
+    int setsize = bufferSize / sizeof(CEApiEvent_s);
     assert(setsize > 0);
-    CEEvent_s * events = buffer;
+    CEApiEvent_s * events = buffer;
     
     CEApiState_s *state = api;
 
@@ -346,61 +326,7 @@ char * _Nonnull CEApiName(void) {
 void CEApiFree(void * _Nonnull api) {
     assert(api);
     CEApiState_s *state = api;
-    
-    close(state->pread);
-    close(state->pwrite);
     close(state->fd);
+    CEDeallocate(state->buffer);
     CEDeallocate(state);
 }
-
-void _CEApiWakeUp(CEApiState_s * _Nonnull state, uint32_t count) {
-    if (count > 1000) {
-        abort();
-    }
-    uint8_t value = (uint8_t)count;
-    ssize_t sendResult = write(state->pwrite, &value, sizeof(uint8_t));
-    if (sendResult <= 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
-               //缓冲区满，不做任何事
-        } else if (errno == EINTR) {
-            //中断
-            CEFileEventMask_es mask = CEApiWait(state->pwrite, CEFileEventMaskWritable, 100);
-            if (mask == CEFileEventMaskWritable) {
-                _CEApiWakeUp(state, count + 1);
-            }
-        } else if (errno == ECONNRESET) {
-            fprintf(stderr, "CEApiWakeUp error 1 %s; \n", strerror(errno));
-            fflush(stderr);
-            abort();
-        } else {
-            fprintf(stderr, "CEApiWakeUp error 2 %s; \n", strerror(errno));
-            fflush(stderr);
-            abort();
-        }
-    }
-}
-
-void CEApiWakeUp(void * _Nonnull api) {
-    assert(api);
-    CEApiState_s *state = api;
-    _CEApiWakeUp(state, 0);
-}
-
-CEFileEventMask_es CEApiWait(int fd, CEFileEventMask_es mask, int milliseconds) {
-    struct pollfd pfd = {};
-    CEFileEventMask_es retmask = 0;
-    pfd.fd = fd;
-    if (mask & CEFileEventMaskReadable) pfd.events |= POLLIN;
-    if (mask & CEFileEventMaskWritable) pfd.events |= POLLOUT;
-    
-    if (poll(&pfd, 1, milliseconds) == 1) {
-        if (pfd.revents & POLLIN) retmask |= CEFileEventMaskReadable;
-        if (pfd.revents & POLLOUT) retmask |= CEFileEventMaskWritable;
-        if (pfd.revents & POLLERR) retmask |= (CEFileEventMaskReadWritable & mask);
-        if (pfd.revents & POLLHUP) retmask |= (CEFileEventMaskReadWritable & mask);
-        return retmask;
-    } else {
-        return CEFileEventMaskNone;
-    }
-}
-

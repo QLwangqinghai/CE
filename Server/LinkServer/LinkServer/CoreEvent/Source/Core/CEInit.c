@@ -7,7 +7,7 @@
 //
 
 #include "CEBase.h"
-#include "CETimeEvent.h"
+#include "CEPollInternal.h"
 
 #include <CCFoundation/CCReferenceBase.h>
 

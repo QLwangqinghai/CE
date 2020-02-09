@@ -34,13 +34,6 @@ extern "C" {
 typedef uint64_t CEMicrosecondTime;
 typedef CCPtr CEPollPtr;
 
-//#pragma pack(push, 2)
-//typedef struct {
-//    uint64_t fd: 23;
-//    uint64_t sequence: 41;
-//} CEFileId;
-//#pragma pack(pop)
-
 static const CEMicrosecondTime CEFrameIntervalPer32 = 61 * 40;//每32个链接 时间间隔减少 (1000000 - 0xF4200)
 static const CEMicrosecondTime CEFrameIntervalDefault = 125000 * 40;
 
@@ -56,7 +49,7 @@ extern const CEFileEventMask_es CEFileEventMaskReadWritable;
 typedef struct {
     int fd;
     uint32_t status: 2;
-    uint32_t context: 16;
+    uint32_t context: 30;
 } CEFileFiredInfo;
 
 typedef void (*CEPollFileEventCallback_f)(CCPtr _Nullable context, CEFileFiredInfo * _Nonnull infos, uint32_t count);
@@ -70,13 +63,7 @@ typedef struct _CEThread {
     pthread_t _Nullable thread;
 } CEThread_s;
 
-#define CETimeEventStatesWait 0
-#define CETimeEventStatesExecuting 0x1
-#define CETimeEventStatesFinished 0x2
-
-#define CETimeEventLeewayMax 0x1FFFFull
-#define CETimeEventIntervalMax 0x3FFFFFFFFFFull
-
+#define CETimeEventRepeatDurationMax 0xFFFFFFFFFFFull
 #define CEFileHandlerInvalid 0x3FFF
 
 
@@ -93,14 +80,15 @@ static const uint32_t CETimeEventQueueIndexInvalid = 0xFFFFul;
 //间隔是前次任务的结束时间 + duration
 #define CETimeEventModeRepeatFixedDelay 2
 
+
 /* Time event structure */
-typedef struct _CETimeEvent {
+typedef struct {
+    CEMicrosecondTime when; //什么时候触发
     uint64_t mode: 2;
     uint64_t isCanceled: 1;
-    uint64_t states: 2;//必须为0
+    uint64_t isFinished: 1;
     uint64_t qIndex: 16;
-    uint64_t duration: 43;//间隔时间 最大 101 天
-    CEMicrosecondTime when; //什么时候触发
+    uint64_t duration: 44;//间隔时间 最大 101 天
     CCClosureRef _Nonnull closure;
 } CETimeEvent_s;
 
@@ -112,18 +100,12 @@ typedef struct _CETimeEventPage {
 } CETimeEventPage_s;
 
 #define CETimeEventQueueSizeMax 0x10000
+#define CETimerQueueBufferSize 0xffff
 #define CETimeEventQueuePagesSize 16
 typedef struct _CETimeEventQueue {
-    uint32_t capacity;
-    uint32_t count;
-    CETimeEventPage_s * _Nullable pages[CETimeEventQueuePagesSize];
-
-    
-//    CETimeEvent_s * _Nullable * _Nonnull buffer;
-} CETimeEventQueue_s;
-
-
-
+    size_t count;
+    CETimeEventRef _Nonnull buffer[CETimerQueueBufferSize];
+} CETimerQueue_s;
 
 
 #define CEBlockQueuePageSize 2046
@@ -136,6 +118,12 @@ typedef struct _CEBlockQueuePage {
 
 
 struct _CEBlockQueue {
+#if __APPLE__
+    os_unfair_lock blockQueueLock;
+#else
+    pthread_spinlock_t blockQueueLock;
+#endif
+    
     CEBlockQueuePage_s * _Nullable begin;
     CEBlockQueuePage_s * _Nullable end;
 };

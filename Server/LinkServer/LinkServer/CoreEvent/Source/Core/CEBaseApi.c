@@ -21,19 +21,28 @@ typedef struct _CEApiState CEApiState_s;
 
 #include <sys/epoll.h>
 
-/*
- typedef union epoll_data {
-    void *ptr;
-     int fd;
-     __uint32_t u32;
-     __uint64_t u64;
- } epoll_data_t;//保存触发事件的某个文件描述符相关的数据
 
- struct epoll_event {
-     __uint32_t events;      /* epoll event */
-     epoll_data_t data;      /* User data variable */
- };
- */
+// typedef union epoll_data {
+//    void *ptr;
+//     int fd;
+//     __uint32_t u32;
+//     __uint64_t u64;
+// } epoll_data_t;//保存触发事件的某个文件描述符相关的数据
+//
+// struct epoll_event {
+//     __uint32_t events;      /* epoll event */
+//     epoll_data_t data;      /* User data variable */
+// };
+//
+//struct kevent {
+//    uintptr_t       ident;  /* identifier for this event */
+//    int16_t         filter; /* filter for event */
+//    uint16_t        flags;  /* general flags */
+//    uint32_t        fflags; /* filter-specific flags */
+//    intptr_t        data;   /* filter-specific data */
+//    void            *udata; /* opaque user data identifier */
+//};
+
 
 typedef struct epoll_event CEEvent_s;
 
@@ -92,7 +101,7 @@ static void CEApiPollHandlePipeInput(CEApiState_s * _Nonnull api, void * _Nullab
 //#define EPOLLHUP 2
 
 
-CCPtr _Nonnull CEApiCreate(void) {
+CCPtr _Nonnull CEApiCreate(uint32_t setSize) {
     int pio[2] = {};
     int result = pipe(pio);
     if (0 != result) {
@@ -215,7 +224,7 @@ char * _Nonnull CEApiName(void) {
 #if CORE_EVENT_USE_KQUEUE
 
 
-CCPtr _Nonnull CEApiCreate(void) {
+CCPtr _Nonnull CEApiCreate(uint32_t setSize) {
     int pio[2] = {};
     int result = pipe(pio);
     

@@ -16,6 +16,8 @@ extern "C" {
 #include "CEBase.h"
 #include <CCFoundation/CCClosure.h>
 
+
+
 #pragma mark - share
 CEPollPtr _Nonnull CEPollShared(void);
 
@@ -32,16 +34,16 @@ CCBool CEPollTimerQueueIsFull(CEPollPtr _Nonnull poll);
  * repeating 间隔时间 (mode 为  CETimeEventModeRepeatFixedRate、CETimeEventModeRepeatFixedDelay 时有效)
  * closure timer 会作为input传入
  * timerQueue 满了 时会崩溃
- * 返回一个retain的对象
+ * 返回一个retain的对象,  需要外部调用release
  */
-CETimeEventId _Nonnull CEPollAddTimeEvent(CEPollPtr _Nonnull poll,
+CETimeEventRef _Nonnull CEPollAddTimeEvent(CEPollPtr _Nonnull poll,
                                            uint32_t mode,
                                            CEMicrosecondTime deadline,
                                            CEMicrosecondTime repeating,
                                            CCClosureRef _Nonnull closure);
 
-void CEPollCancelTimeEvent(CEPollPtr _Nonnull poll, CETimeEventId _Nonnull ref);
-CCBool CEPollIsValidTimeEvent(CEPollPtr _Nonnull poll, CETimeEventId _Nonnull ref);
+void CEPollCancelTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull ref);
+CCBool CEPollIsValidTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull ref);
 
 
 #pragma mark - file event api

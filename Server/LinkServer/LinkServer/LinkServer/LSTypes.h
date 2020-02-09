@@ -76,13 +76,13 @@ typedef struct {
 
 struct _LSSocketSource {
     //到期时间
-    uint64_t deadline: 48;
+    uint64_t deadline: 44;
     
     //在timerQueue中的index
-    uint64_t index: 16;
+    uint64_t index: 20;
 };
 
-#define __LSSocketSourceDeadlineMax (UINT64_MAX >> 16)
+#define __LSSocketSourceDeadlineMax (UINT64_MAX >> 20)
 #define LSSocketSourceDeadlineForever __LSSocketSourceDeadlineMax
 
 typedef struct {
@@ -115,10 +115,18 @@ struct _LSFileHandler {
 
 #pragma pack(pop)
 
+typedef struct {
+    uint32_t context: 16;
+    uint32_t handler: 15;
+    uint32_t isValid: 1;
+} LSFile_t;
+
 struct _LSManager {
     uint32_t domain;
     uint32_t handlerCount;
     uint64_t sequence;
+    size_t fileTableSize;
+    LSFile_t * _Nonnull fileTable;
     LSFileHandler_s handlers[0];
 };
 

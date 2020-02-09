@@ -6,7 +6,7 @@
 //  Copyright © 2018 com.wangqinghai. All rights reserved.
 //
 
-#include "CETimeEvent.h"
+#include "CEBase.h"
 #include "CEMemory.h"
 
 
@@ -22,90 +22,101 @@ static CEMicrosecondTime CEAddMicrosecondsToNow(CEMicrosecondTime milliseconds) 
 }
 
 
-void CETimeEventQueueInit(CETimeEventQueue_s * _Nonnull queue) {
-    queue->count = 0;
-    queue->capacity = 0;
-    for (int i=0; i<CETimeEventQueuePagesSize; i++) {
-        queue->pages[i] = 0;
-    }
+CETimerQueue_s * _Nonnull CETimeEventQueueCreate(void) {
+    CETimerQueue_s * result = CCAlignedAllocate(sizeof(CETimerQueue_s), 128);
+    result->count = 0;
+    return result;
 }
-void CETimeEventQueueShiftDown(CETimeEventQueue_s * _Nonnull queue, uint32_t index);
-void CETimeEventQueueShiftUp(CETimeEventQueue_s * _Nonnull queue, uint32_t index);
+void CETimeEventQueueShiftDown(CETimerQueue_s * _Nonnull queue, uint32_t index);
+void CETimeEventQueueShiftUp(CETimerQueue_s * _Nonnull queue, uint32_t index);
 
 
-void CETimeEventQueueAddSize(CETimeEventQueue_s * _Nonnull queue) {
-    queue->capacity += 0x1000;
-    queue->pages[(queue->capacity >> 12)] = CEAllocateClear(sizeof(CETimeEventPage_s));
+void _CETimerQueueUpdate(CETimerQueue_s * _Nonnull queue, CETimeEventRef _Nonnull ref, CCMicrosecondTime time) {
+    
+    
 }
 
-CETimeEventId _Nonnull CETimeEventQueueRemoveIndex(CETimeEventQueue_s * _Nonnull queue, uint32_t index) {
+
+CETimeEventRef _Nonnull _CETimerQueueRemoveIndex(CETimerQueue_s * _Nonnull queue, uint32_t index) {
     assert(index < queue->count);
-    uint32_t lastIndex = queue->count - 1;
-    CETimeEventId result = CETimeEventQueueGetItem(queue, index);
-    ((CETimeEvent_s *)CCRefGetContentPtr(result))->qIndex = CETimeEventQueueIndexInvalid;
+    uint32_t lastIndex = (uint32_t)(queue->count - 1);
+    CETimeEventRef result = queue->buffer[index];
+    CETimeEvent_s * event = (CETimeEvent_s *)CCRefGetContentPtr(result);
+    event->qIndex = CETimeEventQueueIndexInvalid;
     if (lastIndex == index) {
-        queue->pages[(index >> 12)]->buffer[(index & 0xfff)] = NULL;
+        queue->buffer[index] = NULL;
         queue->count -= 1;
     } else {
-        queue->pages[(index >> 12)]->buffer[(index & 0xfff)] = queue->pages[(lastIndex >> 12)]->buffer[(lastIndex & 0xfff)];
-        ((CETimeEvent_s *)CCRefGetContentPtr(CETimeEventQueueGetItem(queue, index)))->qIndex = index;
-        queue->pages[(lastIndex >> 12)]->buffer[(lastIndex & 0xfff)] = NULL;
-        CETimeEventQueueShiftDown(queue, index);
+        CETimeEventRef last = queue->buffer[lastIndex];
+        queue->buffer[index] = last;
+        CETimeEvent_s * lastEvent = (CETimeEvent_s *)CCRefGetContentPtr(last);
+        lastEvent->qIndex = index;
+        queue->buffer[lastIndex] = NULL;
+        if (lastEvent->when > event->when) {
+            CETimeEventQueueShiftDown(queue, index);
+        } else if (lastEvent->when < event->when) {
+            if (index > 0) {
+                CETimeEventQueueShiftUp(queue, index);
+            }
+        }
         queue->count -= 1;
     }
     return result;
 }
 
-CETimeEvent_s * _Nullable CETimeEventQueueRemoveFirst(CETimeEventQueue_s * _Nonnull queue) {
-    return CETimeEventQueueRemoveIndex(queue, 0);
+CETimeEventRef _Nullable _CETimerQueueRemoveFirst(CETimerQueue_s * _Nonnull queue) {
+    if (queue->count <= 0) {
+        return NULL;
+    }
+    return _CETimerQueueRemoveIndex(queue, 0);
 }
 
-CCBool CETimeEventQueueRemove(CETimeEventQueue_s * _Nonnull queue, CETimeEventId _Nonnull event) {
+
+CCBool _CETimerQueueRemove(CETimerQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event) {
     assert(queue);
     assert(event);
     uint32_t index = ((CETimeEvent_s *)CCRefGetContentPtr(event))->qIndex;
     if (index >= queue->count) {
         return false;
     }
-    CETimeEventId t = CETimeEventQueueGetItem(queue, index);
+    CETimeEventRef t = queue->buffer[index];
     if (t != event) {
         return false;
     }
-    CETimeEventQueueRemoveIndex(queue, index);
+    CETimeEventRef removed = _CETimerQueueRemoveIndex(queue, index);
+    assert(event == removed);
     return true;
 }
 
-CCBool CETimeEventQueueInsert(CETimeEventQueue_s * _Nonnull queue, CETimeEventId _Nonnull event) {
-    if (queue->count == queue->capacity) {
-        CETimeEventQueueAddSize(queue);
+CCBool _CETimerQueueInsert(CETimerQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event) {
+    if (queue->count >= CETimerQueueBufferSize) {
+        return false;
     }
     CETimeEvent_s * e = (CETimeEvent_s *)CCRefGetContentPtr(event);
     uint32_t currentIndex = e->qIndex;
     if (currentIndex != CETimeEventQueueIndexInvalid) {
         return false;
     }
-    uint32_t index = queue->count;
+    uint32_t index = (uint32_t)(queue->count);
     queue->count += 1;
-    queue->pages[(index >> 12)]->buffer[(index & 0xfff)] = event;
+    queue->buffer[index] = event;
     e->qIndex = index;
     CETimeEventQueueShiftUp(queue, index);
     return true;
 }
 
-static inline void CETimeEventQueueSwap(CETimeEventQueue_s * _Nonnull queue, uint32_t index, uint32_t aindex) {
-    CETimeEventId t = queue->pages[(index >> 12)]->buffer[(index & 0xfff)];
-    CETimeEventId at = queue->pages[(aindex >> 12)]->buffer[(aindex & 0xfff)];
-    queue->pages[(index >> 12)]->buffer[(index & 0xfff)] = at;
-    queue->pages[(aindex >> 12)]->buffer[(aindex & 0xfff)] = t;
-    
+static inline void CETimeEventQueueSwap(CETimerQueue_s * _Nonnull queue, uint32_t index, uint32_t aindex) {
+    CETimeEventRef t = queue->buffer[index];
+    CETimeEventRef at = queue->buffer[aindex];
+    queue->buffer[index] = at;
+    queue->buffer[aindex] = t;
     ((CETimeEvent_s *)CCRefGetContentPtr(t))->qIndex = aindex;
     ((CETimeEvent_s *)CCRefGetContentPtr(at))->qIndex = index;
 }
 
-static inline _Bool CETimeEventQueueNeedSwap(CETimeEventQueue_s * _Nonnull queue, uint32_t parentIndex, uint32_t childIndex) {
-    
-    CETimeEvent_s * parent = CCRefGetContentPtr(CETimeEventQueueGetItem(queue, parentIndex));
-    CETimeEvent_s * child = CCRefGetContentPtr(CETimeEventQueueGetItem(queue, childIndex));
+static inline _Bool CETimeEventQueueNeedSwap(CETimerQueue_s * _Nonnull queue, uint32_t parentIndex, uint32_t childIndex) {
+    CETimeEvent_s * parent = CCRefGetContentPtr(queue->buffer[parentIndex]);
+    CETimeEvent_s * child = CCRefGetContentPtr(queue->buffer[childIndex]);
     if (parent->when == child->when) {
         return false;
     } else {
@@ -113,8 +124,8 @@ static inline _Bool CETimeEventQueueNeedSwap(CETimeEventQueue_s * _Nonnull queue
     }
 }
 
-void CETimeEventQueueShiftDown(CETimeEventQueue_s * _Nonnull queue, uint32_t index) {
-    uint32_t n = queue->count - 1;
+void CETimeEventQueueShiftDown(CETimerQueue_s * _Nonnull queue, uint32_t index) {
+    uint32_t n = (uint32_t)(queue->count - 1);
     uint32_t i = index;
     uint32_t t = 0;
     uint32_t flag = 0;
@@ -142,7 +153,7 @@ void CETimeEventQueueShiftDown(CETimeEventQueue_s * _Nonnull queue, uint32_t ind
     }
 }
 
-void CETimeEventQueueShiftUp(CETimeEventQueue_s * _Nonnull queue, uint32_t index) {
+void CETimeEventQueueShiftUp(CETimerQueue_s * _Nonnull queue, uint32_t index) {
     uint32_t i = index;
     int flag = 0;
     while (i != 0 && flag == 0) {
@@ -156,44 +167,14 @@ void CETimeEventQueueShiftUp(CETimeEventQueue_s * _Nonnull queue, uint32_t index
     }
 }
 
-void CETimeEventPerform(CETimeEventId _Nonnull ref) {
+void _CETimeEventPerform(CETimeEventRef _Nonnull ref) {
     assert(ref);
     CETimeEvent_s * content = CCRefGetContentPtr(ref);
-
-    if (CETimeEventStatesWait != content->states) {
-        CELogError("CETimeEventPerform error");
-        abort();
-    }
-    content->states = CETimeEventStatesExecuting;
     CCClosurePerform(content->closure, ref, NULL);
-    
-    if (CETimeEventStatesExecuting == content->states) {
-        if (CETimeEventModeRepeatFixedRate == content->mode) {
-            content->when = content->when + content->duration;
-            content->states = CETimeEventStatesWait;
-        } else if (CETimeEventModeRepeatFixedDelay == content->mode) {
-            content->when = CEGetCurrentTime() + content->duration;
-            content->states = CETimeEventStatesWait;
-        } else if (CETimeEventModeDelay == content->mode) {
-            content->states = CETimeEventStatesFinished;
-        } else {
-            CELogError("CETimeEventPerform error");
-            abort();
-        }
-    } else if (CETimeEventStatesWait == content->states) {
-        CELogError("CETimeEventPerform error");
-        abort();
-    } else if (CETimeEventStatesFinished == content->states) {
-        CELogError("CETimeEventPerform error");
-        abort();
-    } else {
-        CELogError("CETimeEventPerform error");
-        abort();
-    }
 }
 
 
-void _CETimeEventDeinit(CETimeEventId _Nonnull ref) {
+void _CETimeEventDeinit(CETimeEventRef _Nonnull ref) {
     assert(ref);
     CETimeEvent_s * content = CCRefGetContentPtr(ref);
     assert(content->qIndex = CETimeEventQueueIndexInvalid);

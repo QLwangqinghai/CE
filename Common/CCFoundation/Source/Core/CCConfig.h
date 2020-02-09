@@ -1,6 +1,6 @@
 //
 //  CCConfig.h
-//  CoreEvent
+//  CCFoundation
 //
 //  Created by vector on 2018/11/26.
 //  Copyright © 2018 com.wangqinghai. All rights reserved.

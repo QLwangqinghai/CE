@@ -31,7 +31,7 @@ static const CEApiResult_t CEApiResultErrorSystemCall = 2;
 
 size_t CEApiGetEventItemSize(void);
 
-CCPtr _Nonnull CEApiCreate(void);
+CCPtr _Nonnull CEApiCreate(uint32_t setSize);
 
 void CEApiFree(void * _Nonnull api);
 
@@ -43,7 +43,7 @@ typedef struct __CEApiUpdateEventsItem {
     
 } CEApiUpdateEventsItem_t;
 
-void CEApiUpdateEvents(void * _Nonnull api, int * _Nonnull fdPtrs, uint32_t swangqiangize, CEFileEventMask_es oldMask, CEFileEventMask_es mask);
+void CEApiUpdateEvents(void * _Nonnull api, int * _Nonnull fdPtrs, uint32_t size, CEFileEventMask_es oldMask, CEFileEventMask_es mask);
 
 
 int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buffer, size_t bufferSize, uint32_t itemSize, void * _Nullable context, const CEApiPollCallback_s * _Nonnull callback);

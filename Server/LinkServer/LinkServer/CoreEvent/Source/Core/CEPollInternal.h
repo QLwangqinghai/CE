@@ -10,6 +10,8 @@
 #define CEPollInternal_h
 
 #include "CEPoll.h"
+extern CCRefType CERefTypeTimeEvent;
+extern void _CETimeEventDeinit(CETimeEventRef _Nonnull ref);
 
 
 #define CEPollFileTimerHashShift 2
@@ -18,11 +20,12 @@
 
 #pragma pack(push, 2)
 
-//4B
+//8B
 typedef struct {
-    uint32_t context: 16;
-    uint32_t handler: 14;
+    uint32_t context: 30;
     uint32_t mask: 2;
+    uint32_t handler: 14;
+    uint32_t xx: 18;
 } CEFile_t;
 
 typedef struct {
@@ -31,44 +34,22 @@ typedef struct {
 } CEFileEventHandler_s;
 
 
-/*
- none
- checking
- timeout
- */
-//typedef uint32_t CEFileTimerStatus_t;
-//const CEFileTimerStatus_t CEFileTimerStatusNone = 0;
-//const CEFileTimerStatus_t CEFileTimerStatusNormal = 1;
-//const CEFileTimerStatus_t CEFileTimerStatusTimeout = 2;
-
-/* File event structure 16B*/
-
-//typedef struct {
-//    CCRange32 range;
-//    CEFileEventHandler_s handler;
-//} CEFileHandler_s;
-
-
 typedef struct {
     pthread_t _Nullable thread;
-    void * _Nullable api; /* This is used for polling API specific data */
-
-#if __APPLE__
-    os_unfair_lock blockQueueLock;
-#else
-    pthread_spinlock_t blockQueueLock;
-#endif
-    uint64_t fdSequence;
     uint32_t progress;//
     uint32_t blockEvent;
     size_t tmpBufferSize;
     CEBlockQueue_s blockQueue;
     CCPtr _Nonnull tmpBuffer;
-    CETimeEventQueue_s timerQueue;
+    CETimerQueue_s * _Nonnull timerQueue;
     CCMicrosecondTime currentTime;//单位 微秒
     uint32_t fileTableSize;
+    uint32_t fileStatusTableSize;
     uint32_t handlerCount;
     CEFile_t * _Nonnull fileTable;
+    CCUInt8 * _Nonnull fileStatusTable;
+
+    void * _Nullable api; /* This is used for polling API specific data */
 
 //    uint32_t observerBufferSize;
 //    uint32_t observerBufferCount;
@@ -77,6 +58,29 @@ typedef struct {
     CEFileEventHandler_s fileEventHandlers[CEPollFileHandlerTableSize];
 } CEPoll_s;
 #pragma pack(pop)
+
+
+static inline void __CEPollSetStatus(CEPoll_s * _Nonnull p, uint32_t index, uint32_t status) {
+    CCUInt8 offsets[4] = {6, 4, 2, 0};
+    CCUInt8 mask[4] = {0x3F, 0xCF, 0xF3, 0x3};
+    uint32_t offset = index % 4;
+    CCUInt8 * ptr = p->fileStatusTable + (index >> 2);
+    CCUInt8 v = (status & 0x3) << (offsets[offset]);
+    *ptr = ((*ptr) & mask[offset]) | v;
+}
+
+static inline uint32_t __CEPollGetStatus(CEPoll_s * _Nonnull p, uint32_t index) {
+    CCUInt8 offsets[4] = {6, 4, 2, 0};
+    CCUInt8 mask[4] = {0x3F, 0xCF, 0xF3, 0x3};
+    uint32_t offset = index % 4;
+    CCUInt8 v = p->fileStatusTable[(index >> 2)];
+    CCUInt8 status = (v & mask[offset]) >> (offsets[offset]);
+    return status;
+}
+
+
+
+
 
 static inline CEFile_t * _Nonnull __CEPollGetFileWithIndex(CEPoll_s * _Nonnull p, int index) {
     CEFile_t * file = p->fileTable;

@@ -1265,7 +1265,7 @@ CCResult_t CCAesCrypt(CCAesContextPtr _Nonnull context,
                       const size_t inSize,
                       uint8_t * _Nonnull out,
                       const size_t outSize,
-                      size_t * _Nonnull outMoved) __attribute__((optimize("O0"))) {
+                      size_t * _Nonnull outMoved) {
     
     CCResult_t ck = CCAesContextCheck(context);
     if (CCResultSuccess != ck) {

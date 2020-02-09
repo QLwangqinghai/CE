@@ -110,7 +110,7 @@ void LSTimerQueueShiftUp(LSTimerQueue_s * _Nonnull queue, uint32_t index) {
     }
 }
 
-void CETimeEventPerform(CETimeEventId _Nonnull ref) {
+void CETimeEventPerform(CETimeEventRef _Nonnull ref) {
     assert(ref);
     CETimeEvent_s * content = CCRefGetContentPtr(ref);
 

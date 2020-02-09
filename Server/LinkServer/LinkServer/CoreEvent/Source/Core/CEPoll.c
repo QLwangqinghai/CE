@@ -11,12 +11,25 @@
 #include "CEMemory.h"
 #include "CEConfig.h"
 #include "CEBaseApi.h"
-#include "CETimeEvent.h"
 #include "CEFileEvent.h"
 #include "CEBaseApi.h"
 
-extern void CETimeEventPerform(CETimeEventId _Nonnull ref);
+extern void _CETimeEventPerform(CETimeEventRef _Nonnull ref);
 
+extern CETimerQueue_s * _Nonnull CETimeEventQueueCreate(void);
+static inline CETimeEventRef _Nullable _CETimerQueueGetFirst(CETimerQueue_s * _Nonnull queue) {
+    if (queue->count <= 0) {
+        return NULL;
+    }
+    return queue->buffer[0];
+}
+
+extern CCBool _CETimerQueueRemove(CETimerQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event);
+extern CCBool _CETimerQueueInsert(CETimerQueue_s * _Nonnull queue, CETimeEventRef _Nonnull event);
+
+extern CETimeEventRef _Nullable _CETimerQueueRemoveFirst(CETimerQueue_s * _Nonnull queue);
+extern CETimeEventRef _Nonnull _CETimerQueueRemoveIndex(CETimerQueue_s * _Nonnull queue, uint32_t index);
+extern void _CETimerQueueUpdate(CETimerQueue_s * _Nonnull queue, CETimeEventRef _Nonnull ref, CCMicrosecondTime time);
 
 /*
  我测试过 getsockopt(m_socket, SOL_SOCKET, SO_ERROR,(char*)&optval, &optlen);
@@ -99,10 +112,10 @@ extern void CETimeEventPerform(CETimeEventId _Nonnull ref);
 CCBool CEPollTimerQueueIsFull(CEPollPtr _Nonnull poll) {
     assert(poll);
     CEPoll_s * p = poll;
-    return p->timerQueue.count < CETimeEventQueueSizeMax;
+    return p->timerQueue->count < CETimerQueueBufferSize;
 }
 
-CETimeEventId _Nonnull CEPollAddTimeEvent(CEPollPtr _Nonnull poll,
+CETimeEventRef _Nonnull CEPollAddTimeEvent(CEPollPtr _Nonnull poll,
                                            uint32_t mode,
                                            CEMicrosecondTime deadline,
                                            CEMicrosecondTime repeating,
@@ -110,40 +123,40 @@ CETimeEventId _Nonnull CEPollAddTimeEvent(CEPollPtr _Nonnull poll,
     assert(poll);
     CEPoll_s * p = poll;
     assert(mode <= 2);//0, 1, 2 有效
-    CETimeEventId ref = CCRefAllocate(CCDomain, CERefTypeTimeEvent, sizeof(CETimeEvent_s));
+    CETimeEventRef ref = CCRefAllocate(CCDomain, CERefTypeTimeEvent, sizeof(CETimeEvent_s));
     CETimeEvent_s * content = CCRefGetContentPtr(ref);
     CCRefRetain(closure);
     content->isCanceled = 0;
     content->closure = closure;
     content->when = deadline;
     content->mode = mode;
-    content->states = CETimeEventStatesWait;
+    content->isFinished = 0;
     content->qIndex = CETimeEventQueueIndexInvalid;
     content->duration = repeating;
-    assert(CETimeEventQueueInsert(&(p->timerQueue), ref));
+    assert(_CETimerQueueInsert(p->timerQueue, ref));
     CCRefRetain(ref);
     return ref;
 }
 
-void CEPollCancelTimeEvent(CEPollPtr _Nonnull poll, CETimeEventId _Nonnull ref) {
+void CEPollCancelTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull ref) {
     assert(poll);
     assert(ref);
     CEPoll_s * p = poll;
     CETimeEvent_s * content = CCRefGetContentPtr(ref);
-    if (CETimeEventStatesFinished != content->states) {
+    if (0 != content->isFinished) {
         content->isCanceled = 1;
     }
-    if (CETimeEventQueueRemove(&(p->timerQueue), ref)) {
+    if (_CETimerQueueRemove(p->timerQueue, ref)) {
         CCRefRelease(ref);
     }
 }
-CCBool CEPollIsValidTimeEvent(CEPollPtr _Nonnull poll, CETimeEventId _Nonnull ref) {
+CCBool CEPollIsValidTimeEvent(CEPollPtr _Nonnull poll, CETimeEventRef _Nonnull ref) {
     assert(poll);
     assert(ref);
     CEPoll_s * p = poll;
     CETimeEvent_s * content = (CETimeEvent_s *)CCRefGetContentPtr(ref);
     uint32_t index = content->qIndex;
-    return (index < p->timerQueue.count);
+    return (index < p->timerQueue->count);
 }
 
 
@@ -167,9 +180,6 @@ CEResult_t CEPollAddFile(CEPollPtr _Nonnull poll, uint32_t handlerId, int fd, ui
         return CEResultErrorParams;
     };
     assert(poll);
-
-    p->fdSequence += 1;
-
     CEFile_t * file = __CEPollGetFileWithIndex(p, fd);
     if (file->handler != 0) {
         return CEResultErrorFileIdInvalid;
@@ -238,32 +248,37 @@ void CEPollWakeUp(CEPoll_s * _Nonnull p) {
     assert(p);
     CEApiWakeUp(p->api);
 }
-static inline void CEPollBlockQueueLock(CEPoll_s * _Nonnull poll) {
-    assert(poll);
+static inline void CEBlockQueueLock(CEBlockQueue_s * _Nonnull queue) {
+    assert(queue);
 #if __APPLE__
-    os_unfair_lock_lock(&(poll->blockQueueLock));
+    os_unfair_lock_lock(&(queue->blockQueueLock));
 #else
-    pthread_spin_lock(&(poll->blockQueueLock));
+    pthread_spin_lock(&(queue->blockQueueLock));
 #endif
 }
 
-static inline void CEPollBlockQueueUnlock(CEPoll_s * _Nonnull poll) {
-    assert(poll);
+static inline void CEBlockQueueUnlock(CEBlockQueue_s * _Nonnull queue) {
+    assert(queue);
 #if __APPLE__
-    os_unfair_lock_unlock(&(poll->blockQueueLock));
+    os_unfair_lock_unlock(&(queue->blockQueueLock));
 #else
-    pthread_spin_unlock(&(poll->blockQueueLock));
+    pthread_spin_unlock(&(queue->blockQueueLock));
 #endif
 }
 
 CEBlockQueuePage_s * _Nullable CEBlockQueueRemoveAll(CEBlockQueue_s * _Nonnull queue) {
+    assert(queue);
+    CEBlockQueueLock(queue);
     CEBlockQueuePage_s * page = queue->begin;
     queue->begin = NULL;
     queue->end = NULL;
+    CEBlockQueueUnlock(queue);
     return page;
 }
 
 void CEBlockQueueAppend(CEBlockQueue_s * _Nonnull queue, CCClosureRef _Nonnull closure) {
+    assert(queue);
+    CEBlockQueueLock(queue);
     CEBlockQueuePage_s * page = queue->end;
     
     if (NULL == page) {
@@ -282,6 +297,7 @@ void CEBlockQueueAppend(CEBlockQueue_s * _Nonnull queue, CCClosureRef _Nonnull c
     assert(page->used < CEBlockQueuePageSize);
     page->buffer[page->used] = closure;
     page->used ++;
+    CEBlockQueueUnlock(queue);
 }
 
 
@@ -291,9 +307,7 @@ void CEPollAsync(CEPollPtr _Nonnull poll, CCClosureRef _Nonnull closure) {
     CEPoll_s * p = poll;
 
     CCRefRetain(closure);
-    CEPollBlockQueueLock(p);
     CEBlockQueueAppend(&(p->blockQueue), closure);
-    CEPollBlockQueueUnlock(p);
     CEPollWakeUp(p);
 }
 
@@ -307,39 +321,37 @@ struct CEApiPollContext {
 
 _Bool CEApiFileEventMapperCallback(void * _Nullable context, void * _Nonnull api, CCPtr _Nonnull buffer, int fd, CEFileEventMask_es mask) {
     assert(context);
-//    if (mask == CEFileEventMaskNone) {
-//        return false;
-//    }
-//    CEPoll_s * p = ((struct CEApiPollContext *)context)->poll;
-//    CCRange16 * ranges = ((struct CEApiPollContext *)context)->ranges;
-//    assert(p);
-//    assert(ranges);
-//
-//    CEFile_t * file = __CEPollGetFileWithIndex(p, fd);
-//    assert(file->handler > 0);
-//
-//    if (CEFileEventMaskReadWritable & mask) {
-//        _Bool isFired = file->read.isFired || file->write.isFired;
-//
-//        if (CEFileEventMaskReadable & mask) {
-//            file->read.isFired = 1;
-//        }
-//        if (CEFileEventMaskWritable & mask) {
-//            file->write.isFired = 1;
-//        }
-//        if (!isFired) {
-//            CEFileFiredInfo info = {
-//                .id = __CEFileIdMake(fd, file->sequence),
-//                .handler = file->handler,
-//            };
-//            CEFileFiredInfo * item = buffer;
-//            *item = info;
-//            assert(file->handler > 0);
-//            assert(file->handler <= p->maxHandlerId);
-//            ranges[file->handler].length += 1;
-//            ((struct CEApiPollContext *)context)->count += 1;
-//        }
-//    }
+    if (mask == CEFileEventMaskNone) {
+        return false;
+    }
+    CEPoll_s * p = ((struct CEApiPollContext *)context)->poll;
+    CCRange16 * ranges = ((struct CEApiPollContext *)context)->ranges;
+    assert(p);
+    assert(ranges);
+    assert(fd < p->fileTableSize);
+
+    CEFile_t * file = __CEPollGetFileWithIndex(p, fd);
+    assert(file->handler > 0);
+
+    if (CEFileEventMaskReadWritable & mask) {
+        uint32_t oldStatus = __CEPollGetStatus(p, fd);
+        uint32_t newStatus = oldStatus;
+        if (CEFileEventMaskReadable & mask) {
+            newStatus |= CEFileEventMaskReadable;
+        }
+        if (CEFileEventMaskWritable & mask) {
+            newStatus |= CEFileEventMaskWritable;
+        }
+        __CEPollSetStatus(p, fd, newStatus);
+        if (0 == oldStatus && 0 != newStatus) {
+            CEFile_t file = p->fileTable[fd];
+            int * item = buffer;
+            *item = fd;
+            assert(file.handler < p->handlerCount);
+            ranges[file.handler].length += 1;
+            ((struct CEApiPollContext *)context)->count += 1;
+        }
+    }
     return true;
 }
 
@@ -355,9 +367,7 @@ void CEApiPipeEventCallback(void * _Nullable context, void * _Nonnull api) {
 
 int64_t _CEPollDoBlocks(CEPoll_s * _Nonnull p) {
     CEBlockQueuePage_s * page = NULL;
-    CEPollBlockQueueLock(p);
     page = CEBlockQueueRemoveAll(&(p->blockQueue));
-    CEPollBlockQueueUnlock(p);
     
     int64_t count = 0;
     while (NULL != page) {
@@ -378,38 +388,46 @@ int64_t _CEPollDoBlocks(CEPoll_s * _Nonnull p) {
 int64_t _CEPollDoTimers(CEPoll_s * _Nonnull p) {
     int64_t processed = 0;
     
-//    CETimeEventManager_s * tem = &(p->timeEventManager);
-//    CETimeEventQueue_s * teq = &(p->timeEventManager.timerQueue);
-//
-//    CETimeEvent_s * te = CETimeEventQueueGetFirstItem(teq);
-//    CEMicrosecondTime now = p->currentTime;
-//    int64_t fired = 0;
-//    while (NULL != te) {
-//        if (te->when <= now) {
-//            tem->executingTimeEvent = te;
-//            CETimeEventSourceExecute(te, eventLoop);
-//            if (CETimeEventStatesWait == te->states) {
-//                CETimeEventQueueShiftDown(teq, te->qIndex);
-//            } else {
-//                CETimeEvent_s * removed = CETimeEventQueueRemoveFirst(teq);
-//                CCRefRelease
-//                CETimeEventSourceDeinit(removed, eventLoop);
-//            }
-//
-//            te = CETimeEventQueueGetFirstItem(teq);
-//
-//            tem->executingTimeEvent = NULL;
-//            fired += 1;
-//        } else {
-//            break;
-//        }
-//    }
-//    tem->executingTimeEvent = NULL;
-    
+    CETimerQueue_s * queue = p->timerQueue;
+    CETimeEventRef * ref = _CETimerQueueGetFirst(queue);
+    CEMicrosecondTime now = p->currentTime;
+    int64_t fired = 0;
+    while (NULL != ref) {
+        CETimeEvent_s * event = (CETimeEvent_s *)CCRefGetContentPtr(ref);
+        if (event->when <= now) {
+            if (event->isCanceled) {
+                if (_CETimerQueueRemove(queue, ref)) {
+                    CCRefRelease(ref);
+                }
+            } else {
+                assert(0 == event->isFinished);
+                _CETimeEventPerform(ref);
+                if (0 == event->isCanceled) {
+                    if (CETimeEventModeRepeatFixedRate == event->mode) {
+                        _CETimerQueueUpdate(queue, ref, event->when + event->duration);
+                    } else if (CETimeEventModeRepeatFixedDelay == event->mode) {
+                        _CETimerQueueUpdate(queue, ref, CEGetCurrentTime() + event->duration);
+                    } else if (CETimeEventModeDelay == event->mode) {
+                        event->isFinished = true;
+                    } else {
+                        CELogError("CETimeEventPerform error");
+                        abort();
+                    }
+                }
+                if (0 != event->isCanceled || 0 != event->isFinished) {
+                    if (_CETimerQueueRemove(queue, ref)) {
+                        CCRefRelease(ref);
+                    }
+                }
+                ref = _CETimerQueueGetFirst(queue);
+            }
+            fired += 1;
+        } else {
+            break;
+        }
+    }
     return processed;
 }
-
-
 
 
 //bufferSize 缓冲区长度， 不是个数
@@ -422,18 +440,20 @@ int __CEPollDoCheckSource(CEPoll_s * _Nonnull p, struct CEApiPollContext * _Nonn
     CEMicrosecondTime now = CEGetCurrentTime();
     CEMicrosecondTime timeout = 1;
     if (now < p->currentTime + CEFrameIntervalDefault) {
-        CETimeEvent_s * te = CETimeEventQueueGetFirstItem(&(p->timerQueue));
-        if (NULL != te) {
-            if (te->when > now) {
+        CETimeEvent_s * ref = _CETimerQueueGetFirst(p->timerQueue);
+        if (NULL != ref) {
+            CETimeEvent_s * event = (CETimeEvent_s *)CCRefGetContentPtr(ref);
+            if (event->when > now) {
                 timeout = 1;
             } else {
-                timeout = te->when - now;
+                timeout = event->when - now;
             }
         } else {
             timeout = CEFrameIntervalDefault - p->fileTableSize / 32 * CEFrameIntervalPer32;
         }
     }
-    return CEApiPoll(p->api, timeout, p->tmpBuffer, p->tmpBufferSize, sizeof(CEFileFiredInfo), context, &callback);
+    memset(p->fileStatusTable, 0, p->fileStatusTableSize);
+    return CEApiPoll(p->api, timeout, p->tmpBuffer, p->tmpBufferSize, sizeof(int), context, &callback);
 }
 
 int64_t _CEPollDoSource(CEPoll_s * _Nonnull p) {
@@ -511,38 +531,6 @@ int64_t _CEPollDoSource(CEPoll_s * _Nonnull p) {
     return processed;
 }
 
-void __CEPollDoCheckSourceTimeout(CEPoll_s * _Nonnull p) {
-//    CERunLoopTimeSlip(p, 1);
-}
-
-int64_t _CEPollDoSourceTimeout(CEPoll_s * _Nonnull p) {
-    int64_t processed = 0;
-
-//    for (int j = 0; j < eventLoop->firedCount; j++) {
-//        CEFileDescription_s fd = *(CERunLoopGetFiredEventByIndex(eventLoop, j));
-//
-//        CEFileEvent_s *fe = CERunLoopGetFileEvent(eventLoop, fd);
-//        if (NULL !=  fe) {
-//            if (fe->isReadTimeout || fe->isWriteTimeout) {
-//                CEFileEventInfo_s info = {
-//                    .readable = 0,
-//                    .writable = 0,
-//                    .isReadTimeout = fe->isReadTimeout,
-//                    .isWriteTimeout = fe->isWriteTimeout,
-//                    .xxx = 0,
-//                };
-//                fe->isReadTimeout = 0;
-//                fe->isWriteTimeout = 0;
-//                fe->handler(eventLoop, fd, fe->clientData, info);
-//                processed++;
-//            }
-//        }
-//    }
-//    eventLoop->firedCount = 0;
-    return processed;
-}
-
-
 static const char * const _Nullable CEPollProgressName[4] = {
     "CEPollProgress.doSource",
     "CEPollProgress.doBlock",
@@ -611,7 +599,7 @@ pthread_t CEPollCreateThread(CEPoll_s * _Nonnull p) {
         CELogError("pthread_attr_getstacksize error %s\n", strerror(result));
         return 0;
     }
-
+//PTHREAD_STACK_MIN;
     size_t rStacksize = 1024 * 1024 * 4;
     if (stacksize < rStacksize) {
         result = pthread_attr_setstacksize(&attr, rStacksize);//设置线程堆栈大小
@@ -686,27 +674,30 @@ CEPoll_s * _Nonnull CEPollCreate(uint32_t setsize) {
     poll->fileTableSize = setsize;
     poll->fileTable = CEAllocateClear(sizeof(CEFile_t) * setsize);
     
+    poll->fileStatusTableSize = sizeof(CCUInt8) * ((setsize + 3) / 4);
+    poll->fileStatusTable = CEAllocateClear(poll->fileStatusTableSize);
     poll->tmpBufferSize = CEApiGetEventItemSize() * setsize;
-    poll->tmpBuffer = CEAllocateClear(poll->tmpBufferSize);    
+    poll->tmpBuffer = CEAllocateClear(poll->tmpBufferSize);
     
     CEFile_t * iter = poll->fileTable;
     for (uint32_t index=0; index<poll->fileTableSize; index++) {
-        iter += 1;
         *iter = CEFileInvalid;
+        iter += 1;
     }
     poll->fileTableSize = setsize;
     poll->currentTime = CEGetCurrentTime();
 
-    
+    poll->blockQueue.begin = NULL;
+    poll->blockQueue.end = NULL;
 #if __APPLE__
-    poll->blockQueueLock = OS_UNFAIR_LOCK_INIT;
+    poll->blockQueue.blockQueueLock = OS_UNFAIR_LOCK_INIT;
 #else
-    pthread_spin_init(&(poll->blockQueueLock), PTHREAD_PROCESS_PRIVATE);
+    pthread_spin_init(&(poll->blockQueue.blockQueueLock), PTHREAD_PROCESS_PRIVATE);
 #endif
     
     poll->api = api;
 
-    CETimeEventQueueInit(&(poll->timerQueue));
+    poll->timerQueue = CETimeEventQueueCreate();
     //pipe
     //https://www.cnblogs.com/kunhu/p/3608109.html
     

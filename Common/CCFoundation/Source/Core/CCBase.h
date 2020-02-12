@@ -64,6 +64,13 @@ extern CCMicrosecondTime CCBootInterval(void);
 //返回0成功
 int CCGetExecutablePath(char * _Nonnull buf, uint32_t * _Nonnull bufsize);
 
+
+size_t CCGetCachelineSize(void);
+
+//Avaliable CPU processor count
+uint32_t CCActiveProcessorCount(void);
+
+
 #if defined(__cplusplus)
 }  // extern C
 #endif

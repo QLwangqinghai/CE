@@ -12,7 +12,7 @@
 #include "LSTypes.h"
 
 
-LSFileHandler_s * _Nonnull LSManagerGetHandler(LSManager_s * _Nonnull manager, uint32_t index);
+LSEventLoop_s * _Nonnull LSManagerGetEventLoop(LSManager_s * _Nonnull manager, uint32_t index);
 
 LSManager_s * _Nonnull LSManagerShared(void);
 

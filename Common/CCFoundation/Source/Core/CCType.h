@@ -27,6 +27,7 @@ extern "C" {
 #include <math.h>
 #include <string.h>
 #include <errno.h>
+#include <stddef.h>
 
 #if defined(__GNUC__)
 #include <stdbool.h>

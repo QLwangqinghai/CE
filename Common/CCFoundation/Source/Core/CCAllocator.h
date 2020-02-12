@@ -98,7 +98,6 @@ static inline void CCDeallocate(void * _Nonnull ptr) {
     CCFree(ptr);
 }
 
-size_t CCGetCachelineSize(void);
 
 #if defined(__cplusplus)
 }  // extern C

@@ -297,7 +297,7 @@ int CEApiPoll(void * _Nonnull api, CEMicrosecondTime timeout, CCPtr _Nonnull buf
     if (retval > 0) {
         numevents = retval;
         uint8_t * ptr = buffer;
-        
+
         for(int j = 0; j < numevents; j++) {
             CEFileEventMask_es mask = CEFileEventMaskNone;
             struct kevent *e = events + j;

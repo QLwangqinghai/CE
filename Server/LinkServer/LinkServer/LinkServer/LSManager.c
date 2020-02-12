@@ -16,9 +16,22 @@ LSFileHandler_s * _Nonnull LSManagerGetHandler(LSManager_s * _Nonnull manager, u
     return &(manager->handlers[index]);
 }
 
-LSManager_s * _Nonnull LSManagerCreate(uint32_t domain, uint32_t handlerCount) {
+LSEventLoop_s * _Nonnull LSManagerGetEventLoop(LSManager_s * _Nonnull manager, uint32_t index) {
+    struct rlimit limit;
+    if(getrlimit(RLIMIT_NOFILE, &limit) != 0) {
+        CELogError("getrlimit RLIMIT_NOFILE error %s; \n", strerror(errno))
+        abort();
+    }
+    CELogVerbose("getrlimit RLIMIT_NOFILE max: %llu, current: %llu\n", limit.rlim_max, limit.rlim_cur)
+    uint32_t fileTableSize = limit.rlim_max < UINT32_MAX ? limit.rlim_max : UINT32_MAX;
     
-    LSManager_s * manager = CCAllocate(sizeof(LSManager_s) + sizeof(LSFileHandler_s) * handlerCount);
+    LSManager_s * manager = CCAllocate(sizeof(LSManager_s));
+    manager->handlers = CCAllocate(sizeof(LSFileHandler_s) * handlerCount);
+    manager->handlerCount = handlerCount;
+    
+    manager->fileTable = CCAllocate(sizeof(LSFile_s) * fileTableSize);
+    manager->fileTableSize = fileTableSize;
+    
     CEPollPtr poll = CEPollShared();
 
     for (uint32_t index=0; index<handlerCount; index++) {
@@ -31,19 +44,34 @@ LSManager_s * _Nonnull LSManagerCreate(uint32_t domain, uint32_t handlerCount) {
     return manager;
 }
 
+LSManager_s * _Nonnull LSManagerCreate(uint32_t domain, uint32_t loopCount, uint32_t maxConnectionCount) {
+    LSManager_s * manager = CCAllocate(sizeof(LSManager_s));
+    manager->loops = CCAllocate(sizeof(LSEventLoop_s) * loopCount);
+    manager->loopCount = loopCount;
+    
+    struct rlimit limit;
+    if(getrlimit(RLIMIT_NOFILE, &limit) != 0) {
+        CELogError("getrlimit RLIMIT_NOFILE error %s; \n", strerror(errno))
+        abort();
+    }
+    CELogVerbose("getrlimit RLIMIT_NOFILE max: %llu, current: %llu\n", limit.rlim_max, limit.rlim_cur)
+    uint32_t fileTableSize = limit.rlim_max < UINT32_MAX ? limit.rlim_max : UINT32_MAX;
 
-
-
-
-
+    manager->fileTable = CCAllocate(sizeof(LSFile_s) * fileTableSize);
+    manager->fileTableSize = fileTableSize;
+    
+    
+    
+}
 
 #pragma mark - shared
 
 static LSManager_s * _Nonnull __LSManagerShared = NULL;
 void LSManagerSharedCreate(void) {
     uint32_t domain = 0;
-    uint32_t handlerCount = 1;
-    __LSManagerShared = LSManagerCreate(domain, handlerCount);
+    uint32_t eventLoopCount = CCActiveProcessorCount();
+    uint32_t maxCount = 123;
+    __LSManagerShared = LSManagerCreate(domain, handlerCount, maxCount);
 }
 LSManager_s * _Nonnull LSManagerShared(void) {
     static pthread_once_t once = PTHREAD_ONCE_INIT;

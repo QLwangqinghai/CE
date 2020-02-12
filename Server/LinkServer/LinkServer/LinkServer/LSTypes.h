@@ -47,6 +47,13 @@ typedef struct _LSFileHandler LSFileHandler_s;
 struct _LSSocketSource;
 typedef struct _LSSocketSource LSSocketSource_s;
 
+struct _LSFileGroup;
+typedef struct _LSFileGroup LSFileGroup_s;
+
+struct _LSEventLoop;
+typedef struct _LSEventLoop LSEventLoop_s;
+
+
 typedef LSSocketSource_s * _Nonnull (*LSTimerQueueGetSource_f)(LSFileHandler_s * _Nonnull handler, uint32_t id);
 
 #pragma pack(push, 2)
@@ -87,7 +94,11 @@ struct _LSSocketSource {
 
 typedef struct {
     int fd;
-    uint32_t xxx;
+    uint32_t mask: 2;
+    uint32_t status: 2;
+//    uint32_t isReadable: 1;
+//    uint32_t isWritable: 1;
+    uint32_t xxx: 28;
     uint64_t sequence;
     LSSocketSource_s writeSource;
     LSSocketSource_s readSource;
@@ -95,7 +106,7 @@ typedef struct {
     CCByte16 deviceToken;
     CCByte16 writeVi;
     CCByte16 readVi;
-} LSConnect_s;
+} LSConnection_s;
 
 
 typedef struct {
@@ -104,30 +115,49 @@ typedef struct {
     uint16_t table[0x10000];
 } LSTimerQueue_s;
 
-struct _LSFileHandler {
-    uint32_t handlerId;
+struct _LSFileGroup {
+    uint32_t groupId;
     uint32_t count;
-    LSManager_s * _Nonnull manager;
-    LSConnect_s * _Nonnull connectTable;
+    LSFileHandler_s * _Nonnull handler;
+    LSConnection_s * _Nonnull connectionTable;
     LSTimerQueue_s * _Nonnull readTimerQueue;
     LSTimerQueue_s * _Nonnull writeTimerQueue;
 };
 
-#pragma pack(pop)
+struct _LSFileHandler {
+    uint32_t handlerId;
+    uint32_t count;
+    LSManager_s * _Nonnull manager;
+    LSConnection_s * _Nonnull connectionTable;
+    LSTimerQueue_s * _Nonnull readTimerQueue;
+    LSTimerQueue_s * _Nonnull writeTimerQueue;
+};
+
+struct _LSEventLoop {
+    uint32_t id;
+    uint32_t groupCount;
+    uint32_t connectionCapacity;
+    uint32_t connectCount;
+    LSFileGroup_s groups[0];
+};
 
 typedef struct {
-    uint32_t context: 16;
-    uint32_t handler: 15;
+    uint32_t index: 21;
+    uint32_t loop: 10;
     uint32_t isValid: 1;
-} LSFile_t;
+} LSFile_s;
+
+#pragma pack(pop)
 
 struct _LSManager {
     uint32_t domain;
-    uint32_t handlerCount;
+    uint32_t loopCount;
+    uint32_t maxConnectionCount;
+    uint32_t connectionCapacity;
     uint64_t sequence;
-    size_t fileTableSize;
-    LSFile_t * _Nonnull fileTable;
-    LSFileHandler_s handlers[0];
+    size_t fileTableSize;//当前进程能打开的最大文件描述符大小
+    LSFile_s * _Nonnull fileTable;//index 是 fd， 值是 File在fileTable中的index
+    LSEventLoop_s * _Nonnull loops;
 };
 
 

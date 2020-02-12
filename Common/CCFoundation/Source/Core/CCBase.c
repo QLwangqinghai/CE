@@ -191,7 +191,104 @@ int CCGetExecutablePath(char* buf, uint32_t * bufsize) {
     }
 }
 #endif
+#if defined(__APPLE__)
+
+#include <sys/sysctl.h>
+size_t CCGetCachelineSize(void) {
+    
+    int name[] = {CTL_HW,HW_CACHELINE};
+    size_t lineSize = 0;
+    size_t sizeOfLineSize = sizeof(lineSize);
+
+    int code = sysctl(name, 2, &lineSize, &sizeOfLineSize, NULL, 0); // getting size of answer
+    if (0 == code) {
+        return (int32_t)lineSize;
+    } else {
+        return 64;
+    }
+}
+#elif defined(_WIN32)
+
+#include <stdlib.h>
+#include <windows.h>
+size_t CCGetCachelineSize() {
+    size_t line_size = 0;
+    DWORD buffer_size = 0;
+    DWORD i = 0;
+    SYSTEM_LOGICAL_PROCESSOR_INFORMATION * buffer = 0;
+
+    GetLogicalProcessorInformation(0, &buffer_size);
+    buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION *)malloc(buffer_size);
+    GetLogicalProcessorInformation(&buffer[0], &buffer_size);
+
+    for (i = 0; i != buffer_size / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION); ++i) {
+        if (buffer[i].Relationship == RelationCache && buffer[i].Cache.Level == 1) {
+            line_size = buffer[i].Cache.LineSize;
+            break;
+        }
+    }
+
+    free(buffer);
+    return line_size;
+}
+
+#elif defined(linux)
+
+#include <stdio.h>
+size_t CCGetCachelineSize() {
+    FILE * p = 0;
+    p = fopen("/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size", "r");
+    unsigned int i = 0;
+    if (p) {
+        fscanf(p, "%d", &i);
+        fclose(p);
+    }
+    return i;
+}
+
+#else
+    #error Unrecognized platform
+#endif
 
 
+//uint32_t CCCpuCount(void) {
+//
+//    #include <sys/sysinfo.h>
+//
+//    int main(int argc, char* argv[])
+//    {
+//        printf("cpu total: %d\n", get_nprocs_conf());
+//        printf("cpu num: %d\n", get_nprocs());
+//        return 0;
+//
+//    }
+//}
 
 
+uint32_t CCActiveProcessorCount() {
+    int32_t pcnt;
+#if CC_TARGET_OS_WINDOWS
+    SYSTEM_INFO sysInfo;
+    GetSystemInfo(&sysInfo);
+    DWORD_PTR activeProcessorMask = sysInfo.dwActiveProcessorMask;
+    // assumes sizeof(DWORD_PTR) is 64 bits or less
+    uint64_t v = activeProcessorMask;
+    v = v - ((v >> 1) & 0x5555555555555555ULL);
+    v = (v & 0x3333333333333333ULL) + ((v >> 2) & 0x3333333333333333ULL);
+    v = (v + (v >> 4)) & 0xf0f0f0f0f0f0f0fULL;
+    pcnt = (v * 0x0101010101010101ULL) >> ((sizeof(v) - 1) * 8);
+#elif CC_TARGET_OS_DARWIN
+    int32_t mib[] = {CTL_HW, HW_AVAILCPU};
+    size_t len = sizeof(pcnt);
+    int32_t result = sysctl(mib, sizeof(mib) / sizeof(int32_t), &pcnt, &len, NULL, 0);
+    if (result != 0) {
+        pcnt = 0;
+    }
+#elif CC_TARGET_OS_LINUX
+    pcnt = sysconf(_SC_NPROCESSORS_ONLN);
+#else
+    // Assume the worst
+    pcnt = 1;
+#endif
+    return pcnt;
+}

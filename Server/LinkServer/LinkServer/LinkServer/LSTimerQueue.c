@@ -15,26 +15,31 @@ static CEMicrosecondTime CEAddMicrosecondsToNow(CEMicrosecondTime milliseconds) 
     return time + milliseconds;
 }
 
-void __LSTimerQueueInit(LSTimerQueue_s * _Nonnull queue, LSFileHandler_s * _Nonnull owner, LSTimerQueueGetSource_f _Nonnull getSource) {
-    assert(queue);
-    assert(owner);
-    assert(getSource);
-    queue->owner = owner;
-    queue->getSource = getSource;
-    for (uint32_t i=0; i<0x10000; i++) {
-        queue->table[i] = i;
-    }
+static inline void __LSTimerQueueSetItemSourceIndex(LSTimerQueue_s * _Nonnull queue, uint32_t connectionIndex, uint32_t timerIndex) {
+    queue->setSourceIndex(queue->group, connectionIndex, timerIndex);
 }
 
+
+//void __LSTimerQueueInit(LSTimerQueue_s * _Nonnull queue, LSConnectionGroup_s * _Nonnull group, LSTimerQueueSetSourceIndex_f _Nonnull setSourceIndex) {
+//    assert(queue);
+//    assert(group);
+//    assert(setSourceIndex);
+//    queue->group = group;
+//    queue->setSourceIndex = setSourceIndex;
+//    for (uint32_t i=0; i<0x10000; i++) {
+//        queue->table[i] = i;
+//    }
+//}
+
 void LSTimerQueueUpdateItem(LSTimerQueue_s * _Nonnull queue, uint32_t index, CEMicrosecondTime deadline) {
-    uint64_t time = deadline >> 16;
+    uint64_t time = deadline >> 12;
     if (time != LSSocketSourceDeadlineForever) {
         if (0 != (deadline & 0xffffULL)) {
             time += 1;
         }
     }
     
-    LSSocketSource_s * source = LSTimerQueueGetItem(queue, queue->table[index]);
+    LSConnectionTimeSource_s * source = LSTimerQueueGetItem(queue, index);
     uint64_t old = source->deadline;
     source->deadline = time;
     if (time > old) {
@@ -46,20 +51,21 @@ void LSTimerQueueUpdateItem(LSTimerQueue_s * _Nonnull queue, uint32_t index, CEM
 
 
 
-static inline void LSTimerQueueSwap(LSTimerQueue_s * _Nonnull queue, uint32_t index, uint32_t aindex) {
-    uint32_t id = queue->table[index];
-    queue->table[index] = queue->table[aindex];
-    queue->table[aindex] = id;
-    LSTimerQueueGetItem(queue, queue->table[index])->index = index;
-    LSTimerQueueGetItem(queue, queue->table[aindex])->index = aindex;
-    queue->table[aindex] = index;
-    queue->table[index] = aindex;
+static inline void LSTimerQueueSwap(LSTimerQueue_s * _Nonnull queue, uint32_t aIndex, uint32_t bIndex) {
+    LSConnectionTimeSource_s * a = LSTimerQueueGetItem(queue, aIndex);
+    LSConnectionTimeSource_s * b = LSTimerQueueGetItem(queue, bIndex);
+    LSConnectionTimeSource_s tmp = *a;
+    *a = *b;
+    *b = tmp;
+    
+    __LSTimerQueueSetItemSourceIndex(queue, a->connectionIndex, aIndex);
+    __LSTimerQueueSetItemSourceIndex(queue, b->connectionIndex, bIndex);
 }
 
 static inline CCBool LSTimerQueueNeedSwap(LSTimerQueue_s * _Nonnull queue, uint32_t parentIndex, uint32_t childIndex) {
     
-    LSSocketSource_s * parent = LSTimerQueueGetItem(queue, queue->table[parentIndex]);
-    LSSocketSource_s * child = LSTimerQueueGetItem(queue, queue->table[childIndex]);
+    LSConnectionTimeSource_s * parent = LSTimerQueueGetItem(queue, parentIndex);
+    LSConnectionTimeSource_s * child = LSTimerQueueGetItem(queue, childIndex);
     if (parent->deadline == child->deadline) {
         return false;
     } else {
@@ -110,38 +116,3 @@ void LSTimerQueueShiftUp(LSTimerQueue_s * _Nonnull queue, uint32_t index) {
     }
 }
 
-void CETimeEventPerform(CETimeEventRef _Nonnull ref) {
-    assert(ref);
-    CETimeEvent_s * content = CCRefGetContentPtr(ref);
-
-    if (CETimeEventStatesWait != content->states) {
-        CELogError("CETimeEventPerform error");
-        abort();
-    }
-    content->states = CETimeEventStatesExecuting;
-    CCClosurePerform(content->closure, ref, NULL);
-    
-    if (CETimeEventStatesExecuting == content->states) {
-        if (CETimeEventModeRepeatFixedRate == content->mode) {
-            content->when = content->when + content->duration;
-            content->states = CETimeEventStatesWait;
-        } else if (CETimeEventModeRepeatFixedDelay == content->mode) {
-            content->when = CEGetCurrentTime() + content->duration;
-            content->states = CETimeEventStatesWait;
-        } else if (CETimeEventModeDelay == content->mode) {
-            content->states = CETimeEventStatesFinished;
-        } else {
-            CELogError("CETimeEventPerform error");
-            abort();
-        }
-    } else if (CETimeEventStatesWait == content->states) {
-        CELogError("CETimeEventPerform error");
-        abort();
-    } else if (CETimeEventStatesFinished == content->states) {
-        CELogError("CETimeEventPerform error");
-        abort();
-    } else {
-        CELogError("CETimeEventPerform error");
-        abort();
-    }
-}

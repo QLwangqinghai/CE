@@ -27,8 +27,6 @@ void CEMemoryManagerUpdateReallocate(void * _Nullable (* _Nonnull func)(void * _
 void CEMemoryManagerUpdateDeallocate(void (* _Nonnull func)(void * _Nonnull ptr));
 
 
-
-
 #if defined(__cplusplus)
 }
 #endif

@@ -39,6 +39,7 @@
 		D6BD24BD23E2BDB500B3A57D /* OBBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D6BD24BC23E2BDB500B3A57D /* OBBridge.m */; };
 		D6D663DD23F403270041BADB /* LSConnection.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D663DC23F403270041BADB /* LSConnection.c */; };
 		D6D663E023F413F10041BADB /* LSEventLoop.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D663DF23F413F10041BADB /* LSEventLoop.c */; };
+		D6D663E323F4FF470041BADB /* LSConnnectionGroup.c in Sources */ = {isa = PBXBuildFile; fileRef = D6D663E223F4FF470041BADB /* LSConnnectionGroup.c */; };
 		D6F5429123E1BD07008B2D65 /* CEPollInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F5429023E1BD07008B2D65 /* CEPollInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -123,6 +124,8 @@
 		D6D663DC23F403270041BADB /* LSConnection.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LSConnection.c; sourceTree = "<group>"; };
 		D6D663DE23F413F10041BADB /* LSEventLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LSEventLoop.h; sourceTree = "<group>"; };
 		D6D663DF23F413F10041BADB /* LSEventLoop.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LSEventLoop.c; sourceTree = "<group>"; };
+		D6D663E123F4FF470041BADB /* LSConnnectionGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LSConnnectionGroup.h; sourceTree = "<group>"; };
+		D6D663E223F4FF470041BADB /* LSConnnectionGroup.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LSConnnectionGroup.c; sourceTree = "<group>"; };
 		D6F5428C23E1BBE2008B2D65 /* CEFileEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEFileEvent.h; sourceTree = "<group>"; };
 		D6F5428D23E1BBE2008B2D65 /* CEFileEvent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CEFileEvent.c; sourceTree = "<group>"; };
 		D6F5429023E1BD07008B2D65 /* CEPollInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPollInternal.h; sourceTree = "<group>"; };
@@ -223,6 +226,8 @@
 				D6D663DC23F403270041BADB /* LSConnection.c */,
 				D6D663DE23F413F10041BADB /* LSEventLoop.h */,
 				D6D663DF23F413F10041BADB /* LSEventLoop.c */,
+				D6D663E123F4FF470041BADB /* LSConnnectionGroup.h */,
+				D6D663E223F4FF470041BADB /* LSConnnectionGroup.c */,
 			);
 			path = LinkServer;
 			sourceTree = "<group>";
@@ -499,6 +504,7 @@
 				D6D663DD23F403270041BADB /* LSConnection.c in Sources */,
 				D65AE54923EB25760061DB93 /* CEFileEvent.c in Sources */,
 				D6D663E023F413F10041BADB /* LSEventLoop.c in Sources */,
+				D6D663E323F4FF470041BADB /* LSConnnectionGroup.c in Sources */,
 				D65AE55223EBC0EC0061DB93 /* LSTypes.c in Sources */,
 				D6B2F6E523DE63A700781CA8 /* AppDelegate.swift in Sources */,
 				D6BD24BD23E2BDB500B3A57D /* OBBridge.m in Sources */,

@@ -44,17 +44,18 @@ typedef struct _LSManager LSManager_s;
 struct _LSFileHandler;
 typedef struct _LSFileHandler LSFileHandler_s;
 
-struct _LSSocketSource;
-typedef struct _LSSocketSource LSSocketSource_s;
+struct _LSConnectionTimeSource;
+typedef struct _LSConnectionTimeSource LSConnectionTimeSource_s;
 
 struct _LSFileGroup;
 typedef struct _LSFileGroup LSFileGroup_s;
 
+struct _LSConnnectionGroup;
+typedef struct _LSConnnectionGroup LSConnectionGroup_s;
+
 struct _LSEventLoop;
 typedef struct _LSEventLoop LSEventLoop_s;
 
-
-typedef LSSocketSource_s * _Nonnull (*LSTimerQueueGetSource_f)(LSFileHandler_s * _Nonnull handler, uint32_t id);
 
 #pragma pack(push, 2)
 //handlerId14 context:16
@@ -81,15 +82,14 @@ typedef struct {
     uint16_t time;
 } PackageHeader_s;
 
-struct _LSSocketSource {
+struct _LSConnectionTimeSource {
     //到期时间
-    uint64_t deadline: 44;
-    
-    //在timerQueue中的index
-    uint64_t index: 20;
+    uint64_t deadline: 52;
+
+    uint64_t connectionIndex: 12;//对应的connection在group中的index
 };
 
-#define __LSSocketSourceDeadlineMax (UINT64_MAX >> 20)
+#define __LSSocketSourceDeadlineMax (UINT64_MAX >> 12)
 #define LSSocketSourceDeadlineForever __LSSocketSourceDeadlineMax
 
 typedef struct {
@@ -98,39 +98,36 @@ typedef struct {
     uint32_t status: 2;
 //    uint32_t isReadable: 1;
 //    uint32_t isWritable: 1;
-    uint32_t xxx: 28;
+    uint32_t readTimerIndex: 12;
+    uint32_t writeTimerIndex: 12;
+    uint32_t xxx: 4;
     uint64_t sequence;
-    LSSocketSource_s writeSource;
-    LSSocketSource_s readSource;
-
     CCByte16 deviceToken;
     CCByte16 writeVi;
     CCByte16 readVi;
 } LSConnection_s;
 
 
+
+typedef LSConnectionTimeSource_s * _Nonnull (*LSTimerQueueSetSourceIndex_f)(LSConnectionGroup_s * _Nonnull group, uint32_t connectionIndex, uint32_t timerIndex);
+
 typedef struct {
-    LSFileHandler_s * _Nonnull owner;
-    LSTimerQueueGetSource_f _Nonnull getSource;
-    uint16_t table[0x10000];
+    LSConnectionGroup_s * _Nonnull group;
+    LSConnectionTimeSource_s * _Nonnull sources;
+    LSTimerQueueSetSourceIndex_f _Nonnull setSourceIndex;
 } LSTimerQueue_s;
 
-struct _LSFileGroup {
-    uint32_t groupId;
-    uint32_t count;
-    LSFileHandler_s * _Nonnull handler;
-    LSConnection_s * _Nonnull connectionTable;
-    LSTimerQueue_s * _Nonnull readTimerQueue;
-    LSTimerQueue_s * _Nonnull writeTimerQueue;
-};
+//每4kconnection为一组
+typedef struct {
+    LSConnection_s table[4096];
+    LSConnectionTimeSource_s writeSourceQueue[4096];
+    LSConnectionTimeSource_s readSourceQueue[4096];
+} LSConnnectionGroupStorage_s;
 
-struct _LSFileHandler {
-    uint32_t handlerId;
-    uint32_t count;
-    LSManager_s * _Nonnull manager;
-    LSConnection_s * _Nonnull connectionTable;
-    LSTimerQueue_s * _Nonnull readTimerQueue;
-    LSTimerQueue_s * _Nonnull writeTimerQueue;
+struct _LSConnnectionGroup {
+    uint32_t groupId;
+    uint32_t activeCount;
+    LSConnnectionGroupStorage_s * _Nonnull storage;
 };
 
 struct _LSEventLoop {
@@ -138,12 +135,13 @@ struct _LSEventLoop {
     uint32_t groupCount;
     uint32_t connectionCapacity;
     uint32_t connectCount;
-    LSFileGroup_s groups[0];
+    void * _Nonnull api;
+    LSConnectionGroup_s groups[0];
 };
 
 typedef struct {
-    uint32_t index: 21;
-    uint32_t loop: 10;
+    uint32_t index: 24;
+    uint32_t loopId: 7;
     uint32_t isValid: 1;
 } LSFile_s;
 
@@ -153,11 +151,10 @@ struct _LSManager {
     uint32_t domain;
     uint32_t loopCount;
     uint32_t maxConnectionCount;
-    uint32_t connectionCapacity;
+    uint32_t fileTableSize;//当前进程能打开的最大文件描述符大小
     uint64_t sequence;
-    size_t fileTableSize;//当前进程能打开的最大文件描述符大小
     LSFile_s * _Nonnull fileTable;//index 是 fd， 值是 File在fileTable中的index
-    LSEventLoop_s * _Nonnull loops;
+    LSEventLoop_s * _Nonnull loops[0];
 };
 
 

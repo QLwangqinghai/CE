@@ -246,7 +246,8 @@ CEResult_t CEPollRemoveFileEventMask(CEPollPtr _Nonnull poll, int fd, CEFileEven
 
 void CEPollWakeUp(CEPoll_s * _Nonnull p) {
     assert(p);
-    CEApiWakeUp(p->api);
+
+
 }
 static inline void CEBlockQueueLock(CEBlockQueue_s * _Nonnull queue) {
     assert(queue);
@@ -667,8 +668,7 @@ CEPoll_s * _Nonnull CEPollCreate(uint32_t setsize) {
     } else {
         CELogInfo("success to setrlimit rlim_cur %lld; \n", limit.rlim_cur);
     }
-    
-    void * api = CEApiCreate();
+    void * api = CEApiCreate(1024);
 
     CEPoll_s * poll = (CEPoll_s *)CEAllocateClear(sizeof(CEPoll_s));
     poll->fileTableSize = setsize;

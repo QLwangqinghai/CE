@@ -22,14 +22,16 @@ extern CCRefType CERefTypeTimeEvent;
 void LSTimerQueueShiftDown(LSTimerQueue_s * _Nonnull queue, uint32_t index);
 void LSTimerQueueShiftUp(LSTimerQueue_s * _Nonnull queue, uint32_t index);
 
-
-static inline LSSocketSource_s * _Nonnull LSTimerQueueGetItem(LSTimerQueue_s * _Nonnull queue, uint32_t id) {
-    return queue->getSource(queue->owner, id);
+static inline LSConnectionTimeSource_s * LSTimerQueueGetItem(LSTimerQueue_s * _Nonnull queue, uint32_t index) {
+    return queue->sources + index;
 }
 
-static inline LSSocketSource_s * _Nonnull LSTimerQueueGetFirstItem(LSTimerQueue_s * _Nonnull queue) {
-    return LSTimerQueueGetItem(queue, 0);
+static inline LSConnectionTimeSource_s * LSTimerQueueGetFirstItem(LSTimerQueue_s * _Nonnull queue) {
+    return queue->sources;
 }
+
+
+//index 必须是timer的index
 void LSTimerQueueUpdateItem(LSTimerQueue_s * _Nonnull queue, uint32_t index, CEMicrosecondTime deadline);
 
 

@@ -163,12 +163,14 @@ strip_invalid_archs() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Basic/Basic.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CCFoundation/CCFoundation.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CoreEventShim/CoreEventShim.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/FileService/FileService.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SITP/SITP.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Basic/Basic.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CCFoundation/CCFoundation.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CoreEventShim/CoreEventShim.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/FileService/FileService.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SITP/SITP.framework"
 fi

@@ -10,14 +10,14 @@
 #define LSFileHandler_h
 
 #include "LSTypes.h"
-#import <CoreEvent/CoreEvent.h>
 #import <CCFoundation/CCFoundation.h>
 #import <CCFoundation/CCNet.h>
 
-
-void LSFileHandlerInit(LSFileHandler_s * _Nonnull handler, uint32_t id, LSManager_s * _Nonnull manager);
-
-void LSFileHandlerSetConnectReadTimeout(LSFileHandler_s * _Nonnull handler, uint32_t id, LSManager_s * _Nonnull manager);
+//#import <CoreEvent/CoreEvent.h>
+//
+//void LSFileHandlerInit(LSFileHandler_s * _Nonnull handler, uint32_t id, LSManager_s * _Nonnull manager);
+//
+//void LSFileHandlerSetConnectReadTimeout(LSFileHandler_s * _Nonnull handler, uint32_t id, LSManager_s * _Nonnull manager);
 
 
 

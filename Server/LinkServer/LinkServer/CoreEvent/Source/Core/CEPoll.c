@@ -574,14 +574,14 @@ pthread_t CEPollCreateThread(CEPoll_s * _Nonnull p) {
     struct sched_param param;
     //初始化线程属性
     pthread_attr_init(&attr);
-    int policy;
-    int result = 0;
+//    int policy;
+//    int result = 0;
     
-    result = pthread_getschedparam(pthread_self(), &policy, &param);
-    if (0 != result) {
-        CELogError("pthread_getschedparam %s\n", strerror(result));
-        return 0;
-    }
+//    result = pthread_getschedparam(pthread_self(), &policy, &param);
+//    if (0 != result) {
+//        CELogError("pthread_getschedparam %s\n", strerror(result));
+//        return 0;
+//    }
     result = pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
     if (0 != result) {
         CELogError("pthread_attr_setscope PTHREAD_SCOPE_SYSTEM %s\n", strerror(result));

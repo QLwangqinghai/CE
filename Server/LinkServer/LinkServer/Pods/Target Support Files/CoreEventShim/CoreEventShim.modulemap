@@ -1,0 +1,6 @@
+framework module CoreEventShim {
+  umbrella header "CoreEventShim-umbrella.h"
+
+  export *
+  module * { export * }
+}

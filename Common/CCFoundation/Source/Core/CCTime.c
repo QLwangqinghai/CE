@@ -105,7 +105,7 @@ CCMicrosecondTime CCMicrosecondTimeGetCurrent(void) {
 #include <mach/mach_time.h>
 #include <sys/time.h>
 
-CCMicrosecondTime CCBootInterval(void) {
+CCBootMicrosecondTime CCBootInterval(void) {
     mach_timebase_info_data_t timeBaseInfo = {};
     assert(0 == mach_timebase_info(&timeBaseInfo));
     uint64_t t = mach_continuous_time();
@@ -119,7 +119,7 @@ CCMicrosecondTime CCBootInterval(void) {
 #include <sys/times.h>
 #include <stdlib.h>
 
-CCMicrosecondTime CCBootInterval(void) {
+CCBootMicrosecondTime CCBootInterval(void) {
 
 #if !defined(CLOCK_BOOTTIME_ALARM)
 #error "CLOCK_BOOTTIME_ALARM undefined"

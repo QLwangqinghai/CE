@@ -10,12 +10,12 @@ target 'CoreEvent' do
 
   # Pods for CoreEvent
 
-
     pod 'CCFoundation', :path => '../../../Common/CCFoundation'
     pod 'Basic', :path => '../../../Common/Basic'
     pod 'SITP', :path => '../../../Common/SITP'
     pod 'FileService', :path => '../../../Common/FileService'
-
+    pod 'CoreEventShim', :path => '../../../Common/CoreEventShim'
+    
 end
 
 target 'LinkServer' do
@@ -29,5 +29,6 @@ target 'LinkServer' do
     pod 'Basic', :path => '../../../Common/Basic'
     pod 'SITP', :path => '../../../Common/SITP'
     pod 'FileService', :path => '../../../Common/FileService'
+    pod 'CoreEventShim', :path => '../../../Common/CoreEventShim'
 
 end

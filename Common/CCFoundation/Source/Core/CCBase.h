@@ -59,7 +59,7 @@ extern const CCChar __CCBase64ByteToCharMappings[64];
 #pragma mark - CCMicrosecondTime
 
 extern CCMicrosecondTime CCMicrosecondTimeGetCurrent(void);
-extern CCMicrosecondTime CCBootInterval(void);
+extern CCBootMicrosecondTime CCBootInterval(void);
 
 //返回0成功
 int CCGetExecutablePath(char * _Nonnull buf, uint32_t * _Nonnull bufsize);

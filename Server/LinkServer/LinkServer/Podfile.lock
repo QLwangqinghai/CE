@@ -1,6 +1,7 @@
 PODS:
   - Basic (0.1.0)
   - CCFoundation (0.1.0)
+  - CoreEventShim (0.1.0)
   - FileService (0.1.0):
     - Basic
     - CCFoundation
@@ -10,6 +11,7 @@ PODS:
 DEPENDENCIES:
   - Basic (from `../../../Common/Basic`)
   - CCFoundation (from `../../../Common/CCFoundation`)
+  - CoreEventShim (from `../../../Common/CoreEventShim`)
   - FileService (from `../../../Common/FileService`)
   - SITP (from `../../../Common/SITP`)
 
@@ -18,6 +20,8 @@ EXTERNAL SOURCES:
     :path: "../../../Common/Basic"
   CCFoundation:
     :path: "../../../Common/CCFoundation"
+  CoreEventShim:
+    :path: "../../../Common/CoreEventShim"
   FileService:
     :path: "../../../Common/FileService"
   SITP:
@@ -26,9 +30,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Basic: 43707a2cef5f207047f59cf558653f3bdb7bcf12
   CCFoundation: 8ed9e53d7b894e0ddce4cff91ea6b5ccfff7c7d6
+  CoreEventShim: 3aebd3aefa2ba9695549c12be2c6a716b0e3af6b
   FileService: a4c2b7d993efa9e3e12e1f620c662596641c4ef0
   SITP: 53f0f994b1a61937c97ef9a9665a01bbf128ed74
 
-PODFILE CHECKSUM: b5fd1dd68d18a866e0a04bf28e6f66133f724eca
+PODFILE CHECKSUM: aa74a7490caa703719beec89088993f18c1a18e3
 
 COCOAPODS: 1.8.4

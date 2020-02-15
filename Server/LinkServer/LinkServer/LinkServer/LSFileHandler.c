@@ -10,40 +10,40 @@
 #include "LSTimerQueue.h"
 
 
-LSSocketSource_s * _Nonnull LSTimerQueueGetReadSource(LSFileHandler_s * _Nonnull handler, uint32_t index);
-LSSocketSource_s * _Nonnull LSTimerQueueGetWriteSource(LSFileHandler_s * _Nonnull handler, uint32_t index);
-
-
-extern void __LSTimerQueueInit(LSTimerQueue_s * _Nonnull queue, LSFileHandler_s * _Nonnull owner, LSTimerQueueGetSource_f _Nonnull getSource);
-
-
-static inline void __LSConnectInit(LSConnect_s * _Nonnull connect, uint32_t id) {
-    connect->readSource.deadline = LSSocketSourceDeadlineForever;
-    connect->readSource.index = id;
-    connect->writeSource.deadline = LSSocketSourceDeadlineForever;
-    connect->writeSource.index = id;
-}
-
-void LSFileHandlerInit(LSFileHandler_s * _Nonnull handler, uint32_t id, LSManager_s * _Nonnull manager) {
-    assert(handler);
-    assert(manager);
-    handler->handlerId = id;
-    handler->manager = manager;
-    
-    LSConnect_s * connectTable = CCAlignedAllocate(sizeof(LSConnect_s) * 0x10000, 128);
-    for (uint32_t i=0; i<0x10000; i++) {
-        __LSConnectInit(connectTable + i, i);
-    }
-    handler->connectTable = connectTable;
-    
-    LSTimerQueue_s * readTimerQueue = CCAllocate(sizeof(LSTimerQueue_s));
-    __LSTimerQueueInit(readTimerQueue, handler, LSTimerQueueGetReadSource);
-    handler->readTimerQueue = readTimerQueue;
-    
-    LSTimerQueue_s * writeTimerQueue = CCAllocate(sizeof(LSTimerQueue_s));
-    __LSTimerQueueInit(writeTimerQueue, handler, LSTimerQueueGetWriteSource);
-    handler->writeTimerQueue = writeTimerQueue;
-}
+//LSSocketSource_s * _Nonnull LSTimerQueueGetReadSource(LSFileHandler_s * _Nonnull handler, uint32_t index);
+//LSSocketSource_s * _Nonnull LSTimerQueueGetWriteSource(LSFileHandler_s * _Nonnull handler, uint32_t index);
+//
+//
+//extern void __LSTimerQueueInit(LSTimerQueue_s * _Nonnull queue, LSFileHandler_s * _Nonnull owner, LSTimerQueueGetSource_f _Nonnull getSource);
+//
+//
+//static inline void __LSConnectInit(LSConnect_s * _Nonnull connect, uint32_t id) {
+//    connect->readSource.deadline = LSSocketSourceDeadlineForever;
+//    connect->readSource.index = id;
+//    connect->writeSource.deadline = LSSocketSourceDeadlineForever;
+//    connect->writeSource.index = id;
+//}
+//
+//void LSFileHandlerInit(LSFileHandler_s * _Nonnull handler, uint32_t id, LSManager_s * _Nonnull manager) {
+//    assert(handler);
+//    assert(manager);
+//    handler->handlerId = id;
+//    handler->manager = manager;
+//
+//    LSConnect_s * connectTable = CCAlignedAllocate(sizeof(LSConnect_s) * 0x10000, 128);
+//    for (uint32_t i=0; i<0x10000; i++) {
+//        __LSConnectInit(connectTable + i, i);
+//    }
+//    handler->connectTable = connectTable;
+//
+//    LSTimerQueue_s * readTimerQueue = CCAllocate(sizeof(LSTimerQueue_s));
+//    __LSTimerQueueInit(readTimerQueue, handler, LSTimerQueueGetReadSource);
+//    handler->readTimerQueue = readTimerQueue;
+//
+//    LSTimerQueue_s * writeTimerQueue = CCAllocate(sizeof(LSTimerQueue_s));
+//    __LSTimerQueueInit(writeTimerQueue, handler, LSTimerQueueGetWriteSource);
+//    handler->writeTimerQueue = writeTimerQueue;
+//}
 
 
 
@@ -213,14 +213,14 @@ void LSFileHandlerInit(LSFileHandler_s * _Nonnull handler, uint32_t id, LSManage
 //}
 
 
-LSSocketSource_s * _Nonnull LSTimerQueueGetReadSource(LSFileHandler_s * _Nonnull handler, uint32_t index) {
-    return &(handler->connectTable[index].readSource);
-}
-LSSocketSource_s * _Nonnull LSTimerQueueGetWriteSource(LSFileHandler_s * _Nonnull handler, uint32_t index) {
-    return &(handler->connectTable[index].writeSource);
-}
+//LSSocketSource_s * _Nonnull LSTimerQueueGetReadSource(LSFileHandler_s * _Nonnull handler, uint32_t index) {
+//    return &(handler->connectTable[index].readSource);
+//}
+//LSSocketSource_s * _Nonnull LSTimerQueueGetWriteSource(LSFileHandler_s * _Nonnull handler, uint32_t index) {
+//    return &(handler->connectTable[index].writeSource);
+//}
 
 
-void _LSFileHandlerFileEventCallback(CCPtr _Nullable context, CEFileFiredInfo * _Nonnull infos, uint32_t count) {
-    
-}
+//void _LSFileHandlerFileEventCallback(CCPtr _Nullable context, CEFileFiredInfo * _Nonnull infos, uint32_t count) {
+//    
+//}

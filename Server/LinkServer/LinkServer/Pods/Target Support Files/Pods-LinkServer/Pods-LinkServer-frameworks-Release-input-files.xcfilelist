@@ -1,5 +1,6 @@
 ${PODS_ROOT}/Target Support Files/Pods-LinkServer/Pods-LinkServer-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/Basic/Basic.framework
 ${BUILT_PRODUCTS_DIR}/CCFoundation/CCFoundation.framework
+${BUILT_PRODUCTS_DIR}/CoreEventShim/CoreEventShim.framework
 ${BUILT_PRODUCTS_DIR}/FileService/FileService.framework
 ${BUILT_PRODUCTS_DIR}/SITP/SITP.framework

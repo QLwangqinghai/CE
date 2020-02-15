@@ -25,8 +25,6 @@
 		D6B2F6E923DE63A900781CA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6B2F6E823DE63A900781CA8 /* Assets.xcassets */; };
 		D6B2F6EC23DE63A900781CA8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6B2F6EA23DE63A900781CA8 /* Main.storyboard */; };
 		D6B2F6FD23DE63C100781CA8 /* CoreEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F6FB23DE63C100781CA8 /* CoreEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D6B2F70023DE63C100781CA8 /* CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B2F6F923DE63C100781CA8 /* CoreEvent.framework */; };
-		D6B2F70123DE63C100781CA8 /* CoreEvent.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D6B2F6F923DE63C100781CA8 /* CoreEvent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D6B2F72923DE647100781CA8 /* CEBaseApi.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F70823DE647000781CA8 /* CEBaseApi.c */; };
 		D6B2F73623DE647100781CA8 /* CEBaseApi.h in Headers */ = {isa = PBXBuildFile; fileRef = D6B2F71523DE647100781CA8 /* CEBaseApi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6B2F74A23DE661500781CA8 /* CEBaseType.c in Sources */ = {isa = PBXBuildFile; fileRef = D6B2F74823DE661500781CA8 /* CEBaseType.c */; };
@@ -43,16 +41,6 @@
 		D6F5429123E1BD07008B2D65 /* CEPollInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F5429023E1BD07008B2D65 /* CEPollInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		D6B2F6FE23DE63C100781CA8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D6B2F6D923DE63A700781CA8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D6B2F6F823DE63C100781CA8;
-			remoteInfo = CoreEvent;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		D6AE6D7323EC6E0C00B0B15C /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -62,17 +50,6 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
-		};
-		D6B2F70523DE63C100781CA8 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D6B2F70123DE63C100781CA8 /* CoreEvent.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -143,7 +120,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6B2F70023DE63C100781CA8 /* CoreEvent.framework in Frameworks */,
 				BF0FA29B9D8377C3C8ABAA65 /* Pods_LinkServer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,10 +192,10 @@
 				D65AE54723EB20550061DB93 /* LSFileHandler.c */,
 				D6F5428D23E1BBE2008B2D65 /* CEFileEvent.c */,
 				D6F5428C23E1BBE2008B2D65 /* CEFileEvent.h */,
-				D65AE54D23EB2D4C0061DB93 /* LSManager.h */,
-				D65AE54E23EB2D4C0061DB93 /* LSManager.c */,
 				D65AE55023EBC0EC0061DB93 /* LSTypes.h */,
 				D65AE55123EBC0EC0061DB93 /* LSTypes.c */,
+				D65AE54D23EB2D4C0061DB93 /* LSManager.h */,
+				D65AE54E23EB2D4C0061DB93 /* LSManager.c */,
 				D6AE6D6E23EC5FCB00B0B15C /* LSTimerQueue.h */,
 				D6AE6D6F23EC5FCB00B0B15C /* LSTimerQueue.c */,
 				D6D663DB23F403270041BADB /* LSConnection.h */,
@@ -328,13 +304,11 @@
 				D6B2F6DD23DE63A700781CA8 /* Sources */,
 				D6B2F6DE23DE63A700781CA8 /* Frameworks */,
 				D6B2F6DF23DE63A700781CA8 /* Resources */,
-				D6B2F70523DE63C100781CA8 /* Embed Frameworks */,
 				685C0544B16CFD8149E70EAF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				D6B2F6FF23DE63C100781CA8 /* PBXTargetDependency */,
 			);
 			name = LinkServer;
 			productName = LinkServer;
@@ -527,14 +501,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		D6B2F6FF23DE63C100781CA8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D6B2F6F823DE63C100781CA8 /* CoreEvent */;
-			targetProxy = D6B2F6FE23DE63C100781CA8 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		D6B2F6EA23DE63A900781CA8 /* Main.storyboard */ = {

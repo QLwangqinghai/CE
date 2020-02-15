@@ -8,12 +8,6 @@
 
 #include "LSTimerQueue.h"
 
-CCRefType CERefTypeTimeEvent = UINTPTR_MAX;
-
-static CEMicrosecondTime CEAddMicrosecondsToNow(CEMicrosecondTime milliseconds) {
-    CEMicrosecondTime time = CEGetCurrentTime();
-    return time + milliseconds;
-}
 
 static inline void __LSTimerQueueSetItemSourceIndex(LSTimerQueue_s * _Nonnull queue, uint32_t connectionIndex, uint32_t timerIndex) {
     queue->setSourceIndex(queue->group, connectionIndex, timerIndex);
@@ -31,10 +25,10 @@ static inline void __LSTimerQueueSetItemSourceIndex(LSTimerQueue_s * _Nonnull qu
 //    }
 //}
 
-void LSTimerQueueUpdateItem(LSTimerQueue_s * _Nonnull queue, uint32_t index, CEMicrosecondTime deadline) {
-    uint64_t time = deadline >> 12;
+void LSTimerQueueUpdateItem(LSTimerQueue_s * _Nonnull queue, uint32_t index, uint64_t deadline) {
+    uint64_t time = deadline >> 13;
     if (time != LSSocketSourceDeadlineForever) {
-        if (0 != (deadline & 0xffffULL)) {
+        if (0 != (deadline & 0x1fffULL)) {
             time += 1;
         }
     }
@@ -74,7 +68,7 @@ static inline CCBool LSTimerQueueNeedSwap(LSTimerQueue_s * _Nonnull queue, uint3
 }
 
 void LSTimerQueueShiftDown(LSTimerQueue_s * _Nonnull queue, uint32_t index) {
-    uint32_t n = 0xffff;
+    uint32_t n = 0x1fff;
     uint32_t i = index;
     uint32_t t = 0;
     uint32_t flag = 0;

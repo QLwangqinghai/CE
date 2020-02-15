@@ -8,7 +8,6 @@
 
 #include "CEBaseApi.h"
 
-#include "CEMemory.h"
 #include <poll.h>
 #include <sys/socket.h>
 #include <sys/fcntl.h>
@@ -32,10 +31,6 @@
 #include <string.h>
 #include <errno.h>
 #include <stddef.h>
-
-#if defined(__GNUC__)
-#include <stdbool.h>
-#endif
 
 
 const CEFileEventMask_es CEFileEventMaskNone = 0;
@@ -91,6 +86,12 @@ typedef struct kevent CEApiEvent_s;
 
 #endif
 
+
+void CELogError(void) {
+    printf("%s\n", strerror(errno));
+}
+
+
 size_t CEApiGetEventItemSize(void) {
     return sizeof(CEApiEvent_s);
 }
@@ -100,6 +101,7 @@ struct _CEApiState {
 #if CORE_EVENT_USE_EPOLL
     int eventfd;
 #endif
+    int size;
     int setSize;
     CEApiEvent_s * _Nonnull events;
 };
@@ -128,30 +130,37 @@ struct _CEApiState {
 //#define EPOLLERR 2
 //#define EPOLLHUP 2
 
-
-void * _Nonnull CEApiCreate(int setSize) {
-    int size = setSize > 256 ? setSize : 256;
+_Bool _CEApiInit(CEApiState_s * _Nonnull state) {
     int fd = epoll_create(1024); /* 1024 is just a hint for the kernel */
-    assert(fd != -1);
-    
+    if (fd == -1) {
+        return false;
+    }
     int eventfd = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
-    assert(eventfd != -1);
+    if (eventfd == -1) {
+        close(fd);
+        return false;
+    }
 
-    CEApiState_s * state = CEAllocateClear(sizeof(CEApiState_s));
-    assert(state);
+    CEApiEvent_s * ev = state->events+j;
+    ev.events = EPOLLIN;
+    ev.data.fd = eventfd
+    
+    if (epoll_ctl(fd, EPOLL_CTL_ADD, eventfd, &ev) == -1) {
+        close(fd);
+        close(eventfd);
+        return false;
+    };
     state->fd = fd;
     state->eventfd = eventfd;
-    state->setSize = size;
-    state->events = CEAllocateClear(sizeof(CEApiEvent_s) * size);
-    return state;
+    return true;
 }
 
-void CEApiAddEvent(void * _Nonnull api, int fd);
-void CEApiUpdateReadEvent(void * _Nonnull api, int fd, _Bool enable);
-void CEApiUpdateWriteEvent(void * _Nonnull api, int fd, _Bool enable);
-void CEApiRemoveEvent(void * _Nonnull api, int fd);
+void _CEApiDeinit(CEApiState_s * _Nonnull state) {
+    close(state->fd);
+    close(state->eventfd);
+}
 
-void CEApiAddEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
+void CEApiAddEvent(void * _Nonnull api, int fd) {
     assert(api);
     CEApiState_s *state = api;
 
@@ -160,34 +169,15 @@ void CEApiAddEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
      * operation. Otherwise we need an ADD operation. */
     
     int op = EPOLL_CTL_ADD;
-    ee.events = EPOLLERR | EPOLLHUP;
-    if (mask & CEFileEventMaskReadable) ee.events |= EPOLLIN;
-    if (mask & CEFileEventMaskWritable) ee.events |= EPOLLOUT;
+    ee.events = EPOLLERR | EPOLLHUP | EPOLLRDHUP;
     ee.data.fd = fd;
     if (epoll_ctl(state->fd,op,fd,&ee) == -1) {
-        printf("\n");
+        CELogError();
         abort();
     };
 }
-void CEApiUpdateEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
-    assert(api);
-    CEApiState_s *state = api;
 
-    CEApiEvent_s ee = {0}; /* avoid valgrind warning */
-    /* If the fd was already monitored for some event, we need a MOD
-     * operation. Otherwise we need an ADD operation. */
-    
-    int op = EPOLL_CTL_MOD;
-    ee.events = EPOLLERR | EPOLLHUP;
-    if (mask & CEFileEventMaskReadable) ee.events |= EPOLLIN;
-    if (mask & CEFileEventMaskWritable) ee.events |= EPOLLOUT;
-    ee.data.fd = fd;
-    if (epoll_ctl(state->fd,op,fd,&ee) == -1) {
-        printf("\n");
-        abort();
-    };
-}
-void CEApiRemoveEvent(void * _Nonnull api, int fd) {
+void CEApiRemoveExceptEvent(void * _Nonnull api, int fd) {
     assert(api);
     CEApiState_s *state = api;
 
@@ -197,13 +187,31 @@ void CEApiRemoveEvent(void * _Nonnull api, int fd) {
     int op = EPOLL_CTL_DEL;
     ee.data.fd = fd;
     if (epoll_ctl(state->fd,op,fd,&ee) == -1) {
-        printf("\n");
+        CELogError();
         abort();
     };
 }
 
+void CEApiUpdateEvent(void * _Nonnull api, int fd, CEFileEventMask_es mask) {
+    assert(api);
+    CEApiState_s *state = api;
 
-void CEApiPoll(void * _Nonnull api, uint64_t timeout, void * _Nonnull context, CEApiPollCallback_f _Nonnull callback) {
+    CEApiEvent_s ee = {0}; /* avoid valgrind warning */
+    /* If the fd was already monitored for some event, we need a MOD
+     * operation. Otherwise we need an ADD operation. */
+    
+    int op = EPOLL_CTL_MOD;
+    ee.events = EPOLLERR | EPOLLHUP | EPOLLRDHUP;
+    if (mask & CEFileEventMaskReadable) ee.events |= EPOLLIN;
+    if (mask & CEFileEventMaskWritable) ee.events |= EPOLLOUT;
+    ee.data.fd = fd;
+    if (epoll_ctl(state->fd,op,fd,&ee) == -1) {
+        CELogError();
+        abort();
+    };
+}
+
+void CEApiPoll(void * _Nonnull api, uint64_t timeout, void * _Nonnull context, CEBaseApiPollCallback_f _Nonnull callback) {
     assert(api);
     assert(callback);
     assert(buffer);
@@ -224,12 +232,27 @@ void CEApiPoll(void * _Nonnull api, uint64_t timeout, void * _Nonnull context, C
                 eventfd_t value = 0;
                 eventfd_read(state->eventfd, &value);
             } else {
-                if (e->events & EPOLLIN) mask |= CEFileEventMaskReadable;
-                if (e->events & EPOLLOUT) mask |= CEFileEventMaskWritable;
-                if (e->events & EPOLLERR) mask |= CEFileEventMaskReadWritable;
-                if (e->events & EPOLLHUP) mask |= CEFileEventMaskReadWritable;
+                _Bool error = false;
+                if (e->events & EPOLLIN) {
+                    mask |= CEFileEventMaskReadable;
+                }
+                if (e->events & EPOLLOUT) {
+                    mask |= CEFileEventMaskWritable
+                };
+                if (e->events & EPOLLERR) {
+                    error = true;
+                    mask |= CEFileEventMaskReadWritable
+                };
+                if (e->events & EPOLLHUP) {
+                    error = true;
+                    mask |= CEFileEventMaskReadWritable
+                };
+                if (e->events & EPOLLRDHUP) {
+                    error = true;
+                    mask |= CEFileEventMaskReadWritable
+                };
                 if (mask != CEFileEventMaskNone) {
-                    callback(api, context, (int)(e->ident), mask);
+                    callback(api, context, CEEventMake(e->data.fd, 0, mask));
                 }
             }
         }
@@ -245,6 +268,10 @@ void CEApiWakeUp(void * _Nonnull api) {
 
 char * _Nonnull CEApiName(void) {
     return "epoll";
+}
+
+int _CESetSize(int size) {
+    return size;
 }
 
 #endif
@@ -275,16 +302,11 @@ char * _Nonnull CEApiName(void) {
  state->pwrite = pio[1];
  */
 
-void * _Nonnull CEApiCreate(int setSize) {
-    int size = setSize > 256 ? setSize : 256;
+_Bool _CEApiInit(CEApiState_s * _Nonnull state) {
     int fd = kqueue();
-    assert(fd != -1);
-    CEApiState_s *state = CEAllocateClear(sizeof(CEApiState_s));
-    assert(state);
-    state->fd = fd;
-    state->setSize = size;
-    state->events = CEAllocateClear(sizeof(CEApiEvent_s) * size);
-    
+    if (fd == -1) {
+        return false;
+    }
     struct kevent event = {};
     event.ident = 0;
     event.filter = EVFILT_USER;
@@ -293,9 +315,16 @@ void * _Nonnull CEApiCreate(int setSize) {
     event.udata = NULL;
     event.flags = EV_ADD | EV_ENABLE | EV_CLEAR;
     if (kevent(state->fd, &event, 1, NULL, 0, NULL) == -1) {
-        abort();
+        CELogError();
+        close(fd);
+        return false;
     }
-    return state;
+    state->fd = fd;
+    return true;
+}
+
+void _CEApiDeinit(CEApiState_s * _Nonnull state) {
+    close(state->fd);
 }
 
 //ev timer https://blog.csdn.net/Namcodream521/article/details/83032615
@@ -305,22 +334,70 @@ void CEApiAddEvent(void * _Nonnull api, int fd) {
     assert(api);
     CEApiState_s *state = api;
     
+    uint16_t op = EV_ADD;
+
     struct kevent ke;
-    EV_SET(&ke, fd, EVFILT_READ, EV_ADD | EV_DISABLE, 0, 0, NULL);
+    EV_SET(&ke, fd, EVFILT_EXCEPT, op, 0, 0, NULL);
     if (kevent(state->fd, &ke, 1, NULL, 0, NULL) == -1) {
-        abort();
+        if (op == EV_DELETE && errno == ENOENT) {
+            
+        } else {
+            CELogError();
+            abort();
+        }
     }
 }
+
+void CEApiRemoveEvent(void * _Nonnull api, int fd) {
+    assert(api);
+    CEApiState_s *state = api;
+    uint16_t op = EV_DELETE;
+    struct kevent ke;
+    EV_SET(&ke, fd, EVFILT_EXCEPT, op, 0, 0, NULL);
+    if (kevent(state->fd, &ke, 1, NULL, 0, NULL) == -1) {
+        if (op == EV_DELETE && errno == ENOENT) {
+            
+        } else {
+            CELogError();
+            abort();
+        }
+    }
+    EV_SET(&ke, fd, EVFILT_READ, op, 0, 0, NULL);
+    if (kevent(state->fd, &ke, 1, NULL, 0, NULL) == -1) {
+        if (op == EV_DELETE && errno == ENOENT) {
+            
+        } else {
+            CELogError();
+            abort();
+        }
+    }
+    EV_SET(&ke, fd, EVFILT_WRITE, op, 0, 0, NULL);
+    if (kevent(state->fd, &ke, 1, NULL, 0, NULL) == -1) {
+        if (op == EV_DELETE && errno == ENOENT) {
+            
+        } else {
+            CELogError();
+            abort();
+        }
+    }
+}
+
+
 void CEApiUpdateReadEvent(void * _Nonnull api, int fd, _Bool enable) {
     assert(api);
     CEApiState_s *state = api;
     
-    uint16_t op = enable ? EV_ENABLE : EV_DISABLE;
-    
+    uint16_t op = enable ? EV_ADD : EV_DELETE;
+
     struct kevent ke;
     EV_SET(&ke, fd, EVFILT_READ, op, 0, 0, NULL);
     if (kevent(state->fd, &ke, 1, NULL, 0, NULL) == -1) {
-        abort();
+        if (op == EV_DELETE && errno == ENOENT) {
+            
+        } else {
+            CELogError();
+            abort();
+        }
     }
 }
 void CEApiUpdateWriteEvent(void * _Nonnull api, int fd, _Bool enable) {
@@ -330,20 +407,16 @@ void CEApiUpdateWriteEvent(void * _Nonnull api, int fd, _Bool enable) {
     struct kevent ke;
     EV_SET(&ke, fd, EVFILT_WRITE, op, 0, 0, NULL);
     if (kevent(state->fd, &ke, 1, NULL, 0, NULL) == -1) {
-        abort();
-    }
-}
-void CEApiRemoveEvent(void * _Nonnull api, int fd) {
-    assert(api);
-    CEApiState_s *state = api;
-    struct kevent ke;
-    EV_SET(&ke, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-    if (kevent(state->fd, &ke, 1, NULL, 0, NULL) == -1) {
-        abort();
+        if (op == EV_DELETE && errno == ENOENT) {
+            
+        } else {
+            CELogError();
+            abort();
+        }
     }
 }
 
-void CEApiPoll(void * _Nonnull api, uint64_t timeout, void * _Nonnull context, CEApiPollCallback_f _Nonnull callback) {
+void CEApiPoll(void * _Nonnull api, uint64_t timeout, void * _Nonnull context, CEBaseApiPollCallback_f _Nonnull callback) {
     struct timespec tv = {};
     if (timeout <= 0) {
         tv.tv_nsec = 1;
@@ -367,9 +440,11 @@ void CEApiPoll(void * _Nonnull api, uint64_t timeout, void * _Nonnull context, C
                 //do noting
             } else {
                 if (e->filter == EVFILT_READ) {
-                    callback(api, context, (int)(e->ident), CEFileEventMaskReadable);
+                    callback(api, context, CEEventMake((int)(e->ident), 0, CEFileEventMaskReadable));
                 } else if (e->filter == EVFILT_WRITE) {
-                    callback(api, context, (int)(e->ident), CEFileEventMaskWritable);
+                    callback(api, context, CEEventMake((int)(e->ident), 0, CEFileEventMaskWritable));
+                } else {
+                    callback(api, context, CEEventMake((int)(e->ident), 1, CEFileEventMaskReadable));
                 }
             }
         }
@@ -389,6 +464,7 @@ void CEApiWakeUp(void * _Nonnull api) {
     event.udata = NULL;
     event.flags = 0;
     if (kevent(state->fd, &event, 1, NULL, 0, NULL) == -1) {
+        CELogError();
         abort();
     }
 }
@@ -396,14 +472,45 @@ void CEApiWakeUp(void * _Nonnull api) {
 char * _Nonnull CEApiName(void) {
     return "kqueue";
 }
-
-
+int _CESetSize(int size) {
+    int64_t value = size;
+    value = value * 2;
+    if (value > INT32_MAX) {
+        value = INT32_MAX;
+    }
+    return (int)value;
+}
 #endif
+
+void * _Nullable CEApiCreate(int size) {
+    if (size < 256) {
+        size = 256;
+    }
+    int setSize = _CESetSize(size);
+    CEApiState_s *state = malloc(sizeof(CEApiState_s));
+    if (NULL == state) {
+        return NULL;
+    }
+    CEApiEvent_s * events = malloc(sizeof(CEApiEvent_s) * setSize);
+    if (NULL == events) {
+        free(state);
+        return NULL;
+    }
+    if (!_CEApiInit(state)) {
+        free(state);
+        free(events);
+        return NULL;
+    }
+    state->setSize = setSize;
+    state->size = size;
+    state->events = events;
+    return state;
+}
 
 void CEApiFree(void * _Nonnull api) {
     assert(api);
     CEApiState_s *state = api;
-    close(state->fd);
-    CEDeallocate(state->events);
-    CEDeallocate(state);
+    _CEApiDeinit(state);
+    free(state->events);
+    free(state);
 }

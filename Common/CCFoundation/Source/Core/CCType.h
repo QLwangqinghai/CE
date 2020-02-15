@@ -95,6 +95,7 @@ typedef CCUInt CCHashCode;
 #pragma mark - CCMicrosecondTime
 
 typedef CCSInt64 CCMicrosecondTime;
+typedef CCUInt64 CCBootMicrosecondTime;
 
 
 #pragma mark - CCIndex

@@ -17,22 +17,20 @@ extern "C" {
 
 #define LSTimerQueue
 
-extern CCRefType CERefTypeTimeEvent;
 
 void LSTimerQueueShiftDown(LSTimerQueue_s * _Nonnull queue, uint32_t index);
 void LSTimerQueueShiftUp(LSTimerQueue_s * _Nonnull queue, uint32_t index);
 
-static inline LSConnectionTimeSource_s * LSTimerQueueGetItem(LSTimerQueue_s * _Nonnull queue, uint32_t index) {
+static inline LSConnectionTimeSource_s * _Nonnull LSTimerQueueGetItem(LSTimerQueue_s * _Nonnull queue, uint32_t index) {
     return queue->sources + index;
 }
 
-static inline LSConnectionTimeSource_s * LSTimerQueueGetFirstItem(LSTimerQueue_s * _Nonnull queue) {
+static inline LSConnectionTimeSource_s * _Nonnull LSTimerQueueGetFirstItem(LSTimerQueue_s * _Nonnull queue) {
     return queue->sources;
 }
 
-
 //index 必须是timer的index
-void LSTimerQueueUpdateItem(LSTimerQueue_s * _Nonnull queue, uint32_t index, CEMicrosecondTime deadline);
+void LSTimerQueueUpdateItem(LSTimerQueue_s * _Nonnull queue, uint32_t index, uint64_t deadline);
 
 
 #if defined(__cplusplus)

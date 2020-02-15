@@ -13,7 +13,8 @@
 extern "C" {
 #endif
 
-#import <CoreEvent/CoreEvent.h>
+#import <CCFoundation/CCFoundation.h>
+#import <CoreEventShim/CoreEventShim.h>
 
 // AES_MAXNR is the maximum number of AES rounds.   128b:10 192:12 256:14
 #define AES_MAXNR 14
@@ -56,9 +57,17 @@ typedef struct _LSConnnectionGroup LSConnectionGroup_s;
 struct _LSEventLoop;
 typedef struct _LSEventLoop LSEventLoop_s;
 
-
 #pragma pack(push, 2)
 //handlerId14 context:16
+
+typedef struct {
+    int fd;
+    uint32_t indexInGroup: 13;//LSFile_s
+    uint32_t groupId: 10;
+    uint32_t loopId: 6;
+    uint32_t error: 1;
+    uint32_t status: 2;//CEFileEventMask_es
+} LSEvent_s;
 
 
 typedef struct {
@@ -84,9 +93,9 @@ typedef struct {
 
 struct _LSConnectionTimeSource {
     //到期时间
-    uint64_t deadline: 52;
+    uint64_t deadline: 51;
 
-    uint64_t connectionIndex: 12;//对应的connection在group中的index
+    uint64_t connectionIndex: 13;//对应的connection在group中的index
 };
 
 #define __LSSocketSourceDeadlineMax (UINT64_MAX >> 12)
@@ -96,11 +105,12 @@ typedef struct {
     int fd;
     uint32_t mask: 2;
     uint32_t status: 2;
+    uint32_t hasError: 1;
 //    uint32_t isReadable: 1;
 //    uint32_t isWritable: 1;
-    uint32_t readTimerIndex: 12;
-    uint32_t writeTimerIndex: 12;
-    uint32_t xxx: 4;
+    uint32_t readTimerIndex: 13;
+    uint32_t writeTimerIndex: 13;
+    uint32_t xxx: 1;
     uint64_t sequence;
     CCByte16 deviceToken;
     CCByte16 writeVi;
@@ -119,18 +129,26 @@ typedef struct {
 
 //每4kconnection为一组
 typedef struct {
-    LSConnection_s table[4096];
-    LSConnectionTimeSource_s writeSourceQueue[4096];
-    LSConnectionTimeSource_s readSourceQueue[4096];
+    uint16_t trigger[8192];
+    LSConnection_s table[8192];
+    LSConnectionTimeSource_s writeSourceQueue[8192];
+    LSConnectionTimeSource_s readSourceQueue[8192];
 } LSConnnectionGroupStorage_s;
 
 struct _LSConnnectionGroup {
     uint32_t groupId;
+    uint32_t triggerCount;
     uint32_t activeCount;
     LSConnnectionGroupStorage_s * _Nonnull storage;
 };
 
 struct _LSEventLoop {
+#if (defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined (__NetBSD__))
+    pthread_t _Nonnull thread;
+#else
+    pthread_t thread;
+#endif
+    uint64_t time;
     uint32_t id;
     uint32_t groupCount;
     uint32_t connectionCapacity;
@@ -139,9 +157,16 @@ struct _LSEventLoop {
     LSConnectionGroup_s groups[0];
 };
 
+static inline LSConnectionGroup_s * _Nonnull LSEventLoopGetGroup(LSEventLoop_s * _Nonnull loop, uint32_t index) {
+    assert(loop);
+    assert(index<loop->groupCount);
+    return &(loop->groups[index]);
+}
+
 typedef struct {
-    uint32_t index: 24;
-    uint32_t loopId: 7;
+    uint32_t index: 23;
+    uint32_t loopId: 6;
+    uint32_t mask: 2;
     uint32_t isValid: 1;
 } LSFile_s;
 
@@ -156,6 +181,11 @@ struct _LSManager {
     LSFile_s * _Nonnull fileTable;//index 是 fd， 值是 File在fileTable中的index
     LSEventLoop_s * _Nonnull loops[0];
 };
+
+static inline LSFile_s * _Nonnull LSManagerGetFile(LSManager_s * _Nonnull manager, uint32_t index) {
+    assert(index < manager->fileTableSize);
+    return manager->fileTable + index;
+}
 
 
 #if defined(__cplusplus)

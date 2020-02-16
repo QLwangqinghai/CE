@@ -18,13 +18,13 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         let scale = UIScreen.main.scale
         let screenSize: CGSize = UIScreen.main.size
         let min = screenSize.width < screenSize.height ? screenSize.width : screenSize.height
-        let width: DrawingContext.Width
+        let drawingSize: DrawingSize
         if min * scale + 0.4 > 1080 {
-            width = .preset1440
+            drawingSize = .preset1440x1080
         } else {
-            width = .preset960
+            drawingSize = .preset960x720
         }
-        let controller = DrawingContainerController(frame: CGRect(), contextWidth:width)
+        let controller = DrawingContainerController(frame: CGRect(), drawingSize:drawingSize)
         return controller
     } ()
     
@@ -45,8 +45,8 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         self.contentView.isHidden = true
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         self.resetContainerControllerLayout()
     }
     

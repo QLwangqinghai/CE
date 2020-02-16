@@ -67,7 +67,6 @@ open class BaseViewController: UIViewController {
 //        contentView.leftAnchor.constraint(equalTo: self.view.leftAnchor)
         
         
-        self.view.safeAreaLayoutGuide
     }
     
     open override func willMove(toParent parent: UIViewController?) {

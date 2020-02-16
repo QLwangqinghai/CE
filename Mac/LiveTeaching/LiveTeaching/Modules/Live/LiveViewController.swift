@@ -6,44 +6,34 @@
 //  Copyright © 2020 vector. All rights reserved.
 //
 
-import DrawingBoard
 
 class LiveViewController: ViewController, UIScrollViewDelegate {
     
     
 //    public let drawingBoard: DrawingBoard
 
-    public let sectionController: DrawingSectionController = {
+    
+
+    public let containerController: DrawingContainerController = {
         let scale = UIScreen.main.scale
         let screenSize: CGSize = UIScreen.main.size
         let min = screenSize.width < screenSize.height ? screenSize.width : screenSize.height
-        let boxSize: DrawingContext.BoxSize
+        let width: DrawingContext.Width
         if min * scale + 0.4 > 1080 {
-            boxSize = .preset960x720
+            width = .preset1440
         } else {
-            boxSize = .preset1440x1080
+            width = .preset960
         }
-        
-        let bitmapLayout = BitmapLayout(boxSize: boxSize, colorSpace: DrawingContext.ColorSpace.little32Argb, backgroundColor: DrawingContext.Color.clear)
-
-        let contentWidth: CCUInt32 = boxSize.size.width
-        let contentSize: Size = Size(width: contentWidth, height: contentWidth * 8)
-        
-        let frame: CGRect = CGRect(x: 0, y: 0, width: min * CGFloat(contentWidth) / CGFloat(boxSize.size.height), height: min)
-        let zoomScale: CGFloat = CGFloat(boxSize.size.height) / min
-        let sectionIdentifier = "12345"
-        let child = DrawingController(ownerIdentifier: sectionIdentifier, domain: "0", contentSize: contentSize, offset: 0, bitmapLayout: bitmapLayout, zoomScale: zoomScale, backgroundDataSource: DrawingBoardProvider(bitmapLayout: bitmapLayout), contentDataSource: DrawingBoardProvider(bitmapLayout: bitmapLayout))
-        
-        let controller = DrawingSectionController(identifier: "12345", childs: [child], currentIndex: 0, frame: frame)
+        let controller = DrawingContainerController(frame: CGRect(), contextWidth:width)
         return controller
     } ()
     
+
     override func viewDidLoad() {
         super.viewDidLoad()
 //        self.view.addSubview(self.drawingController.content)
-        
-        self.sectionController.frame.origin.x = self.view.bounds.size.width - self.sectionController.frame.size.width
-        self.view.addSubview(self.sectionController.content)
+        self.view.addSubview(self.containerController.content)
+        self.resetContainerControllerLayout()
         
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: 30, height: 400))
         scrollView.contentSize = CGSize(width: 0, height: 3200)
@@ -57,7 +47,16 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.sectionController.frame.origin.x = self.view.bounds.size.width - self.sectionController.frame.size.width
+        self.resetContainerControllerLayout()
+    }
+    
+    private func resetContainerControllerLayout() {
+        let bounds = self.view.bounds
+        var frame = bounds
+        frame.size.width = bounds.size.height * 4 / 3
+        frame.origin.x = bounds.size.width - frame.size.width
+        frame.origin.y = 0
+        self.containerController.frame = frame
     }
     
         

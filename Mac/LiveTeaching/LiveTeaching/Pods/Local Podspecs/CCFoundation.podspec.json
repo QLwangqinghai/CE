@@ -15,7 +15,8 @@
     "tag": "0.1.0"
   },
   "platforms": {
-    "ios": "9.0"
+    "ios": "9.0",
+    "osx": "10.14"
   },
   "source_files": [
     "*.h",
@@ -23,6 +24,7 @@
   ],
   "public_header_files": [
     "Source/Core/*.h",
+    "Source/Crypto/*.h",
     "*.h"
   ]
 }

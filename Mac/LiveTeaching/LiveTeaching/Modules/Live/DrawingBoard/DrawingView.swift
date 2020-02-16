@@ -7,6 +7,8 @@
 //
 
 import UIKit
+@_exported import CCFoundation
+@_exported import Basic
 
 extension Log {
     public static func description(of value: Double, decimal: Int, needsPaddingZero: Bool = true) -> String {
@@ -402,6 +404,45 @@ public protocol DrawingViewDrawDelegate: class {
 
 
 public class DrawingView: UIView {
+    
+    public struct Status: Equatable {
+        public var offset: CGFloat = 0
+        public var contentHeight: CGFloat = 0
+         
+        public static func == (_ lhs: Status, _ rhs: Status) -> Bool {
+            return lhs.offset == rhs.offset && lhs.contentHeight == rhs.contentHeight
+        }
+    }
+    
+    public class Observer {
+        public typealias ObserveClosure = (_ observer: Observer, _ view: DrawingView, _ from: Status, _ to: Status) -> Void
+        public let identifier: String
+        public var willUpdate: ObserveClosure
+        public var didUpdate: ObserveClosure
+        public init(identifier: String) {
+            self.identifier = identifier
+            self.willUpdate = {(_, _, _, _) in
+            }
+            self.didUpdate = {(_, _, _, _) in
+            }
+        }
+    }
+    
+    private var observers: [Observer] = []
+
+    public func addObserver(_ observer: Observer) {
+        self.observers.append(observer)
+    }
+    public func removeObserver(_ observer: Observer) {
+        self.observers.removeAll(where: { (item) -> Bool in
+            return item === observer
+        })
+    }
+    public func updateStatus(_ status: Status) {
+        
+    }
+    
+ 
     private let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
     
     private var isDispatchEventToRecognizer: Bool = false
@@ -410,6 +451,8 @@ public class DrawingView: UIView {
     
     public let backgroundLayer: CALayer = CALayer()
     public let contentLayer: CALayer = CALayer()
+    
+    public private(set) var status: Status = Status()
 
     public override init(frame: CGRect) {
         super.init(frame: frame)

@@ -16,7 +16,7 @@ target 'LiveTeaching' do
     pod 'SITP', :path => '../../../Common/SITP'
     pod 'FileService', :path => '../../../Common/FileService'
     pod 'UIFoundation', :path => '../UIFoundation'
-    pod 'DrawingBoard', :path => '../DrawingBoard'
+    #pod 'DrawingBoard', :path => '../DrawingBoard'
 
 
 end

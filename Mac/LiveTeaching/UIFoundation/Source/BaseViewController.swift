@@ -10,7 +10,7 @@ import UIKit
 
 
 
-open class ControllerContentView: UIStackView {
+open class ControllerContentView: StackView {
     
 }
 
@@ -63,6 +63,11 @@ open class BaseViewController: UIViewController {
         contentView.frame = self.view.bounds
         self.view.addSubview(contentView)
         self.view.backgroundColor = UIColor.white
+        
+//        contentView.leftAnchor.constraint(equalTo: self.view.leftAnchor)
+        
+        
+        self.view.safeAreaLayoutGuide
     }
     
     open override func willMove(toParent parent: UIViewController?) {

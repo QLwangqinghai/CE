@@ -408,26 +408,14 @@ public class DrawingView: UIView {
         
     internal var drawDelegate: DrawingViewDrawDelegate? = nil
     
-    public let backgroundLayer: CALayer = CALayer()
-    public let contentLayer: CALayer = CALayer()
-
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        self._prepare()
+        self.backgroundColor = .green
+        self.isMultipleTouchEnabled = true
     }
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self._prepare()
-    }
-    
-    private func _prepare() {
         self.backgroundColor = .green
-        self.backgroundLayer.zPosition = -100
-        self.contentLayer.zPosition = -50
-        self.layer.addSublayer(self.backgroundLayer)
-        self.layer.addSublayer(self.contentLayer)
-        self.backgroundLayer.frame = self.layer.bounds
-        self.contentLayer.frame = self.layer.bounds
         self.isMultipleTouchEnabled = true
     }
     

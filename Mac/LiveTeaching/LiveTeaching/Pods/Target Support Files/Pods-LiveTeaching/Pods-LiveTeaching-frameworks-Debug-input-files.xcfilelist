@@ -1,7 +1,6 @@
 ${PODS_ROOT}/Target Support Files/Pods-LiveTeaching/Pods-LiveTeaching-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/Basic/Basic.framework
 ${BUILT_PRODUCTS_DIR}/CCFoundation/CCFoundation.framework
-${BUILT_PRODUCTS_DIR}/DrawingBoard/DrawingBoard.framework
 ${BUILT_PRODUCTS_DIR}/FileService/FileService.framework
 ${BUILT_PRODUCTS_DIR}/SITP/SITP.framework
 ${BUILT_PRODUCTS_DIR}/UIFoundation/UIFoundation.framework

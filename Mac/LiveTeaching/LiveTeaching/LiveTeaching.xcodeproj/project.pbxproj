@@ -19,6 +19,15 @@
 		D606702C23DC9904009BA4B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606702323DC9904009BA4B0 /* AppDelegate.swift */; };
 		D606702D23DC9904009BA4B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606702423DC9904009BA4B0 /* SceneDelegate.swift */; };
 		D606703123DC993C009BA4B0 /* OCBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D606703023DC993C009BA4B0 /* OCBridge.m */; };
+		D6690E7223F93EAE00B5FA44 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6690E7123F93EAE00B5FA44 /* DrawingView.swift */; };
+		D673AF8923F93F2000D37AFF /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8023F93F1F00D37AFF /* Controller.swift */; };
+		D673AF8A23F93F2000D37AFF /* DrawingBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */; };
+		D673AF8C23F93F2000D37AFF /* DrawingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8323F93F1F00D37AFF /* DrawingController.swift */; };
+		D673AF8E23F93F2000D37AFF /* DrawingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8523F93F1F00D37AFF /* DrawingContainer.swift */; };
+		D673AF8F23F93F2000D37AFF /* DrawingSliceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8623F93F1F00D37AFF /* DrawingSliceController.swift */; };
+		D673AF9523F93FB700D37AFF /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF9423F93FB700D37AFF /* Log.swift */; };
+		D673AF9723F9689500D37AFF /* DrawingBoardCBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF9623F9689400D37AFF /* DrawingBoardCBridge.swift */; };
+		D673AF9923F9692A00D37AFF /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF9823F9692A00D37AFF /* DrawingContext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +49,15 @@
 		D606702E23DC993B009BA4B0 /* LiveTeaching-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LiveTeaching-Bridging-Header.h"; sourceTree = "<group>"; };
 		D606702F23DC993C009BA4B0 /* OCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCBridge.h; sourceTree = "<group>"; };
 		D606703023DC993C009BA4B0 /* OCBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OCBridge.m; sourceTree = "<group>"; };
+		D6690E7123F93EAE00B5FA44 /* DrawingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
+		D673AF8023F93F1F00D37AFF /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
+		D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingBoard.swift; sourceTree = "<group>"; };
+		D673AF8323F93F1F00D37AFF /* DrawingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingController.swift; sourceTree = "<group>"; };
+		D673AF8523F93F1F00D37AFF /* DrawingContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingContainer.swift; sourceTree = "<group>"; };
+		D673AF8623F93F1F00D37AFF /* DrawingSliceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingSliceController.swift; sourceTree = "<group>"; };
+		D673AF9423F93FB700D37AFF /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		D673AF9623F9689400D37AFF /* DrawingBoardCBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingBoardCBridge.swift; sourceTree = "<group>"; };
+		D673AF9823F9692A00D37AFF /* DrawingContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingContext.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +145,7 @@
 		D606701D23DC9904009BA4B0 /* Live */ = {
 			isa = PBXGroup;
 			children = (
+				D6690E7023F93E9C00B5FA44 /* DrawingBoard */,
 				D606701E23DC9904009BA4B0 /* LiveViewController.swift */,
 			);
 			path = Live;
@@ -148,6 +167,22 @@
 				D606702423DC9904009BA4B0 /* SceneDelegate.swift */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		D6690E7023F93E9C00B5FA44 /* DrawingBoard */ = {
+			isa = PBXGroup;
+			children = (
+				D673AF9823F9692A00D37AFF /* DrawingContext.swift */,
+				D673AF9623F9689400D37AFF /* DrawingBoardCBridge.swift */,
+				D673AF9423F93FB700D37AFF /* Log.swift */,
+				D673AF8023F93F1F00D37AFF /* Controller.swift */,
+				D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */,
+				D673AF8523F93F1F00D37AFF /* DrawingContainer.swift */,
+				D673AF8323F93F1F00D37AFF /* DrawingController.swift */,
+				D673AF8623F93F1F00D37AFF /* DrawingSliceController.swift */,
+				D6690E7123F93EAE00B5FA44 /* DrawingView.swift */,
+			);
+			path = DrawingBoard;
 			sourceTree = "<group>";
 		};
 		ED3DEF41BFF050135FCC5387 /* Frameworks */ = {
@@ -273,13 +308,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D673AF8E23F93F2000D37AFF /* DrawingContainer.swift in Sources */,
 				D606702C23DC9904009BA4B0 /* AppDelegate.swift in Sources */,
+				D673AF9723F9689500D37AFF /* DrawingBoardCBridge.swift in Sources */,
+				D673AF9523F93FB700D37AFF /* Log.swift in Sources */,
+				D673AF8A23F93F2000D37AFF /* DrawingBoard.swift in Sources */,
 				D606702D23DC9904009BA4B0 /* SceneDelegate.swift in Sources */,
+				D673AF8923F93F2000D37AFF /* Controller.swift in Sources */,
 				D606702823DC9904009BA4B0 /* Resource.swift in Sources */,
 				D606703123DC993C009BA4B0 /* OCBridge.m in Sources */,
 				D606702623DC9904009BA4B0 /* ViewController.swift in Sources */,
 				D606702B23DC9904009BA4B0 /* MainTabBarViewController.swift in Sources */,
 				D606702523DC9904009BA4B0 /* HomePageViewController.swift in Sources */,
+				D673AF9923F9692A00D37AFF /* DrawingContext.swift in Sources */,
+				D6690E7223F93EAE00B5FA44 /* DrawingView.swift in Sources */,
+				D673AF8C23F93F2000D37AFF /* DrawingController.swift in Sources */,
+				D673AF8F23F93F2000D37AFF /* DrawingSliceController.swift in Sources */,
 				D606702A23DC9904009BA4B0 /* MinePageViewController.swift in Sources */,
 				D606702923DC9904009BA4B0 /* LiveViewController.swift in Sources */,
 			);

@@ -24,6 +24,7 @@ public class DrawingController: BaseController<DrawingContainer>, DrawingViewDra
         self.drawingBoardController = DrawingBoardController(pageContext: pageContext, size: Size(width: contentSize.width, height: contentSize.width))
         self.backgroundController = DrawingBackgroundController(pageContext: pageContext, domain: "background", dataSource: backgroundDataSource)
         self.contentController = DrawingContentController(pageContext: pageContext, domain: "content", dataSource: contentDataSource)
+
         let observer = DrawingPageContext.Observer(identifier: pageContext.identifier)
         pageContext.addObserver(observer)
         self.observer = observer

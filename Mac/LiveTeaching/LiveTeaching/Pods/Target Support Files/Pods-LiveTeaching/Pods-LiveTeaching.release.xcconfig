@@ -1,9 +1,9 @@
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/Basic" "${PODS_CONFIGURATION_BUILD_DIR}/CCFoundation" "${PODS_CONFIGURATION_BUILD_DIR}/DrawingBoard" "${PODS_CONFIGURATION_BUILD_DIR}/FileService" "${PODS_CONFIGURATION_BUILD_DIR}/SITP" "${PODS_CONFIGURATION_BUILD_DIR}/UIFoundation"
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/Basic" "${PODS_CONFIGURATION_BUILD_DIR}/CCFoundation" "${PODS_CONFIGURATION_BUILD_DIR}/FileService" "${PODS_CONFIGURATION_BUILD_DIR}/SITP" "${PODS_CONFIGURATION_BUILD_DIR}/UIFoundation"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/Basic/Basic.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/CCFoundation/CCFoundation.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/DrawingBoard/DrawingBoard.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/FileService/FileService.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/SITP/SITP.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/UIFoundation/UIFoundation.framework/Headers"
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/Basic/Basic.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/CCFoundation/CCFoundation.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/FileService/FileService.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/SITP/SITP.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/UIFoundation/UIFoundation.framework/Headers"
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
-OTHER_LDFLAGS = $(inherited) -framework "Basic" -framework "CCFoundation" -framework "DrawingBoard" -framework "FileService" -framework "SITP" -framework "UIFoundation"
+OTHER_LDFLAGS = $(inherited) -framework "Basic" -framework "CCFoundation" -framework "FileService" -framework "SITP" -framework "UIFoundation"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)

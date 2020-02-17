@@ -24,10 +24,14 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         } else {
             drawingSize = .preset960x720
         }
-        let controller = DrawingContainerController(frame: CGRect(), drawingSize:drawingSize)
+        
+        let controller = DrawingContainerController(frame: CGRect(), drawingSize:drawingSize, contentHeight: drawingSize.rawValue.width * 16, bitmapLayout: Drawing.BitmapLayout(width: drawingSize.rawValue.width, colorSpace: Drawing.ColorSpace.little16Xrgb, backgroundColor: Drawing.Color(little32Argb: 0)))
+        var status = DrawingView.Status()
+        status.offset = 0
+        status.contentHeight = drawingSize.rawValue.width * 16
+        controller.context.drawingView.updateStatus(status)
         return controller
     } ()
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()

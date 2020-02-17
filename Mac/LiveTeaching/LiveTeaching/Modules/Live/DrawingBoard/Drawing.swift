@@ -11,33 +11,32 @@ import UIKit
 public struct Drawing {
     public enum ColorSpace: UInt32 {
         //android 只有argb模式
-        
         case little32Argb = 1
-    //        case little16Xrgb = 2
+        case little16Xrgb = 2//最高位填充0
         public static let deviceRgb: CGColorSpace = CGColorSpaceCreateDeviceRGB()
 
         public var bytesPerPixel: UInt32 {
             switch self {
             case .little32Argb:
                 return 4
-    //            case .little16Xrgb:
-    //                return 2
+            case .little16Xrgb:
+                return 2
             }
         }
         public var bitsPerComponent: UInt32 {
             switch self {
             case .little32Argb:
                 return 8
-    //            case .little16Xrgb:
-    //                return 5
+            case .little16Xrgb:
+                return 5
             }
         }
         public var bitsPerPixel: UInt32 {
             switch self {
             case .little32Argb:
                 return 32
-    //            case .little16Xrgb:
-    //                return 16
+            case .little16Xrgb:
+                return 16
             }
         }
         
@@ -49,8 +48,8 @@ public struct Drawing {
             switch self {
             case .little32Argb:
                 return CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue
-    //            case .little16Xrgb:
-    //                return CGBitmapInfo.byteOrder16Little.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue
+            case .little16Xrgb:
+                return CGBitmapInfo.byteOrder16Little.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue
             }
         }
     }
@@ -111,10 +110,6 @@ public struct Drawing {
     }
 
 }
-
-
-
-
 
 
 

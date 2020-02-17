@@ -507,26 +507,26 @@ public class ScheduleContext {
 //        }
 //
 //
-////        func makeImage(x: UInt32, y: UInt32, width: UInt32, height: UInt32) -> CGImage? {
-////            let right = UInt64(x) + UInt64(width)
-////            let bottom = UInt64(y) + UInt64(height)
-////            if right > UInt64(self.config.width) {
-////                return nil
-////            }
-////            if bottom > UInt64(self.config.height) {
-////                return nil
-////            }
-////            let config = self.config
-////            let colorSpace = config.colorSpace
-////            let bitmapInfo: UInt32 = colorSpace.bitmapInfo
-////
-////            let offset = config.bytesPerRow * Int(y) + Int(colorSpace.bytesPerPixel * x)
-////            let dataProvider = CGDataProvider(dataInfo: nil, data: self.mainPtr.advanced(by: offset), size: self.config.bufferSize - offset) { (mptr, ptr, size) in
-////                print("de")
-////                }!
-////            return CGImage(width: Int(width), height: Int(height), bitsPerComponent: colorSpace.bitsPerComponent, bitsPerPixel: colorSpace.bitsPerPixel, bytesPerRow: config.bytesPerRow, space: DrawingContext.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
-////        }
-//    }
+//        func makeImage(x: UInt32, y: UInt32, width: UInt32, height: UInt32) -> CGImage? {
+//            let right = UInt64(x) + UInt64(width)
+//            let bottom = UInt64(y) + UInt64(height)
+//            if right > UInt64(self.config.width) {
+//                return nil
+//            }
+//            if bottom > UInt64(self.config.height) {
+//                return nil
+//            }
+//            let config = self.config
+//            let colorSpace = config.colorSpace
+//            let bitmapInfo: UInt32 = colorSpace.bitmapInfo
+//
+//            let offset = config.bytesPerRow * Int(y) + Int(colorSpace.bytesPerPixel * x)
+//            let dataProvider = CGDataProvider(dataInfo: nil, data: self.mainPtr.advanced(by: offset), size: self.config.bufferSize - offset) { (mptr, ptr, size) in
+//                print("de")
+//                }!
+//            return CGImage(width: Int(width), height: Int(height), bitsPerComponent: colorSpace.bitsPerComponent, bitsPerPixel: colorSpace.bitsPerPixel, bytesPerRow: config.bytesPerRow, space: DrawingContext.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+//        }
+    }
 //
 //    public class Storage {
 //        public private(set) var buffer: (UnsafeMutableRawPointer, Int)

@@ -20,10 +20,7 @@ public protocol DrawingHandle: class {
 public protocol DrawingSectionHandle: DrawingHandle {
     func hasPrev() -> Bool
     func hasNext() -> Bool
-
-
 }
-
 
 public class DrawingController: NSObject, DrawingViewDrawDelegate {
     public private(set) var drawingView: DrawingView? = nil
@@ -100,9 +97,9 @@ public class DrawingContainerController: BaseController<DrawingContainer> {
     public private(set) var currentSection: DrawingSectionHandle?
     public let context: DrawingContext
     
-    public init(frame: CGRect, drawingSize: DrawingSize) {
+    public init(frame: CGRect, drawingSize: DrawingSize, contentHeight: UInt32, bitmapLayout: Drawing.BitmapLayout) {
         self.frame = frame
-        self.context = DrawingContext(drawingSize: drawingSize)
+        self.context = DrawingContext(drawingSize: drawingSize, contentHeight: contentHeight, bitmapLayout: bitmapLayout)
     }
     let observer: StackView.Observer = StackView.Observer()
     public override func loadContent() -> DrawingContainer {

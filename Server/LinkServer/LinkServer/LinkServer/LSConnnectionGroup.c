@@ -41,9 +41,11 @@ void _LSConnnectionGroupSaveEvent(LSConnectionGroup_s * _Nonnull group, LSEvent_
     connection->status = connection->status | event.status;
     assert(group->triggerCount < 0x1000);
 }
+
 void _LSConnnectionGroupClearEvents(LSConnectionGroup_s * _Nonnull group) {
     group->triggerCount = 0;
 }
+
 void _LSConnnectionGroupPerformEvents(LSConnectionGroup_s * _Nonnull group, uint64_t time) {
     uint32_t count = group->triggerCount;
     for (uint32_t index=0; index<count; index++) {

@@ -101,20 +101,22 @@ struct _LSConnectionTimeSource {
 #define __LSSocketSourceDeadlineMax (UINT64_MAX >> 12)
 #define LSSocketSourceDeadlineForever __LSSocketSourceDeadlineMax
 
+
+//    CCByte16 deviceToken; fd4 + sequence8 + 
 typedef struct {
     int fd;
     uint32_t mask: 2;
     uint32_t status: 2;
     uint32_t hasError: 1;
-//    uint32_t isReadable: 1;
-//    uint32_t isWritable: 1;
     uint32_t readTimerIndex: 13;
     uint32_t writeTimerIndex: 13;
-    uint32_t xxx: 1;
+    uint32_t isValid: 1;
     uint64_t sequence;
     CCByte16 deviceToken;
     CCByte16 writeVi;
     CCByte16 readVi;
+    CCByte64 writeKey;
+    CCByte64 readKey;
 } LSConnection_s;
 
 
@@ -179,6 +181,7 @@ struct _LSManager {
     uint32_t fileTableSize;//当前进程能打开的最大文件描述符大小
     uint64_t sequence;
     LSFile_s * _Nonnull fileTable;//index 是 fd， 值是 File在fileTable中的index
+    int * clientBuffer;
     LSEventLoop_s * _Nonnull loops[0];
 };
 

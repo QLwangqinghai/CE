@@ -164,7 +164,11 @@ void CEClosureManagerExecute(const CCPtr _Nullable input, CCPtr _Nullable output
 //
 //        int struct_len = sizeof(struct sockaddr_in);
 //        int fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-//        assert(fd >= 0);
+//        assert(fd != -1);
+//int val =1;
+//if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val))<0) {
+//    perror("setsockopt()");
+//}
 //        assert(bind(fd, (struct sockaddr *)&server_addr, struct_len) == 0);
 //        assert(listen(fd, 1024) == 0);
 //

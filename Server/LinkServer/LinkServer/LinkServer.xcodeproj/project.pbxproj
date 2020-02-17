@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		207055E61554CA95715F896B /* Pods_CoreEvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CFAD904B2BC253E0E1BD91E /* Pods_CoreEvent.framework */; };
 		BF0FA29B9D8377C3C8ABAA65 /* Pods_LinkServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8081401C46F4166053DFE5C9 /* Pods_LinkServer.framework */; };
+		D64CD9EF23F7B566003C0077 /* LSServerConnection.c in Sources */ = {isa = PBXBuildFile; fileRef = D64CD9EE23F7B566003C0077 /* LSServerConnection.c */; };
 		D64DD12023DEBDA400BEBBBE /* CEPoll.h in Headers */ = {isa = PBXBuildFile; fileRef = D64DD11E23DEBDA400BEBBBE /* CEPoll.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D64DD12123DEBDA400BEBBBE /* CEPoll.c in Sources */ = {isa = PBXBuildFile; fileRef = D64DD11F23DEBDA400BEBBBE /* CEPoll.c */; };
 		D64DD14423E0CA4B00BEBBBE /* CETimeEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = D64DD14223E0CA4B00BEBBBE /* CETimeEvent.c */; };
@@ -60,6 +61,8 @@
 		8081401C46F4166053DFE5C9 /* Pods_LinkServer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LinkServer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A38E94BD893D05003CFD32A /* Pods-CoreEvent.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreEvent.release.xcconfig"; path = "Target Support Files/Pods-CoreEvent/Pods-CoreEvent.release.xcconfig"; sourceTree = "<group>"; };
 		C270896BA8B2D6ECF82F4151 /* Pods-LinkServer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LinkServer.debug.xcconfig"; path = "Target Support Files/Pods-LinkServer/Pods-LinkServer.debug.xcconfig"; sourceTree = "<group>"; };
+		D64CD9ED23F7B566003C0077 /* LSServerConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LSServerConnection.h; sourceTree = "<group>"; };
+		D64CD9EE23F7B566003C0077 /* LSServerConnection.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LSServerConnection.c; sourceTree = "<group>"; };
 		D64DD11E23DEBDA400BEBBBE /* CEPoll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEPoll.h; sourceTree = "<group>"; };
 		D64DD11F23DEBDA400BEBBBE /* CEPoll.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CEPoll.c; sourceTree = "<group>"; };
 		D64DD14223E0CA4B00BEBBBE /* CETimeEvent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CETimeEvent.c; sourceTree = "<group>"; };
@@ -204,6 +207,8 @@
 				D6D663DF23F413F10041BADB /* LSEventLoop.c */,
 				D6D663E123F4FF470041BADB /* LSConnnectionGroup.h */,
 				D6D663E223F4FF470041BADB /* LSConnnectionGroup.c */,
+				D64CD9ED23F7B566003C0077 /* LSServerConnection.h */,
+				D64CD9EE23F7B566003C0077 /* LSServerConnection.c */,
 			);
 			path = LinkServer;
 			sourceTree = "<group>";
@@ -483,6 +488,7 @@
 				D6B2F6E523DE63A700781CA8 /* AppDelegate.swift in Sources */,
 				D6BD24BD23E2BDB500B3A57D /* OBBridge.m in Sources */,
 				D6AE6D7023EC5FCB00B0B15C /* LSTimerQueue.c in Sources */,
+				D64CD9EF23F7B566003C0077 /* LSServerConnection.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

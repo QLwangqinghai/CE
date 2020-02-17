@@ -13,7 +13,10 @@ public struct Resource {
         public static let background: UIColor = UIColor.white
         
     }
-    
+    public class Image {
+        public static let back: UIImage = UIImage(named: "")!
+        
+    }
     
     
 }

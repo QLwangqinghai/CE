@@ -402,49 +402,7 @@ public protocol DrawingViewDrawDelegate: class {
 
 
 public class DrawingView: UIView {
-    public struct Status: Equatable {
-        public var offset: CGFloat = 0
-        public var contentHeight: UInt32 = 0
-        public static func == (_ lhs: Status, _ rhs: Status) -> Bool {
-            return lhs.offset == rhs.offset && lhs.contentHeight == rhs.contentHeight
-        }
-    }
-    public struct ContentStatus: Equatable {
-        public var offset: CGFloat = 0
-        public var height: CGFloat = 0
-        public var bitmapY: UInt32 = 0
-        public var bitmapHeight: UInt32 = 0
-
-        public static func == (_ lhs: ContentStatus, _ rhs: ContentStatus) -> Bool {
-            return lhs.offset == rhs.offset && lhs.height == rhs.height
-        }
-    }
-    
-    public class Observer {
-        public typealias ObserveClosure = (_ observer: Observer, _ view: DrawingView, _ from: Status, _ to: Status) -> Void
-        public let identifier: String
-        public var willUpdate: ObserveClosure
-        public var didUpdate: ObserveClosure
-        public init(identifier: String) {
-            self.identifier = identifier
-            self.willUpdate = {(_, _, _, _) in
-            }
-            self.didUpdate = {(_, _, _, _) in
-            }
-        }
-    }
-        
     public let bitmap: DrawingBitmap
-    private var observers: [Observer] = []
-
-    public func addObserver(_ observer: Observer) {
-        self.observers.append(observer)
-    }
-    public func removeObserver(_ observer: Observer) {
-        self.observers.removeAll(where: { (item) -> Bool in
-            return item === observer
-        })
-    }
  
     private let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
     
@@ -452,26 +410,19 @@ public class DrawingView: UIView {
         
     internal var drawDelegate: DrawingViewDrawDelegate? = nil
     
-    public let contentLayer: CALayer = CALayer()
-    
-//    public private(set) var contentStatus: ContentStatus = ContentStatus()
-    public private(set) var status: Status = Status()
-
     public let drawingSize: DrawingSize
-    public init(drawingSize: DrawingSize, contentHeight: UInt32, bitmapLayout: Drawing.BitmapLayout) {
+    public private(set) var status: DrawingContext.Status = DrawingContext.Status()
+
+    public init(drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
         var size = drawingSize.rawValue
-        size.height = contentHeight
+        size.height = contentHeightLimit
         self.drawingSize = drawingSize
         self.bitmap = DrawingBitmap(size: size, bitmapLayout: bitmapLayout)
         super.init(frame: CGRect(origin: CGPoint(), size: drawingSize.cgSize))
 //        self.status.contentHeight = CGFloat(contentHeight) / UIScreen.main.scale
         self.clipsToBounds = true
-        self.bitmap.onSequenceUpdate = {[weak self] (_ bitmap: DrawingBitmap) in
-            guard let strongSelf = self else {
-                return
-            }
-            strongSelf.displayContent()
-        }
+        self.layer.masksToBounds = true
+        self.layer.addSublayer(bitmap.layer)
         self._prepare()
     }
     
@@ -480,37 +431,19 @@ public class DrawingView: UIView {
     }
     
     private func _prepare() {
-        self.contentLayer.zPosition = 1
-        self.layer.addSublayer(self.contentLayer)
-        var frame = self.layer.bounds
-        frame.size.height = frame.size.width * 16
-        self.contentLayer.frame = frame
         self.isMultipleTouchEnabled = true
     }
     public override func layoutSubviews() {
         super.layoutSubviews()
     }
-    
-    public func updateStatus(_ status: Status) {
-        if self.status != status {
-            self.status = status
-            
-            var bounds = self.bounds
-            bounds.origin.y = 0
-            let scale = UIScreen.main.scale
-            bounds.size.height = CGFloat(status.contentHeight) / scale
-            self.contentLayer.frame = bounds
-            self.displayContent()
-        }
+    public func didUpdateStatus(from: DrawingContext.Status, to status: DrawingContext.Status) {
+        self.status = status
+        var bounds = self.bounds
+        bounds.origin.y = status.offset
+        self.bounds = bounds
+        self.bitmap.contentHeight = status.contentHeight
     }
-    public func displayContent() {
-//        self.contentLayer.contents = self.bitmap.makeImage(y: self.contentStatus.bitmapY, height: self.contentStatus.bitmapHeight)
-//        self.contentLayer.setNeedsDisplay()
-        let layer = self.contentLayer
-        let image = self.bitmap.image
-        layer.contents = image
-        layer.superlayer?.setNeedsDisplay()
-    }
+
     
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if self.eventRecognizer.isEnabled {

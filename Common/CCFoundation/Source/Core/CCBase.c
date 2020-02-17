@@ -123,6 +123,24 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
         memcpy(dst, src, size);
     }
 }
+void CCMemorySetUInt32(void * _Nonnull dst, uint32_t v, size_t count) {
+    size_t r = count;
+    uint32_t * _Nonnull to = dst;
+    while (r > 0) {
+        *to = v;
+        to ++;
+        r --;
+    }
+}
+void CCMemorySetUInt64(void * _Nonnull dst, uint64_t v, size_t count) {
+    size_t r = count;
+    uint64_t * _Nonnull to = dst;
+    while (r > 0) {
+        *to = v;
+        to ++;
+        r --;
+    }
+}
 
 
 

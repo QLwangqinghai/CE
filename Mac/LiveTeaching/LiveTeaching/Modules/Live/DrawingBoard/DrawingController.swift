@@ -97,9 +97,9 @@ public class DrawingContainerController: BaseController<DrawingContainer> {
     public private(set) var currentSection: DrawingSectionHandle?
     public let context: DrawingContext
     
-    public init(frame: CGRect, drawingSize: DrawingSize, contentHeight: UInt32, bitmapLayout: Drawing.BitmapLayout) {
+    public init(frame: CGRect, drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
         self.frame = frame
-        self.context = DrawingContext(drawingSize: drawingSize, contentHeight: contentHeight, bitmapLayout: bitmapLayout)
+        self.context = DrawingContext(drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
     }
     let observer: StackView.Observer = StackView.Observer()
     public override func loadContent() -> DrawingContainer {

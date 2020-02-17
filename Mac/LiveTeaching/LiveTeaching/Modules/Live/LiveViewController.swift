@@ -25,11 +25,11 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
             drawingSize = .preset960x720
         }
         
-        let controller = DrawingContainerController(frame: CGRect(), drawingSize:drawingSize, contentHeight: drawingSize.rawValue.width * 16, bitmapLayout: Drawing.BitmapLayout(width: drawingSize.rawValue.width, colorSpace: Drawing.ColorSpace.little16Xrgb, backgroundColor: Drawing.Color(little32Argb: 0)))
-        var status = DrawingView.Status()
+        let controller = DrawingContainerController(frame: CGRect(), drawingSize:drawingSize, contentHeightLimit: drawingSize.rawValue.width * 16, bitmapLayout: Drawing.BitmapLayout(width: drawingSize.rawValue.width, colorSpace: Drawing.ColorSpace.little16Xrgb, backgroundColor: Drawing.Color(little32Argb: 0)))
+        var status = DrawingContext.Status()
         status.offset = 0
         status.contentHeight = drawingSize.rawValue.width * 16
-        controller.context.drawingView.updateStatus(status)
+        controller.context.updateStatus(status)
         return controller
     } ()
 

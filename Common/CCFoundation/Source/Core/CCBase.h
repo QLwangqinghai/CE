@@ -50,6 +50,8 @@ static inline CCIndex CCPowerAlign2(CCIndex capacity) {
 #pragma mark - CCByte
 
 void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size);
+void CCMemorySetUInt32(void * _Nonnull dst, uint32_t v, size_t count);
+void CCMemorySetUInt64(void * _Nonnull dst, uint64_t v, size_t count);
 
 extern CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCChar * _Nonnull outputBuffer, CCInt bufferLength);
 extern CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);

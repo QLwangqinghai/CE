@@ -48,7 +48,7 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         scrollView.delegate = self
         self.contentView.isHidden = true
         
-        
+        _ = DisplayManager.shared
         
 //        let render = UIGraphicsImageRenderer.init(size: CGSize.init(width: 200, height: 200), format: UIGraphicsImageRendererFormat)
     }

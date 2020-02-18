@@ -128,7 +128,7 @@ public class DrawingContainerController: BaseController<DrawingContainer> {
 
     private func layoutSubviews() {
         let bounds = self.content.bounds
-        let drawingSize = self.context.drawingSize.cgSize
+        let drawingSize = self.context.status.drawingSize.cgSize
         self.context.drawingView.bounds = CGRect(origin: CGPoint(), size: drawingSize)
         self.context.drawingView.transform = CGAffineTransform.identity.scaledBy(x: bounds.size.width / drawingSize.width, y: bounds.size.height / drawingSize.height)
         self.context.drawingView.center = CGPoint(x: bounds.size.width/2, y: bounds.size.height/2)        

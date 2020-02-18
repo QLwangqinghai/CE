@@ -42,8 +42,6 @@ public class DrawingBoard {
         self.bitmapContext = CGContext(data: ptr, width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bytesPerRow: bitmapLayout.bytesPerRow, space: colorSpace.space, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
         }, releaseInfo: nil)!
         self.size = size
-
-        
     }
     
     deinit {

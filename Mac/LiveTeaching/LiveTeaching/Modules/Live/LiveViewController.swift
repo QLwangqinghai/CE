@@ -26,7 +26,7 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         }
         
         let controller = DrawingContainerController(frame: CGRect(), drawingSize:drawingSize, contentHeightLimit: drawingSize.rawValue.width * 16, bitmapLayout: Drawing.BitmapLayout(width: drawingSize.rawValue.width, colorSpace: Drawing.ColorSpace.little16Xrgb, backgroundColor: Drawing.Color(little32Argb: 0)))
-        var status = DrawingContext.Status()
+        var status = DrawingStatus.Status()
         status.offset = 0
         status.contentHeight = drawingSize.rawValue.width * 16
         controller.context.updateStatus(status)
@@ -47,6 +47,10 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         
         scrollView.delegate = self
         self.contentView.isHidden = true
+        
+        
+        
+//        let render = UIGraphicsImageRenderer.init(size: CGSize.init(width: 200, height: 200), format: UIGraphicsImageRendererFormat)
     }
     
     override func viewDidLayoutSubviews() {

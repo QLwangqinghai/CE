@@ -40,16 +40,15 @@ public class DrawingBitmap {
     public let bufferSize: Int
     public let ptr: UnsafeMutableRawPointer
     public let bitmapContext: CGContext
-    public let bitmapLayout: Drawing.BitmapLayout
 //    public var image: CGImage
     public var image: CGImage {
-        let colorSpace = self.bitmapLayout.colorSpace
+        let bitmapLayout = self.status.bitmapLayout
+        let colorSpace = bitmapLayout.colorSpace
         let image = CGImage(width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: colorSpace.bitmapInfo), provider: self.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)!
         return image
     }
     public let layer: CALayer
     public private(set) var slices: [DrawingBitmapSliceLayer] = []
-
     
     public let dataProvider: CGDataProvider
     public var contentHeight: UInt32 {
@@ -95,13 +94,16 @@ public class DrawingBitmap {
         }
     }
     var timer: DispatchSourceTimer?
-    public init(size: Size, contentHeight: UInt32 = 0, bitmapLayout: Drawing.BitmapLayout) {
+    
+    public let status: DrawingStatus
+    public init(size: Size, contentHeight: UInt32 = 0, status: DrawingStatus) {
+        let bitmapLayout = status.bitmapLayout
         assert(size.height > 0)
         assert(size.width <= bitmapLayout.countPerRow)
         var sliceSize: Size = size
         sliceSize.height = size.width / 2
         self.sliceSize = sliceSize
-        self.bitmapLayout = bitmapLayout
+        self.status = status
         self.contentHeight = contentHeight
         let bufferSize = bitmapLayout.bytesPerRow * Int(size.height)
         let ptr = UnsafeMutableRawPointer.allocate(byteCount: bufferSize, alignment: CCGetCachelineSize())
@@ -160,16 +162,15 @@ public class DrawingBitmap {
     }
     
     public func displayContent() {
-        let colorSpace = self.bitmapLayout.colorSpace
+        let bitmapLayout = self.status.bitmapLayout
+        let colorSpace = bitmapLayout.colorSpace
         let bitmapInfo: UInt32 = colorSpace.bitmapInfo
         for (idx, slice) in self.slices.enumerated() {
             if idx < 4 {
-                slice.contents = CGImage(width: Int(self.size.width), height: Int(slice.size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: self.bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
-
+                slice.contents = CGImage(width: Int(self.size.width), height: Int(slice.size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
             } else {
                 slice.contents = nil
             }
-
         }
         layer.superlayer?.setNeedsDisplay()
 
@@ -177,10 +178,9 @@ public class DrawingBitmap {
     }
   
     fileprivate func makeDataProvider(y: UInt32, height: UInt32) -> CGDataProvider {
-        let colorSpace = self.bitmapLayout.colorSpace
-        let bitmapInfo: UInt32 = colorSpace.bitmapInfo
-        let offset = self.bitmapLayout.bytesPerRow * Int(y)
-        let size = self.bitmapLayout.bytesPerRow * Int(height)
+        let bitmapLayout = self.status.bitmapLayout
+        let offset = bitmapLayout.bytesPerRow * Int(y)
+        let size = bitmapLayout.bytesPerRow * Int(height)
         return CGDataProvider(dataInfo: nil, data: self.ptr.advanced(by: offset), size: size) { (mptr, ptr, size) in
             print("dataProvider release")
             }!
@@ -190,14 +190,15 @@ public class DrawingBitmap {
         if height <= 0 {
             return nil
         }
-        let colorSpace = self.bitmapLayout.colorSpace
+        let bitmapLayout = self.status.bitmapLayout
+        let colorSpace = bitmapLayout.colorSpace
         let bitmapInfo: UInt32 = colorSpace.bitmapInfo
-        let offset = self.bitmapLayout.bytesPerRow * Int(y)
-        let size = self.bitmapLayout.bytesPerRow * Int(height)
+        let offset = bitmapLayout.bytesPerRow * Int(y)
+        let size = bitmapLayout.bytesPerRow * Int(height)
         let dataProvider = CGDataProvider(dataInfo: nil, data: self.ptr.advanced(by: offset), size: size) { (mptr, ptr, size) in
             print("dataProvider release")
             }!
-        return CGImage(width: Int(self.size.width), height: Int(height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: self.bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+        return CGImage(width: Int(self.size.width), height: Int(height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
     }
     
 //    func makeImage(x: UInt32, y: UInt32, width: UInt32, height: UInt32) -> CGImage? {
@@ -257,10 +258,7 @@ public class DrawingBitmap {
 //    }
 //}
 
-
-
-
-public class DrawingContext {
+public class DrawingStatus {
     public struct Status: Equatable {
         public var offset: CGFloat = 0
         public var contentHeight: UInt32 = 0
@@ -269,22 +267,15 @@ public class DrawingContext {
         }
     }
     public class Observer {
-        public typealias ObserveClosure = (_ observer: Observer, _ context: DrawingContext, _ from: Status, _ to: Status) -> Void
-        public var willUpdate: ObserveClosure
+        public typealias ObserveClosure = (_ observer: Observer, _ context: DrawingStatus, _ from: Status, _ to: Status) -> Void
         public var didUpdate: ObserveClosure
         public init() {
-            self.willUpdate = {(_, _, _, _) in
-            }
             self.didUpdate = {(_, _, _, _) in
             }
         }
     }
     
-    
     public let drawingSize: DrawingSize
-    public let drawingView: DrawingView
-    public let operationView: ViewContainer
-
     //最大值
     public let contentHeightLimit: UInt32
     public let bitmapLayout: Drawing.BitmapLayout
@@ -295,8 +286,6 @@ public class DrawingContext {
         self.drawingSize = drawingSize
         self.bitmapLayout = bitmapLayout
         self.contentHeightLimit = contentHeightLimit
-        self.drawingView = DrawingView(drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
-        self.operationView = ViewContainer(frame: CGRect())
     }
     
     public func addObserver(_ observer: Observer) {
@@ -311,15 +300,42 @@ public class DrawingContext {
     public func updateStatus(_ status: Status) {
         let old = self.status
         if old != status {
+            self.status = status
             let observers = self.observers
             for observer in observers {
-                observer.willUpdate(observer, self, old, status)
-            }
-            self.status = status
-            self.drawingView.didUpdateStatus(from: old, to: status)
-            for observer in observers.reversed() {
                 observer.didUpdate(observer, self, old, status)
             }
         }
+    }
+}
+
+
+
+public class DrawingContext {
+    public let drawingView: DrawingView
+    public let operationView: ViewContainer
+
+    public private(set) var status: DrawingStatus
+    
+    public init(drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
+        let status = DrawingStatus(drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
+        self.drawingView = DrawingView(status: status)
+        self.operationView = ViewContainer(frame: CGRect())
+        self.status = status
+    }
+    
+    public func updateStatus(_ status: DrawingStatus.Status) {
+        let old = self.status.status
+//        if old != status {
+//            let observers = self.observers
+//            for observer in observers {
+//                observer.willUpdate(observer, self, old, status)
+//            }
+//            self.status = status
+//            self.drawingView.didUpdateStatus(from: old, to: status)
+//            for observer in observers.reversed() {
+//                observer.didUpdate(observer, self, old, status)
+//            }
+//        }
     }
 }

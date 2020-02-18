@@ -402,24 +402,21 @@ public protocol DrawingViewDrawDelegate: class {
 
 
 public class DrawingView: UIView {
+    public let status: DrawingStatus
     public let bitmap: DrawingBitmap
- 
+    
     private let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
     
     private var isDispatchEventToRecognizer: Bool = false
         
     internal var drawDelegate: DrawingViewDrawDelegate? = nil
-    
-    public let drawingSize: DrawingSize
-    public private(set) var status: DrawingContext.Status = DrawingContext.Status()
 
-    public init(drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
-        var size = drawingSize.rawValue
-        size.height = contentHeightLimit
-        self.drawingSize = drawingSize
-        self.bitmap = DrawingBitmap(size: size, bitmapLayout: bitmapLayout)
-        super.init(frame: CGRect(origin: CGPoint(), size: drawingSize.cgSize))
-//        self.status.contentHeight = CGFloat(contentHeight) / UIScreen.main.scale
+    public init(status: DrawingStatus) {
+        self.status = status
+        var size = status.drawingSize.rawValue
+        size.height = status.contentHeightLimit
+        self.bitmap = DrawingBitmap(size: size, status: status)
+        super.init(frame: CGRect(origin: CGPoint(), size: status.drawingSize.cgSize))
         self.clipsToBounds = true
         self.layer.masksToBounds = true
         self.layer.addSublayer(bitmap.layer)
@@ -436,14 +433,12 @@ public class DrawingView: UIView {
     public override func layoutSubviews() {
         super.layoutSubviews()
     }
-    public func didUpdateStatus(from: DrawingContext.Status, to status: DrawingContext.Status) {
-        self.status = status
+    public func didUpdateStatus(from: DrawingStatus.Status, to status: DrawingStatus.Status) {
         var bounds = self.bounds
         bounds.origin.y = status.offset
         self.bounds = bounds
         self.bitmap.contentHeight = status.contentHeight
     }
-
     
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if self.eventRecognizer.isEnabled {

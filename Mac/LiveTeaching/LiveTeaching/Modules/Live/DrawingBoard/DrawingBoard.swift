@@ -92,7 +92,7 @@ public class DrawingBoard {
     }
 
     
-//    public func map(rect: CGRect, config: DrawingContext.BoxConfig, originY: Int32, frames: inout [Int32: C2DBytesRange]) -> C2DRect? {
+//    public func map(rect: CGRect, config: DrawingContainer.BoxConfig, originY: Int32, frames: inout [Int32: C2DBytesRange]) -> C2DRect? {
 //        var frame = rect.standardized
 //        frame = rect.inset(by: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
 //        let scale = config.scale

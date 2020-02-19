@@ -244,8 +244,8 @@ extension Drawing {
 
 
 //public struct Manager {
-////    public static let context: DrawingContext = DrawingContext()
-////    public static let specificKey: DispatchSpecificKey<DrawingContext> = DispatchSpecificKey<DrawingContext>()
+////    public static let context: DrawingContainer = DrawingContainer()
+////    public static let specificKey: DispatchSpecificKey<DrawingContainer> = DispatchSpecificKey<DrawingContainer>()
 ////    public static let queue: DispatchQueue = {
 ////        let q = DispatchQueue(label: "d", qos: DispatchQoS.userInitiated, attributes: [], autoreleaseFrequency: .inherit, target: nil)
 ////        q.setSpecific(key: Manager.specificKey, value: Manager.context)

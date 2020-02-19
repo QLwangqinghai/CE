@@ -44,9 +44,14 @@ open class StackView: UIStackView {
             observer.willLayoutSubviews(observer, self)
         }
         super.layoutSubviews()
+        self.layout()
         for observer in observers.reversed() {
             observer.didLayoutSubviews(observer, self)
         }
+    }
+    
+    open func layout() {
+        
     }
 
 }

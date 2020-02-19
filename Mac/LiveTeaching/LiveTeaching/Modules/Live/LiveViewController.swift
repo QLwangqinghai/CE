@@ -6,14 +6,12 @@
 //  Copyright © 2020 vector. All rights reserved.
 //
 
+import UIKit
 
 class LiveViewController: ViewController, UIScrollViewDelegate {
     
     
 //    public let drawingBoard: DrawingBoard
-
-    
-
     public let containerController: DrawingContainerController = {
         let scale = UIScreen.main.scale
         let screenSize: CGSize = UIScreen.main.size
@@ -29,14 +27,15 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         var status = DrawingStatus.Status()
         status.offset = 0
         status.contentHeight = drawingSize.rawValue.width * 16
-        controller.context.updateStatus(status)
+        controller.container.updateStatus(status)
         return controller
     } ()
+    let textField: UITextField = UITextField(frame: CGRect(x: 20, y: 20, width: 80, height: 30))
 
     override func viewDidLoad() {
         super.viewDidLoad()
 //        self.view.addSubview(self.drawingController.content)
-        self.view.addSubview(self.containerController.content)
+        self.view.addSubview(self.containerController.container)
         self.resetContainerControllerLayout()
         
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: 30, height: 400))
@@ -50,12 +49,38 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         
         _ = DisplayManager.shared
         
+        
+        
+        self.view.addSubview(self.textField)
+        self.textField.backgroundColor = .blue
+        let button: UIButton = UIButton(frame: CGRect(x: 20, y: 60, width: 80, height: 30))
+        button.setTitle("设置偏移", for: UIControl.State.normal)
+//        let fout = UIFont.systemFont(ofSize: 13)
+//        if let titleLabel = button.titleLabel {
+//            titleLabel.font = fout
+//        }
+        button.setTitleColor(.black, for: UIControl.State.normal)
+        self.view.addSubview(button)
+        button.addTarget(self, action: #selector(setOffset), for: UIControl.Event.touchUpInside)
+
+//        let a:
 //        let render = UIGraphicsImageRenderer.init(size: CGSize.init(width: 200, height: 200), format: UIGraphicsImageRendererFormat)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.resetContainerControllerLayout()
+    }
+    
+    @objc func setOffset() {
+        self.textField.resignFirstResponder()
+        if let text = self.textField.text {
+            if let offset = Double(text) {
+                var status = self.containerController.container.status.status
+                status.offset = CGFloat(offset)
+                self.containerController.container.updateStatus(status)
+            }
+        }
     }
     
     private func resetContainerControllerLayout() {

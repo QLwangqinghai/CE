@@ -39,6 +39,18 @@ public class DrawingController: NSObject, DrawingViewDrawDelegate {
 
     
     //MARK: DrawingViewDrawDelegate
+    public func drawingViewDidBeginRecognize(_ view: DrawingView) {
+        //开始识别
+    }
+    public func drawingViewDidRecognizedFailed(_ view: DrawingView) {
+        //识别失败
+    }
+    public func drawingViewDidRecognizedSuccess(_ view: DrawingView) {
+        //识别成功
+
+    }
+
+    //以下3个api是识别成功后的调用
     public func drawingView(_ view: DrawingView, beginDraw points:[TouchPoint]) {
         
     }
@@ -88,52 +100,31 @@ public class DrawingSectionController: NSObject {
 
 
 
-public class DrawingContainerController: BaseController<DrawingContainer> {
+public class DrawingContainerController: NSObject {
     public var frame: CGRect {
         didSet {
-            self.content.frame = self.frame
+            self.container.frame = self.frame
         }
     }
     public private(set) var currentSection: DrawingSectionHandle?
-    public let context: DrawingContext
-    
+    public let container: DrawingContainer
+    let observer: StackView.Observer = StackView.Observer()
+
     public init(frame: CGRect, drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
         self.frame = frame
-        self.context = DrawingContext(drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
+        self.container = DrawingContainer(frame: frame, drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
     }
-    let observer: StackView.Observer = StackView.Observer()
-    public override func loadContent() -> DrawingContainer {
-        let container: DrawingContainer = DrawingContainer(frame: self.frame)
-        container.addObserver(self.observer)
-        self.observer.didLayoutSubviews = {[weak self] (_ observer: StackView.Observer, _ view: StackView) in
-            guard let strongSelf = self else {
-                return
-            }
-            strongSelf.layoutSubviews()
-        }
-        return container
-    }
-    
-    public override func contentDidLoad(_ content: DrawingContainer) {
-        super.contentDidLoad(content)
-        self.content.addSubview(self.context.drawingView)
-        self.content.addSubview(self.context.operationView)
-        self.layoutSubviews()
-    }
-    deinit {
-        if let content = self.contentIfLoaded {
-            content.removeObserver(self.observer)
-        }
-    }
-
-    private func layoutSubviews() {
-        let bounds = self.content.bounds
-        let drawingSize = self.context.status.drawingSize.cgSize
-        self.context.drawingView.bounds = CGRect(origin: CGPoint(), size: drawingSize)
-        self.context.drawingView.transform = CGAffineTransform.identity.scaledBy(x: bounds.size.width / drawingSize.width, y: bounds.size.height / drawingSize.height)
-        self.context.drawingView.center = CGPoint(x: bounds.size.width/2, y: bounds.size.height/2)        
-        self.context.operationView.frame = CGRect(origin: CGPoint(), size: bounds.size)
-    }
+//    public override func loadContent() -> DrawingContainer {
+//        let container: DrawingContainer = DrawingContainer(frame: self.frame)
+//        container.addObserver(self.observer)
+//        self.observer.didLayoutSubviews = {[weak self] (_ observer: StackView.Observer, _ view: StackView) in
+//            guard let strongSelf = self else {
+//                return
+//            }
+//            strongSelf.layoutSubviews()
+//        }
+//        return container
+//    }
     
     public func updateCurrentSection(_ current: DrawingSectionHandle?) {
         

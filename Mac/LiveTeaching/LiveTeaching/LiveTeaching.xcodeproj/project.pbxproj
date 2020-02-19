@@ -24,11 +24,11 @@
 		D673AF8923F93F2000D37AFF /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8023F93F1F00D37AFF /* Controller.swift */; };
 		D673AF8A23F93F2000D37AFF /* DrawingBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */; };
 		D673AF8C23F93F2000D37AFF /* DrawingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8323F93F1F00D37AFF /* DrawingController.swift */; };
-		D673AF8E23F93F2000D37AFF /* DrawingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8523F93F1F00D37AFF /* DrawingContainer.swift */; };
 		D673AF8F23F93F2000D37AFF /* DrawingSliceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8623F93F1F00D37AFF /* DrawingSliceController.swift */; };
 		D673AF9523F93FB700D37AFF /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF9423F93FB700D37AFF /* Log.swift */; };
 		D673AF9723F9689500D37AFF /* DrawingBoardCBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF9623F9689400D37AFF /* DrawingBoardCBridge.swift */; };
 		D673AF9923F9692A00D37AFF /* Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF9823F9692A00D37AFF /* Drawing.swift */; };
+		D682FD0D23FD04C400DC25DE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D682FD0C23FD04C400DC25DE /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,11 +55,11 @@
 		D673AF8023F93F1F00D37AFF /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingBoard.swift; sourceTree = "<group>"; };
 		D673AF8323F93F1F00D37AFF /* DrawingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingController.swift; sourceTree = "<group>"; };
-		D673AF8523F93F1F00D37AFF /* DrawingContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingContainer.swift; sourceTree = "<group>"; };
 		D673AF8623F93F1F00D37AFF /* DrawingSliceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingSliceController.swift; sourceTree = "<group>"; };
 		D673AF9423F93FB700D37AFF /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		D673AF9623F9689400D37AFF /* DrawingBoardCBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingBoardCBridge.swift; sourceTree = "<group>"; };
 		D673AF9823F9692A00D37AFF /* Drawing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drawing.swift; sourceTree = "<group>"; };
+		D682FD0C23FD04C400DC25DE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +68,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				35BEDDD9B1AAF0C69129217C /* Pods_LiveTeaching.framework in Frameworks */,
+				D682FD0D23FD04C400DC25DE /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,7 +181,6 @@
 				D673AF9423F93FB700D37AFF /* Log.swift */,
 				D673AF8023F93F1F00D37AFF /* Controller.swift */,
 				D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */,
-				D673AF8523F93F1F00D37AFF /* DrawingContainer.swift */,
 				D673AF8323F93F1F00D37AFF /* DrawingController.swift */,
 				D673AF8623F93F1F00D37AFF /* DrawingSliceController.swift */,
 				D6690E7123F93EAE00B5FA44 /* DrawingView.swift */,
@@ -191,6 +191,7 @@
 		ED3DEF41BFF050135FCC5387 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D682FD0C23FD04C400DC25DE /* UIKit.framework */,
 				D2AB4090CBA0F7EFB33F9473 /* Pods_LiveTeaching.framework */,
 			);
 			name = Frameworks;
@@ -311,7 +312,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D673AF8E23F93F2000D37AFF /* DrawingContainer.swift in Sources */,
 				D606702C23DC9904009BA4B0 /* AppDelegate.swift in Sources */,
 				D673AF9723F9689500D37AFF /* DrawingBoardCBridge.swift in Sources */,
 				D673AF9523F93FB700D37AFF /* Log.swift in Sources */,

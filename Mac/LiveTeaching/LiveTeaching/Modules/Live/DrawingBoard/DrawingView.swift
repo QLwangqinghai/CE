@@ -395,11 +395,20 @@ public final class DrawingEventRecognizer: NSObject {
 
 
 public protocol DrawingViewDrawDelegate: class {
+    
+    //开始识别
+    func drawingViewDidBeginRecognize(_ view: DrawingView)
+    
+    //识别失败
+    func drawingViewDidRecognizedFailed(_ view: DrawingView)
+    
+    //识别成功
+    func drawingViewDidRecognizedSuccess(_ view: DrawingView)
+
     func drawingView(_ view: DrawingView, beginDraw points:[TouchPoint])
     func drawingView(_ view: DrawingView, draw to:TouchPoint)
     func drawingViewFinishDraw(_ view: DrawingView)
 }
-
 
 public class DrawingView: UIView {
     public let status: DrawingStatus

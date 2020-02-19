@@ -1,5 +1,5 @@
 //
-//  DrawingContext.swift
+//  DrawingContainer.swift
 //  LiveTeaching
 //
 //  Created by vector on 2020/2/17.
@@ -267,6 +267,9 @@ public class DrawingBitmap {
         if height <= 0 {
             return nil
         }
+        if y >= self.contentHeight {
+            return nil
+        }
         let bitmapLayout = self.status.bitmapLayout
         let colorSpace = bitmapLayout.colorSpace
         let bitmapInfo: UInt32 = colorSpace.bitmapInfo
@@ -374,11 +377,12 @@ public class DrawingStatus {
         })
     }
     
-    public func updateStatus(_ status: Status) {
+    internal func updateStatus(_ status: Status, closure: (_ status: DrawingStatus, _ old:Status, _ new: Status)-> Void) {
         let old = self.status
         if old != status {
             self.status = status
             let observers = self.observers
+            closure(self, old, status)
             for observer in observers {
                 observer.didUpdate(observer, self, old, status)
             }
@@ -387,22 +391,37 @@ public class DrawingStatus {
 }
 
 
+public class DrawingContainer: StackView {
+    public let container: StackView
 
-public class DrawingContext {
     public let drawingView: DrawingView
     public let operationView: ViewContainer
-
     public private(set) var status: DrawingStatus
     
-    public init(drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
+    public init(frame: CGRect, drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
+        let container: StackView = StackView(frame: CGRect(origin: CGPoint(), size: drawingSize.cgSize))
         let status = DrawingStatus(drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
         self.drawingView = DrawingView(status: status)
         self.operationView = ViewContainer(frame: CGRect())
         self.status = status
-    }
+        self.container = container
+        super.init(frame: frame)
+        self.addSubview(container)
 
+        container.addSubview(self.drawingView)
+        self.addSubview(self.operationView)
+        self.layoutSubviews()
+    }
+    
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
     public func updateStatus(_ status: DrawingStatus.Status) {
-        self.status.updateStatus(status)
+        self.status.updateStatus(status) { (status, old, new) in
+            self.drawingView.didUpdateStatus(from: old, to: new)
+        }
 //        let old = self.status.status
 //        if old != status {
 //            self.status.status = status
@@ -416,5 +435,15 @@ public class DrawingContext {
 //                observer.didUpdate(observer, self, old, status)
 //            }
 //        }
+    }
+    
+    open override func layout() {
+        super.layout()
+        let bounds = self.bounds
+        let drawingSize = self.status.drawingSize.cgSize
+        self.container.bounds = CGRect(origin: CGPoint(), size: drawingSize)
+        self.container.transform = CGAffineTransform.identity.scaledBy(x: bounds.size.width / drawingSize.width, y: bounds.size.height / drawingSize.height)
+        self.container.center = CGPoint(x: bounds.size.width/2, y: bounds.size.height/2)
+        self.operationView.frame = CGRect(origin: CGPoint(), size: bounds.size)
     }
 }

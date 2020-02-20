@@ -29,6 +29,8 @@
 		D673AF9723F9689500D37AFF /* DrawingBoardCBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF9623F9689400D37AFF /* DrawingBoardCBridge.swift */; };
 		D673AF9923F9692A00D37AFF /* Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF9823F9692A00D37AFF /* Drawing.swift */; };
 		D682FD0D23FD04C400DC25DE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D682FD0C23FD04C400DC25DE /* UIKit.framework */; };
+		D6D1EA8023FEB2E6009DD55F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D1EA7F23FEB2E6009DD55F /* Network.swift */; };
+		D6D1EA8623FEB828009DD55F /* BCKeychainUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D1EA8423FEB828009DD55F /* BCKeychainUtil.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +62,9 @@
 		D673AF9623F9689400D37AFF /* DrawingBoardCBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingBoardCBridge.swift; sourceTree = "<group>"; };
 		D673AF9823F9692A00D37AFF /* Drawing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drawing.swift; sourceTree = "<group>"; };
 		D682FD0C23FD04C400DC25DE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		D6D1EA7F23FEB2E6009DD55F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		D6D1EA8423FEB828009DD55F /* BCKeychainUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCKeychainUtil.m; sourceTree = "<group>"; };
+		D6D1EA8523FEB828009DD55F /* BCKeychainUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCKeychainUtil.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +141,7 @@
 		D606701723DC9904009BA4B0 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D6D1EA7E23FEB2C1009DD55F /* Network */,
 				D606701823DC9904009BA4B0 /* ViewController.swift */,
 				D606701A23DC9904009BA4B0 /* Resource.swift */,
 				D606702F23DC993C009BA4B0 /* OCBridge.h */,
@@ -186,6 +192,16 @@
 				D6690E7123F93EAE00B5FA44 /* DrawingView.swift */,
 			);
 			path = DrawingBoard;
+			sourceTree = "<group>";
+		};
+		D6D1EA7E23FEB2C1009DD55F /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				D6D1EA8523FEB828009DD55F /* BCKeychainUtil.h */,
+				D6D1EA8423FEB828009DD55F /* BCKeychainUtil.m */,
+				D6D1EA7F23FEB2E6009DD55F /* Network.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		ED3DEF41BFF050135FCC5387 /* Frameworks */ = {
@@ -314,6 +330,7 @@
 			files = (
 				D606702C23DC9904009BA4B0 /* AppDelegate.swift in Sources */,
 				D673AF9723F9689500D37AFF /* DrawingBoardCBridge.swift in Sources */,
+				D6D1EA8623FEB828009DD55F /* BCKeychainUtil.m in Sources */,
 				D673AF9523F93FB700D37AFF /* Log.swift in Sources */,
 				D6165D3B23F9A04200CE6B07 /* DrawingContext.swift in Sources */,
 				D673AF8A23F93F2000D37AFF /* DrawingBoard.swift in Sources */,
@@ -324,6 +341,7 @@
 				D606702623DC9904009BA4B0 /* ViewController.swift in Sources */,
 				D606702B23DC9904009BA4B0 /* MainTabBarViewController.swift in Sources */,
 				D606702523DC9904009BA4B0 /* HomePageViewController.swift in Sources */,
+				D6D1EA8023FEB2E6009DD55F /* Network.swift in Sources */,
 				D673AF9923F9692A00D37AFF /* Drawing.swift in Sources */,
 				D6690E7223F93EAE00B5FA44 /* DrawingView.swift in Sources */,
 				D673AF8C23F93F2000D37AFF /* DrawingController.swift in Sources */,

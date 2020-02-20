@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SQLite3
+import SQLite
 
 //http://blog.csdn.net/sukhoi27smk/article/details/41895849 字段对应关系
 

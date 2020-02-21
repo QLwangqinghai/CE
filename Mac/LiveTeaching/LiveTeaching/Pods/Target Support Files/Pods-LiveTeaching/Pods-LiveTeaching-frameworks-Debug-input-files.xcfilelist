@@ -1,4 +1,5 @@
 ${PODS_ROOT}/Target Support Files/Pods-LiveTeaching/Pods-LiveTeaching-frameworks.sh
+${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework
 ${BUILT_PRODUCTS_DIR}/Basic/Basic.framework
 ${BUILT_PRODUCTS_DIR}/CCFoundation/CCFoundation.framework
 ${BUILT_PRODUCTS_DIR}/FileService/FileService.framework

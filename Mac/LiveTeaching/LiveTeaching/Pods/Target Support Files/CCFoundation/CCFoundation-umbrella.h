@@ -19,8 +19,6 @@
 #import "CCNet.h"
 #import "CCReferenceBase.h"
 #import "CCType.h"
-#import "sqlite3.h"
-#import "sqlite3ext.h"
 #import "aes_locl.h"
 #import "CCAes.h"
 #import "CCAesInternal.h"

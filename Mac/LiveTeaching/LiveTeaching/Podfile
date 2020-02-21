@@ -18,6 +18,7 @@ target 'LiveTeaching' do
     pod 'UIFoundation', :path => '../UIFoundation'
     #pod 'DrawingBoard', :path => '../DrawingBoard'
 
+    pod 'Alamofire'
     pod 'SwiftyBeaver'
     pod 'YYText'
 

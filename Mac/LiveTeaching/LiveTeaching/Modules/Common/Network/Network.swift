@@ -9,10 +9,18 @@
 import UIKit
 import UIFoundation
 import SwiftyBeaver
+import Alamofire
 
 public class Network: NSObject {
-    
-    public static let service: String = "device"
+    public struct Service {
+        public static let device: String = "com.angfung.device"
+        
+    }
+    public struct Account {
+        public static let identifier: String = "identifier"
+    }
+
+    public static let v: String = "id-seed"
 
     public static let accessGroup: String = "group.com.angfung"
     
@@ -26,13 +34,11 @@ public class Network: NSObject {
         //禁止iCloud同步
         query[String(kSecAttrSynchronizable)] = kCFBooleanFalse
         query[String(kSecAttrAccessible)] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-        query[String(kSecAttrService)] = service
-
         query[String(kSecMatchLimit)] = kSecMatchLimitOne
         query[String(kSecReturnData)] = kCFBooleanTrue
-
         
-        query[String(kSecAttrAccount)] = key
+        query[String(kSecAttrService)] = Service.device
+        query[String(kSecAttrAccount)] = Account.identifier
         
         
         
@@ -65,10 +71,24 @@ public class Network: NSObject {
         //禁止iCloud同步
         query[String(kSecAttrSynchronizable)] = kCFBooleanFalse
         query[String(kSecAttrAccessible)] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-        query[String(kSecAttrApplicationTag)] = data
-        query[String(kSecAttrLabel)] = "device"
 
-        let status = SecItemAdd(query as CFDictionary, nil)
+        query[String(kSecUseAuthenticationUI)] = String(kSecUseAuthenticationUIFail)
+
+        query[String(kSecAttrService)] = Service.device
+        query[String(kSecAttrAccount)] = Account.identifier
+
+        var status = SecItemCopyMatching(query as CFDictionary, nil)
+        switch status {
+        case errSecSuccess:
+            status = SecItemDelete(query as CFDictionary)
+            if status != errSecSuccess {
+
+            }
+        default:
+            break
+        }
+        query[String(kSecValueData)] = data
+        status = SecItemAdd(query as CFDictionary, nil)
         
         if status != errSecSuccess {
             SwiftyBeaver.info("\(status)")
@@ -79,6 +99,9 @@ public class Network: NSObject {
 
 
     static func test() {
+        AF.request("www.baidu.com", method: HTTPMethod.get, parameters: Encodable?, encoder: ParameterEncoder, headers: <#T##HTTPHeaders?#>, interceptor: <#T##RequestInterceptor?#>)
+        
+        
         do {
             let data = try Network.query()
             

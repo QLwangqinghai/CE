@@ -161,6 +161,7 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Basic/Basic.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CCFoundation/CCFoundation.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/FileService/FileService.framework"
@@ -170,6 +171,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/YYText/YYText.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Basic/Basic.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CCFoundation/CCFoundation.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/FileService/FileService.framework"

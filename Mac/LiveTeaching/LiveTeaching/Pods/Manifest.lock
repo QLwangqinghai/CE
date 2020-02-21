@@ -1,4 +1,5 @@
 PODS:
+  - Alamofire (5.0.0)
   - Basic (0.1.0)
   - CCFoundation (0.1.0)
   - FileService (0.1.0):
@@ -12,6 +13,7 @@ PODS:
   - YYText (1.0.7)
 
 DEPENDENCIES:
+  - Alamofire
   - Basic (from `../../../Common/Basic`)
   - CCFoundation (from `../../../Common/CCFoundation`)
   - FileService (from `../../../Common/FileService`)
@@ -22,6 +24,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/QLwangqinghai/pod.git:
+    - Alamofire
     - SwiftyBeaver
     - YYText
 
@@ -38,6 +41,7 @@ EXTERNAL SOURCES:
     :path: "../UIFoundation"
 
 SPEC CHECKSUMS:
+  Alamofire: de3d1ed933df2a42f0bd2cb2bd831210039786df
   Basic: 43707a2cef5f207047f59cf558653f3bdb7bcf12
   CCFoundation: 8ed9e53d7b894e0ddce4cff91ea6b5ccfff7c7d6
   FileService: a4c2b7d993efa9e3e12e1f620c662596641c4ef0
@@ -46,6 +50,6 @@ SPEC CHECKSUMS:
   UIFoundation: 9b74b081b858c14164bee53a7fe2a239bf8af2d8
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 60b21f8a38c60c3357083263627f4c5a3ed588de
+PODFILE CHECKSUM: c78eb02d7f50b476e6743dc0aac61f266a53d6c4
 
 COCOAPODS: 1.8.4

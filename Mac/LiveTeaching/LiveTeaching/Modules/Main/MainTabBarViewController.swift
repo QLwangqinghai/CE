@@ -31,6 +31,10 @@ class MainTabBarViewController: UITabBarController {
         
         self.addChild(homePageNavigation)
         self.addChild(minePageNavigation)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+            Network.test()
+        }
     }
     
     override func viewDidLoad() {

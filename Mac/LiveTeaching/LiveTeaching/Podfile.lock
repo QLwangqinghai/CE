@@ -6,15 +6,24 @@ PODS:
     - CCFoundation
   - SITP (0.1.0):
     - CCFoundation
+  - SwiftyBeaver (1.8.4)
   - UIFoundation (0.1.0):
     - Basic
+  - YYText (1.0.7)
 
 DEPENDENCIES:
   - Basic (from `../../../Common/Basic`)
   - CCFoundation (from `../../../Common/CCFoundation`)
   - FileService (from `../../../Common/FileService`)
   - SITP (from `../../../Common/SITP`)
+  - SwiftyBeaver
   - UIFoundation (from `../UIFoundation`)
+  - YYText
+
+SPEC REPOS:
+  https://github.com/QLwangqinghai/pod.git:
+    - SwiftyBeaver
+    - YYText
 
 EXTERNAL SOURCES:
   Basic:
@@ -33,8 +42,10 @@ SPEC CHECKSUMS:
   CCFoundation: 8ed9e53d7b894e0ddce4cff91ea6b5ccfff7c7d6
   FileService: a4c2b7d993efa9e3e12e1f620c662596641c4ef0
   SITP: 53f0f994b1a61937c97ef9a9665a01bbf128ed74
+  SwiftyBeaver: ac9614008fd40de60059577c8d4ac9dd8367419f
   UIFoundation: 9b74b081b858c14164bee53a7fe2a239bf8af2d8
+  YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: ae78b130544dcd65ee8305584b761ac4eeb2eb2b
+PODFILE CHECKSUM: 60b21f8a38c60c3357083263627f4c5a3ed588de
 
 COCOAPODS: 1.8.4

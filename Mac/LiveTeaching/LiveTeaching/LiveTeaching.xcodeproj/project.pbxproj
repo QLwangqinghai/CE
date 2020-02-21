@@ -37,7 +37,7 @@
 		19F34FD28D8D3A2B9571EEA3 /* Pods-LiveTeaching.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LiveTeaching.debug.xcconfig"; path = "Target Support Files/Pods-LiveTeaching/Pods-LiveTeaching.debug.xcconfig"; sourceTree = "<group>"; };
 		ADAE9FE2BBFE5AE1760C8DAC /* Pods-LiveTeaching.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LiveTeaching.release.xcconfig"; path = "Target Support Files/Pods-LiveTeaching/Pods-LiveTeaching.release.xcconfig"; sourceTree = "<group>"; };
 		D2AB4090CBA0F7EFB33F9473 /* Pods_LiveTeaching.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LiveTeaching.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D6066FFD23DC957E009BA4B0 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6066FFD23DC957E009BA4B0 /* LT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D606700923DC9581009BA4B0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D606700C23DC9581009BA4B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D606700E23DC9581009BA4B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -62,6 +62,7 @@
 		D673AF9623F9689400D37AFF /* DrawingBoardCBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingBoardCBridge.swift; sourceTree = "<group>"; };
 		D673AF9823F9692A00D37AFF /* Drawing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drawing.swift; sourceTree = "<group>"; };
 		D682FD0C23FD04C400DC25DE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		D683A4C123FFE7FD0014CCAC /* LT.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = LT.entitlements; sourceTree = "<group>"; };
 		D6D1EA7F23FEB2E6009DD55F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		D6D1EA8423FEB828009DD55F /* BCKeychainUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCKeychainUtil.m; sourceTree = "<group>"; };
 		D6D1EA8523FEB828009DD55F /* BCKeychainUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCKeychainUtil.h; sourceTree = "<group>"; };
@@ -103,7 +104,7 @@
 		D6066FFE23DC957E009BA4B0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D6066FFD23DC957E009BA4B0 /* Demo.app */,
+				D6066FFD23DC957E009BA4B0 /* LT.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,6 +112,7 @@
 		D6066FFF23DC957E009BA4B0 /* LiveTeaching */ = {
 			isa = PBXGroup;
 			children = (
+				D683A4C123FFE7FD0014CCAC /* LT.entitlements */,
 				D606700923DC9581009BA4B0 /* Assets.xcassets */,
 				D606700B23DC9581009BA4B0 /* LaunchScreen.storyboard */,
 				D606700E23DC9581009BA4B0 /* Info.plist */,
@@ -232,7 +234,7 @@
 			);
 			name = LiveTeaching;
 			productName = LiveTeaching;
-			productReference = D6066FFD23DC957E009BA4B0 /* Demo.app */;
+			productReference = D6066FFD23DC957E009BA4B0 /* LT.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -397,6 +399,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development: qinghai wang (8W5NBK7WA9)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -457,6 +460,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Distribution: qinghai wang (J97FN9Y7WR)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -485,6 +489,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = LiveTeaching/LT.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = LiveTeaching/Info.plist;
@@ -494,7 +500,8 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.liveTeaching;
-				PRODUCT_NAME = Demo;
+				PRODUCT_NAME = LT;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Modules/Common/LiveTeaching-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -508,6 +515,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = LiveTeaching/LT.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = LiveTeaching/Info.plist;
@@ -517,7 +526,8 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.liveTeaching;
-				PRODUCT_NAME = Demo;
+				PRODUCT_NAME = LT;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Modules/Common/LiveTeaching-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -1,0 +1,25 @@
+{
+  "name": "Logging",
+  "version": "0.1.0",
+  "summary": "Logging.",
+  "description": "Logging.",
+  "homepage": "https://github.com/QLwangqinghai/CE.git",
+  "license": {
+    "type": "MIT"
+  },
+  "authors": {
+    "": ""
+  },
+  "source": {
+    "git": "https://github.com/QLwangqinghai/CE.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "9.0",
+    "osx": "10.14"
+  },
+  "source_files": [
+    "*.h",
+    "Sources/**/*.{h,c,m,cpp,swift}"
+  ]
+}

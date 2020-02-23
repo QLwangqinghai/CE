@@ -39,7 +39,7 @@ static inline CCIndex CCPowerAlign2(CCIndex capacity) {
     initialCapacity |= (initialCapacity >> 8);
     initialCapacity |= (initialCapacity >> 16);
     
-#if CCBuild64Bit
+#if BUILD_TARGET_RT_64_BIT
     initialCapacity |= (initialCapacity >> 32);
 #endif
     initialCapacity += 1;

@@ -84,7 +84,7 @@ static CCRefDomainTable_s _CCRefDomainTable = {
     },
     .count = 1,
 };
-CCRefDomain_s * _Nonnull _CCRefDomainTableGetItem(CCUIntFast id) {
+CCRefDomain_s * _Nonnull _CCRefDomainTableGetItem(UIntegerFast id) {
     return &((&_CCRefDomainTable)->domains[id]);
 }
 
@@ -110,7 +110,7 @@ const CCRefType CCTypeClosure = 0;
 
 
 typedef struct {
-    _Atomic(CCUIntFast) info;
+    _Atomic(UIntegerFast) info;
 } CCRefDecreasedBase;
 
 
@@ -130,7 +130,7 @@ typedef struct {
     uintptr_t flag: 1;
     uintptr_t type: 12;
     uintptr_t hasWeak: 1;
-#if CCBuild64Bit
+#if BUILD_TARGET_RT_64_BIT
     uintptr_t count: 50;
 #else
     uintptr_t count: 18;
@@ -139,7 +139,7 @@ typedef struct {
 
 
 typedef struct {
-#if CCBuild64Bit
+#if BUILD_TARGET_RT_64_BIT
     CCUInt count: 56;
 #else
     CCUInt count: 24;
@@ -151,7 +151,7 @@ typedef struct {
 
 typedef struct {
     _Atomic(uintptr_t) type;
-    _Atomic(CCUIntFast) counter;
+    _Atomic(UIntegerFast) counter;
 } CCRefBase;
 
 #pragma pack(pop)
@@ -193,32 +193,32 @@ static const uintptr_t __CCRefDecreasedRcMask = ~((uintptr_t)(0x3FFF));
 static const uintptr_t __CCRefDecreasedRcHasWeakMask = 0x2000;
 
 
-#if CCBuild64Bit
+#if BUILD_TARGET_RT_64_BIT
 
-static const CCUIntFast __CCRefNormalDomainMask = 0xFE00000000000000ULL;
-static const CCUIntFast __CCRefNormalRcMask = 0xFFFFFFFFFFFFFFULL;
-static const CCUIntFast __CCRefNormalHasWeakMask = 0x100000000000000ULL;
-static const CCUIntFast __CCRefNormalDomainShift = 57;
+static const UIntegerFast __CCRefNormalDomainMask = 0xFE00000000000000ULL;
+static const UIntegerFast __CCRefNormalRcMask = 0xFFFFFFFFFFFFFFULL;
+static const UIntegerFast __CCRefNormalHasWeakMask = 0x100000000000000ULL;
+static const UIntegerFast __CCRefNormalDomainShift = 57;
 
 #else
 
-static const CCUIntFast __CCRefNormalDomainMask = 0xFE000000UL;
-static const CCUIntFast __CCRefNormalRcMask = 0xFFFFFFUL;
-static const CCUIntFast __CCRefNormalHasWeakMask = 0x1000000UL;
-static const CCUIntFast __CCRefNormalDomainShift = 25;
+static const UIntegerFast __CCRefNormalDomainMask = 0xFE000000UL;
+static const UIntegerFast __CCRefNormalRcMask = 0xFFFFFFUL;
+static const UIntegerFast __CCRefNormalHasWeakMask = 0x1000000UL;
+static const UIntegerFast __CCRefNormalDomainShift = 25;
 
 #endif
 
 
 
-static inline _Atomic(CCUIntFast) * _Nonnull CCRefNormalGetCounterPtr(CCRef _Nonnull ref) {
+static inline _Atomic(UIntegerFast) * _Nonnull CCRefNormalGetCounterPtr(CCRef _Nonnull ref) {
     return &(((CCRefBase *)ref)->counter);
 }
 
 static inline CCBool __CCRefNormalRetain(CCRef _Nonnull ref) {
-    CCUIntFast rcInfo = 0;
-    CCUIntFast newRcInfo = 0;
-    _Atomic(CCUIntFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
+    UIntegerFast rcInfo = 0;
+    UIntegerFast newRcInfo = 0;
+    _Atomic(UIntegerFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
     
     do {
         rcInfo = atomic_load(rcInfoPtr);
@@ -269,9 +269,9 @@ weak标记只能在加锁中 修改
 引用计数充当了自旋锁作用
 */
 static inline CCBool __CCRefNormalSetDeallocing(CCRef _Nonnull ref) {
-    CCUIntFast rcInfo = 0;
-    CCUIntFast newRcInfo = 0;
-    _Atomic(CCUIntFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
+    UIntegerFast rcInfo = 0;
+    UIntegerFast newRcInfo = 0;
+    _Atomic(UIntegerFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
 
     uintptr_t address = (uintptr_t)ref;
     while (1) {
@@ -364,10 +364,10 @@ static inline void __CCRefDecreasedRelease(CCRef _Nonnull ref) {
 }
 
 static inline void __CCRefNormalRelease(CCRef _Nonnull ref) {
-    CCUIntFast rcInfo = 0;
-    CCUIntFast newRcInfo = 0;
+    UIntegerFast rcInfo = 0;
+    UIntegerFast newRcInfo = 0;
     
-    _Atomic(CCUIntFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
+    _Atomic(UIntegerFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
     do {
         rcInfo = atomic_load(rcInfoPtr);
         if ((rcInfo & __CCRefNormalRcMask) < 3) {
@@ -407,10 +407,10 @@ void CCRefRelease(CCRef _Nonnull ref) {
 static inline void __CCRefNormalInit(CCRefBase * _Nonnull ref, uint32_t domain, CCRefType type) {
     ref->type = type;
 
-    CCUIntFast rcInfo = domain;
+    UIntegerFast rcInfo = domain;
     rcInfo = rcInfo << __CCRefNormalDomainShift;
     rcInfo += 3;
-    _Atomic(CCUIntFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
+    _Atomic(UIntegerFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
     atomic_store(rcInfoPtr, rcInfo);
 }
 
@@ -472,9 +472,9 @@ CCRef _Nullable CCRefTryRetain(CCRef _Nonnull ref) {
 
 
 static inline CCBool __CCRefNormalSetHasWeak(CCRef _Nonnull ref, CCBool hasWeak) {
-    CCUIntFast rcInfo = 0;
-    CCUIntFast newRcInfo = 1;
-    _Atomic(CCUIntFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
+    UIntegerFast rcInfo = 0;
+    UIntegerFast newRcInfo = 1;
+    _Atomic(UIntegerFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
 
     do {
         rcInfo = atomic_load(rcInfoPtr);

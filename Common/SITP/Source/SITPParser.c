@@ -477,7 +477,7 @@ onParamError:
 //        return result;
 //    }
 //
-//#if CCBuildBigEndian
+//#if BUILD_TARGET_RT_BIG_ENDIAN
 //    uint8_t * bytes = (uint8_t *)(&length);
 //    uint8_t tmp = bytes[0];
 //    bytes[0] = bytes[3];
@@ -567,7 +567,7 @@ SITPParserErrorRef _Nullable _SITPParserReadFieldHead(SITPByteUnsafeReader_t * _
             if (error) {
                 return error;
             }
-#if CCBuildBigEndian
+#if BUILD_TARGET_RT_BIG_ENDIAN
             uint8_t * bytes = (uint8_t *)(&length);
             uint8_t tmp = bytes[0];
             bytes[0] = bytes[3];
@@ -678,7 +678,7 @@ SITPParserErrorRef _Nullable _SITPParserReadCompressFieldHead(SITPByteUnsafeRead
                 if (error) {
                     return error;
                 }
-#if CCBuildBigEndian
+#if BUILD_TARGET_RT_BIG_ENDIAN
                 uint8_t * bytes = (uint8_t *)(&length);
                 uint8_t tmp = bytes[0];
                 bytes[0] = bytes[3];

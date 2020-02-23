@@ -33,48 +33,49 @@ extern "C" {
 
 
 #if __APPLE__
-#define CC_TARGET_OS_DARWIN       1
-#define CC_TARGET_OS_LINUX        0
-#define CC_TARGET_OS_WINDOWS      0
-#define CC_TARGET_OS_BSD          0
-#define CC_TARGET_OS_ANDROID      0
-#define CC_TARGET_OS_CYGWIN       0
+#define BUILD_TARGET_OS_DARWIN       1
+#define BUILD_TARGET_OS_LINUX        0
+#define BUILD_TARGET_OS_WINDOWS      0
+#define BUILD_TARGET_OS_BSD          0
+#define BUILD_TARGET_OS_ANDROID      0
+#define BUILD_TARGET_OS_CYGWIN       0
 #elif __ANDROID__
-#define CC_TARGET_OS_DARWIN       0
-#define CC_TARGET_OS_LINUX        1
-#define CC_TARGET_OS_WINDOWS      0
-#define CC_TARGET_OS_BSD          0
-#define CC_TARGET_OS_ANDROID      1
-#define CC_TARGET_OS_CYGWIN       0
+#define BUILD_TARGET_OS_DARWIN       0
+#define BUILD_TARGET_OS_LINUX        1
+#define BUILD_TARGET_OS_WINDOWS      0
+#define BUILD_TARGET_OS_BSD          0
+#define BUILD_TARGET_OS_ANDROID      1
+#define BUILD_TARGET_OS_CYGWIN       0
 #elif __linux__
-#define CC_TARGET_OS_DARWIN       0
-#define CC_TARGET_OS_LINUX        1
-#define CC_TARGET_OS_WINDOWS      0
-#define CC_TARGET_OS_BSD          0
-#define CC_TARGET_OS_ANDROID      0
-#define CC_TARGET_OS_CYGWIN       0
+#define BUILD_TARGET_OS_DARWIN       0
+#define BUILD_TARGET_OS_LINUX        1
+#define BUILD_TARGET_OS_WINDOWS      0
+#define BUILD_TARGET_OS_BSD          0
+#define BUILD_TARGET_OS_ANDROID      0
+#define BUILD_TARGET_OS_CYGWIN       0
 #elif __CYGWIN__
-#define CC_TARGET_OS_DARWIN       0
-#define CC_TARGET_OS_LINUX        1
-#define CC_TARGET_OS_WINDOWS      0
-#define CC_TARGET_OS_BSD          0
-#define CC_TARGET_OS_ANDROID      0
-#define CC_TARGET_OS_CYGWIN       1
+#define BUILD_TARGET_OS_DARWIN       0
+#define BUILD_TARGET_OS_LINUX        1
+#define BUILD_TARGET_OS_WINDOWS      0
+#define BUILD_TARGET_OS_BSD          0
+#define BUILD_TARGET_OS_ANDROID      0
+#define BUILD_TARGET_OS_CYGWIN       1
 #elif _WIN32 || _WIN64
-#define CC_TARGET_OS_DARWIN       0
-#define CC_TARGET_OS_LINUX        0
-#define CC_TARGET_OS_WINDOWS      1
-#define CC_TARGET_OS_BSD          0
-#define CC_TARGET_OS_ANDROID      0
+#define BUILD_TARGET_OS_DARWIN       0
+#define BUILD_TARGET_OS_LINUX        0
+#define BUILD_TARGET_OS_WINDOWS      1
+#define BUILD_TARGET_OS_BSD          0
+#define BUILD_TARGET_OS_ANDROID      0
 #elif __unix__
-#define CC_TARGET_OS_DARWIN       0
-#define CC_TARGET_OS_LINUX        0
-#define CC_TARGET_OS_WINDOWS      0
-#define CC_TARGET_OS_BSD          1
-#define CC_TARGET_OS_ANDROID      0
+#define BUILD_TARGET_OS_DARWIN       0
+#define BUILD_TARGET_OS_LINUX        0
+#define BUILD_TARGET_OS_WINDOWS      0
+#define BUILD_TARGET_OS_BSD          1
+#define BUILD_TARGET_OS_ANDROID      0
 #else
 #error unknown operating system
 #endif
+
 
 #if (defined(__CYGWIN32__) || defined(_WIN32)) && !defined(__WIN32__)
 #define __WIN32__ 1
@@ -88,6 +89,25 @@ extern "C" {
 #define __LLP64__ 1
 #endif
 
+#if defined(_MSC_VER) && defined(_M_IX86)
+#define __i386__ 1
+#endif
+
+#if (defined(__i386__) || defined(__x86_64__)) && !defined(__LITTLE_ENDIAN__)
+#define __LITTLE_ENDIAN__ 1
+#endif
+
+#if !defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
+#error Do not know the endianess of this architecture
+#endif
+
+#if !__BIG_ENDIAN__ && !__LITTLE_ENDIAN__
+#error Both __BIG_ENDIAN__ and __LITTLE_ENDIAN__ cannot be false
+#endif
+
+#if __BIG_ENDIAN__ && __LITTLE_ENDIAN__
+#error Both __BIG_ENDIAN__ and __LITTLE_ENDIAN__ cannot be true
+#endif
 
 /* Test for proc filesystem */
 #ifdef __linux__
@@ -249,24 +269,24 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 #endif
 
 
-#if __LLP64__ || __LP64__
-#define CCBuild64Bit 1
+#if __LLP64__ || __LP64__ || __POINTER_WIDTH__-0 == 64
+#define BUILD_TARGET_RT_64_BIT 1
+#define BUILD_TARGET_RT_32_BIT 0
 #else
-#define CCBuild64Bit 0
+#define BUILD_TARGET_RT_64_BIT 0
+#define BUILD_TARGET_RT_32_BIT 1
 #endif
 
 
 #if __LITTLE_ENDIAN__
-#define CCBuildLittleEndian 1
-#define CCBuildBigEndian    0
+#define BUILD_TARGET_RT_LITTLE_ENDIAN 1
+#define BUILD_TARGET_RT_BIG_ENDIAN    0
 #elif __BIG_ENDIAN__
-#define CCBuildLittleEndian 0
-#define CCBuildBigEndian    1
+#define BUILD_TARGET_RT_LITTLE_ENDIAN 0
+#define BUILD_TARGET_RT_BIG_ENDIAN    1
 #else
 #error unknown endian
 #endif
-
-
 
 #if defined(__cplusplus)
 }  // extern C

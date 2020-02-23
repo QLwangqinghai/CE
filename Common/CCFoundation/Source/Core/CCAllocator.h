@@ -19,7 +19,7 @@ extern "C" {
 #include <stdlib.h>
 
 
-#if CC_TARGET_OS_WINDOWS
+#if BUILD_TARGET_OS_WINDOWS
 
 #include<malloc.h>
 

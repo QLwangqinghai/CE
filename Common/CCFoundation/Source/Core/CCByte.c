@@ -53,7 +53,7 @@ CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCCh
         assert(outputBuffer);
     }
     
-#if CCBuild64Bit
+#if BUILD_TARGET_RT_64_BIT
     assert(length <= 6917529027641081853LL);
 #else
     assert(length <= 1610612733L);

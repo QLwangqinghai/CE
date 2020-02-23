@@ -99,26 +99,33 @@ public class Network: NSObject {
 
 
     static func test() {
-        AF.request("www.baidu.com", method: HTTPMethod.get, parameters: Encodable?, encoder: ParameterEncoder, headers: <#T##HTTPHeaders?#>, interceptor: <#T##RequestInterceptor?#>)
-        
-        
-        do {
-            let data = try Network.query()
-            
-            SwiftyBeaver.info("query data: \(data)")
-            
-            if data == nil {
-                let d = UUID().uuidString.data(using: String.Encoding.utf8)!
-                try Network.save(d)
-            }
-            
-            let data2 = try Network.query()
-            
-            SwiftyBeaver.info("2 query data: \(data2)")
+//        RequestInterceptor
 
-        } catch let error {
-            print(error)
-        }
+//        var d: DataRequest?
+//        d?.responseJSON(completionHandler: { (<#AFDataResponse<Any>#>) in
+//            <#code#>
+//        })
+//        
+//        AF.request("www.baidu.com", method: HTTPMethod.get, parameters: Encodable?, encoder: ParameterEncoder, headers: HTTPHeaders.init(), interceptor: RequestInterceptor?).response
+//        
+//        
+//        do {
+//            let data = try Network.query()
+//            
+//            SwiftyBeaver.info("query data: \(data)")
+//            
+//            if data == nil {
+//                let d = UUID().uuidString.data(using: String.Encoding.utf8)!
+//                try Network.save(d)
+//            }
+//            
+//            let data2 = try Network.query()
+//            
+//            SwiftyBeaver.info("2 query data: \(data2)")
+//
+//        } catch let error {
+//            print(error)
+//        }
     }
     
     

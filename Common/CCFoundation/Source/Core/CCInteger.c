@@ -204,7 +204,7 @@ static inline CCInt __CCSInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             break;
         case CCIntegerEncodingCompressNoFlag: {
             CCUInt8 buffer[8] = {};
-#if CCBuildLittleEndian
+#if BUILD_TARGET_RT_LITTLE_ENDIAN
             const uint8_t * bytes = (const uint8_t *)(&n);
             buffer[7] = bytes[0];
             buffer[6] = bytes[1];
@@ -301,7 +301,7 @@ static inline CCInt __CCSInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
             break;
         case CCIntegerEncodingCompressNoFlag: {
             CCUInt8 buffer[4] = {};
-#if CCBuildLittleEndian
+#if BUILD_TARGET_RT_LITTLE_ENDIAN
             const uint8_t * bytes = (const uint8_t *)(&n);
             buffer[3] = bytes[0];
             buffer[2] = bytes[1];
@@ -388,7 +388,7 @@ static inline CCInt __CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             break;
         case CCIntegerEncodingCompressNoFlag: {
             CCUInt8 buffer[8] = {};
-#if CCBuildLittleEndian
+#if BUILD_TARGET_RT_LITTLE_ENDIAN
             const uint8_t * bytes = (const uint8_t *)(&n);
             buffer[7] = bytes[0];
             buffer[6] = bytes[1];
@@ -462,7 +462,7 @@ static inline CCInt __CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
             break;
         case CCIntegerEncodingCompressNoFlag: {
             CCUInt8 buffer[4] = {};
-#if CCBuildLittleEndian
+#if BUILD_TARGET_RT_LITTLE_ENDIAN
             const uint8_t * bytes = (const uint8_t *)(&n);
             buffer[3] = bytes[0];
             buffer[2] = bytes[1];
@@ -638,7 +638,7 @@ static inline CCInt __CCIntegerToBytes(void * _Nonnull n, CCInt len, CCBool swap
 }
 
 static inline CCBool __CCIntegerBytesSwap(CCBool bigEndianEncode) {
-#if CCBuildLittleEndian
+#if BUILD_TARGET_RT_LITTLE_ENDIAN
     return bigEndianEncode;
 #else
     return !bigEndianEncode;

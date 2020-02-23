@@ -12,7 +12,7 @@
 const CCMicrosecondTime kCCAbsoluteTimeIntervalSince1970 = 978307200000000LL;
 
 
-#if CC_TARGET_OS_WINDOWS
+#if BUILD_TARGET_OS_WINDOWS
 static const CCMicrosecondTime kCCAbsoluteTimeIntervalSince1601 = 12622780800000000LL;
 
 CCMicrosecondTime CCMicrosecondTimeGetCurrent(void) {

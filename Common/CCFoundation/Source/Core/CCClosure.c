@@ -8,13 +8,13 @@
 
 #include "CCClosure.h"
 
-static const CCUInt CCClosureContextSizeMax = CCUInt_MAX >> 1;
+static const UInteger CCClosureContextSizeMax = UIntegerMax >> 1;
 
 
 typedef struct {
     CCClosureExecute_f _Nonnull execute;
     CCUInt hasClear: 1;
-#if CCBuild64Bit
+#if BUILD_TARGET_RT_64_BIT
     CCUInt contextSize: 63;
 #else
     CCUInt contextSize: 31;

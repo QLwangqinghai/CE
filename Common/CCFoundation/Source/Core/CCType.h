@@ -44,6 +44,47 @@ fflush(stderr);\
 
 #pragma mark - base
 
+typedef _Bool CBool;
+
+#if BUILD_TARGET_RT_64_BIT
+
+typedef int64_t SInteger;
+typedef uint64_t UInteger;
+
+#define SIntegerFast int_fast64_t
+#define SIntegerFastMax INT_FAST64_MAX
+#define SIntegerMax INT64_MAX
+#define SIntegerFastMin INT_FAST64_MIN
+#define SIntegerMin INT64_MIN
+
+#define UIntegerFast uint_fast64_t
+#define UIntegerFastMax UINT_FAST64_MAX
+#define UIntegerMax UINT64_MAX
+
+#elif BUILD_TARGET_RT_32_BIT
+
+typedef int32_t SInteger;
+typedef uint32_t UInteger;
+
+#define SIntegerFast int_fast32_t
+#define SIntegerFastMax INT_FAST32_MAX
+#define SIntegerMax INT32_MAX
+#define SIntegerFastMin INT_FAST32_MIN
+#define SIntegerMin INT32_MIN
+
+#define UIntegerFast uint_fast32_t
+#define UIntegerFastMax UINT_FAST32_MAX
+#define UIntegerMax UINT32_MAX
+
+#else
+#error unknown rt
+#endif
+
+
+typedef unsigned char U8Char;
+typedef unsigned short U16Char;
+
+
 typedef uint64_t CCUInt64;
 typedef uint32_t CCUInt32;
 typedef uint16_t CCUInt16;
@@ -57,31 +98,15 @@ typedef _Bool CCBool;
 typedef CCUInt8 CCChar;
 typedef CCUInt16 CCU16Char;
 
-#define CCUIntFast64 uint_fast64_t
-#define CCUIntFast32 uint_fast32_t
-#define CCUIntFast64Max UINT_FAST64_MAX
-#define CCUIntFast32Max UINT_FAST32_MAX
 
-
-#if CCBuild64Bit
+#if BUILD_TARGET_RT_64_BIT
 typedef CCSInt64 CCInt;
 typedef CCUInt64 CCUInt;
-#define CCUIntFast CCUIntFast64
-#define CCUIntFastMax CCUIntFast64Max
 #else
 typedef CCSInt32 CCInt;
 typedef CCUInt32 CCUInt;
-#define CCUIntFast CCUIntFast32
-#define CCUIntFastMax CCUIntFast32Max
 #endif
 
-#if CCBuild64Bit
-#define CCUInt_MAX UINT64_MAX
-#define CCSInt_MAX INT64_MAX
-#else
-#define CCUInt_MAX UINT32_MAX
-#define CCSInt_MAX INT32_MAX
-#endif
 
 #pragma mark - pointer
 
@@ -106,7 +131,7 @@ typedef CCUInt64 CCBootMicrosecondTime;
 
 
 typedef CCUInt CCIndex;
-#define CCConstantIndexNotFound CCUInt_MAX
+#define CCConstantIndexNotFound UIntegerMax
 
 typedef CCUInt16 CCIndex16;
 typedef CCUInt32 CCIndex32;

@@ -102,7 +102,7 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
     uintptr_t to = (uintptr_t)src;
 
     size_t offset = (from & 0x7);
-    if (offset == (to & 0x7) && CCBuild64Bit) {
+    if (offset == (to & 0x7) && BUILD_TARGET_RT_64_BIT) {
         uint8_t * dst8 = dst;
         const uint8_t * src8 = src;
         if (offset > 0) {
@@ -285,7 +285,7 @@ size_t CCGetCachelineSize() {
 
 uint32_t CCActiveProcessorCount() {
     int32_t pcnt;
-#if CC_TARGET_OS_WINDOWS
+#if BUILD_TARGET_OS_WINDOWS
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
     DWORD_PTR activeProcessorMask = sysInfo.dwActiveProcessorMask;
@@ -295,14 +295,14 @@ uint32_t CCActiveProcessorCount() {
     v = (v & 0x3333333333333333ULL) + ((v >> 2) & 0x3333333333333333ULL);
     v = (v + (v >> 4)) & 0xf0f0f0f0f0f0f0fULL;
     pcnt = (v * 0x0101010101010101ULL) >> ((sizeof(v) - 1) * 8);
-#elif CC_TARGET_OS_DARWIN
+#elif BUILD_TARGET_OS_DARWIN
     int32_t mib[] = {CTL_HW, HW_AVAILCPU};
     size_t len = sizeof(pcnt);
     int32_t result = sysctl(mib, sizeof(mib) / sizeof(int32_t), &pcnt, &len, NULL, 0);
     if (result != 0) {
         pcnt = 0;
     }
-#elif CC_TARGET_OS_LINUX
+#elif BUILD_TARGET_OS_LINUX
     pcnt = sysconf(_SC_NPROCESSORS_ONLN);
 #else
     // Assume the worst

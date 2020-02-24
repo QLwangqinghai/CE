@@ -18,7 +18,7 @@ static const int8_t CByteLeastSignificant[256] = {-1, 0, 1, 0, 2, 0, 1, 0, 3, 0,
 static const uint8_t CByteSignificantCount[256] = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8};
 
 
-CCInt CCUInt64MostSignificantBit(CCUInt64 n) {
+SInteger CCUInt64MostSignificantBit(uint64_t n) {
     if (0 == n) {
         return -1;
     }
@@ -59,7 +59,7 @@ CCInt CCUInt64MostSignificantBit(CCUInt64 n) {
         }
     }
 }
-CCInt CCUInt32MostSignificantBit(CCUInt32 n) {
+SInteger CCUInt32MostSignificantBit(uint32_t n) {
     if (0 == n) {
         return -1;
     }
@@ -82,7 +82,7 @@ CCInt CCUInt32MostSignificantBit(CCUInt32 n) {
     }
 }
 
-CCInt CCUInt64LeastSignificantBit(CCUInt64 n) {
+SInteger CCUInt64LeastSignificantBit(uint64_t n) {
     if (0 == n) {
         return -1;
     }
@@ -125,7 +125,7 @@ CCInt CCUInt64LeastSignificantBit(CCUInt64 n) {
     }
 }
 
-CCInt CCUInt32LeastSignificantBit(CCUInt32 n) {
+SInteger CCUInt32LeastSignificantBit(uint32_t n) {
     if (0 == n) {
         return -1;
     }
@@ -149,12 +149,12 @@ CCInt CCUInt32LeastSignificantBit(CCUInt32 n) {
     }
 }
 
-static inline CCInt __CCSInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+static inline SInteger __CCSInt64Encode(uint64_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     switch (encoding) {
         case CCIntegerEncodingCompress7BitsPerComponent: {
-            CCUInt8 buffer[10] = {};
-            CCUInt64 mask = 0x7F;
-            CCBool compress0 = ((n & 0x8000000000000000ULL) == 0);
+            uint8_t buffer[10] = {};
+            uint64_t mask = 0x7F;
+            CBool compress0 = ((n & 0x8000000000000000ULL) == 0);
             if (compress0) {
                 buffer[0] = 0;
             } else {
@@ -169,16 +169,16 @@ static inline CCInt __CCSInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             buffer[7] = (n >> 14) & mask;
             buffer[8] = (n >> 7) & mask;
             buffer[9] = n & mask;
-            CCInt offset = -1;
+            SInteger offset = -1;
             if (compress0) {
-                for (CCInt i=0; i<9; i++) {
+                for (SInteger i=0; i<9; i++) {
                     if (!(buffer[i] == 0 && buffer[i+1] < 0x40)) {
                         offset = i;
                         break;
                     }
                 }
             } else {
-                for (CCInt i=0; i<9; i++) {
+                for (SInteger i=0; i<9; i++) {
                     if (!(buffer[i] == 0x7F && buffer[i+1] >= 0x40)) {
                         offset = i;
                         break;
@@ -188,13 +188,13 @@ static inline CCInt __CCSInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             if (offset < 0) {
                 offset = 9;
             }
-            CCInt requireLength = 10 - offset;
+            SInteger requireLength = 10 - offset;
             if (bufferLength < requireLength) {
                 return -2;
             }
             
-            CCInt outputIndex = 0;
-            for (CCInt i=offset; i<9; i++) {
+            SInteger outputIndex = 0;
+            for (SInteger i=offset; i<9; i++) {
                 outputBuffer[outputIndex] = (buffer[i] | 0x80);
                 outputIndex += 1;
             }
@@ -203,7 +203,7 @@ static inline CCInt __CCSInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
         }
             break;
         case CCIntegerEncodingCompressNoFlag: {
-            CCUInt8 buffer[8] = {};
+            uint8_t buffer[8] = {};
 #if BUILD_TARGET_RT_LITTLE_ENDIAN
             const uint8_t * bytes = (const uint8_t *)(&n);
             buffer[7] = bytes[0];
@@ -218,17 +218,17 @@ static inline CCInt __CCSInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             ((CCUInt64 *)buffer)[0] = n;
 #endif
             
-            CCBool compress0 = ((n & 0x8000000000000000ULL) == 0);
-            CCInt offset = -1;
+            CBool compress0 = ((n & 0x8000000000000000ULL) == 0);
+            SInteger offset = -1;
             if (compress0) {
-                for (CCInt i=0; i<7; i++) {
+                for (SInteger i=0; i<7; i++) {
                     if (!(buffer[i] == 0 && buffer[i+1] < 0x80)) {
                         offset = i;
                         break;
                     }
                 }
             } else {
-                for (CCInt i=0; i<7; i++) {
+                for (SInteger i=0; i<7; i++) {
                     if (!(buffer[i] == 0xFF && buffer[i+1] >= 0x80)) {
                         offset = i;
                         break;
@@ -238,7 +238,7 @@ static inline CCInt __CCSInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             if (offset < 0) {
                 offset = 7;
             }
-            CCInt requireLength = 8 - offset;
+            SInteger requireLength = 8 - offset;
             if (bufferLength < requireLength) {
                 return -2;
             }
@@ -252,12 +252,12 @@ static inline CCInt __CCSInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             break;
     }
 }
-static inline CCInt __CCSInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+static inline SInteger __CCSInt32Encode(uint32_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     switch (encoding) {
         case CCIntegerEncodingCompress7BitsPerComponent: {
-            CCUInt8 buffer[5] = {};
-            CCUInt32 mask = 0x7F;
-            CCBool compress0 = ((n & 0x80000000UL) == 0);
+            uint8_t buffer[5] = {};
+            uint32_t mask = 0x7F;
+            CBool compress0 = ((n & 0x80000000UL) == 0);
             if (compress0) {
                 buffer[0] = ((n >> 28) & mask);
             } else {
@@ -267,16 +267,16 @@ static inline CCInt __CCSInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
             buffer[2] = (n >> 14) & mask;
             buffer[3] = (n >> 7) & mask;
             buffer[4] = n & mask;
-            CCInt offset = -1;
+            SInteger offset = -1;
             if (compress0) {
-                for (CCInt i=0; i<4; i++) {
+                for (SInteger i=0; i<4; i++) {
                     if (!(buffer[i] == 0 && buffer[i+1] < 0x40)) {
                         offset = i;
                         break;
                     }
                 }
             } else {
-                for (CCInt i=0; i<4; i++) {
+                for (SInteger i=0; i<4; i++) {
                     if (!(buffer[i] == 0x7F && buffer[i+1] >= 0x40)) {
                         offset = i;
                         break;
@@ -286,12 +286,12 @@ static inline CCInt __CCSInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
             if (offset < 0) {
                 offset = 4;
             }
-            CCInt requireLength = 5 - offset;
+            SInteger requireLength = 5 - offset;
             if (bufferLength < requireLength) {
                 return -2;
             }
-            CCInt outputIndex = 0;
-            for (CCInt i=offset; i<4; i++) {
+            SInteger outputIndex = 0;
+            for (SInteger i=offset; i<4; i++) {
                 outputBuffer[outputIndex] = (buffer[i] | 0x80);
                 outputIndex += 1;
             }
@@ -300,7 +300,7 @@ static inline CCInt __CCSInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
         }
             break;
         case CCIntegerEncodingCompressNoFlag: {
-            CCUInt8 buffer[4] = {};
+            uint8_t buffer[4] = {};
 #if BUILD_TARGET_RT_LITTLE_ENDIAN
             const uint8_t * bytes = (const uint8_t *)(&n);
             buffer[3] = bytes[0];
@@ -311,17 +311,17 @@ static inline CCInt __CCSInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
             ((CCUInt32 *)buffer)[0] = n;
 #endif
             
-            CCBool compress0 = ((n & 0x80000000UL) == 0);
-            CCInt offset = -1;
+            CBool compress0 = ((n & 0x80000000UL) == 0);
+            SInteger offset = -1;
             if (compress0) {
-                for (CCInt i=0; i<3; i++) {
+                for (SInteger i=0; i<3; i++) {
                     if (!(buffer[i] == 0 && buffer[i+1] < 0x80)) {
                         offset = i;
                         break;
                     }
                 }
             } else {
-                for (CCInt i=0; i<3; i++) {
+                for (SInteger i=0; i<3; i++) {
                     if (!(buffer[i] == 0xFF && buffer[i+1] >= 0x80)) {
                         offset = i;
                         break;
@@ -331,7 +331,7 @@ static inline CCInt __CCSInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
             if (offset < 0) {
                 offset = 3;
             }
-            CCInt requireLength = 4 - offset;
+            SInteger requireLength = 4 - offset;
             if (bufferLength < requireLength) {
                 return -2;
             }
@@ -347,11 +347,11 @@ static inline CCInt __CCSInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
 }
 
 
-static inline CCInt __CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+static inline SInteger __CCUInt64Encode(uint64_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     switch (encoding) {
         case CCIntegerEncodingCompress7BitsPerComponent: {
-            CCUInt8 buffer[10] = {};
-            CCUInt64 mask = 0x7F;
+            uint8_t buffer[10] = {};
+            uint64_t mask = 0x7F;
             buffer[0] = (n >> 63) & mask;
             buffer[1] = (n >> 56) & mask;
             buffer[2] = (n >> 49) & mask;
@@ -362,8 +362,8 @@ static inline CCInt __CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             buffer[7] = (n >> 14) & mask;
             buffer[8] = (n >> 7) & mask;
             buffer[9] = n & mask;
-            CCInt offset = -1;
-            for (CCInt i=0; i<9; i++) {
+            SInteger offset = -1;
+            for (SInteger i=0; i<9; i++) {
                 if (buffer[i] != 0) {
                     offset = i;
                     break;
@@ -373,12 +373,12 @@ static inline CCInt __CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             if (offset < 0) {
                 offset = 9;
             }
-            CCInt requireLength = 10 - offset;
+            SInteger requireLength = 10 - offset;
             if (bufferLength < requireLength) {
                 return -2;
             }
-            CCInt outputIndex = 0;
-            for (CCInt i=offset; i<9; i++) {
+            SInteger outputIndex = 0;
+            for (SInteger i=offset; i<9; i++) {
                 outputBuffer[outputIndex] = (buffer[i] | 0x80);
                 outputIndex += 1;
             }
@@ -387,7 +387,7 @@ static inline CCInt __CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
         }
             break;
         case CCIntegerEncodingCompressNoFlag: {
-            CCUInt8 buffer[8] = {};
+            uint8_t buffer[8] = {};
 #if BUILD_TARGET_RT_LITTLE_ENDIAN
             const uint8_t * bytes = (const uint8_t *)(&n);
             buffer[7] = bytes[0];
@@ -402,8 +402,8 @@ static inline CCInt __CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             ((CCUInt64 *)buffer)[0] = n;
 #endif
             
-            CCInt offset = -1;
-            for (CCInt i=0; i<7; i++) {
+            SInteger offset = -1;
+            for (SInteger i=0; i<7; i++) {
                 if (buffer[i] != 0) {
                     offset = i;
                     break;
@@ -412,7 +412,7 @@ static inline CCInt __CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             if (offset < 0) {
                 offset = 7;
             }
-            CCInt requireLength = 8 - offset;
+            SInteger requireLength = 8 - offset;
             if (bufferLength < requireLength) {
                 return -2;
             }
@@ -426,18 +426,18 @@ static inline CCInt __CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, C
             break;
     }
 }
-static inline CCInt __CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+static inline SInteger __CCUInt32Encode(uint32_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     switch (encoding) {
         case CCIntegerEncodingCompress7BitsPerComponent: {
-            CCUInt8 buffer[5] = {};
-            CCUInt32 mask = 0x7F;
+            uint8_t buffer[5] = {};
+            uint32_t mask = 0x7F;
             buffer[0] = ((n >> 28) & mask);
             buffer[1] = (n >> 21) & mask;
             buffer[2] = (n >> 14) & mask;
             buffer[3] = (n >> 7) & mask;
             buffer[4] = n & mask;
-            CCInt offset = -1;
-            for (CCInt i=0; i<4; i++) {
+            SInteger offset = -1;
+            for (SInteger i=0; i<4; i++) {
                 if (buffer[i] != 0) {
                     offset = i;
                     break;
@@ -447,12 +447,12 @@ static inline CCInt __CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
             if (offset < 0) {
                 offset = 4;
             }
-            CCInt requireLength = 5 - offset;
+            SInteger requireLength = 5 - offset;
             if (bufferLength < requireLength) {
                 return -2;
             }
-            CCInt outputIndex = 0;
-            for (CCInt i=offset; i<4; i++) {
+            SInteger outputIndex = 0;
+            for (SInteger i=offset; i<4; i++) {
                 outputBuffer[outputIndex] = (buffer[i] | 0x80);
                 outputIndex += 1;
             }
@@ -461,7 +461,7 @@ static inline CCInt __CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
         }
             break;
         case CCIntegerEncodingCompressNoFlag: {
-            CCUInt8 buffer[4] = {};
+            uint8_t buffer[4] = {};
 #if BUILD_TARGET_RT_LITTLE_ENDIAN
             const uint8_t * bytes = (const uint8_t *)(&n);
             buffer[3] = bytes[0];
@@ -472,8 +472,8 @@ static inline CCInt __CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
             ((CCUInt32 *)buffer)[0] = n;
 #endif
             
-            CCInt offset = -1;
-            for (CCInt i=0; i<3; i++) {
+            SInteger offset = -1;
+            for (SInteger i=0; i<3; i++) {
                 if (buffer[i] != 0) {
                     offset = i;
                     break;
@@ -482,7 +482,7 @@ static inline CCInt __CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
             if (offset < 0) {
                 offset = 3;
             }
-            CCInt requireLength = 4 - offset;
+            SInteger requireLength = 4 - offset;
             if (bufferLength < requireLength) {
                 return -2;
             }
@@ -500,34 +500,34 @@ static inline CCInt __CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, C
 
 
 
-CCInt CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCUInt64Encode(uint64_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCUInt64Encode(n, encoding, outputBuffer, bufferLength);
 }
-CCInt CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCUInt32Encode(uint32_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCUInt32Encode(n, encoding, outputBuffer, bufferLength);
 }
 
-CCInt CCSInt64Encode(CCSInt64 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCSInt64Encode(int64_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCSInt64Encode(n, encoding, outputBuffer, bufferLength);
 }
-CCInt CCSInt32Encode(CCSInt32 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCSInt32Encode(int32_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCSInt32Encode(n, encoding, outputBuffer, bufferLength);
 }
 
 
 
-CCInt CCUInt64Decode(CCUInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const CCUInt8 * _Nonnull bytes, CCInt bytesLength) {
+SInteger CCUInt64Decode(uint64_t * _Nonnull n, CCIntegerEncoding_e encoding, const uint8_t * _Nonnull bytes, SInteger bytesLength) {
     if (bytesLength <= 0) {
         return -1;
     }
     assert(n);
     assert(bytes);
-    CCUInt64 result = 0;
+    uint64_t result = 0;
     switch (encoding) {
         case CCIntegerEncodingCompress7BitsPerComponent: {
-            CCInt upper = MIN(bytesLength, 10);
-            for (CCInt idx=0; idx<upper; idx++) {
-                CCUInt64 v = bytes[idx];
+            SInteger upper = MIN(bytesLength, 10);
+            for (SInteger idx=0; idx<upper; idx++) {
+                uint64_t v = bytes[idx];
                 if (v >= 0x80) {
                     result = (result << 7) | (v & 0x7F);
                 } else {
@@ -546,8 +546,8 @@ CCInt CCUInt64Decode(CCUInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const 
             if (bytesLength > 8) {
                 return -2;
             }
-            for (CCInt idx=0; idx<bytesLength; idx++) {
-                CCUInt64 v = bytes[idx];
+            for (SInteger idx=0; idx<bytesLength; idx++) {
+                uint64_t v = bytes[idx];
                 result = (result << 8) | v;
             }
             *n = result;
@@ -560,25 +560,25 @@ CCInt CCUInt64Decode(CCUInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const 
             break;
     }
 }
-CCInt CCSInt64Decode(CCSInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const CCUInt8 * _Nonnull bytes, CCInt bytesLength) {
+SInteger CCSInt64Decode(int64_t * _Nonnull n, CCIntegerEncoding_e encoding, const uint8_t * _Nonnull bytes, SInteger bytesLength) {
     if (bytesLength <= 0) {
         return -1;
     }
     assert(n);
     assert(bytes);
 
-    CCUInt64 result = 0;
+    uint64_t result = 0;
     
     switch (encoding) {
         case CCIntegerEncodingCompress7BitsPerComponent: {
-            CCBool compress0 = ((bytes[0] & 0x40) == 0);
+            CBool compress0 = ((bytes[0] & 0x40) == 0);
             if (!compress0) {
                 result = ~0ULL;
             }
 
-            CCInt upper = MIN(bytesLength, 10);
-            for (CCInt idx=0; idx<upper; idx++) {
-                CCUInt64 v = bytes[idx];
+            SInteger upper = MIN(bytesLength, 10);
+            for (SInteger idx=0; idx<upper; idx++) {
+                uint64_t v = bytes[idx];
                 if (v >= 0x80) {
                     result = (result << 7) | (v & 0x7F);
                 } else {
@@ -586,7 +586,7 @@ CCInt CCSInt64Decode(CCSInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const 
                     if (9 == idx && (0x80 != bytes[0] || 0xFF != bytes[0])) {
                         return -2;
                     }
-                    *n = (CCSInt64)result;
+                    *n = (int64_t)result;
                     return idx + 1;
                 }
             }
@@ -597,16 +597,16 @@ CCInt CCSInt64Decode(CCSInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const 
             if (bytesLength > 8) {
                 return -2;
             }
-            CCBool compress0 = ((bytes[0] & 0x80) == 0);
+            CBool compress0 = ((bytes[0] & 0x80) == 0);
             if (!compress0) {
                 result = ~0ULL;
             }
 
-            for (CCInt idx=0; idx<bytesLength; idx++) {
-                CCUInt64 v = bytes[idx];
+            for (SInteger idx=0; idx<bytesLength; idx++) {
+                uint64_t v = bytes[idx];
                 result = (result << 8) | v;
             }
-            *n = (CCSInt64)result;
+            *n = (int64_t)result;
             return bytesLength;
         }
             break;
@@ -619,16 +619,16 @@ CCInt CCSInt64Decode(CCSInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const 
 
 
 
-static inline CCInt __CCIntegerToBytes(void * _Nonnull n, CCInt len, CCBool swap, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+static inline SInteger __CCIntegerToBytes(void * _Nonnull n, SInteger len, CBool swap, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     if (bufferLength < len) {
         return -1;
     }
     assert(outputBuffer);
     if (len > 1 && swap) {
-        CCUInt8 * v = (CCUInt8 *)n;
-        CCInt upper = len / 2;
-        for (CCInt i=0; i<upper; i++) {
-            CCUInt8 tmp = v[i];
+        uint8_t * v = (uint8_t *)n;
+        SInteger upper = len / 2;
+        for (SInteger i=0; i<upper; i++) {
+            uint8_t tmp = v[i];
             v[i] = v[len-1-i];
             v[len-1-i] = tmp;
         }
@@ -637,7 +637,7 @@ static inline CCInt __CCIntegerToBytes(void * _Nonnull n, CCInt len, CCBool swap
     return len;
 }
 
-static inline CCBool __CCIntegerBytesSwap(CCBool bigEndianEncode) {
+static inline CBool __CCIntegerBytesSwap(CBool bigEndianEncode) {
 #if BUILD_TARGET_RT_LITTLE_ENDIAN
     return bigEndianEncode;
 #else
@@ -646,28 +646,28 @@ static inline CCBool __CCIntegerBytesSwap(CCBool bigEndianEncode) {
 }
 
 
-CCInt CCUInt64ToBytes(CCUInt64 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCUInt64ToBytes(uint64_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCIntegerToBytes(&n, 8, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
 }
-CCInt CCUInt32ToBytes(CCUInt32 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCUInt32ToBytes(uint32_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCIntegerToBytes(&n, 4, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
 }
-CCInt CCUInt16ToBytes(CCUInt16 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCUInt16ToBytes(uint16_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCIntegerToBytes(&n, 2, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
 }
 
-CCInt CCSInt64ToBytes(CCSInt64 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCSInt64ToBytes(int64_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCIntegerToBytes(&n, 8, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
 }
-CCInt CCSInt32ToBytes(CCSInt32 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCSInt32ToBytes(int32_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCIntegerToBytes(&n, 4, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
 }
-CCInt CCSInt16ToBytes(CCSInt16 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCSInt16ToBytes(int16_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     return __CCIntegerToBytes(&n, 2, __CCIntegerBytesSwap(bigEndianEncode), outputBuffer, bufferLength);
 }
 
 
-static inline CCInt __CCBytesToInteger(const CCUInt8 * _Nonnull bytes, CCInt bytesLength, void * _Nonnull n, CCInt len, CCBool swap) {
+static inline SInteger __CCBytesToInteger(const uint8_t * _Nonnull bytes, SInteger bytesLength, void * _Nonnull n, SInteger len, CBool swap) {
     if (bytesLength < len) {
         return -1;
     }
@@ -675,10 +675,10 @@ static inline CCInt __CCBytesToInteger(const CCUInt8 * _Nonnull bytes, CCInt byt
     assert(bytes);
     memcpy(n, bytes, len);
     if (len > 1 && swap) {
-        CCUInt8 * v = (CCUInt8 *)n;
-        CCInt upper = len / 2;
-        for (CCInt i=0; i<upper; i++) {
-            CCUInt8 tmp = v[i];
+        uint8_t * v = (uint8_t *)n;
+        SInteger upper = len / 2;
+        for (SInteger i=0; i<upper; i++) {
+            uint8_t tmp = v[i];
             v[i] = v[len-1-i];
             v[len-1-i] = tmp;
         }
@@ -687,22 +687,22 @@ static inline CCInt __CCBytesToInteger(const CCUInt8 * _Nonnull bytes, CCInt byt
 }
 
 
-CCInt CCBytesToUInt64(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCUInt64 * _Nonnull n) {
+SInteger CCBytesToUInt64(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, uint64_t * _Nonnull n) {
     return __CCBytesToInteger(bytes, length, n, 8, __CCIntegerBytesSwap(bigEndianEncode));
 }
-CCInt CCBytesToUInt32(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCUInt32 * _Nonnull n) {
+SInteger CCBytesToUInt32(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, uint32_t * _Nonnull n) {
     return __CCBytesToInteger(bytes, length, n, 4, __CCIntegerBytesSwap(bigEndianEncode));
 }
-CCInt CCBytesToUInt16(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCUInt16 * _Nonnull n) {
+SInteger CCBytesToUInt16(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, uint16_t * _Nonnull n) {
     return __CCBytesToInteger(bytes, length, n, 2, __CCIntegerBytesSwap(bigEndianEncode));
 }
 
-CCInt CCBytesToSInt64(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt64 * _Nonnull n) {
+SInteger CCBytesToSInt64(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, int64_t * _Nonnull n) {
     return __CCBytesToInteger(bytes, length, n, 8, __CCIntegerBytesSwap(bigEndianEncode));
 }
-CCInt CCBytesToSInt32(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt32 * _Nonnull n) {
+SInteger CCBytesToSInt32(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, int32_t * _Nonnull n) {
     return __CCBytesToInteger(bytes, length, n, 4, __CCIntegerBytesSwap(bigEndianEncode));
 }
-CCInt CCBytesToSInt16(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt16 * _Nonnull n) {
+SInteger CCBytesToSInt16(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, int16_t * _Nonnull n) {
     return __CCBytesToInteger(bytes, length, n, 2, __CCIntegerBytesSwap(bigEndianEncode));
 }

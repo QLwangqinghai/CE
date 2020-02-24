@@ -14,8 +14,8 @@
 
 #include "SITPIndexShift.h"
 
-CCUInt8 const SITPTypeCodeBoolTrue = 0xC4;
-CCUInt8 const SITPTypeCodeBoolFalse = 0x84;
+uint8_t const SITPTypeCodeBoolTrue = 0xC4;
+uint8_t const SITPTypeCodeBoolFalse = 0x84;
 
 
 SITPParserCode const SITPParserCodeUnknownError = 0;
@@ -72,7 +72,7 @@ static const SITPParserError_t __SITPParserErrors[10] = {
     },
 };
 
-SITPParserErrorRef _Nullable __SITPParserErrorWithCode(CCInt code) {
+SITPParserErrorRef _Nullable __SITPParserErrorWithCode(SInteger code) {
     if (code > 0 && code < 10) {
         return &(__SITPParserErrors[code]);
     } else {
@@ -194,7 +194,7 @@ SITPParserErrorRef _Nullable _SITPByteUnsafeReaderRead(SITPByteUnsafeReader_t * 
     return NULL;
 }
 
-CCBool __SITPByteUnsafeReaderInit(SITPByteUnsafeReader_t * _Nonnull reader, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range) {
+CBool __SITPByteUnsafeReaderInit(SITPByteUnsafeReader_t * _Nonnull reader, SITPByteBuffer_t * _Nonnull buffers, uint32_t bufferCount, SITPByteRange range) {
     uint32_t currentBufferIndex = 0;
     SITPByteSize location = buffers[0].range.location;
     for (uint32_t i=0; i<bufferCount; i++) {

@@ -20,6 +20,7 @@
 		D606702D23DC9904009BA4B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606702423DC9904009BA4B0 /* SceneDelegate.swift */; };
 		D606703123DC993C009BA4B0 /* OCBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D606703023DC993C009BA4B0 /* OCBridge.m */; };
 		D6165D3B23F9A04200CE6B07 /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6165D3A23F9A04200CE6B07 /* DrawingContext.swift */; };
+		D63F4DBA2403ECC700D1FE62 /* TestDrawViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63F4DB92403ECC700D1FE62 /* TestDrawViewController.swift */; };
 		D6690E7223F93EAE00B5FA44 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6690E7123F93EAE00B5FA44 /* DrawingView.swift */; };
 		D673AF8923F93F2000D37AFF /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8023F93F1F00D37AFF /* Controller.swift */; };
 		D673AF8A23F93F2000D37AFF /* DrawingBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */; };
@@ -53,6 +54,7 @@
 		D606702F23DC993C009BA4B0 /* OCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCBridge.h; sourceTree = "<group>"; };
 		D606703023DC993C009BA4B0 /* OCBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OCBridge.m; sourceTree = "<group>"; };
 		D6165D3A23F9A04200CE6B07 /* DrawingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingContext.swift; sourceTree = "<group>"; };
+		D63F4DB92403ECC700D1FE62 /* TestDrawViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDrawViewController.swift; sourceTree = "<group>"; };
 		D6690E7123F93EAE00B5FA44 /* DrawingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
 		D673AF8023F93F1F00D37AFF /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingBoard.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 			children = (
 				D6690E7023F93E9C00B5FA44 /* DrawingBoard */,
 				D606701E23DC9904009BA4B0 /* LiveViewController.swift */,
+				D63F4DB92403ECC700D1FE62 /* TestDrawViewController.swift */,
 			);
 			path = Live;
 			sourceTree = "<group>";
@@ -348,6 +351,7 @@
 				D6690E7223F93EAE00B5FA44 /* DrawingView.swift in Sources */,
 				D673AF8C23F93F2000D37AFF /* DrawingController.swift in Sources */,
 				D673AF8F23F93F2000D37AFF /* DrawingSliceController.swift in Sources */,
+				D63F4DBA2403ECC700D1FE62 /* TestDrawViewController.swift in Sources */,
 				D606702A23DC9904009BA4B0 /* MinePageViewController.swift in Sources */,
 				D606702923DC9904009BA4B0 /* LiveViewController.swift in Sources */,
 			);

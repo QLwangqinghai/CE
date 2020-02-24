@@ -24,8 +24,8 @@ static inline uint_fast32_t CCAtomicUInt32Load(_Atomic(uint_fast32_t) * _Nonnull
     uint_fast32_t v = atomic_load(ref);
     return v;
 }
-static inline CCBool CCAtomicUInt32CompareExchange(_Atomic(uint_fast32_t) * _Nonnull ref, uint_fast32_t oldValue, uint_fast32_t newValue) {
-    CCBool result = atomic_compare_exchange_strong(ref, &oldValue, newValue);
+static inline CBool CCAtomicUInt32CompareExchange(_Atomic(uint_fast32_t) * _Nonnull ref, uint_fast32_t oldValue, uint_fast32_t newValue) {
+    CBool result = atomic_compare_exchange_strong(ref, &oldValue, newValue);
     return result;
 }
 
@@ -36,8 +36,8 @@ static inline uint_fast64_t CCAtomicUInt64Load(_Atomic(uint_fast64_t) * _Nonnull
     uint_fast64_t v = atomic_load(ref);
     return v;
 }
-static inline CCBool CCAtomicUInt64CompareExchange(_Atomic(uint_fast64_t) * _Nonnull ref, uint_fast64_t oldValue, uint_fast64_t newValue) {
-    CCBool result = atomic_compare_exchange_strong(ref, &oldValue, newValue);
+static inline CBool CCAtomicUInt64CompareExchange(_Atomic(uint_fast64_t) * _Nonnull ref, uint_fast64_t oldValue, uint_fast64_t newValue) {
+    CBool result = atomic_compare_exchange_strong(ref, &oldValue, newValue);
     return result;
 }
 

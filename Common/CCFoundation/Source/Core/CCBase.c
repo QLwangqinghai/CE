@@ -10,13 +10,13 @@
 #include <pthread.h>
 
 
-static inline void _CCMemoryQuickCopy(CCUInt64 * _Nonnull dst, const CCUInt64 * _Nonnull src, size_t count) {
+static inline void _CCMemoryQuickCopy(uint64_t * _Nonnull dst, const uint64_t * _Nonnull src, size_t count) {
     static size_t countQuickMask = ~((size_t)(0x7));
 
     if ((dst + count) <= src || (src + count) <= dst) {//没有重叠区域
-        CCUInt64 * to = dst;
-        const CCUInt64 * from = src;
-        CCUInt64 * end = to + (count & countQuickMask);
+        uint64_t * to = dst;
+        const uint64_t * from = src;
+        uint64_t * end = to + (count & countQuickMask);
 
         while (to < end) {
             *to = *from;
@@ -44,20 +44,20 @@ static inline void _CCMemoryQuickCopy(CCUInt64 * _Nonnull dst, const CCUInt64 * 
             to ++;
             from ++;
         }
-        end = (CCUInt64 *)dst + count;
+        end = (uint64_t *)dst + count;
         while (to < end) {
             *to = *from;
             to ++;
             from ++;
         }
     } else {
-        CCUInt64 * end = dst;
+        uint64_t * end = dst;
         end = end + (count & countQuickMask);
-        CCUInt64 * to = end + count;
-        const CCUInt64 * from = src;
+        uint64_t * to = end + count;
+        const uint64_t * from = src;
         from = from + count;
         
-        end = (CCUInt64 *)dst + count;
+        end = (uint64_t *)dst + count;
         while (to > end) {
             to --;
             from --;
@@ -113,7 +113,7 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
         size_t remain = (size - offset);
         size_t count = remain / 8;
         if (count > 0) {
-            _CCMemoryQuickCopy((CCUInt64 *)dst8, (const CCUInt64 *)src8, count);
+            _CCMemoryQuickCopy((uint64_t *)dst8, (const uint64_t *)src8, count);
         }
         remain = remain & 0x7;
         if (remain > 0) {

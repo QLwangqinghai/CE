@@ -13,9 +13,9 @@ static const UInteger CCClosureContextSizeMax = UIntegerMax >> 1;
 
 typedef struct {
     CCClosureExecute_f _Nonnull execute;
-    CCUInt hasClear: 1;
+    UInteger hasClear: 1;
 #if BUILD_TARGET_RT_64_BIT
-    CCUInt contextSize: 63;
+    UInteger contextSize: 63;
 #else
     CCUInt contextSize: 31;
 #endif

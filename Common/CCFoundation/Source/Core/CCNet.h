@@ -46,11 +46,11 @@ void if_freenameindex(struct if_nameindex *ptr);
 */
 
 typedef struct {
-    CCUInt16 family;
-    CCUInt16 port;//local的port， 不需要转换字节序
+    uint16_t family;
+    uint16_t port;//local的port， 不需要转换字节序
 
-    CCUInt32 flowinfo;//ipv6有用 字段分为2个字段：低序20位是flow label，高序12位保留, IPV6报头中的通信流类别字段和流标签字段
-    CCUInt32 scopeId;//ipv6有用 指定了使用哪个网络接口 eg: .scopeId = if_nametoindex("eth0")
+    uint32_t flowinfo;//ipv6有用 字段分为2个字段：低序20位是flow label，高序12位保留, IPV6报头中的通信流类别字段和流标签字段
+    uint32_t scopeId;//ipv6有用 指定了使用哪个网络接口 eg: .scopeId = if_nametoindex("eth0")
     CCByte16 address;
 } CCTcpSocketInfo;
 

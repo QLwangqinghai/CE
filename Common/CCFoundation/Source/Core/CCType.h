@@ -48,65 +48,46 @@ typedef _Bool CBool;
 
 #if BUILD_TARGET_RT_64_BIT
 
-typedef int64_t SInteger;
-typedef uint64_t UInteger;
+    typedef int64_t SInteger;
+    typedef uint64_t UInteger;
 
-#define SIntegerFast int_fast64_t
-#define SIntegerFastMax INT_FAST64_MAX
-#define SIntegerMax INT64_MAX
-#define SIntegerFastMin INT_FAST64_MIN
-#define SIntegerMin INT64_MIN
+    #define SIntegerFast int_fast64_t
+    #define SIntegerFastMax INT_FAST64_MAX
+    #define SIntegerMax INT64_MAX
+    #define SIntegerFastMin INT_FAST64_MIN
+    #define SIntegerMin INT64_MIN
 
-#define UIntegerFast uint_fast64_t
-#define UIntegerFastMax UINT_FAST64_MAX
-#define UIntegerMax UINT64_MAX
+    #define UIntegerFast uint_fast64_t
+    #define UIntegerFastMax UINT_FAST64_MAX
+    #define UIntegerMax UINT64_MAX
 
 #elif BUILD_TARGET_RT_32_BIT
 
-typedef int32_t SInteger;
-typedef uint32_t UInteger;
+    typedef int32_t SInteger;
+    typedef uint32_t UInteger;
 
-#define SIntegerFast int_fast32_t
-#define SIntegerFastMax INT_FAST32_MAX
-#define SIntegerMax INT32_MAX
-#define SIntegerFastMin INT_FAST32_MIN
-#define SIntegerMin INT32_MIN
+    #define SIntegerFast int_fast32_t
+    #define SIntegerFastMax INT_FAST32_MAX
+    #define SIntegerMax INT32_MAX
+    #define SIntegerFastMin INT_FAST32_MIN
+    #define SIntegerMin INT32_MIN
 
-#define UIntegerFast uint_fast32_t
-#define UIntegerFastMax UINT_FAST32_MAX
-#define UIntegerMax UINT32_MAX
+    #define UIntegerFast uint_fast32_t
+    #define UIntegerFastMax UINT_FAST32_MAX
+    #define UIntegerMax UINT32_MAX
 
 #else
-#error unknown rt
+    #error unknown rt
 #endif
 
 
 typedef unsigned char U8Char;
 typedef unsigned short U16Char;
 
+typedef _Bool CBool;
 
-typedef uint64_t CCUInt64;
-typedef uint32_t CCUInt32;
-typedef uint16_t CCUInt16;
-typedef uint8_t CCUInt8;
-typedef int64_t CCSInt64;
-typedef int32_t CCSInt32;
-typedef int16_t CCSInt16;
-typedef int8_t CCSInt8;
-typedef _Bool CCBool;
-
-typedef CCUInt8 CCChar;
-typedef CCUInt16 CCU16Char;
-
-
-#if BUILD_TARGET_RT_64_BIT
-typedef CCSInt64 CCInt;
-typedef CCUInt64 CCUInt;
-#else
-typedef CCSInt32 CCInt;
-typedef CCUInt32 CCUInt;
-#endif
-
+typedef uint8_t CCChar;
+typedef uint16_t CCU16Char;
 
 #pragma mark - pointer
 
@@ -114,13 +95,12 @@ typedef void * CCPtr;
 
 #pragma mark - CCHashCode
 
-typedef CCUInt CCHashCode;
-
+typedef UInteger CCHashCode;
 
 #pragma mark - CCMicrosecondTime
 
-typedef CCSInt64 CCMicrosecondTime;
-typedef CCUInt64 CCBootMicrosecondTime;
+typedef int64_t CCMicrosecondTime;
+typedef uint64_t CCBootMicrosecondTime;
 
 
 #pragma mark - CCIndex
@@ -130,12 +110,12 @@ typedef CCUInt64 CCBootMicrosecondTime;
 #define CCConstantIndex64NotFound UINT64_MAX
 
 
-typedef CCUInt CCIndex;
+typedef UInteger CCIndex;
 #define CCConstantIndexNotFound UIntegerMax
 
-typedef CCUInt16 CCIndex16;
-typedef CCUInt32 CCIndex32;
-typedef CCUInt64 CCIndex64;
+typedef uint16_t CCIndex16;
+typedef uint32_t CCIndex32;
+typedef uint64_t CCIndex64;
 
 extern const CCIndex CCIndexNotFound;
 extern const CCIndex16 CCIndex16NotFound;
@@ -144,63 +124,63 @@ extern const CCIndex64 CCIndex64NotFound;
 
 #pragma mark - CCPoint
 typedef struct {
-    CCSInt32 x;
-    CCSInt32 y;
+    int32_t x;
+    int32_t y;
 } CCPoint32;
-static inline CCPoint32 CCPoint32Make(CCSInt32 x, CCSInt32 y) {
+static inline CCPoint32 CCPoint32Make(int32_t x, int32_t y) {
     CCPoint32 point = {
         .x = x,
         .y = y,
     };
     return point;
 }
-static inline CCBool CCPoint32Equal(CCPoint32 lhs, CCPoint32 rhs) {
+static inline CBool CCPoint32Equal(CCPoint32 lhs, CCPoint32 rhs) {
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
 typedef struct {
-    CCSInt64 x;
-    CCSInt64 y;
+    int64_t x;
+    int64_t y;
 } CCPoint64;
-static inline CCPoint64 CCPoint64Make(CCSInt64 x, CCSInt64 y) {
+static inline CCPoint64 CCPoint64Make(int64_t x, int64_t y) {
     CCPoint64 point = {
         .x = x,
         .y = y,
     };
     return point;
 }
-static inline CCBool CCPoint64Equal(CCPoint64 lhs, CCPoint64 rhs) {
+static inline CBool CCPoint64Equal(CCPoint64 lhs, CCPoint64 rhs) {
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
 #pragma mark - CCSize
 typedef struct {
-    CCUInt32 width;
-    CCUInt32 height;
+    uint32_t width;
+    uint32_t height;
 } CCSize32;
-static inline CCSize32 CCSize32Make(CCUInt32 width, CCUInt32 height) {
+static inline CCSize32 CCSize32Make(uint32_t width, uint32_t height) {
     CCSize32 size = {
         .width = width,
         .height = height,
     };
     return size;
 }
-static inline CCBool CCSize32Equal(CCSize32 lhs, CCSize32 rhs) {
+static inline CBool CCSize32Equal(CCSize32 lhs, CCSize32 rhs) {
     return lhs.width == rhs.width && lhs.height == rhs.height;
 }
 
 typedef struct {
-    CCUInt64 width;
-    CCUInt64 height;
+    uint64_t width;
+    uint64_t height;
 } CCSize64;
-static inline CCSize64 CCSize64Make(CCUInt64 width, CCUInt64 height) {
+static inline CCSize64 CCSize64Make(uint64_t width, uint64_t height) {
     CCSize64 size = {
         .width = width,
         .height = height,
     };
     return size;
 }
-static inline CCBool CCSize64Equal(CCSize64 lhs, CCSize64 rhs) {
+static inline CBool CCSize64Equal(CCSize64 lhs, CCSize64 rhs) {
     return lhs.width == rhs.width && lhs.height == rhs.height;
 }
 
@@ -210,17 +190,17 @@ typedef struct {
     CCPoint32 origin;
     CCSize32 size;
 } CCRect32;
-static inline CCRect32 CCRect32Make(CCSInt32 x, CCSInt32 y, CCUInt32 width, CCUInt32 height) {
+static inline CCRect32 CCRect32Make(int32_t x, int32_t y, uint32_t width, uint32_t height) {
     CCRect32 rect = {
         .origin = CCPoint32Make(x, y),
         .size = CCSize32Make(width, height),
     };
     return rect;
 }
-static inline CCBool CCRect32Equal(CCRect32 lhs, CCRect32 rhs) {
+static inline CBool CCRect32Equal(CCRect32 lhs, CCRect32 rhs) {
     return CCPoint32Equal(lhs.origin, rhs.origin) && CCSize32Equal(lhs.size, rhs.size);
 }
-static inline CCBool CCRect32IsValid(CCRect32 rect) {
+static inline CBool CCRect32IsValid(CCRect32 rect) {
     return 0;
 }
 
@@ -230,17 +210,17 @@ typedef struct {
     CCPoint64 origin;
     CCSize64 size;
 } CCRect64;
-static inline CCRect64 CCRect64Make(CCSInt64 x, CCSInt64 y, CCUInt64 width, CCUInt64 height) {
+static inline CCRect64 CCRect64Make(int64_t x, int64_t y, uint64_t width, uint64_t height) {
     CCRect64 rect = {
         .origin = CCPoint64Make(x, y),
         .size = CCSize64Make(width, height),
     };
     return rect;
 }
-static inline CCBool CCRect64Equal(CCRect64 lhs, CCRect64 rhs) {
+static inline CBool CCRect64Equal(CCRect64 lhs, CCRect64 rhs) {
     return CCPoint64Equal(lhs.origin, rhs.origin) && CCSize64Equal(lhs.size, rhs.size);
 }
-static inline CCBool CCRect64IsValid(CCRect32 rect) {
+static inline CBool CCRect64IsValid(CCRect32 rect) {
     return 0;
 }
 
@@ -334,133 +314,133 @@ static inline CCRange CCRangeMake(CCIndex location, CCIndex length) {
 #pragma mark - CCByte
 //used for uuid、md5、ipAddress
 typedef struct {
-    CCUInt8 content[16];
+    uint8_t content[16];
 } CCByte16;
 
-static inline CCBool CCByte16Equal(const CCByte16 * _Nonnull lhs, const CCByte16 * _Nonnull rhs) {
+static inline CBool CCByte16Equal(const CCByte16 * _Nonnull lhs, const CCByte16 * _Nonnull rhs) {
     assert(lhs);
     assert(rhs);
     return memcmp(lhs, rhs, sizeof(CCByte16)) == 0;
 }
-static inline void CCByte16ToBytes(const CCByte16 * _Nonnull bytes, CCUInt8 * _Nonnull buffer) {
+static inline void CCByte16ToBytes(const CCByte16 * _Nonnull bytes, uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(buffer, bytes->content, 16);
 }
-static inline void CCByte16Reset(CCByte16 * _Nonnull bytes, const CCUInt8 * _Nonnull buffer) {
+static inline void CCByte16Reset(CCByte16 * _Nonnull bytes, const uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(bytes->content, buffer, 16);
 }
-static inline CCByte16 CCByteMake(const CCUInt8 * _Nonnull buffer) {
+static inline CCByte16 CCByteMake(const uint8_t * _Nonnull buffer) {
     CCByte16 result = {};
     memcpy(result.content, buffer, 16);
     return result;
 }
 
 typedef struct {
-    CCUInt8 content[20];
+    uint8_t content[20];
 } CCByte20;
-static inline CCBool CCByte20Equal(const CCByte20 * _Nonnull lhs, const CCByte20 * _Nonnull rhs) {
+static inline CBool CCByte20Equal(const CCByte20 * _Nonnull lhs, const CCByte20 * _Nonnull rhs) {
     assert(lhs);
     assert(rhs);
     return memcmp(lhs, rhs, sizeof(CCByte20)) == 0;
 }
-static inline void CCByte20ToBytes(const CCByte20 * _Nonnull bytes, CCUInt8 * _Nonnull buffer) {
+static inline void CCByte20ToBytes(const CCByte20 * _Nonnull bytes, uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(buffer, bytes->content, 20);
 }
-static inline void CCByte20Reset(CCByte20 * _Nonnull bytes, const CCUInt8 * _Nonnull buffer) {
+static inline void CCByte20Reset(CCByte20 * _Nonnull bytes, const uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(bytes->content, buffer, 20);
 }
-static inline CCByte20 CCByte20Make(const CCUInt8 * _Nonnull buffer) {
+static inline CCByte20 CCByte20Make(const uint8_t * _Nonnull buffer) {
     CCByte20 result = {};
     memcpy(result.content, buffer, 20);
     return result;
 }
 
 typedef struct {
-    CCUInt8 content[32];
+    uint8_t content[32];
 } CCByte32;
-static inline CCBool CCByte32Equal(const CCByte32 * _Nonnull lhs, const CCByte32 * _Nonnull rhs) {
+static inline CBool CCByte32Equal(const CCByte32 * _Nonnull lhs, const CCByte32 * _Nonnull rhs) {
     assert(lhs);
     assert(rhs);
     return memcmp(lhs, rhs, sizeof(CCByte32)) == 0;
 }
-static inline void CCByte32ToBytes(const CCByte32 * _Nonnull bytes, CCUInt8 * _Nonnull buffer) {
+static inline void CCByte32ToBytes(const CCByte32 * _Nonnull bytes, uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(buffer, bytes->content, 32);
 }
-static inline void CCByte32Reset(CCByte32 * _Nonnull bytes, const CCUInt8 * _Nonnull buffer) {
+static inline void CCByte32Reset(CCByte32 * _Nonnull bytes, const uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(bytes->content, buffer, 32);
 }
-static inline CCByte32 CCByte32Make(const CCUInt8 * _Nonnull buffer) {
+static inline CCByte32 CCByte32Make(const uint8_t * _Nonnull buffer) {
     CCByte32 result = {};
     memcpy(result.content, buffer, 32);
     return result;
 }
 
 typedef struct {
-    CCUInt8 content[48];
+    uint8_t content[48];
 } CCByte48;
-static inline CCBool CCByte48Equal(const CCByte48 * _Nonnull lhs, const CCByte48 * _Nonnull rhs) {
+static inline CBool CCByte48Equal(const CCByte48 * _Nonnull lhs, const CCByte48 * _Nonnull rhs) {
     assert(lhs);
     assert(rhs);
     return memcmp(lhs, rhs, sizeof(CCByte48)) == 0;
 }
-static inline void CCByte48ToBytes(const CCByte48 * _Nonnull bytes, CCUInt8 * _Nonnull buffer) {
+static inline void CCByte48ToBytes(const CCByte48 * _Nonnull bytes, uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(buffer, bytes->content, 48);
 }
-static inline void CCByte48Reset(CCByte48 * _Nonnull bytes, const CCUInt8 * _Nonnull buffer) {
+static inline void CCByte48Reset(CCByte48 * _Nonnull bytes, const uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(bytes->content, buffer, 48);
 }
-static inline CCByte48 CCByte48Make(const CCUInt8 * _Nonnull buffer) {
+static inline CCByte48 CCByte48Make(const uint8_t * _Nonnull buffer) {
     CCByte48 result = {};
     memcpy(result.content, buffer, 48);
     return result;
 }
 
 typedef struct {
-    CCUInt8 content[64];
+    uint8_t content[64];
 } CCByte64;
-static inline CCBool CCByte64Equal(const CCByte64 * _Nonnull lhs, const CCByte64 * _Nonnull rhs) {
+static inline CBool CCByte64Equal(const CCByte64 * _Nonnull lhs, const CCByte64 * _Nonnull rhs) {
     assert(lhs);
     assert(rhs);
     return memcmp(lhs, rhs, sizeof(CCByte64)) == 0;
 }
-static inline void CCByte64ToBytes(const CCByte64 * _Nonnull bytes, CCUInt8 * _Nonnull buffer) {
+static inline void CCByte64ToBytes(const CCByte64 * _Nonnull bytes, uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(buffer, bytes->content, 64);
 }
-static inline void CCByte64Reset(CCByte64 * _Nonnull bytes, const CCUInt8 * _Nonnull buffer) {
+static inline void CCByte64Reset(CCByte64 * _Nonnull bytes, const uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(bytes->content, buffer, 64);
 }
-static inline CCByte64 CCByte64Make(const CCUInt8 * _Nonnull buffer) {
+static inline CCByte64 CCByte64Make(const uint8_t * _Nonnull buffer) {
     CCByte64 result = {};
     memcpy(result.content, buffer, 64);
     return result;
 }
 
 typedef struct {
-    CCUInt8 content[128];
+    uint8_t content[128];
 } CCByte128;
-static inline CCBool CCByte128Equal(const CCByte128 * _Nonnull lhs, const CCByte128 * _Nonnull rhs) {
+static inline CBool CCByte128Equal(const CCByte128 * _Nonnull lhs, const CCByte128 * _Nonnull rhs) {
     assert(lhs);
     assert(rhs);
     return memcmp(lhs, rhs, sizeof(CCByte128)) == 0;
 }
-static inline void CCByte128ToBytes(const CCByte128 * _Nonnull bytes, CCUInt8 * _Nonnull buffer) {
+static inline void CCByte128ToBytes(const CCByte128 * _Nonnull bytes, uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(buffer, bytes->content, 128);
 }
-static inline void CCByte128Reset(CCByte128 * _Nonnull bytes, const CCUInt8 * _Nonnull buffer) {
+static inline void CCByte128Reset(CCByte128 * _Nonnull bytes, const uint8_t * _Nonnull buffer) {
     assert(bytes);
     memcpy(bytes->content, buffer, 128);
 }
-static inline CCByte128 CCByte128Make(const CCUInt8 * _Nonnull buffer) {
+static inline CCByte128 CCByte128Make(const uint8_t * _Nonnull buffer) {
     CCByte128 result = {};
     memcpy(result.content, buffer, 128);
     return result;
@@ -474,9 +454,9 @@ typedef CCByte16 CCIpAddress;
 #pragma mark - other
 
 typedef struct {
-    CCSInt64 seconds;
-    CCSInt32 nanosecond;
-    CCSInt32 _xx;//must be zero
+    int64_t seconds;
+    int32_t nanosecond;
+    int32_t _xx;//must be zero
 } CCTime;
 
 

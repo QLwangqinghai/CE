@@ -15,15 +15,15 @@ struct _SITPParser;
 typedef struct _SITPParser SITPParser_t;
 typedef SITPParser_t * SITPParserPtr;
 
-typedef CCInt SITPParserCode;
+typedef SInteger SITPParserCode;
 
 typedef struct {
     SITPParserCode code;
     const char * _Nonnull message;
 } SITPParserError_t;
 
-extern CCUInt8 const SITPTypeCodeBoolTrue;
-extern CCUInt8 const SITPTypeCodeBoolFalse;
+extern uint8_t const SITPTypeCodeBoolTrue;
+extern uint8_t const SITPTypeCodeBoolFalse;
 
 extern SITPParserCode const SITPParserCodeUnknownError;
 extern SITPParserCode const SITPParserCodeNeedMoreData;
@@ -63,7 +63,7 @@ typedef enum {
 } SITPMessageEncoding_e;
 
 //encoding 是否是无效的
-static inline CCBool SITPMessageEncodingIsInvalid(SITPMessageEncoding_e encoding) {
+static inline CBool SITPMessageEncodingIsInvalid(SITPMessageEncoding_e encoding) {
     return encoding != SITPMessageEncodingNormal && encoding != SITPMessageEncodingCompressFieldContentLength;
 };
 

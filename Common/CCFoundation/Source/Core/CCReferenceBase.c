@@ -21,7 +21,7 @@ typedef struct {
 
 typedef struct {
     CCDomainRefType_s types[0x1000];
-    CCUInt count;
+    UInteger count;
 } CCDomainRefTypeTable_s;
 
 
@@ -70,7 +70,7 @@ typedef struct {
 } CCRefDomain_s;
 
 typedef struct {
-    CCUInt count;
+    UInteger count;
     CCRefDomain_s domains[128];
 } CCRefDomainTable_s;
 
@@ -92,16 +92,16 @@ CCRefDomain_s * _Nonnull _CCRefDomainTableGetItem(UIntegerFast id) {
 
 
 typedef struct {
-    CCUInt counter;
-    CCUInt hash;
+    UInteger counter;
+    UInteger hash;
     uintptr_t value;
 } CCRefWeakContainer_t;
 
 void CCRefWeakTableLock(uintptr_t ref);
 void CCRefWeakTableUnlock(uintptr_t ref);
 
-void CCRefWeakTableLockByHash(CCUInt hash);
-void CCRefWeakTableUnlockByHash(CCUInt hash);
+void CCRefWeakTableLockByHash(UInteger hash);
+void CCRefWeakTableUnlockByHash(UInteger hash);
 void _CCRefWeakTableRemoveRef(uintptr_t ref);
 
 
@@ -121,7 +121,7 @@ typedef struct {
 //64   life:7b weak:1 count:56
 
 
-typedef CCUInt CCRefCounterType;
+typedef UInteger CCRefCounterType;
 
 
 #pragma pack(push, 1)
@@ -140,12 +140,12 @@ typedef struct {
 
 typedef struct {
 #if BUILD_TARGET_RT_64_BIT
-    CCUInt count: 56;
+    UInteger count: 56;
 #else
     CCUInt count: 24;
 #endif
-    CCUInt hasWeak: 1;
-    CCUInt domain: 7;
+    UInteger hasWeak: 1;
+    UInteger domain: 7;
 } CCRefCounter;
 
 
@@ -157,7 +157,7 @@ typedef struct {
 #pragma pack(pop)
 
 
-static inline CCBool __CCRefIsDecreasedType(_Atomic(uintptr_t) * _Nonnull typePtr) {
+static inline CBool __CCRefIsDecreasedType(_Atomic(uintptr_t) * _Nonnull typePtr) {
     uintptr_t type = atomic_load(typePtr);
     return ((type & 1) == 1);
 }
@@ -215,7 +215,7 @@ static inline _Atomic(UIntegerFast) * _Nonnull CCRefNormalGetCounterPtr(CCRef _N
     return &(((CCRefBase *)ref)->counter);
 }
 
-static inline CCBool __CCRefNormalRetain(CCRef _Nonnull ref) {
+static inline CBool __CCRefNormalRetain(CCRef _Nonnull ref) {
     UIntegerFast rcInfo = 0;
     UIntegerFast newRcInfo = 0;
     _Atomic(UIntegerFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
@@ -234,7 +234,7 @@ static inline CCBool __CCRefNormalRetain(CCRef _Nonnull ref) {
     return true;
 }
 
-static inline CCBool __CCRefDecreasedRetain(_Atomic(uintptr_t) * _Nonnull rcInfoPtr) {
+static inline CBool __CCRefDecreasedRetain(_Atomic(uintptr_t) * _Nonnull rcInfoPtr) {
     uintptr_t rcInfo = 0;
     uintptr_t newRcInfo = 0;
     do {
@@ -251,7 +251,7 @@ static inline CCBool __CCRefDecreasedRetain(_Atomic(uintptr_t) * _Nonnull rcInfo
     return true;
 }
 
-static inline CCBool __CCRefRetain(CCRef _Nonnull ref) {
+static inline CBool __CCRefRetain(CCRef _Nonnull ref) {
     _Atomic(uintptr_t) * typePtr = (_Atomic(uintptr_t) *)ref;
     if (__CCRefIsDecreasedType(typePtr)) {
         return __CCRefDecreasedRetain(typePtr);
@@ -268,7 +268,7 @@ CCRefWeakContainerCreate 会先对对象retain， 对象一定是个有效对象
 weak标记只能在加锁中 修改
 引用计数充当了自旋锁作用
 */
-static inline CCBool __CCRefNormalSetDeallocing(CCRef _Nonnull ref) {
+static inline CBool __CCRefNormalSetDeallocing(CCRef _Nonnull ref) {
     UIntegerFast rcInfo = 0;
     UIntegerFast newRcInfo = 0;
     _Atomic(UIntegerFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
@@ -285,7 +285,7 @@ static inline CCBool __CCRefNormalSetDeallocing(CCRef _Nonnull ref) {
         newRcInfo = (rcInfo & __CCRefNormalDomainMask) + 1;
         if ((rcInfo & __CCRefNormalHasWeakMask) == __CCRefNormalHasWeakMask) {
             CCRefWeakTableLock(address);
-            CCBool result = (atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+            CBool result = (atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
             if (result) {
                 _CCRefWeakTableRemoveRef(address);
             }
@@ -294,7 +294,7 @@ static inline CCBool __CCRefNormalSetDeallocing(CCRef _Nonnull ref) {
                 return true;
             }
         } else {
-            CCBool result = (atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+            CBool result = (atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
             if (result) {
                 return true;
             }
@@ -302,7 +302,7 @@ static inline CCBool __CCRefNormalSetDeallocing(CCRef _Nonnull ref) {
     }
 }
 
-static inline CCBool __CCRefDecreasedSetDeallocing(CCRef _Nonnull ref) {
+static inline CBool __CCRefDecreasedSetDeallocing(CCRef _Nonnull ref) {
     _Atomic(uintptr_t) * rcInfoPtr = (_Atomic(uintptr_t) *)ref;
     uintptr_t rcInfo = atomic_load(rcInfoPtr);
     uintptr_t newRcInfo = (rcInfo & CCRefDecreasedTypeAndFlagMask) + CCRefDecreasedRcOne;
@@ -318,7 +318,7 @@ static inline CCBool __CCRefDecreasedSetDeallocing(CCRef _Nonnull ref) {
         }
         if ((rcInfo & __CCRefDecreasedRcHasWeakMask) == __CCRefDecreasedRcHasWeakMask) {
             CCRefWeakTableLock(address);
-            CCBool result = (atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+            CBool result = (atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
             if (result) {
                 _CCRefWeakTableRemoveRef(address);
             }
@@ -327,7 +327,7 @@ static inline CCBool __CCRefDecreasedSetDeallocing(CCRef _Nonnull ref) {
                 return true;
             }
         } else {
-            CCBool result = (atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+            CBool result = (atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
             if (result) {
                 return true;
             }
@@ -471,7 +471,7 @@ CCRef _Nullable CCRefTryRetain(CCRef _Nonnull ref) {
 }
 
 
-static inline CCBool __CCRefNormalSetHasWeak(CCRef _Nonnull ref, CCBool hasWeak) {
+static inline CBool __CCRefNormalSetHasWeak(CCRef _Nonnull ref, CBool hasWeak) {
     UIntegerFast rcInfo = 0;
     UIntegerFast newRcInfo = 1;
     _Atomic(UIntegerFast) * rcInfoPtr = CCRefNormalGetCounterPtr(ref);
@@ -494,7 +494,7 @@ static inline CCBool __CCRefNormalSetHasWeak(CCRef _Nonnull ref, CCBool hasWeak)
     return true;
 }
 
-static inline CCBool __CCRefDecreasedSetHasWeak(CCRef _Nonnull ref, CCBool hasWeak) {
+static inline CBool __CCRefDecreasedSetHasWeak(CCRef _Nonnull ref, CBool hasWeak) {
     _Atomic(uintptr_t) * rcInfoPtr = (_Atomic(uintptr_t) *)ref;
 
     uintptr_t rcInfo = 0;
@@ -518,7 +518,7 @@ static inline CCBool __CCRefDecreasedSetHasWeak(CCRef _Nonnull ref, CCBool hasWe
     return true;
 }
 
-CCBool _CCRefSetHasWeak(CCRef _Nonnull ref, CCBool hasWeak) {
+CBool _CCRefSetHasWeak(CCRef _Nonnull ref, CBool hasWeak) {
     assert(ref);
     _Atomic(uintptr_t) * typePtr = (_Atomic(uintptr_t) *)ref;
     uintptr_t type = atomic_load(typePtr);
@@ -532,10 +532,10 @@ CCBool _CCRefSetHasWeak(CCRef _Nonnull ref, CCBool hasWeak) {
 
 
 
-void CCRefWeakTableLockByHash(CCUInt hash) {
+void CCRefWeakTableLockByHash(UInteger hash) {
     
 }
-void CCRefWeakTableUnlockByHash(CCUInt hash) {
+void CCRefWeakTableUnlockByHash(UInteger hash) {
     
 }
 void CCRefWeakTableLock(uintptr_t ref) {
@@ -594,7 +594,7 @@ CCRefWeakContainerPtr _Nonnull CCRefWeakContainerCreate(CCRef _Nonnull ref) {
 };
 void CCRefWeakContainerDestroy(CCRefWeakContainerPtr _Nonnull container) {
     CCRefWeakContainer_t * ptr = container;
-    CCUInt hash = ptr->hash;
+    UInteger hash = ptr->hash;
     CCRefWeakTableLockByHash(hash);
     assert(ptr->counter > 0);
     ptr->counter -= 1;

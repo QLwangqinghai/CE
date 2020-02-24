@@ -55,7 +55,7 @@ public class DrawingBoard {
     public func map(rect: CGRect, scale: CGFloat) -> Rect? {
         var frame = rect.standardized
         frame = rect.inset(by: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
-        var bounds = Rect(x: CCSInt32(frame.origin.x * scale), y: CCSInt32(frame.origin.y * scale), width: CCUInt32(frame.size.width * scale), height: CCUInt32(frame.size.height * scale))
+        var bounds = Rect(x: Int32(frame.origin.x * scale), y: Int32(frame.origin.y * scale), width: UInt32(frame.size.width * scale), height: UInt32(frame.size.height * scale))
 
 //        bounds = C2DRectEnlargeFrame(<#T##from: C2DRect##C2DRect#>, <#T##to: C2DRect##C2DRect#>)
 
@@ -68,11 +68,11 @@ public class DrawingBoard {
         }
         
         if bounds.origin.x < 0 {
-            bounds.size.width -= CCUInt32(rect.origin.x * -1)
+            bounds.size.width -= UInt32(rect.origin.x * -1)
             bounds.origin.x = 0
         }
         if rect.origin.y < 0 {
-            bounds.size.height -= CCUInt32(rect.origin.y * -1)
+            bounds.size.height -= UInt32(rect.origin.y * -1)
             bounds.origin.y = 0
         }
 

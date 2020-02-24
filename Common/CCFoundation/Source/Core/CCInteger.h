@@ -16,13 +16,13 @@ extern "C" {
 #include "CCType.h"
 
 //找出为1的最高位
-CCInt CCUInt64MostSignificantBit(CCUInt64 n);
-CCInt CCUInt32MostSignificantBit(CCUInt32 n);
+SInteger CCUInt64MostSignificantBit(uint64_t n);
+SInteger CCUInt32MostSignificantBit(uint32_t n);
 
 
 //找出为1的最低位
-CCInt CCUInt64LeastSignificantBit(CCUInt64 n);
-CCInt CCUInt32LeastSignificantBit(CCUInt32 n);
+SInteger CCUInt64LeastSignificantBit(uint64_t n);
+SInteger CCUInt32LeastSignificantBit(uint32_t n);
 
 
 typedef enum {
@@ -30,34 +30,34 @@ typedef enum {
     CCIntegerEncodingCompressNoFlag = 1,
 } CCIntegerEncoding_e;
 
-CCInt CCUInt64Encode(CCUInt64 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
-CCInt CCUInt32Encode(CCUInt32 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
+SInteger CCUInt64Encode(uint64_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
+SInteger CCUInt32Encode(uint32_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
 
-CCInt CCSInt64Encode(CCSInt64 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
-CCInt CCSInt32Encode(CCSInt32 n, CCIntegerEncoding_e encoding, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
+SInteger CCSInt64Encode(int64_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
+SInteger CCSInt32Encode(int32_t n, CCIntegerEncoding_e encoding, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
 
 //>0 success
-CCInt CCUInt64Decode(CCUInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const CCUInt8 * _Nonnull bytes, CCInt bytesLength);
-CCInt CCSInt64Decode(CCSInt64 * _Nonnull n, CCIntegerEncoding_e encoding, const CCUInt8 * _Nonnull bytes, CCInt bytesLength);
+SInteger CCUInt64Decode(uint64_t * _Nonnull n, CCIntegerEncoding_e encoding, const uint8_t * _Nonnull bytes, SInteger bytesLength);
+SInteger CCSInt64Decode(int64_t * _Nonnull n, CCIntegerEncoding_e encoding, const uint8_t * _Nonnull bytes, SInteger bytesLength);
 
 
 
-CCInt CCUInt64ToBytes(CCUInt64 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
-CCInt CCUInt32ToBytes(CCUInt32 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
-CCInt CCUInt16ToBytes(CCUInt16 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
+SInteger CCUInt64ToBytes(uint64_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
+SInteger CCUInt32ToBytes(uint32_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
+SInteger CCUInt16ToBytes(uint16_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
 
-CCInt CCSInt64ToBytes(CCSInt64 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
-CCInt CCSInt32ToBytes(CCSInt32 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
-CCInt CCSInt16ToBytes(CCSInt16 n, CCBool bigEndianEncode, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
+SInteger CCSInt64ToBytes(int64_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
+SInteger CCSInt32ToBytes(int32_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
+SInteger CCSInt16ToBytes(int16_t n, CBool bigEndianEncode, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
 
 
-CCInt CCBytesToUInt64(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCUInt64 * _Nonnull n);
-CCInt CCBytesToUInt32(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCUInt32 * _Nonnull n);
-CCInt CCBytesToUInt16(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCUInt16 * _Nonnull n);
+SInteger CCBytesToUInt64(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, uint64_t * _Nonnull n);
+SInteger CCBytesToUInt32(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, uint32_t * _Nonnull n);
+SInteger CCBytesToUInt16(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, uint16_t * _Nonnull n);
 
-CCInt CCBytesToSInt64(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt64 * _Nonnull n);
-CCInt CCBytesToSInt32(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt32 * _Nonnull n);
-CCInt CCBytesToSInt16(const CCUInt8 * _Nonnull bytes, CCInt length, CCBool bigEndianEncode, CCSInt16 * _Nonnull n);
+SInteger CCBytesToSInt64(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, int64_t * _Nonnull n);
+SInteger CCBytesToSInt32(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, int32_t * _Nonnull n);
+SInteger CCBytesToSInt16(const uint8_t * _Nonnull bytes, SInteger length, CBool bigEndianEncode, int16_t * _Nonnull n);
 
 #if defined(__cplusplus)
 }  // extern C

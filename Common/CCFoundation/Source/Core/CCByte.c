@@ -12,7 +12,7 @@
 
 //static const CCChar __CCBase64Padding = '_';
 
-static const CCUInt8 __CCBase64CharToByteMappings[128] __attribute__((aligned(128))) = {
+static const uint8_t __CCBase64CharToByteMappings[128] __attribute__((aligned(128))) = {
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 63, 255, 255, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 255, 255, 255, 255, 255, 255,
     255, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 255, 255, 255, 255, 62,
@@ -26,7 +26,7 @@ const CCChar __CCBase64ByteToCharMappings[64] __attribute__((aligned(64))) = {
     '~', '-',
 };
 
-static inline CCUInt8 __CCByteBase64DecodeByte(CCChar c) {
+static inline uint8_t __CCByteBase64DecodeByte(CCChar c) {
     assert(c > 0);
     if (c >= 128) {
         return 255;
@@ -35,14 +35,14 @@ static inline CCUInt8 __CCByteBase64DecodeByte(CCChar c) {
     }
 }
 
-static inline CCChar __CCByteBase64EncodeByte(CCUInt8 byte) {
+static inline CCChar __CCByteBase64EncodeByte(uint8_t byte) {
     assert(byte < 64);
     return __CCBase64ByteToCharMappings[byte];
 }
 
 
 
-CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCChar * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCByteBase64EncodeBytes(const uint8_t * _Nonnull bytes, SInteger length, CCChar * _Nonnull outputBuffer, SInteger bufferLength) {
     assert(length >= 0);
     if (length > 0) {
         assert(bytes);
@@ -59,7 +59,7 @@ CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCCh
     assert(length <= 1610612733L);
 #endif
     
-    CCInt outputLength = (length/3)*4;
+    SInteger outputLength = (length/3)*4;
     
     if (length % 3 == 1) {
         outputLength += 2;
@@ -69,13 +69,13 @@ CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCCh
     if (bufferLength < outputLength) {
         return -1;
     }
-    CCUInt8 currentByte = 0;
-    CCInt outputIndex = 0;
-    CCInt index=0;
-    CCInt upper = length / 3 * 3;
+    uint8_t currentByte = 0;
+    SInteger outputIndex = 0;
+    SInteger index=0;
+    SInteger upper = length / 3 * 3;
     for (; index<upper; index += 3) {
-        CCInt index1 = index + 1;
-        CCInt index2 = index + 2;
+        SInteger index1 = index + 1;
+        SInteger index2 = index + 2;
 
         outputBuffer[outputIndex] = __CCByteBase64EncodeByte(bytes[index] >> 2);
         outputIndex ++;
@@ -114,7 +114,7 @@ CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCCh
     return outputIndex;
 }
 
-CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength) {
+SInteger CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, SInteger length, uint8_t * _Nonnull outputBuffer, SInteger bufferLength) {
     assert(length >= 0);
     if (length > 0) {
         assert(encoded);
@@ -124,7 +124,7 @@ CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCU
     if (length > 0 && bufferLength > 0) {
         assert(outputBuffer);
     }
-    CCInt outputLength = (length/4)*3;
+    SInteger outputLength = (length/4)*3;
     if (length % 4 == 1) {
         return -2;
     } else if (length % 4 == 2) {
@@ -136,17 +136,17 @@ CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCU
         return -1;
     }
         
-    CCUInt8 currentByte = 0;
-    CCInt outputIndex = 0;
-    CCInt index=0;
-    CCInt upper = length / 4 * 4;
+    uint8_t currentByte = 0;
+    SInteger outputIndex = 0;
+    SInteger index=0;
+    SInteger upper = length / 4 * 4;
 
     for (; index<upper; index += 4) {
-        CCInt index1 = index + 1;
-        CCInt index2 = index + 2;
-        CCInt index3 = index + 3;
+        SInteger index1 = index + 1;
+        SInteger index2 = index + 2;
+        SInteger index3 = index + 3;
 
-        CCUInt8 v = __CCByteBase64DecodeByte(encoded[index]);
+        uint8_t v = __CCByteBase64DecodeByte(encoded[index]);
         if (v >= 64) {
             return -4;
         }
@@ -182,7 +182,7 @@ CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCU
     
     if (index % 4 == 0) {
     } else if (index % 4 == 2) {
-        CCUInt8 v = __CCByteBase64DecodeByte(encoded[index]);
+        uint8_t v = __CCByteBase64DecodeByte(encoded[index]);
         if (v >= 64) {
             return -4;
         }
@@ -199,9 +199,9 @@ CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCU
         outputBuffer[outputIndex] = currentByte;
         outputIndex ++;
     } else if (index % 4 == 3) {
-        CCInt index1 = index + 1;
-        CCInt index2 = index + 2;
-        CCUInt8 v = __CCByteBase64DecodeByte(encoded[index]);
+        SInteger index1 = index + 1;
+        SInteger index2 = index + 2;
+        uint8_t v = __CCByteBase64DecodeByte(encoded[index]);
         if (v >= 64) {
             return -4;
         }

@@ -53,8 +53,8 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size);
 void CCMemorySetUInt32(void * _Nonnull dst, uint32_t v, size_t count);
 void CCMemorySetUInt64(void * _Nonnull dst, uint64_t v, size_t count);
 
-extern CCInt CCByteBase64EncodeBytes(const CCUInt8 * _Nonnull bytes, CCInt length, CCChar * _Nonnull outputBuffer, CCInt bufferLength);
-extern CCInt CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, CCInt length, CCUInt8 * _Nonnull outputBuffer, CCInt bufferLength);
+extern SInteger CCByteBase64EncodeBytes(const uint8_t * _Nonnull bytes, SInteger length, CCChar * _Nonnull outputBuffer, SInteger bufferLength);
+extern SInteger CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, SInteger length, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
 
 extern const CCChar __CCBase64ByteToCharMappings[64];
 

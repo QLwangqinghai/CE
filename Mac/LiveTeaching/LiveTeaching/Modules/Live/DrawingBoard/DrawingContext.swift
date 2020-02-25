@@ -118,7 +118,7 @@ public class DrawingBitmap {
         }
     }
     var timer: DispatchSourceTimer?
-    let observer = DrawingStatus.Observer()
+//    let observer = DrawingStatus.Observer()
 
     public let status: DrawingStatus
     public init(size: Size, contentHeight: UInt32 = 0, status: DrawingStatus) {
@@ -183,39 +183,62 @@ public class DrawingBitmap {
         let timeEnd2 = CFAbsoluteTimeGetCurrent();
         print(timeEnd2 - timeEnd)
 
-        status.addObserver(self.observer)
-        self.observer.didUpdate = {[weak self] (_ observer: DrawingStatus.Observer, _ context: DrawingStatus, _ from: DrawingStatus.Status, _ to: DrawingStatus.Status) in
-            guard let strongSelf = self else {
-                return
-            }
-            strongSelf.contentHeight = to.contentHeight
-            
-            
-            
-            let sliceSize = strongSelf.status.drawingSize.cgSize
-            let top = to.offset > 0 ? to.offset : 0
-            let bottom = to.offset + sliceSize.height
-            
-            if top < strongSelf.layer.frame.origin.y || bottom > strongSelf.layer.frame.origin.y + strongSelf.layer.frame.size.height {
-                let t = top - (sliceSize.width - sliceSize.height) / 2
-                let y: UInt32
-                let scale = UIScreen.main.scale
-                if t < 0 {
-                    y = 0
-                } else {
-                    let tmp = Int(t * scale - 1)
-                    y = tmp > 0 ? UInt32(tmp) : 0
-                }
-                
-                strongSelf.layer.frame = CGRect(x: 0, y: CGFloat(y) / scale, width: sliceSize.width, height: sliceSize.width)
-                strongSelf.layer.cgImage = strongSelf.makeImage(y: y, height: strongSelf.status.drawingSize.rawValue.height)
-            }
-            
-            
-        }
+//        status.addObserver(self.observer)
+//        self.observer.didUpdate = {[weak self] (_ observer: DrawingStatus.Observer, _ context: DrawingStatus, _ from: DrawingStatus.Status, _ to: DrawingStatus.Status) in
+//            guard let strongSelf = self else {
+//                return
+//            }
+//            strongSelf.contentHeight = to.contentHeight
+//
+//
+//
+//            let sliceSize = strongSelf.status.drawingSize.cgSize
+//            let top = to.offset > 0 ? to.offset : 0
+//            let bottom = to.offset + sliceSize.height
+//
+//            if top < strongSelf.layer.frame.origin.y || bottom > strongSelf.layer.frame.origin.y + strongSelf.layer.frame.size.height {
+//                let t = top - (sliceSize.width - sliceSize.height) / 2
+//                let y: UInt32
+//                let scale = UIScreen.main.scale
+//                if t < 0 {
+//                    y = 0
+//                } else {
+//                    let tmp = Int(t * scale - 1)
+//                    y = tmp > 0 ? UInt32(tmp) : 0
+//                }
+//
+//                strongSelf.layer.frame = CGRect(x: 0, y: CGFloat(y) / scale, width: sliceSize.width, height: sliceSize.width)
+//                strongSelf.layer.cgImage = strongSelf.makeImage(y: y, height: strongSelf.status.drawingSize.rawValue.height)
+//            }
+//
+//
+//        }
     }
     deinit {
-        self.status.removeObserver(self.observer)
+//        self.status.removeObserver(self.observer)
+    }
+    
+    public func didUpdateStatus(from: DrawingStatus.Status, to: DrawingStatus.Status) {
+        self.contentHeight = to.contentHeight
+        
+        let sliceSize = self.status.drawingSize.cgSize
+        let top = to.offset > 0 ? to.offset : 0
+        let bottom = to.offset + sliceSize.height
+        
+        if top < self.layer.frame.origin.y || bottom > self.layer.frame.origin.y + self.layer.frame.size.height {
+            let t = top - (sliceSize.width - sliceSize.height) / 2
+            let y: UInt32
+            let scale = UIScreen.main.scale
+            if t < 0 {
+                y = 0
+            } else {
+                let tmp = Int(t * scale - 1)
+                y = tmp > 0 ? UInt32(tmp) : 0
+            }
+            
+            self.layer.frame = CGRect(x: 0, y: CGFloat(y) / scale, width: sliceSize.width, height: sliceSize.width)
+            self.layer.cgImage = self.makeImage(y: y, height: self.status.drawingSize.rawValue.height)
+        }
     }
     
     public func displayContent() {

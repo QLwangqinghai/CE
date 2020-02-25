@@ -20,9 +20,11 @@ public enum ImageFormat {
 public struct ImageAsset {
     public let format: ImageFormat
     public let size: CCSize32
-    public init(format: ImageFormat, size: CCSize32) {
+    public let count: UInt32
+    public init(format: ImageFormat, size: CCSize32, count: UInt32 = 1) {
         self.format = format
         self.size = size
+        self.count = count
     }
 }
 
@@ -54,6 +56,7 @@ public enum FileType {
     case text
 }
 
+//文件原始内容，不包含名称等
 public struct FileMeta {
     public var id: CCByte64
     public var type: FileType

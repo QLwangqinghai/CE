@@ -54,22 +54,6 @@ public struct TouchPoint: CustomStringConvertible, CustomDebugStringConvertible,
     }
 }
 
-public class BaseDrawEventHandler: NSObject {
-    public var isEnabled: Bool = true
-    
-    override init() {
-        super.init()
-    }
-}
-public class TapEventHandler: BaseDrawEventHandler {
-    public var isPending: Bool = true
-
-    
-    
-    override init() {
-        super.init()
-    }
-}
 
 
 public class Shape {
@@ -98,8 +82,6 @@ public enum PathElement {
     
     //圆弧
     case arc(center: CGPoint, radius: CGFloat, startAngle: CGFloat, endAngle: CGFloat, clockwise: Bool)
-
-    
 }
 
 public class Path {
@@ -112,9 +94,11 @@ public class Path {
     public func move(to point: CGPoint) {
         self.points.append(.move(to: point))
     }
+    
     public func close() {
         self.points.append(.close)
     }
+    
     public func addLine(to point: CGPoint) {
         self.points.append(.line(to: point))
     }
@@ -241,62 +225,128 @@ public class Path {
 }
 
 
-public class DrawingTouchPointArray: BaseDrawEventHandler {
-    public private(set) var points: [TouchPoint] = []
-    public private(set) var bounds: (CGPoint, CGPoint)?
+public class TouchEventHandler: NSObject {
+    public var isEnabled: Bool = true
+    override init() {
+        super.init()
+    }
+}
+public class TapEventHandler: TouchEventHandler {
+    public var isPending: Bool = true
     
-    fileprivate var touch: UITouch? = nil
+    override init() {
+        super.init()
+    }
+}
 
-    public enum State : Int {
-        case possible
+public class TouchPointCollection {
+    public private(set) var bounds: (CGPoint, CGPoint)
+
+    public let identifier: Data
+    public let timestamp: TimeInterval
+    
+    public private(set) var items: [TouchPoint]
+
+    public init(identifier: Data, point: TouchPoint) {
+        self.identifier = identifier
+        self.timestamp = point.timestamp
+        self.bounds = (point.location, point.location)
+        self.items = [point]
+    }
+    
+    public func append(_ point: TouchPoint) {
+        self.items.append(point)
+        let location = point.location
+        var bounds = self.bounds
+        if bounds.0.x > location.x {
+            bounds.0.x = location.x
+        }
+        if bounds.0.y > location.y {
+            bounds.0.y = location.y
+        }
+        if bounds.1.x < location.x {
+            bounds.1.x = location.x
+        }
+        if bounds.1.y < location.y {
+            bounds.1.y = location.y
+        }
+        self.bounds = bounds
+    }
+}
+
+
+public class DrawingEventHandler: TouchEventHandler {
+    public enum State: Int {
         case pending
         case moving
         case finished
     }
-    
-    public var state: State = .possible {
-        didSet {
-            if self.state == .possible {
-                self.points = []
-                self.bounds = nil
-                self.touch = nil
-            }
+
+    fileprivate var recogning: (status: State, touch: UITouch, points: TouchPointCollection)? = nil
+
+    private func pending(touch: UITouch, points: TouchPointCollection) {
+        guard self.recogning == nil else {
+            print("pending error")
+            return
         }
+        self.recogning = (.pending, touch, points)
+    }
+    public func becomeMoving() {
+        guard let (status, touch, points) = self.recogning, status == .pending else {
+            print("moving error")
+            return
+        }
+        self.recogning = (.moving, touch, points)
+    }
+    public func finish() {
+        guard let (status, touch, points) = self.recogning, status == .pending || status == .moving else {
+            print("finish error")
+            return
+        }
+        self.recogning = (.finished, touch, points)
+    }
+    public func reset() {
+        self.recogning = nil
+    }
+    
+    //开始识别
+    public func beginDrawingRecognize(touch: UITouch, points: TouchPointCollection) {
+        print("beginDrawingRecognize: \(points)")
+        self.pending(touch: touch, points: points)
+    }
+    
+    //识别失败
+    public func didDrawingRecognizedFailed(_ points: TouchPointCollection) {
+        print("didDrawingRecognizedFailed")
+    }
+    
+    //识别成功
+    public func didDrawingRecognizedSuccess(_ points: TouchPointCollection) {
+        print("didDrawingRecognizedSuccess")
+    }
+    
+    //识别成功 后 每有新的point会调用
+    public func didDrawingRecognizedUpdate(_ points: TouchPointCollection, point: TouchPoint) {
+        print("didDrawingRecognizedFinish")
+    }
+    
+    //识别完成
+    public func didDrawingRecognizedFinish(_ points: TouchPointCollection) {
+        print("didDrawingRecognizedFinish")
     }
     
     public func append(point: TouchPoint) -> Bool {
-        guard self.state != .possible && self.state != .finished else {
-            print("DrawHandler.append error")
+        guard let (status, _, points) = self.recogning, status != .finished else {
+            print("append failure")
             return false
         }
-        if let last = self.points.last {
+        if let last = points.items.last {
             if last == point {
                 return false
             }
         }
-        self.points.append(point)
-        let location = point.location
-        if var bounds = self.bounds {
-            if bounds.0.x > location.x {
-                bounds.0.x = location.x
-            }
-            if bounds.0.y > location.y {
-                bounds.0.y = location.y
-            }
-            if bounds.1.x < location.x {
-                bounds.1.x = location.x
-            }
-            if bounds.1.y < location.y {
-                bounds.1.y = location.y
-            }
-            self.bounds = bounds
-        } else {
-            self.bounds = (location, location)
-        }
+        points.append(point)
         return true
-    }
-    public func removeAll() {
-        self.points.removeAll()
     }
     
     override init() {
@@ -338,21 +388,11 @@ public final class DrawingEventRecognizer: NSObject {
 
     public private(set) var state: State = .possible
     public var tapHandler: TapEventHandler?
-    private let drawingTouchPoints: DrawingTouchPointArray = DrawingTouchPointArray()
+    private let drawingHandler: DrawingEventHandler = DrawingEventHandler()
     private var touches: Set<UITouch> = []
     
     private var drawingTimeoutHandler: DispatchWorkItem?
 
-    public func beginDraw(points: [TouchPoint]) {
-        print("beginDraw: \(points) current:\(self.drawingTouchPoints.points)")
-    }
-    public func draw(to point: TouchPoint) {
-        print("drawTo: \(point) current:\(self.drawingTouchPoints.points)")
-    }
-    public func finishDraw() {
-        print("finishDraw current:\(self.drawingTouchPoints.points)")
-    }
-    
     public func tapped(point: TouchPoint) {
         print("tapped: \(point)")
     }
@@ -364,7 +404,7 @@ public final class DrawingEventRecognizer: NSObject {
         }
     }
     
-    public func touchesBegan(view: UIView, touches: Set<UITouch>, with event: UIEvent?) {
+    public func touchesBegan(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
 //        Log.logEvent(view: view, touches: touches, event: event)
         
         if self.state == .possible {
@@ -373,25 +413,29 @@ public final class DrawingEventRecognizer: NSObject {
                 if touches.count == 1 {
                     self.state = .recogning
                     print("recogning")
-                    
-                    let touch = touches.first!
-                    let item = DispatchWorkItem(block: {[weak self] in
-                        guard let `self` = self else {
-                            return
+                    if let delegate = view.drawDelegate {
+                        let touch = touches.first!
+                        let point = TouchPoint(location: touch.location(in: view), timestamp: touch.timestamp)
+
+                        if let id = delegate.drawingViewShouldBeginRecognize(view, point: point) {
+                            let collection = TouchPointCollection(identifier: id, point: point)
+                            
+                            let item = DispatchWorkItem(block: {[weak self] in
+                                guard let strongSelf = self else {
+                                    return
+                                }
+                                if let (status, _, points) = strongSelf.drawingHandler.recogning, status == .pending {
+                                    strongSelf.state = .recognizedDrawing
+                                    strongSelf.drawingHandler.becomeMoving()
+                                    strongSelf.drawingTimeoutHandler = nil
+                                    strongSelf.drawingHandler.didDrawingRecognizedSuccess(points)
+                                }
+                            })
+                            self.drawingTimeoutHandler = item
+                            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.086, execute: item)
+                            self.drawingHandler.beginDrawingRecognize(touch: touch, points: collection)
                         }
-                        if self.drawingTouchPoints.state == .pending {
-                            self.state = .recognizedDrawing
-                            self.drawingTouchPoints.state = .moving
-                            self.drawingTimeoutHandler = nil
-                            self.beginDraw(points: self.drawingTouchPoints.points)
-                        }
-                    })
-                    self.drawingTimeoutHandler = item
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.086, execute: item)
-                    self.drawingTouchPoints.state = .pending
-                    let point = TouchPoint(location: touch.location(in: view), timestamp: touch.timestamp)
-                    self.drawingTouchPoints.touch = touch
-                    let _ = self.drawingTouchPoints.append(point: point)
+                    }
                 } else if touches.count == 2 {
                     self.state = .recognizedDoubleTouch
                     print("double touch")
@@ -404,8 +448,14 @@ public final class DrawingEventRecognizer: NSObject {
         } else if self.state == .recogning {
             let tmp = self.touches.intersection(touches)
             if tmp.count >= 3 {
-                self.drawingTouchPoints.state = .possible
-                self.cancelDrawingTimeoutHandler()
+                if let (status, _, points) = self.drawingHandler.recogning {
+                    guard status == .pending else {
+                        fatalError("error 32")
+                    }
+                    self.drawingHandler.reset()
+                    self.cancelDrawingTimeoutHandler()
+                    self.drawingHandler.didDrawingRecognizedFailed(points)
+                }
                 self.state = .faild
             }
         }
@@ -429,28 +479,30 @@ public final class DrawingEventRecognizer: NSObject {
 //        }
     }
     
-    public func touchesMoved(view: UIView, touches: Set<UITouch>, with event: UIEvent?) {
+    public func touchesMoved(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
 //        Log.logEvent(view: view, touches: touches, event: event)
 
-        if let touch = self.drawingTouchPoints.touch {
+        if let (status, touch, points) = self.drawingHandler.recogning {
             if touches.contains(touch) {
                 let point = TouchPoint(location: touch.location(in: view), timestamp: touch.timestamp)
-                if self.drawingTouchPoints.append(point: point) {
-                    if self.drawingTouchPoints.state == .moving {
-                        self.draw(to: point)
-                    } else if self.drawingTouchPoints.state == .pending {
-                        let bounds = self.drawingTouchPoints.bounds!
+                if self.drawingHandler.append(point: point) {
+                    if status == .moving {
+                        self.drawingHandler.didDrawingRecognizedUpdate(points, point: point)
+                    } else if status == .pending {
+                        let bounds = points.bounds
                         assert(self.state == .recogning)
-                        if bounds.1.x - bounds.0.x > 2 || bounds.1.y - bounds.0.y > 2 {
+                        if bounds.1.x - bounds.0.x > 8 || bounds.1.y - bounds.0.y > 8 {
                             self.state = .recognizedDrawing
-                            self.drawingTouchPoints.state = .moving
                             self.cancelDrawingTimeoutHandler()
-                            self.beginDraw(points: self.drawingTouchPoints.points)
+                            self.drawingHandler.becomeMoving()
+                            self.drawingHandler.didDrawingRecognizedSuccess(points)
                         }
                     }
                 }
             }
         }
+
+        
 //        guard let e = event else {
 ////            super.touchesMoved(touches, with: event)
 //            print("touchesMoved error: \(touches)")
@@ -465,40 +517,41 @@ public final class DrawingEventRecognizer: NSObject {
 //            self.logTouch(touches, with: e)
 //        }
     }
-    public func touchesEnded(view: UIView, touches: Set<UITouch>, with event: UIEvent?) {
-//        Log.logEvent(view: view, touches: touches, event: event)
-
-        if let touch = self.drawingTouchPoints.touch {
+    
+    private func _touchesEnded(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
+        if let (status, touch, points) = self.drawingHandler.recogning {
             if touches.contains(touch) {
                 let point = TouchPoint(location: touch.location(in: view), timestamp: touch.timestamp)
-                let appendResult = self.drawingTouchPoints.append(point: point)
-                if self.drawingTouchPoints.state == .moving {
+                let appendResult = self.drawingHandler.append(point: point)
+                if status == .moving {
                     if appendResult {
-                        self.draw(to: point)
+                        self.drawingHandler.didDrawingRecognizedUpdate(points, point: point)
                     }
-                    self.drawingTouchPoints.state = .finished
-                    self.finishDraw()
-                    self.drawingTouchPoints.state = .possible
-                } else if self.drawingTouchPoints.state == .pending {
-                    self.drawingTouchPoints.state = .possible
-                    self.tapped(point: point)
+                    self.drawingHandler.finish()
+                    self.drawingHandler.didDrawingRecognizedFinish(points)
+                    self.drawingHandler.reset()
+                } else if status == .pending {
+                    if let tapHandler = self.tapHandler, tapHandler.isEnabled {
+                        self.drawingHandler.reset()
+                        self.drawingHandler.didDrawingRecognizedFailed(points)
+                        self.tapped(point: point)
+                    } else {
+                        if self.drawingHandler.append(point: point) {
+                            self.state = .recognizedDrawing
+                            self.cancelDrawingTimeoutHandler()
+                            self.drawingHandler.becomeMoving()
+                            self.drawingHandler.didDrawingRecognizedSuccess(points)
+                            
+                            self.drawingHandler.finish()
+                            self.drawingHandler.didDrawingRecognizedFinish(points)
+                            self.drawingHandler.reset()
+                        } else {
+                            print("_touchesEnded error")
+                        }
+                    }
                 }
             }
         }
-        
-//        guard let e = event else {
-////            super.touchesEnded(touches, with: event)
-//            print("touchesEnded error: \(touches)")
-//            return
-//        }
-//        guard let handler = self.drawingHandler else {
-////            super.touchesEnded(touches, with: event)
-//            print("touchesEnded drawingItem is nil")
-//            return
-//        }
-//        if !handler.handleTouchesEnded(self, touches: touches, with: event) {
-//            self.logTouch(touches, with: e)
-//        }
         
         for item in touches {
             self.touches.remove(item)
@@ -511,61 +564,29 @@ public final class DrawingEventRecognizer: NSObject {
                 self.state = .possible
             }
         }
+
     }
-    public func touchesCancelled(view: UIView, touches: Set<UITouch>, with event: UIEvent?) {
+
+    
+    public func touchesEnded(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
 //        Log.logEvent(view: view, touches: touches, event: event)
+        self._touchesEnded(view: view, touches: touches, with: event)
 
-        if let touch = self.drawingTouchPoints.touch {
-            if touches.contains(touch) {
-                let point = TouchPoint(location: touch.location(in: view), timestamp: touch.timestamp)
-                let appendResult = self.drawingTouchPoints.append(point: point)
-
-                if self.drawingTouchPoints.state == .moving {
-                    if appendResult {
-                        self.draw(to: point)
-                    }
-                    self.drawingTouchPoints.state = .finished
-                    self.finishDraw()
-                    self.drawingTouchPoints.state = .possible
-                } else if self.drawingTouchPoints.state == .pending {
-                    self.drawingTouchPoints.state = .possible
-                }
-            }
-        }
-        
-//        guard let e = event else {
-////            super.touchesCancelled(touches, with: event)
-//            print("touchesCancelled error: \(touches)")
-//            return
-//        }
-//        guard let handler = self.drawingHandler else {
-////            super.touchesCancelled(touches, with: event)
-//            print("touchesCancelled drawingItem is nil")
-//            return
-//        }
-//        if !handler.handleTouchesCancelled(self, touches: touches, with: event) {
-//            self.logTouch(touches, with: e)
-//        }
-        
-        for item in touches {
-            self.touches.remove(item)
-        }
-        if self.touches.isEmpty {
-            if self.state == .faild {
-                self.state = .possible
-            } else {
-                self.state = .ended
-                self.state = .possible
-            }
-        }
+    }
+    public func touchesCancelled(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
+//        Log.logEvent(view: view, touches: touches, event: event)
+        self._touchesEnded(view: view, touches: touches, with: event)
     }
 }
 
 
 public protocol DrawingViewDrawDelegate: class {
     
+    //返回一个identifer
+    func drawingViewShouldBeginRecognize(_ view: DrawingView, point: TouchPoint) -> Data?
+    
     //开始识别
-    func drawingViewDidBeginRecognize(_ view: DrawingView)
+    func drawingViewDidBeginRecognize(_ view: DrawingView, point: TouchPoint)
     
     //识别失败
     func drawingViewDidRecognizedFailed(_ view: DrawingView)
@@ -585,7 +606,7 @@ public class DrawingView: UIView {
     private let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
     
     private var isDispatchEventToRecognizer: Bool = false
-        
+    
     internal var drawDelegate: DrawingViewDrawDelegate? = nil
 
     public init(status: DrawingStatus) {
@@ -614,7 +635,7 @@ public class DrawingView: UIView {
         var bounds = self.bounds
         bounds.origin.y = status.offset
         self.bounds = bounds
-        self.bitmap.contentHeight = status.contentHeight
+        self.bitmap.didUpdateStatus(from: from, to: status)
     }
     
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

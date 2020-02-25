@@ -23,6 +23,11 @@ public protocol DrawingSectionHandle: DrawingHandle {
 }
 
 public class DrawingController: NSObject, DrawingViewDrawDelegate {
+    public func drawingViewShouldBeginRecognize(_ view: DrawingView, point: TouchPoint) -> Data? {
+        return Data()
+    }
+    
+    
     public private(set) var drawingView: DrawingView? = nil
 
 //    public private(set) var status: DrawingView.Status
@@ -39,7 +44,7 @@ public class DrawingController: NSObject, DrawingViewDrawDelegate {
 
     
     //MARK: DrawingViewDrawDelegate
-    public func drawingViewDidBeginRecognize(_ view: DrawingView) {
+    public func drawingViewDidBeginRecognize(_ view: DrawingView, point: TouchPoint) {
         //开始识别
     }
     public func drawingViewDidRecognizedFailed(_ view: DrawingView) {

@@ -17,6 +17,7 @@ public enum ImageFormat {
     case heic
     case webp
 }
+
 public struct ImageAsset {
     public let format: ImageFormat
     public let size: CCSize32
@@ -42,6 +43,15 @@ public struct AVAsset {
     }
 }
 
+public struct PDFAsset {
+    public let size: CCSize32
+    public let count: UInt32 //number of pages
+    public init(size: CCSize32, count: UInt32) {
+        self.size = size
+        self.count = count
+    }
+}
+
 //public enum FileType {
 //    case archive
 //    case image(type: ImageType)
@@ -49,6 +59,9 @@ public struct AVAsset {
 //    case audio
 //    case text
 //}
+
+//pdf 可执行文件 图像 应用程序 归档 影片 文件夹 文本 文稿 演示文稿 音乐 其他
+
 public enum FileType {
 //    case archive
     case image(ImageAsset)
@@ -68,8 +81,6 @@ public struct FileMeta {
     }
 }
 
-
-
 public class FileItem {
     public let id: UInt64
     public let meta: FileMeta
@@ -81,7 +92,6 @@ public class FileItem {
         self.name = name
     }
 }
-
 
 //public enum FileType {
 //    case archive

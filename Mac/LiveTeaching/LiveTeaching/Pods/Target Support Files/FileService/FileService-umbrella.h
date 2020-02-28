@@ -11,6 +11,7 @@
 #endif
 
 #import "FileManagerBase.h"
+#import "FileServiceBase.h"
 #import "FileService.h"
 
 FOUNDATION_EXPORT double FileServiceVersionNumber;

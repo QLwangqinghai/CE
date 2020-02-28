@@ -71,13 +71,14 @@ public enum FileType {
 
 //文件原始内容，不包含名称等
 public struct FileMeta {
-    public var id: CCByte64
+    public var id: FileIdentifier
     public var type: FileType
-    public var size: UInt64
-    public init(id: CCByte64, type: FileType, size: UInt64) {
+    public var size: UInt64 {
+        return self.id.length
+    }
+    public init(id: FileIdentifier, type: FileType) {
         self.id = id
         self.type = type
-        self.size = size
     }
 }
 

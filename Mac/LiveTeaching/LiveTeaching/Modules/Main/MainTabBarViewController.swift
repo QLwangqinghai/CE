@@ -10,7 +10,7 @@ import UIFoundation
 
 class MainTabBarViewController: UITabBarController {
     let homePage = HomePageViewController(nibName: nil, bundle: nil)
-    let minePage = MinePageViewController(nibName: nil, bundle: nil)
+    let mePage = MePageViewController(nibName: nil, bundle: nil)
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -26,11 +26,11 @@ class MainTabBarViewController: UITabBarController {
         let homePageNavigation = BaseNavigationController(rootViewController: self.homePage)
         homePageNavigation.tabBarItem.title = "首页"
         
-        let minePageNavigation = BaseNavigationController(rootViewController: self.minePage)
-        minePageNavigation.tabBarItem.title = "我"
+        let mePageNavigation = BaseNavigationController(rootViewController: self.mePage)
+        mePageNavigation.tabBarItem.title = "我"
         
         self.addChild(homePageNavigation)
-        self.addChild(minePageNavigation)
+        self.addChild(mePageNavigation)
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
             Network.test()

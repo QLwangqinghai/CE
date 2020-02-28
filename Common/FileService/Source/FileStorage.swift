@@ -29,10 +29,16 @@ import Foundation
  
  64字节
 
- 21(60/3 + 4/4)级目录，每3字节1个目录
- 3/3/3/3/......
+ 22(4/2 + 60/3) - 1级目录
+ 1/3/3/3/3/......
  
  */
+
+/*
+ 分段dgst
+ 16MB/段
+ */
+
 
 /*
 存储结构
@@ -44,7 +50,6 @@ import Foundation
 
 /*
 文件系统结构
-
 fs.storage = {
 
 
@@ -52,5 +57,15 @@ fs.storage = {
 */
 
 public final class FileStorage {
-
+    public let directoryPath: String
+    public let fileManager: FileManager
+    
+    public init(directoryPath: String) {
+        self.directoryPath = directoryPath
+        let fileManager: FileManager = FileManager()
+        guard fileManager.changeCurrentDirectoryPath(directoryPath) else {
+            fatalError("directoryPath:\(directoryPath) error")
+        }
+        self.fileManager = fileManager
+    }
 }

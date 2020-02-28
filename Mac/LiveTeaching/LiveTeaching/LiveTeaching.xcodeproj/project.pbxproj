@@ -14,7 +14,7 @@
 		D606702623DC9904009BA4B0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606701823DC9904009BA4B0 /* ViewController.swift */; };
 		D606702823DC9904009BA4B0 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606701A23DC9904009BA4B0 /* Resource.swift */; };
 		D606702923DC9904009BA4B0 /* LiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606701E23DC9904009BA4B0 /* LiveViewController.swift */; };
-		D606702A23DC9904009BA4B0 /* MinePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606702023DC9904009BA4B0 /* MinePageViewController.swift */; };
+		D606702A23DC9904009BA4B0 /* MePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606702023DC9904009BA4B0 /* MePageViewController.swift */; };
 		D606702B23DC9904009BA4B0 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606702223DC9904009BA4B0 /* MainTabBarViewController.swift */; };
 		D606702C23DC9904009BA4B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606702323DC9904009BA4B0 /* AppDelegate.swift */; };
 		D606702D23DC9904009BA4B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D606702423DC9904009BA4B0 /* SceneDelegate.swift */; };
@@ -22,6 +22,8 @@
 		D6165D3B23F9A04200CE6B07 /* DrawingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6165D3A23F9A04200CE6B07 /* DrawingContext.swift */; };
 		D63F4DBA2403ECC700D1FE62 /* TestDrawViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63F4DB92403ECC700D1FE62 /* TestDrawViewController.swift */; };
 		D63F4DD1240675AE00D1FE62 /* Presentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63F4DD0240675AE00D1FE62 /* Presentation.swift */; };
+		D64D036F2408D51300210537 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64D036E2408D51300210537 /* User.swift */; };
+		D64D03772409048700210537 /* region.json in Resources */ = {isa = PBXBuildFile; fileRef = D64D03762409048700210537 /* region.json */; };
 		D6690E7223F93EAE00B5FA44 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6690E7123F93EAE00B5FA44 /* DrawingView.swift */; };
 		D673AF8923F93F2000D37AFF /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8023F93F1F00D37AFF /* Controller.swift */; };
 		D673AF8A23F93F2000D37AFF /* DrawingBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */; };
@@ -47,7 +49,7 @@
 		D606701823DC9904009BA4B0 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D606701A23DC9904009BA4B0 /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		D606701E23DC9904009BA4B0 /* LiveViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveViewController.swift; sourceTree = "<group>"; };
-		D606702023DC9904009BA4B0 /* MinePageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MinePageViewController.swift; sourceTree = "<group>"; };
+		D606702023DC9904009BA4B0 /* MePageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MePageViewController.swift; sourceTree = "<group>"; };
 		D606702223DC9904009BA4B0 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
 		D606702323DC9904009BA4B0 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D606702423DC9904009BA4B0 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -57,6 +59,8 @@
 		D6165D3A23F9A04200CE6B07 /* DrawingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingContext.swift; sourceTree = "<group>"; };
 		D63F4DB92403ECC700D1FE62 /* TestDrawViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDrawViewController.swift; sourceTree = "<group>"; };
 		D63F4DD0240675AE00D1FE62 /* Presentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presentation.swift; sourceTree = "<group>"; };
+		D64D036E2408D51300210537 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		D64D03762409048700210537 /* region.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = region.json; sourceTree = "<group>"; };
 		D6690E7123F93EAE00B5FA44 /* DrawingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
 		D673AF8023F93F1F00D37AFF /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingBoard.swift; sourceTree = "<group>"; };
@@ -130,7 +134,7 @@
 				D606701523DC9904009BA4B0 /* Home */,
 				D606701723DC9904009BA4B0 /* Common */,
 				D606701D23DC9904009BA4B0 /* Live */,
-				D606701F23DC9904009BA4B0 /* Mine */,
+				D606701F23DC9904009BA4B0 /* Me */,
 				D606702123DC9904009BA4B0 /* Main */,
 			);
 			path = Modules;
@@ -147,6 +151,7 @@
 		D606701723DC9904009BA4B0 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D64D036D2408D4FF00210537 /* User */,
 				D6D1EA7E23FEB2C1009DD55F /* Network */,
 				D606701823DC9904009BA4B0 /* ViewController.swift */,
 				D606701A23DC9904009BA4B0 /* Resource.swift */,
@@ -168,12 +173,12 @@
 			path = Live;
 			sourceTree = "<group>";
 		};
-		D606701F23DC9904009BA4B0 /* Mine */ = {
+		D606701F23DC9904009BA4B0 /* Me */ = {
 			isa = PBXGroup;
 			children = (
-				D606702023DC9904009BA4B0 /* MinePageViewController.swift */,
+				D606702023DC9904009BA4B0 /* MePageViewController.swift */,
 			);
-			path = Mine;
+			path = Me;
 			sourceTree = "<group>";
 		};
 		D606702123DC9904009BA4B0 /* Main */ = {
@@ -192,6 +197,15 @@
 				D63F4DD0240675AE00D1FE62 /* Presentation.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		D64D036D2408D4FF00210537 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				D64D03762409048700210537 /* region.json */,
+				D64D036E2408D51300210537 /* User.swift */,
+			);
+			path = User;
 			sourceTree = "<group>";
 		};
 		D6690E7023F93E9C00B5FA44 /* DrawingBoard */ = {
@@ -291,6 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D606700D23DC9581009BA4B0 /* LaunchScreen.storyboard in Resources */,
+				D64D03772409048700210537 /* region.json in Resources */,
 				D606700A23DC9581009BA4B0 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -364,8 +379,9 @@
 				D673AF8C23F93F2000D37AFF /* DrawingController.swift in Sources */,
 				D673AF8F23F93F2000D37AFF /* DrawingSliceController.swift in Sources */,
 				D63F4DBA2403ECC700D1FE62 /* TestDrawViewController.swift in Sources */,
-				D606702A23DC9904009BA4B0 /* MinePageViewController.swift in Sources */,
+				D606702A23DC9904009BA4B0 /* MePageViewController.swift in Sources */,
 				D606702923DC9904009BA4B0 /* LiveViewController.swift in Sources */,
+				D64D036F2408D51300210537 /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,7 +8,7 @@
 
 import UIFoundation
 
-public class MinePageViewController: BaseViewController {
+public class MePageViewController: BaseViewController {
 
     public let tapGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer()
 
@@ -25,7 +25,7 @@ public class MinePageViewController: BaseViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         
-        self.tapGestureRecognizer.addTarget(self, action: #selector(MinePageViewController.handleTapped))
+        self.tapGestureRecognizer.addTarget(self, action: #selector(MePageViewController.handleTapped))
         self.view.addGestureRecognizer(self.tapGestureRecognizer)
     }
 

@@ -1,13 +1,13 @@
-////
-////  FileManagerBase.h
-////  FileManager
-////
-////  Created by vector on 2019/7/18.
-////  Copyright © 2019 angfung. All rights reserved.
-////
 //
+//  FileManagerBase.h
+//  FileManager
 //
-//#include <CCFoundation/CCFoundation.h>
+//  Created by vector on 2019/7/18.
+//  Copyright © 2019 angfung. All rights reserved.
+//
+
+
+#include <CCFoundation/CCFoundation.h>
 //
 //typedef struct _CFMPixelSize {
 //    uint32_t width;

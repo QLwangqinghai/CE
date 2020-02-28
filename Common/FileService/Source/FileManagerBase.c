@@ -9,5 +9,7 @@
 #include "FileManagerBase.h"
 
 #include <unistd.h>
+#include <CCFoundation/CCFoundation.h>
+
 
 

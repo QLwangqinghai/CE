@@ -10,14 +10,11 @@ import Foundation
 
 /*
  {
+ 
+    storageHomeDirecory = "绝对路径"
     storages = [
-        {
-            lowerSize = UInt64
-            upperSize = UInt64
-            substorages = [
-                {upper = UInt16, path = ""}
-            ]
-        },
+        {upper = UInt16, path = ""}
+
     ]
  }
  

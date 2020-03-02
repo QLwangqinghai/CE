@@ -17,11 +17,9 @@ public final class StorageManager {
         self.storages = []
     }
     
-    public func storage(for size: UInt64) -> FileStorage {
-        
-    }
-    
-    
+    public func storage(for file: FileIdentifier) -> FileStorage {
+        return self.storages[Int(file.dgst.0)]
+    }    
     
     public let shared: StorageManager = StorageManager()
 }

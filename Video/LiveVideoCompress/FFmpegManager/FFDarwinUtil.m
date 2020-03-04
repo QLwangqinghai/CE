@@ -17,19 +17,16 @@
 
 static OSType KVideoPixelFormatType = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
 
--(CVPixelBufferRef)yuvPixelBufferWithData:(NSData *)dataFrame
++ (CVPixelBufferRef)yuvPixelBufferWithData:(NSData *)dataFrame
                          presentationTime:(CMTime)presentationTime
-                                    width:(size_t)w
-                                   heigth:(size_t)h
-{
+                                    width:(size_t)width
+                                   heigth:(size_t)heigth {
     unsigned char* buffer = (unsigned char*) dataFrame.bytes;
-    CVPixelBufferRef getCroppedPixelBuffer = [self copyDataFromBuffer:buffer toYUVPixelBufferWithWidth:w Height:h];
+    CVPixelBufferRef getCroppedPixelBuffer = [self copyDataFromBuffer:buffer toYUVPixelBufferWithWidth:width Height:heigth];
     return getCroppedPixelBuffer;
 }
 
-
--(CVPixelBufferRef)copyDataFromBuffer:(const unsigned char*)buffer toYUVPixelBufferWithWidth:(size_t)w Height:(size_t)h
-{
++ (CVPixelBufferRef)copyDataFromBuffer:(const unsigned char*)buffer toYUVPixelBufferWithWidth:(size_t)w Height:(size_t)h {
 //通过宏使模拟器能够通过编译
 #if TARGET_IPHONE_SIMULATOR
     NSDictionary *pixelBufferAttributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSDictionary dictionary],kCVPixelBufferOpenGLESTextureCacheCompatibilityKey,
@@ -63,7 +60,6 @@ static OSType KVideoPixelFormatType = kCVPixelFormatType_420YpCbCr8BiPlanarVideo
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 
     return pixelBuffer;
-
 }
 
 

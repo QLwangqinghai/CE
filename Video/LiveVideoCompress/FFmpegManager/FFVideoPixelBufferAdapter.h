@@ -12,7 +12,7 @@
 #include "libavformat/avformat.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
+//http://www.ffmpeg.org/doxygen/4.0/transcoding_8c-example.html
 @class FFVideoAdapter;
 @interface FFVideoPixelBufferAdapter : NSObject
 
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithVideoAdapter:(FFVideoAdapter *)videoAdapter;
 
-
+//https://www.ffmpeg.org/doxygen/4.0/encode_video_8c-example.html#a9
 - (void)writeFrameAtTime:(int64_t)time handler:(void(^)(CGContextRef context))handler;
 
 //- (FFAVFrame *)makeFrame:(AVFrame *)frame handler:(void(^)(CGContextRef context))handler;

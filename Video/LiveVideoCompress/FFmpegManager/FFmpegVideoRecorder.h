@@ -31,7 +31,7 @@ typedef NS_ENUM(NSUInteger, FFVideoCodecPixelFormat) {
 
 NS_ASSUME_NONNULL_BEGIN
 
-
+@class FFAVFormatContext;
 @interface FFAVStream : NSObject
 @property (nonatomic, strong, readonly) FFAVFormatContext * formatContext;
 

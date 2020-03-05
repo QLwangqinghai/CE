@@ -102,17 +102,26 @@
     }
     NSLog(@"avcodec_send_frame wresult: %@", @(wresult == 0));
 
-    AVPacket pkt;
-    av_init_packet(&pkt);
+    AVPacket * pkt = av_packet_alloc();;
+    int ret = 0;
 
-    pkt.flags |= AV_PKT_FLAG_KEY;
-    pkt.stream_index = self.videoAdapter.stream.stream->index;
-    pkt.data = (uint8_t *)picture;
-    pkt.size = sizeof(AVPicture);
-
-    ret = av_interleaved_write_frame(oc, &pkt);
+    while (ret >= 0) {
+        ret = avcodec_receive_packet(self.videoAdapter.context, pkt);
+        if (ret == AVERROR(EAGAIN)) {
+            return;
+        } else if (ret == AVERROR_EOF) {
+            return;
+        } else if (ret < 0) {
+            fprintf(stderr, "Error during encoding\n");
+            exit(1);
+        }
+           printf("Write packet %3"PRId64" (size=%5d)\n", pkt->pts, pkt->size);
+//           fwrite(pkt->data, 1, pkt->size, outfile);
+           av_packet_unref(pkt);
+       }
     
-    wresult = av_interleaved_write_frame(self.videoAdapter.formatContext.formatContext, to);
+    
+    wresult = av_interleaved_write_frame(self.videoAdapter.formatContext.formatContext, pkt);
     
     NSLog(@"av_interleaved_write_frame wresult: %@", @(wresult == 0));
 }

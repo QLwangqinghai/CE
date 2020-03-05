@@ -990,9 +990,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = SK32D8HW22;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/$(PRODUCT_NAME)/FFmpeg-iOS/include";
 				HEADER_SEARCH_PATHS = (
@@ -1011,9 +1011,9 @@
 					"$(PROJECT_DIR)/LiveVideoCompress/x264-iOS/lib",
 					"$(PROJECT_DIR)/LiveVideoCompress/fdk-aac-ios/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.haoqi.superCoachingLecture;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.video;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = SuperCoachingLectureDev;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1022,9 +1022,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = SK32D8HW22;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/$(PRODUCT_NAME)/FFmpeg-iOS/include";
 				HEADER_SEARCH_PATHS = (
@@ -1043,9 +1043,9 @@
 					"$(PROJECT_DIR)/LiveVideoCompress/x264-iOS/lib",
 					"$(PROJECT_DIR)/LiveVideoCompress/fdk-aac-ios/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.haoqi.superCoachingLecture;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.video;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = SuperCoachingLectureDev;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

@@ -11,7 +11,7 @@
 #include "libswscale/swscale.h"
 #include "libavutil/imgutils.h"
 #import "FFVideoPixelBufferAdapter.h"
-
+#import <UIKit/UIKit.h>
 
 @interface FFAVStream ()
 
@@ -766,7 +766,7 @@
     AVFormatContext * formatContext = self.formatContext.formatContext;
     
     if (!(formatContext->flags & AVFMT_NOFILE)) {
-        int oResult = avio_open2(&(formatContext->pb), self.path.UTF8String, AVIO_FLAG_WRITE, NULL, NULL);
+        int oResult = avio_open2(&(formatContext->pb), self.path.UTF8String, AVIO_FLAG_READ_WRITE, NULL, NULL);
         if (oResult < 0) {
             NSLog(@"Could not open %@", self.path);
         } else {
@@ -874,19 +874,30 @@
     //    /* free the stream */
     //    av_free(oc);
     
+    UIImage * image = [UIImage imageNamed:@"984916-20160701214405843-875974577.jpg"];
     
+    
+
     
     [ada writeFrameAtTime:1 handler:^(CGContextRef  _Nonnull context) {
-        
+        CGContextDrawImage(context, CGRectMake(0, 0, 400, 400), image.CGImage);
     }];
     
     [ada writeFrameAtTime:2 handler:^(CGContextRef  _Nonnull context) {
-        
+        CGContextDrawImage(context, CGRectMake(0, 100, 400, 400), image.CGImage);
+
     }];
     
     [ada writeFrameAtTime:10 handler:^(CGContextRef  _Nonnull context) {
-        
+        CGContextDrawImage(context, CGRectMake(100, 0, 400, 400), image.CGImage);
     }];
+    
+    for (int i=0; i<100; i++) {
+        [ada writeFrameAtTime:11 + i handler:^(CGContextRef  _Nonnull context) {
+            CGContextDrawImage(context, CGRectMake(100, i + 10, 400, 400), image.CGImage);
+        }];
+    }
+    
     [writer close];
 
 }

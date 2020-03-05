@@ -6,18 +6,14 @@
 //  Copyright © 2020 angfung. All rights reserved.
 //
 
-#include "FFmpegVideoRecorder.h"
-#include "libavformat/avformat.h"
+#import "FFmpegVideoRecorder.h"
+
 #include "libswscale/swscale.h"
 #include "libavutil/imgutils.h"
+#import "FFVideoPixelBufferAdapter.h"
 
 
 @interface FFAVStream ()
-@property (nonatomic, strong, readonly) FFAVFormatContext * formatContext;
-
-@property (nonatomic, assign, readonly) AVStream * stream;
-
-@property (nonatomic, assign, readonly) AVCodec * codec;
 
 @end
 @implementation FFAVStream
@@ -35,7 +31,6 @@
 
 
 @interface FFAVFormatContext ()
-@property (nonatomic, assign, readonly) AVFormatContext * formatContext;
 @end
 @implementation FFAVFormatContext
 
@@ -51,7 +46,6 @@
     if (format != FFAVFormatMp4) {
         return nil;
     }
-    
     AVOutputFormat *fmt = av_guess_format("MP4", NULL, NULL);
     AVFormatContext * formatContext = NULL;
     int code= avformat_alloc_output_context2(&formatContext, fmt, "MP4", NULL);
@@ -96,8 +90,6 @@
 
 @interface FFBaseAVAdapter ()
 
-@property (nonatomic, assign) AVCodecContext * context;
-
 @end
 @implementation FFBaseAVAdapter
 
@@ -110,6 +102,10 @@
     }
     return self;
 }
+- (BOOL)close {
+    return avcodec_close(self.stream.codec);
+}
+
 
 @end
 
@@ -129,6 +125,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        _width = 1280;
+        _height = 720;
         _codec = FFVideoCodecH264;
         _frameRate = 24;
     }
@@ -144,114 +142,123 @@
 @end
 @implementation FFAudioAdapter
 
+
+
 @end
 
 @interface FFVideoAdapter ()
 
+@property (nonatomic, assign) uint32_t width;
+@property (nonatomic, assign) uint32_t height;
+
 @end
 @implementation FFVideoAdapter
 
-
-- (AVFrame *)makeFrame:(enum AVPixelFormat)fmt width:(int)width height:(int)height {
-    AVFrame * picture = av_frame_alloc();
-    uint8_t * picture_buf = NULL;
-
-    if (!picture) {
-        return NULL;
-    }
-    
-    int size = av_image_get_buffer_size(fmt, width, height, 64);
-    if (size < 0) {
-        return NULL;
-    }
-    int line = 0;
-    int createImageBufferResult = av_image_alloc(&picture_buf, &line, width, height, fmt, 64);
-    if (!picture_buf) {
-        av_frame_free(&picture);
-        return NULL;
-    }
-    avpicture_fill((AVPicture *)picture, picture_buf,
-                   pix_fmt, width, height);
-    return picture;
-}
-
-- (void)writeFrame:(id)frame {
-    int out_size, ret;
-    AVFormatContext * formatContext = self.formatContext.formatContext;
-    AVCodecContext * context = self.context;
-    AVStream * stream = self.stream.stream;
-    
-//    static struct SwsContext *img_convert_ctx;
-//    if (context->pix_fmt != AV_PIX_FMT_YUV420P) {
-//        /* as we only generate a YUV420P picture, we must convert it
-//           to the codec pixel format if needed */
-//        if (img_convert_ctx == NULL) {
-//            img_convert_ctx = sws_getContext(c->width, c->height,
-//                                             PIX_FMT_YUV420P,
-//                                             c->width, c->height,
-//                                             c->pix_fmt,
-//                                             sws_flags, NULL, NULL, NULL);
-//            if (img_convert_ctx == NULL) {
-//                fprintf(stderr, "Cannot initialize the conversion context\n");
-//                exit(1);
-//            }
-//        }
-//        fill_yuv_image(tmp_picture, frame_count, c->width, c->height);
-//        sws_scale(img_convert_ctx, tmp_picture->data, tmp_picture->linesize,
-//                  0, c->height, picture->data, picture->linesize);
-//    } else {
-//        fill_yuv_image(picture, frame_count, c->width, c->height);
-//    }
-
-    if (formatContext->oformat->flags & AVFMT_NOFILE) {
-        /* raw video case. The API will change slightly in the near
-           futur for that */
-        AVPacket pkt;
-        av_init_packet(&pkt);
-
-        pkt.flags |= AV_PKT_FLAG_KEY;
-        pkt.stream_index= stream->index;
-        pkt.data= (uint8_t *)picture;
-        pkt.size = sizeof(AVPicture);
-
-        ret = av_interleaved_write_frame(formatContext, &pkt);
-    } else {
-        /* encode the image */
-        
-//        avcodec_receive_packet(AVCodecContext *avctx, <#AVPacket *avpkt#>)
 //
-//        avcodec_send_frame(context, &)
-        
-//        avcodec_send_frame()/avcodec_receive_packet() instead
-
-        
-        out_size = avcodec_encode_video(c, video_outbuf, video_outbuf_size, picture);
-        /* if zero size, it means the image was buffered */
-        if (out_size > 0) {
-            AVPacket pkt;
-            av_init_packet(&pkt);
-
-            if (c->coded_frame->pts != AV_NOPTS_VALUE)
-                pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, st->time_base);
-            if(c->coded_frame->key_frame)
-                pkt.flags |= PKT_FLAG_KEY;
-            pkt.stream_index= st->index;
-            pkt.data= video_outbuf;
-            pkt.size= out_size;
-
-            /* write the compressed frame in the media file */
-            ret = av_interleaved_write_frame(oc, &pkt);
-        } else {
-            ret = 0;
-        }
-    }
-    if (ret != 0) {
-        fprintf(stderr, "Error while writing video frame\n");
-        exit(1);
-    }
-    frame_count++;
-}
-
+///*
+// */
+//
+//- (AVFrame *)makeFrame:(enum AVPixelFormat)fmt width:(int)width height:(int)height {
+//    AVFrame * picture = av_frame_alloc();
+//    uint8_t * picture_buf = NULL;
+//
+//    if (!picture) {
+//        return NULL;
+//    }
+//
+//    int size = av_image_get_buffer_size(fmt, width, height, 64);
+//    if (size < 0) {
+//        return NULL;
+//    }
+//    int line = 0;
+//    int createImageBufferResult = av_image_alloc(&picture_buf, &line, width, height, fmt, 64);
+//    if (!picture_buf) {
+//        av_frame_free(&picture);
+//        return NULL;
+//    }
+//    avpicture_fill((AVPicture *)picture, picture_buf,
+//                   pix_fmt, width, height);
+//    return picture;
+//}
+//
+//- (void)writeFrame:(id)frame {
+//    int out_size, ret;
+//    AVFormatContext * formatContext = self.formatContext.formatContext;
+//    AVCodecContext * context = self.context;
+//    AVStream * stream = self.stream.stream;
+//
+////    static struct SwsContext *img_convert_ctx;
+////    if (context->pix_fmt != AV_PIX_FMT_YUV420P) {
+////        /* as we only generate a YUV420P picture, we must convert it
+////           to the codec pixel format if needed */
+////        if (img_convert_ctx == NULL) {
+////            img_convert_ctx = sws_getContext(c->width, c->height,
+////                                             PIX_FMT_YUV420P,
+////                                             c->width, c->height,
+////                                             c->pix_fmt,
+////                                             sws_flags, NULL, NULL, NULL);
+////            if (img_convert_ctx == NULL) {
+////                fprintf(stderr, "Cannot initialize the conversion context\n");
+////                exit(1);
+////            }
+////        }
+////        fill_yuv_image(tmp_picture, frame_count, c->width, c->height);
+////        sws_scale(img_convert_ctx, tmp_picture->data, tmp_picture->linesize,
+////                  0, c->height, picture->data, picture->linesize);
+////    } else {
+////        fill_yuv_image(picture, frame_count, c->width, c->height);
+////    }
+//
+//    if (formatContext->oformat->flags & AVFMT_NOFILE) {
+//        /* raw video case. The API will change slightly in the near
+//           futur for that */
+//        AVPacket pkt;
+//        av_init_packet(&pkt);
+//
+//        pkt.flags |= AV_PKT_FLAG_KEY;
+//        pkt.stream_index= stream->index;
+//        pkt.data= (uint8_t *)picture;
+//        pkt.size = sizeof(AVPicture);
+//
+//        ret = av_interleaved_write_frame(formatContext, &pkt);
+//    } else {
+//        /* encode the image */
+//
+//        avcodec_send_frame(<#AVCodecContext *avctx#>, <#const AVFrame *frame#>)
+//
+////        avcodec_receive_packet(AVCodecContext *avctx, <#AVPacket *avpkt#>)
+////
+////        avcodec_send_frame(context, &)
+//
+////        avcodec_send_frame()/avcodec_receive_packet() instead
+//
+//        out_size = avcodec_encode_video(c, video_outbuf, video_outbuf_size, picture);
+//        /* if zero size, it means the image was buffered */
+//        if (out_size > 0) {
+//            AVPacket pkt;
+//            av_init_packet(&pkt);
+//
+//            if (c->coded_frame->pts != AV_NOPTS_VALUE)
+//                pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, st->time_base);
+//            if(c->coded_frame->key_frame)
+//                pkt.flags |= PKT_FLAG_KEY;
+//            pkt.stream_index= st->index;
+//            pkt.data= video_outbuf;
+//            pkt.size= out_size;
+//
+//            /* write the compressed frame in the media file */
+//            ret = av_interleaved_write_frame(oc, &pkt);
+//        } else {
+//            ret = 0;
+//        }
+//    }
+//    if (ret != 0) {
+//        fprintf(stderr, "Error while writing video frame\n");
+//        exit(1);
+//    }
+//    frame_count++;
+//}
+//
 
 
 @end
@@ -310,8 +317,6 @@
 
 - (nullable FFAudioAdapter *)addAudioAdapter:(FFAudioOption *)option {
     FFAVStream * stream = [self.formatContext createAudioStream:option.codec];
-    
-    AVCodec * codec = stream.codec;
     AVCodecContext * context = avcodec_alloc_context3(stream.codec);
     context->codec_id = stream.codec->id;
     context->codec_type = AVMEDIA_TYPE_AUDIO;
@@ -366,35 +371,89 @@
     //    samples = av_malloc(audio_input_frame_size * 2 * params->channels);
     
 }
+
+/*
+ i:0, AVPixelFormat 0 AV_PIX_FMT_YUV420P
+ i:1, AVPixelFormat 12 AV_PIX_FMT_YUVJ420P
+ i:2, AVPixelFormat 4 AV_PIX_FMT_YUV422P
+ i:3, AVPixelFormat 13 AV_PIX_FMT_YUVJ422P
+ i:4, AVPixelFormat 5 AV_PIX_FMT_YUV444P
+ i:5, AVPixelFormat 14 AV_PIX_FMT_YUVJ444P
+ i:6, AVPixelFormat 23 AV_PIX_FMT_NV12
+ i:7, AVPixelFormat 103 AV_PIX_FMT_NV16
+ i:8, AVPixelFormat 24 AV_PIX_FMT_NV21
+ i:9, AVPixelFormat 64 AV_PIX_FMT_YUV420P10LE
+ i:10, AVPixelFormat 66 AV_PIX_FMT_YUV422P10LE
+ i:11, AVPixelFormat 70 AV_PIX_FMT_GRAY10LE
+ i:12, AVPixelFormat 104 AV_PIX_FMT_ARGB
+ i:13, AVPixelFormat 8 AV_PIX_FMT_GRAY8
+ i:14, AVPixelFormat 171 AV_PIX_FMT_GRAY10LE
+ */
 - (nullable FFVideoAdapter *)addVideoAdapter:(FFVideoOption *)option {
     FFAVStream * stream = [self.formatContext createVideoStream:option.codec];
     
+    AVCodec * codec = stream.codec;
+//    enum AVPixelFormat F171 = 171;
+//    enum AVPixelFormat F70 = 70;
+//    enum AVPixelFormat F66 = 66;
+//    enum AVPixelFormat F64 = 64;
+    /*
+     
+     YUV 4:4:4采样，每一个Y对应一组UV分量8+8+8 = 24bits,3个字节。
+     YUV 4:2:2采样，每两个Y共用一组UV分量,一个YUV占8+4+4 = 16bits 2个字节。
+     YUV 4:2:0采样，每四个Y共用一组UV分量一个YUV占8+2+2 = 12bits 1.5个字节。
+     所以YUV采样方式主要有：YUV444,YUV422,YUV420，三种YUV采样模式的表示
+
+     YUV444
+     （1）YUV444p：YYYYYYYYY VVVVVVVVV UUUUUUUU
+     YUV422
+     （1）YUV422p：YYYYYYYY VVVV UUUU
+     （2）YUVY：YUYV YUYV YUYV YUYV
+     （3）UYVY：UYVY UYVY UYVY UYVY
+     YUV420
+     （1）YUV420p：
+     YV12：YYYYYYYY VV UU
+     YU12（I420）：YYYYYYYY UU VV
+     (2）YUV420sp：
+     NV12：YYYYYYYY UVUV
+     NV21：YYYYYYYY VUVU
+     
+     H264硬编码 YUV420SP: {
+     AV_PIX_FMT_NV12,
+     AV_PIX_FMT_NV21,
+     }
+     NV12:IOS只有这一种模式。存储顺序是先存Y，再UV交替存储。YYYYUVUVUV
+     NV21:安卓的模式。存储顺序是先存Y，再存U，再VU交替存储。YYYYVUVUVU
+     */
+
     AVCodecParameters * params = stream.stream->codecpar;
     params->codec_id = stream.codec->id;
 
     AVCodecContext * context = avcodec_alloc_context3(stream.codec);
     context->codec_type = AVMEDIA_TYPE_VIDEO;
-    context->width = 1280;
-    context->height = 720;
-    context->pix_fmt = AV_PIX_FMT_YUV420P;
+    context->width = option.width;
+    context->height = option.height;
+    context->pix_fmt = AV_PIX_FMT_NV12;
     context->gop_size = 12;
     context->time_base.den = option.frameRate;
     context->time_base.num = 1;
     context->bit_rate = 1400 * 1000;
+    int mapResult = avcodec_parameters_from_context(stream.stream->codecpar, context);
 
     int openResult = avcodec_open2(context, stream.codec, NULL);
     if (0 != openResult) {
         fprintf(stderr, "could not open codec\n");
         abort();
     }
-    int mapResult = avcodec_parameters_from_context(stream.stream->codecpar, context);
     if (mapResult < 0) {
         fprintf(stderr, "could not avcodec_parameters_from_context\n");
         abort();
     }
-    return [[FFVideoAdapter alloc] initWithFormatContext:self.formatContext stream:stream context:context];
+    FFVideoAdapter * adapter = [[FFVideoAdapter alloc] initWithFormatContext:self.formatContext stream:stream context:context];
+    adapter.width = option.width;
+    adapter.height = option.height;
+    return adapter;
 }
-
 
 
 
@@ -703,11 +762,52 @@
 //    }
 }
 
+- (void)open {
+    AVFormatContext * formatContext = self.formatContext.formatContext;
+    
+    if (!(formatContext->flags & AVFMT_NOFILE)) {
+        int oResult = avio_open2(&(formatContext->pb), self.path.UTF8String, AVIO_FLAG_WRITE, NULL, NULL);
+        if (oResult < 0) {
+            NSLog(@"Could not open %@", self.path);
+        } else {
+            NSLog(@"avio_open2 success");
+        }
+    } else {
+        NSLog(@"AVFMT_NOFILE eee");
+    }
+    
+    int writeHeaderResult = avformat_write_header(formatContext, NULL);
+    if (writeHeaderResult == AVSTREAM_INIT_IN_WRITE_HEADER) {
+        NSLog(@"avformat_write_header success AVSTREAM_INIT_IN_WRITE_HEADER");
+    } else if (writeHeaderResult == AVSTREAM_INIT_IN_INIT_OUTPUT) {
+        NSLog(@"avformat_write_header success AVSTREAM_INIT_IN_INIT_OUTPUT");
+    } else {
+        NSLog(@"writeHeaderResult %d", writeHeaderResult);
+    }
+    
+}
 
+- (void)close {
+    AVFormatContext * formatContext = self.formatContext.formatContext;
 
+    int r = av_write_trailer(formatContext);
+    if (r != 0) {
+        NSLog(@"av_write_trailer failure %ld", r);
+    } else {
+        NSLog(@"av_write_trailer success");
+    }
+    int closeResult = avio_closep(&(formatContext->pb));
+    if (closeResult < 0) {
+        NSLog(@"avio_closep failure %ld", closeResult);
+    } else {
+        NSLog(@"avio_closep success %ld", closeResult);
+    }
+}
 
 + (void)test {
-    FFAVWriter * writer = [FFAVWriter writerWithFormat:FFAVFormatMp4 path:@"111"];
+    NSString * path = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/ff_%@.mp4", [NSUUID UUID].UUIDString];
+    NSLog(@"path: %@", path);
+    FFAVWriter * writer = [FFAVWriter writerWithFormat:FFAVFormatMp4 path:path];
     
     FFAudioOption * audio = [[FFAudioOption alloc] init];
     audio.codec = FFAudioCodecAac;
@@ -717,7 +817,77 @@
 
     [writer addAudioAdapter:audio];
     
-    [writer addVideoAdapter:video];
+    FFVideoAdapter * v = [writer addVideoAdapter:video];
+    
+    
+    FFVideoPixelBufferAdapter * ada = [[FFVideoPixelBufferAdapter alloc] initWithVideoAdapter:v];
+    
+    [writer open];
+    //
+    //    for(;;) {
+    //        /* compute current audio and video time */
+    //        if (audio_st)
+    //            audio_pts = (double)audio_st->pts.val * audio_st->time_base.num / audio_st->time_base.den;
+    //        else
+    //            audio_pts = 0.0;
+    //
+    //        if (video_st)
+    //            video_pts = (double)video_st->pts.val * video_st->time_base.num / video_st->time_base.den;
+    //        else
+    //            video_pts = 0.0;
+    //
+    //        if ((!audio_st || audio_pts >= STREAM_DURATION) &&
+    //            (!video_st || video_pts >= STREAM_DURATION))
+    //            break;
+    //
+    //        /* write interleaved audio and video frames */
+    //        if (!video_st || (video_st && audio_st && audio_pts < video_pts)) {
+    //            write_audio_frame(oc, audio_st);
+    //        } else {
+    //            write_video_frame(oc, video_st);
+    //        }
+    //    }
+    //
+    //    /* write the trailer, if any.  the trailer must be written
+    //     * before you close the CodecContexts open when you wrote the
+    //     * header; otherwise write_trailer may try to use memory that
+    //     * was freed on av_codec_close() */
+    //    av_write_trailer(oc);
+    //
+    //    /* close each codec */
+    //    if (video_st)
+    //        close_video(oc, video_st);
+    //    if (audio_st)
+    //        close_audio(oc, audio_st);
+    //
+    //    /* free the streams */
+    //    for(i = 0; i < oc->nb_streams; i++) {
+    //        av_freep(&oc->streams[i]->codec);
+    //        av_freep(&oc->streams[i]);
+    //    }
+    //
+    //    if (!(fmt->flags & AVFMT_NOFILE)) {
+    //        /* close the output file */
+    //        url_fclose(oc->pb);
+    //    }
+    //
+    //    /* free the stream */
+    //    av_free(oc);
+    
+    
+    
+    [ada writeFrameAtTime:1 handler:^(CGContextRef  _Nonnull context) {
+        
+    }];
+    
+    [ada writeFrameAtTime:2 handler:^(CGContextRef  _Nonnull context) {
+        
+    }];
+    
+    [ada writeFrameAtTime:10 handler:^(CGContextRef  _Nonnull context) {
+        
+    }];
+    [writer close];
 
 }
 
@@ -1015,7 +1185,7 @@
 //        video_outbuf_size = 200000;
 //        video_outbuf = av_malloc(video_outbuf_size);
 //    }
-//
+
 //    /* allocate the encoded raw picture */
 //    picture = alloc_picture(c->pix_fmt, c->width, c->height);
 //    if (!picture) {

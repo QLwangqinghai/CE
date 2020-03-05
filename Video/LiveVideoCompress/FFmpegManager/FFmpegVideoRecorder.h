@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FFAVAdapter.h"
+#include "libavformat/avformat.h"
 
 
 //rgb => yuv
@@ -23,10 +25,19 @@ typedef NS_ENUM(NSUInteger, FFVideoCodec) {
     FFVideoCodecH264 = 1,
 };
 
+typedef NS_ENUM(NSUInteger, FFVideoCodecPixelFormat) {
+    FFVideoCodecPixelFormatA = 1,
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 
 @interface FFAVStream : NSObject
+@property (nonatomic, strong, readonly) FFAVFormatContext * formatContext;
+
+@property (nonatomic, assign, readonly) AVStream * stream;
+
+@property (nonatomic, assign, readonly) AVCodec * codec;
 
 @end
 
@@ -38,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable FFAVStream *)createAudioStream:(FFAudioCodec)codec;
 - (nullable FFAVStream *)createVideoStream:(FFVideoCodec)codec;
 
+@property (nonatomic, assign, readonly) AVFormatContext * formatContext;
+
 @end
 
 
@@ -45,6 +58,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FFBaseAVAdapter : NSObject
 @property (nonatomic, strong, readonly) FFAVFormatContext * formatContext;
 @property (nonatomic, strong, readonly) FFAVStream * stream;
+@property (nonatomic, assign, readonly) AVCodecContext * context;
+
+- (BOOL)close;
 
 @end
 
@@ -55,16 +71,20 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 @interface FFVideoOption : NSObject
 @property (nonatomic, assign) FFVideoCodec codec;
+@property (nonatomic, assign) uint32_t width;
+@property (nonatomic, assign) uint32_t height;
 @property (nonatomic, assign) int frameRate;//帧率 每秒钟多少帧
-
 @end
 
 
 @interface FFAudioAdapter : FFBaseAVAdapter
 
+
 @end
 
 @interface FFVideoAdapter : FFBaseAVAdapter
+@property (nonatomic, assign, readonly) uint32_t width;
+@property (nonatomic, assign, readonly) uint32_t height;
 
 @end
 

@@ -41,15 +41,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-
+//https://blog.csdn.net/xubuwei/article/details/83994044
 @interface FFAVFormatContext : NSObject
 
-+ (nullable instancetype)contextWithFormat:(FFAVFormat)format;
++ (nullable instancetype)contextWithFormat:(FFAVFormat)format path:(NSString *)path;
 
 - (nullable FFAVStream *)createAudioStream:(FFAudioCodec)codec;
 - (nullable FFAVStream *)createVideoStream:(FFVideoCodec)codec;
 
-@property (nonatomic, assign, readonly) AVFormatContext * formatContext;
+@property (nonatomic, assign, readonly) FFAVFormat format;
+@property (nonatomic, copy, readonly) NSString * path;
+@property (nonatomic, assign, readonly) AVFormatContext * context;
 
 @end
 
@@ -90,6 +92,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @interface FFAVWriter : NSObject
+
+@property (nonatomic, strong, readonly) FFAVFormatContext * context;
+
 
 @property (nonatomic, strong, readonly, nullable) FFAudioAdapter * audioAdapter;
 @property (nonatomic, strong, readonly, nullable) FFAudioAdapter * videoAdapter;

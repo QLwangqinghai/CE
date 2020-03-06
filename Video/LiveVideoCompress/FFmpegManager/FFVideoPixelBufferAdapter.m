@@ -66,6 +66,11 @@
         _to->height = height;
         _to->format = AV_PIX_FMT_NV12;
         
+        int ret3 = av_frame_get_buffer(_from, 32);
+        int ret4 = av_frame_get_buffer(_to, 32);
+
+        int ret0 = av_frame_make_writable(_from);
+        int ret1 = av_frame_make_writable(_to);
         
         _swsContext = sws_getContext(videoAdapter.width, height, AV_PIX_FMT_BGR0, width, height, AV_PIX_FMT_NV12, SWS_BILINEAR, NULL, NULL, NULL);
         _yuvBuffer = malloc(width * height * 2);
@@ -88,22 +93,31 @@
     }];
 }
 
-- (void)writeFrameAtTime:(int64_t)time handler:(void(^)(CGContextRef context))handler {
-    handler(self.bitmapContext);
-    BOOL result = [self mapTo];
-    AVFrame * to = self.to;
-    to->key_frame = 1;
-    to->pts = time;
-    NSLog(@"writeFrame result: %@", @(result));
-//    AVCodecContext
-    int wresult = avcodec_send_frame(self.videoAdapter.context, to);
-    if (0 == wresult) {
-        //success
-    }
-    NSLog(@"avcodec_send_frame wresult: %@", @(wresult == 0));
-
-    AVPacket * pkt = av_packet_alloc();;
+- (void)sendFrame:(AVFrame *)frame {
     int ret = 0;
+
+    if (frame) {
+        ret = av_frame_is_writable(frame);
+        if (ret != 0) {
+            int wresult = avcodec_send_frame(self.videoAdapter.context, frame);
+            if (0 == wresult) {
+                //success
+            }
+            NSLog(@"avcodec_send_frame wresult: %@", @(wresult == 0));
+        }
+    } else {
+        int wresult = avcodec_send_frame(self.videoAdapter.context, frame);
+        if (0 == wresult) {
+            //success
+        }
+        NSLog(@"avcodec_send_frame wresult: %@", @(wresult == 0));
+    }
+    
+    AVPacket pac = {};
+    av_init_packet(&pac);
+    AVPacket * pkt = &pac;
+    
+
 
     while (ret >= 0) {
         ret = avcodec_receive_packet(self.videoAdapter.context, pkt);
@@ -115,21 +129,42 @@
             fprintf(stderr, "Error during encoding\n");
             exit(1);
         }
-           printf("Write packet %3"PRId64" (size=%5d)\n", pkt->pts, pkt->size);
+           
+        printf("Write packet %ld (size=%5d)\n", pkt->pts, pkt->size);
 //           fwrite(pkt->data, 1, pkt->size, outfile);
-           av_packet_unref(pkt);
-       }
+        ret = av_interleaved_write_frame(self.videoAdapter.formatContext.context, pkt);
+        NSLog(@"av_interleaved_write_frame wresult: %@", @(ret == 0));
+        av_packet_unref(pkt);
+    }
     
-    
-    wresult = av_interleaved_write_frame(self.videoAdapter.formatContext.formatContext, pkt);
-    
-    NSLog(@"av_interleaved_write_frame wresult: %@", @(wresult == 0));
+    NSLog(@"av_interleaved_write_frame wresult: %@", @(ret == 0));
+
 }
+
+- (void)writeFrameAtTime:(int64_t)time handler:(void(^)(CGContextRef context))handler {
+    int64_t tmp = time / self.videoAdapter.context->ticks_per_frame;
+    tmp = time * self.videoAdapter.stream.stream->time_base.den / self.videoAdapter.stream.stream->time_base.num / 1000;
+    
+    handler(self.bitmapContext);
+    BOOL result = [self mapTo];
+    AVFrame * to = self.to;
+    to->pts = tmp;
+//    AVRational t = {.num = time, .den = self.videoAdapter.stream.stream->time_base.den};
+//    to->sample_aspect_ratio = t;
+//    AVCodecContext
+    [self sendFrame:to];
+}
+
+- (void)finish {
+    [self sendFrame:NULL];
+}
+
 
 - (BOOL)mapTo {
     uint8_t * source = self.ptr;
-    uint8_t * buffer = self.yuvBuffer;
-
+    memcpy(_from->data[0], source, 720 * 1280 * 4);
+    
+    
     int width = self.width;
     int height = self.height;
 
@@ -142,7 +177,6 @@
 //    AV_PIX_FMT_BGR0,        ///< packed BGR 8:8:8, 32bpp, BGRXBGRX...   X=unused/undefined
 
     int len = av_image_fill_arrays(from->data, from->linesize, source, AV_PIX_FMT_BGR0, width, height, 1);
-    int len1 = av_image_fill_arrays(to->data, to->linesize, buffer, AV_PIX_FMT_NV12, width, height, 1);
 
         //指定原数据格式，分辨率及目标数据格式，分辨率
     struct SwsContext *sws = self.swsContext;

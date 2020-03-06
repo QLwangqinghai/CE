@@ -12,6 +12,7 @@
 #include "libavutil/imgutils.h"
 #import "FFVideoPixelBufferAdapter.h"
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface FFAVStream ()
 
@@ -34,31 +35,33 @@
 @end
 @implementation FFAVFormatContext
 
-- (instancetype)initWithFormatContext:(AVFormatContext *)formatContext {
+- (instancetype)initWithFormat:(FFAVFormat)format context:(AVFormatContext *)context path:(NSString *)path {
     self = [super init];
     if (self) {
-        _formatContext = formatContext;
+        _format = format;
+        _context = context;
+        _path = [path copy];
     }
     return self;
 }
 
-+ (nullable instancetype)contextWithFormat:(FFAVFormat)format {
++ (nullable instancetype)contextWithFormat:(FFAVFormat)format path:(NSString *)path {
     if (format != FFAVFormatMp4) {
         return nil;
     }
     AVOutputFormat *fmt = av_guess_format("MP4", NULL, NULL);
     AVFormatContext * formatContext = NULL;
-    int code= avformat_alloc_output_context2(&formatContext, fmt, "MP4", NULL);
+    int code= avformat_alloc_output_context2(&formatContext, fmt, "MP4", path.UTF8String);
     if (code < 0) {
         return nil;
     }
     formatContext->oformat = fmt;
-    return [[self alloc] initWithFormatContext:formatContext];
+    return [[self alloc] initWithFormat:format context:formatContext path:path];
 }
 
 - (FFAVStream *)createStream:(AVCodec *)codec {
     if (codec) {
-        AVStream *stream = avformat_new_stream(self.formatContext, codec);
+        AVStream *stream = avformat_new_stream(self.context, codec);
         if (stream) {
             return [[FFAVStream alloc] initWithFormatContext:self stream:stream codec:codec];
         } else {
@@ -128,7 +131,7 @@
         _width = 1280;
         _height = 720;
         _codec = FFVideoCodecH264;
-        _frameRate = 24;
+        _frameRate = 30;
     }
     return self;
 }
@@ -270,10 +273,6 @@
 
 @interface FFAVWriter ()
 
-@property (nonatomic, strong, readonly) FFAVFormatContext * formatContext;
-@property (nonatomic, copy, readonly) NSString * path;
-
-@property (nonatomic, assign) AVOutputFormat * format;
 
 @property (nonatomic, assign) AVStream * audioStream;
 @property (nonatomic, assign) AVStream * videoStream;
@@ -297,26 +296,78 @@
 @end
 @implementation FFAVWriter
 
-
-- (instancetype)initWithFormatContext:(FFAVFormatContext *)formatContext path:(NSString *)path {
+- (instancetype)initWithContext:(FFAVFormatContext *)context {
     self = [super init];
     if (self) {
-        _formatContext = formatContext;
-        _path = [path copy];
+        _context = context;
     }
     return self;
 }
 
+//- (instancetype)initWithFormatContext:(AVFormatContext *)formatContext {
+//    self = [super init];
+//    if (self) {
+//        _formatContext = formatContext;
+//    }
+//    return self;
+//}
+//
+//+ (nullable instancetype)contextWithFormat:(FFAVFormat)format {
+//    if (format != FFAVFormatMp4) {
+//        return nil;
+//    }
+//    AVOutputFormat *fmt = av_guess_format("MP4", NULL, NULL);
+//    AVFormatContext * formatContext = NULL;
+//    int code= avformat_alloc_output_context2(&formatContext, fmt, "MP4", NULL);
+//    if (code < 0) {
+//        return nil;
+//    }
+//    formatContext->oformat = fmt;
+//    return [[self alloc] initWithFormatContext:formatContext];
+//}
+//
+//- (FFAVStream *)createStream:(AVCodec *)codec {
+//    if (codec) {
+//        AVStream *stream = avformat_new_stream(self.formatContext, codec);
+//        if (stream) {
+//            return [[FFAVStream alloc] initWithFormatContext:self stream:stream codec:codec];
+//        } else {
+//            return nil;
+//        }
+//    } else {
+//        return nil;
+//    }
+//}
+//
+//- (FFAVStream *)createAudioStream:(FFAudioCodec)codecType {
+//    if (FFAudioCodecAac == codecType) {
+//        return [self createStream:avcodec_find_encoder(AV_CODEC_ID_AAC)];
+//    } else {
+//        return nil;
+//    }
+//}
+//- (FFAVStream *)createVideoStream:(FFVideoCodec)codecType {
+//    if (FFVideoCodecH264 == codecType) {
+//        return [self createStream:avcodec_find_encoder(AV_CODEC_ID_H264)];
+//    } else {
+//        return nil;
+//    }
+//}
+
+
 + (nullable instancetype)writerWithFormat:(FFAVFormat)format path:(NSString *)path {
-    FFAVFormatContext * context = [FFAVFormatContext contextWithFormat:format];
-    if (nil == context || path.length <= 0) {
+    if (path.length <= 0) {
         return nil;
     }
-    return [[FFAVWriter alloc] initWithFormatContext:context path:path];
+    FFAVFormatContext * context = [FFAVFormatContext contextWithFormat:format path:path];
+    if (nil == context) {
+        return nil;
+    }
+    return [[FFAVWriter alloc] initWithContext:context];
 }
 
 - (nullable FFAudioAdapter *)addAudioAdapter:(FFAudioOption *)option {
-    FFAVStream * stream = [self.formatContext createAudioStream:option.codec];
+    FFAVStream * stream = [self.context createAudioStream:option.codec];
     AVCodecContext * context = avcodec_alloc_context3(stream.codec);
     context->codec_id = stream.codec->id;
     context->codec_type = AVMEDIA_TYPE_AUDIO;
@@ -340,7 +391,7 @@
         abort();
     }
 
-    return [[FFAudioAdapter alloc] initWithFormatContext:self.formatContext stream:stream context:context];
+    return [[FFAudioAdapter alloc] initWithFormatContext:self.context stream:stream context:context];
     
     //    /* init signal generator */
     //    t = 0;
@@ -389,10 +440,75 @@
  i:13, AVPixelFormat 8 AV_PIX_FMT_GRAY8
  i:14, AVPixelFormat 171 AV_PIX_FMT_GRAY10LE
  */
+- (nullable FFVideoAdapter *)addVideoAdapter2:(FFVideoOption *)option {
+    if (FFVideoCodecH264 != option.codec) {
+        return nil;
+    }
+    AVFormatContext * fContext = self.context.context;
+    
+    AVCodec * codec = avcodec_find_encoder(AV_CODEC_ID_H264);
+    if (NULL == codec) {
+        return nil;
+    }
+    AVCodecContext * context = avcodec_alloc_context3(codec);
+    
+    context->flags |= AV_CODEC_FLAG_QSCALE;
+    if (fContext->oformat->flags & AVFMT_GLOBALHEADER) {
+        context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+    }
+    context->codec_type = AVMEDIA_TYPE_VIDEO;
+    context->width = option.width;
+    context->height = option.height;
+    context->pix_fmt = AV_PIX_FMT_NV12;
+    context->gop_size = 10;
+    context->max_b_frames = 1;
+    context->thread_count = 2;
+    context->ticks_per_frame = 2;
+    AVRational timeBase = {.num = 1, .den = option.frameRate};
+
+    context->time_base = timeBase;
+    context->pkt_timebase = timeBase;
+    context->qmin = 10;
+    context->qmax = 51;
+    context->qcompress  = 0.6;
+    
+    AVRational framerate = {.num = option.frameRate, .den = 1};
+    context->framerate = framerate;
+    context->bit_rate = 1400 * 1000;
+
+    int openResult = avcodec_open2(context, codec, NULL);
+    if (0 != openResult) {
+        fprintf(stderr, "could not open codec\n");
+        abort();
+    }
+    
+    FFAVStream * stream = [self.context createVideoStream:option.codec];
+    stream.stream->id = 0;
+    stream.stream->codecpar->codec_tag = 0;
+    stream.stream->time_base = context->time_base;
+//stream.stream->fr
+    
+    int mapResult = avcodec_parameters_from_context(stream.stream->codecpar, context);
+
+    av_dump_format(self.context.context, 0, self.context.path.UTF8String, 1);
+
+    if (mapResult < 0) {
+        fprintf(stderr, "could not avcodec_parameters_from_context\n");
+        abort();
+    }
+    FFVideoAdapter * adapter = [[FFVideoAdapter alloc] initWithFormatContext:self.context stream:stream context:context];
+    adapter.width = option.width;
+    adapter.height = option.height;
+    return adapter;
+}
+
+
 - (nullable FFVideoAdapter *)addVideoAdapter:(FFVideoOption *)option {
-    FFAVStream * stream = [self.formatContext createVideoStream:option.codec];
+    FFAVStream * stream = [self.context createVideoStream:option.codec];
     
     AVCodec * codec = stream.codec;
+    
+    
 //    enum AVPixelFormat F171 = 171;
 //    enum AVPixelFormat F70 = 70;
 //    enum AVPixelFormat F66 = 66;
@@ -434,22 +550,39 @@
     context->width = option.width;
     context->height = option.height;
     context->pix_fmt = AV_PIX_FMT_NV12;
-    context->gop_size = 12;
-    context->time_base.den = option.frameRate;
+    context->gop_size = 10;
+    context->max_b_frames = 1;
     context->time_base.num = 1;
-    context->bit_rate = 1400 * 1000;
-    int mapResult = avcodec_parameters_from_context(stream.stream->codecpar, context);
+    context->thread_count = 2;
+    context->time_base.den = option.frameRate;
+    context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 
+    context->qmin = 10;
+    context->qmax = 51;
+    context->qcompress  = 0.6;
+    
+    AVRational framerate = {.num = option.frameRate, .den = 1};
+    context->framerate = framerate;
+    context->bit_rate = 1400 * 1000;
+    
     int openResult = avcodec_open2(context, stream.codec, NULL);
     if (0 != openResult) {
         fprintf(stderr, "could not open codec\n");
         abort();
     }
+
+//    if (codec->id == AV_CODEC_ID_H264) {
+    //        av_opt_set(context->priv_data, "preset", "slow", 0);
+//    }
+    int mapResult = avcodec_parameters_from_context(stream.stream->codecpar, context);
+
+    av_dump_format(self.context.context, 0, self.context.path.UTF8String, 1);
+
     if (mapResult < 0) {
         fprintf(stderr, "could not avcodec_parameters_from_context\n");
         abort();
     }
-    FFVideoAdapter * adapter = [[FFVideoAdapter alloc] initWithFormatContext:self.formatContext stream:stream context:context];
+    FFVideoAdapter * adapter = [[FFVideoAdapter alloc] initWithFormatContext:self.context stream:stream context:context];
     adapter.width = option.width;
     adapter.height = option.height;
     return adapter;
@@ -763,12 +896,11 @@
 }
 
 - (void)open {
-    AVFormatContext * formatContext = self.formatContext.formatContext;
-    
+    AVFormatContext * formatContext = self.context.context;
     if (!(formatContext->flags & AVFMT_NOFILE)) {
-        int oResult = avio_open2(&(formatContext->pb), self.path.UTF8String, AVIO_FLAG_READ_WRITE, NULL, NULL);
+        int oResult = avio_open2(&(formatContext->pb), self.context.path.UTF8String, AVIO_FLAG_READ_WRITE, NULL, NULL);
         if (oResult < 0) {
-            NSLog(@"Could not open %@", self.path);
+            NSLog(@"Could not open %@", self.context.path);
         } else {
             NSLog(@"avio_open2 success");
         }
@@ -788,7 +920,7 @@
 }
 
 - (void)close {
-    AVFormatContext * formatContext = self.formatContext.formatContext;
+    AVFormatContext * formatContext = self.context.context;
 
     int r = av_write_trailer(formatContext);
     if (r != 0) {
@@ -815,9 +947,9 @@
     FFVideoOption * video = [[FFVideoOption alloc] init];
     video.codec = FFVideoCodecH264;
 
-    [writer addAudioAdapter:audio];
+//    [writer addAudioAdapter:audio];
     
-    FFVideoAdapter * v = [writer addVideoAdapter:video];
+    FFVideoAdapter * v = [writer addVideoAdapter2:video];
     
     
     FFVideoPixelBufferAdapter * ada = [[FFVideoPixelBufferAdapter alloc] initWithVideoAdapter:v];
@@ -877,29 +1009,35 @@
     UIImage * image = [UIImage imageNamed:@"984916-20160701214405843-875974577.jpg"];
     
     
-
+    double d = 1000.0 / 30;
     
-    [ada writeFrameAtTime:1 handler:^(CGContextRef  _Nonnull context) {
+    [ada writeFrameAtTime:0 handler:^(CGContextRef  _Nonnull context) {
         CGContextDrawImage(context, CGRectMake(0, 0, 400, 400), image.CGImage);
     }];
     
-    [ada writeFrameAtTime:2 handler:^(CGContextRef  _Nonnull context) {
+    [ada writeFrameAtTime:d * 1 handler:^(CGContextRef  _Nonnull context) {
         CGContextDrawImage(context, CGRectMake(0, 100, 400, 400), image.CGImage);
 
     }];
     
-    [ada writeFrameAtTime:10 handler:^(CGContextRef  _Nonnull context) {
+    [ada writeFrameAtTime:d * 2 handler:^(CGContextRef  _Nonnull context) {
         CGContextDrawImage(context, CGRectMake(100, 0, 400, 400), image.CGImage);
     }];
     
-    for (int i=0; i<100; i++) {
-        [ada writeFrameAtTime:11 + i handler:^(CGContextRef  _Nonnull context) {
+    for (int i=3; i<121; i++) {
+        [ada writeFrameAtTime:d * i handler:^(CGContextRef  _Nonnull context) {
             CGContextDrawImage(context, CGRectMake(100, i + 10, 400, 400), image.CGImage);
         }];
     }
-    
+    [ada finish];
     [writer close];
-
+    
+    NSDictionary<NSFileAttributeKey, id> * info = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:NULL];
+    NSLog(@"file size %@", info[NSFileSize]);
+    
+    AVAsset * asset = [AVAsset assetWithURL:[NSURL fileURLWithPath:path]];
+    NSLog(@"duration:  %.03lf", CMTimeGetSeconds(asset.duration));
+    
 }
 
 @end

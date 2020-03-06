@@ -20,8 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithVideoAdapter:(FFVideoAdapter *)videoAdapter;
 
-//https://www.ffmpeg.org/doxygen/4.0/encode_video_8c-example.html#a9
+//https://www.ffmpeg.org/doxygen/4.0/encode_video_8c-example.html
+
+//time 单位 毫秒
 - (void)writeFrameAtTime:(int64_t)time handler:(void(^)(CGContextRef context))handler;
+
+- (void)finish;
 
 //- (FFAVFrame *)makeFrame:(AVFrame *)frame handler:(void(^)(CGContextRef context))handler;
 

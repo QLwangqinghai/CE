@@ -141,6 +141,8 @@
 
 }
 
+
+
 - (void)writeFrameAtTime:(int64_t)time handler:(void(^)(CGContextRef context))handler {
     int64_t tmp = time / self.videoAdapter.context->ticks_per_frame;
     tmp = time * self.videoAdapter.stream.stream->time_base.den / self.videoAdapter.stream.stream->time_base.num / 1000;

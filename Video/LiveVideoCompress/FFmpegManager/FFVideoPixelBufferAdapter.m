@@ -164,7 +164,7 @@
 
 - (BOOL)mapTo {
     uint8_t * source = self.ptr;
-    memcpy(_from->data[0], source, 720 * 1280 * 4);
+    memcpy(_from->data[0], source, self.width * self.height * 4);
     
     
     int width = self.width;

@@ -10,6 +10,8 @@
 
 #include "libswscale/swscale.h"
 #include "libavutil/imgutils.h"
+#include "libavutil/opt.h"
+
 #import "FFVideoPixelBufferAdapter.h"
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
@@ -460,9 +462,9 @@
     context->width = option.width;
     context->height = option.height;
     context->pix_fmt = AV_PIX_FMT_NV12;
-    context->gop_size = 10;
+    context->gop_size = option.frameRate * 3;
     context->max_b_frames = 1;
-    context->thread_count = 2;
+    context->thread_count = 1;
     context->ticks_per_frame = 2;
     AVRational timeBase = {.num = 1, .den = option.frameRate};
 
@@ -474,8 +476,11 @@
     
     AVRational framerate = {.num = option.frameRate, .den = 1};
     context->framerate = framerate;
-    context->bit_rate = 1400 * 1000;
-
+    context->bit_rate = option.width * option.height * option.frameRate / 10 * 0.7;//362880
+//    1400 * 1000;
+    context->rc_max_rate = option.width * option.height * option.frameRate / 10 * 0.7;
+    context->rc_min_rate = option.width * option.height * option.frameRate / 10 * 0.7 / 2;    
+    
     int openResult = avcodec_open2(context, codec, NULL);
     if (0 != openResult) {
         fprintf(stderr, "could not open codec\n");
@@ -571,9 +576,10 @@
         abort();
     }
 
-//    if (codec->id == AV_CODEC_ID_H264) {
-    //        av_opt_set(context->priv_data, "preset", "slow", 0);
-//    }
+    if (codec->id == AV_CODEC_ID_H264) {
+           
+        av_opt_set(context->priv_data, "preset", "slow", 0);
+    }
     int mapResult = avcodec_parameters_from_context(stream.stream->codecpar, context);
 
     av_dump_format(self.context.context, 0, self.context.path.UTF8String, 1);
@@ -937,6 +943,7 @@
 }
 
 + (void)test {
+    NSTimeInterval beginTime = [NSDate date].timeIntervalSince1970;
     NSString * path = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/ff_%@.mp4", [NSUUID UUID].UUIDString];
     NSLog(@"path: %@", path);
     FFAVWriter * writer = [FFAVWriter writerWithFormat:FFAVFormatMp4 path:path];
@@ -945,6 +952,9 @@
     audio.codec = FFAudioCodecAac;
     
     FFVideoOption * video = [[FFVideoOption alloc] init];
+    video.width = 960;
+    video.height = 540;
+    video.frameRate = 15;
     video.codec = FFVideoCodecH264;
 
 //    [writer addAudioAdapter:audio];
@@ -1009,24 +1019,17 @@
     UIImage * image = [UIImage imageNamed:@"984916-20160701214405843-875974577.jpg"];
     
     
-    double d = 1000.0 / 30;
-    
-    [ada writeFrameAtTime:0 handler:^(CGContextRef  _Nonnull context) {
-        CGContextDrawImage(context, CGRectMake(0, 0, 400, 400), image.CGImage);
-    }];
-    
-    [ada writeFrameAtTime:d * 1 handler:^(CGContextRef  _Nonnull context) {
-        CGContextDrawImage(context, CGRectMake(0, 100, 400, 400), image.CGImage);
-
-    }];
-    
-    [ada writeFrameAtTime:d * 2 handler:^(CGContextRef  _Nonnull context) {
-        CGContextDrawImage(context, CGRectMake(100, 0, 400, 400), image.CGImage);
-    }];
-    
-    for (int i=3; i<121; i++) {
+    double d = 1000.0 / 10;
+        
+    for (int i=0; i<= 60 * 10; i++) {
+        NSLog(@"index: %ld", i);
         [ada writeFrameAtTime:d * i handler:^(CGContextRef  _Nonnull context) {
-            CGContextDrawImage(context, CGRectMake(100, i + 10, 400, 400), image.CGImage);
+            if (i % 30 == 0) {
+                CGContextSetFillColorWithColor(context, UIColor.whiteColor.CGColor);
+                CGContextFillRect(context, CGRectMake(0, 0, video.width, video.height));
+            }
+            
+            CGContextDrawImage(context, CGRectMake(arc4random() % 400, arc4random() % 300, 400, 600), image.CGImage);
         }];
     }
     [ada finish];
@@ -1038,6 +1041,9 @@
     AVAsset * asset = [AVAsset assetWithURL:[NSURL fileURLWithPath:path]];
     NSLog(@"duration:  %.03lf", CMTimeGetSeconds(asset.duration));
     
+    NSTimeInterval endTime = [NSDate date].timeIntervalSince1970;
+    NSLog(@"used:  %.03lf", endTime - beginTime);
+
 }
 
 @end

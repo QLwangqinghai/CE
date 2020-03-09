@@ -73,6 +73,11 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 @interface FFVideoOption : NSObject
 @property (nonatomic, assign) FFVideoCodec codec;
+
+/*
+ 1280 * 720
+ 960 * 540
+ */
 @property (nonatomic, assign) uint32_t width;
 @property (nonatomic, assign) uint32_t height;
 @property (nonatomic, assign) int frameRate;//帧率 每秒钟多少帧

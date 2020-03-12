@@ -55,7 +55,7 @@ public class DrawingBoard {
     public func map(rect: CGRect, scale: CGFloat) -> Rect? {
         var frame = rect.standardized
         frame = rect.inset(by: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
-        var bounds = Rect(x: Int32(frame.origin.x * scale), y: Int32(frame.origin.y * scale), width: UInt32(frame.size.width * scale), height: UInt32(frame.size.height * scale))
+        var bounds = Rect(x: Int32(frame.origin.x * scale), y: Int32(frame.origin.y * scale), width: Int32(frame.size.width * scale), height: Int32(frame.size.height * scale))
 
 //        bounds = C2DRectEnlargeFrame(<#T##from: C2DRect##C2DRect#>, <#T##to: C2DRect##C2DRect#>)
 
@@ -68,24 +68,24 @@ public class DrawingBoard {
         }
         
         if bounds.origin.x < 0 {
-            bounds.size.width -= UInt32(rect.origin.x * -1)
+            bounds.size.width -= Int32(rect.origin.x * -1)
             bounds.origin.x = 0
         }
         if rect.origin.y < 0 {
-            bounds.size.height -= UInt32(rect.origin.y * -1)
+            bounds.size.height -= Int32(rect.origin.y * -1)
             bounds.origin.y = 0
         }
 
-        let alignment = UInt32(CCGetCachelineSize()) / self.bitmapLayout.colorSpace.bytesPerPixel
+        let alignment = Int32(CCGetCachelineSize()) / self.bitmapLayout.colorSpace.bytesPerPixel
         
         if alignment > 1 {
             let xOffset = bounds.origin.x % Int32(alignment)
             bounds.origin.x -= xOffset
-            bounds.size.width += UInt32(xOffset)
+            bounds.size.width += Int32(xOffset)
 
-            let widthOffset = bounds.size.width % UInt32(alignment)
+            let widthOffset = bounds.size.width % Int32(alignment)
             if widthOffset > 0 {
-                bounds.size.width += (UInt32(alignment) - widthOffset)
+                bounds.size.width += (Int32(alignment) - widthOffset)
             }
         }
         return bounds

@@ -57,49 +57,43 @@ fs.storage = {
 */
 
 public struct FileStorageConfig {
-    public let dgst: UInt8
-    public let homeDirectoryPath: String
-    public let fileManager: FileManager
-    
-    public init(dgst: UInt8, homeDirectoryPath: String) {
-        self.homeDirectoryPath = homeDirectoryPath
-        let fileManager: FileManager = FileManager()
-        let 
-        
-        
-        
-        
-        
-        
-        guard fileManager.changeCurrentDirectoryPath(homeDirectoryPath) else {
-            fatalError("directoryPath:\(directoryPath) error")
-        }
-        self.dgst = dgst
-        self.fileManager = fileManager
-    }
+//    public let dgst: UInt8
+//    public let homeDirectoryPath: String
+//    public let fileManager: FileManager
+//
+//    public init(dgst: UInt8, homeDirectoryPath: String) {
+//        self.homeDirectoryPath = homeDirectoryPath
+//        let fileManager: FileManager = FileManager()
+//        let
+//
+//
+//
+//
+//
+//
+//        guard fileManager.changeCurrentDirectoryPath(homeDirectoryPath) else {
+//            fatalError("directoryPath:\(directoryPath) error")
+//        }
+//        self.dgst = dgst
+//        self.fileManager = fileManager
+//    }
 }
 
 
 
 public final class FileStorage {
-    public let dgst: UInt8
-    public let homeDirectoryPath: String
-    public let fileManager: FileManager
-    
-    public init(dgst: UInt8, homeDirectoryPath: String) {
-        self.homeDirectoryPath = homeDirectoryPath
-        let fileManager: FileManager = FileManager()
-        let 
-        
-        
-        
-        
-        
-        
-        guard fileManager.changeCurrentDirectoryPath(homeDirectoryPath) else {
-            fatalError("directoryPath:\(directoryPath) error")
-        }
-        self.dgst = dgst
-        self.fileManager = fileManager
-    }
+//    public let dgst: UInt8
+//    public let homeDirectoryPath: String
+//    public let fileManager: FileManager
+//    
+//    public init(dgst: UInt8, homeDirectoryPath: String) {
+//        self.homeDirectoryPath = homeDirectoryPath
+//        let fileManager: FileManager = FileManager()
+//        
+//        guard fileManager.changeCurrentDirectoryPath(homeDirectoryPath) else {
+//            fatalError("directoryPath:\(directoryPath) error")
+//        }
+//        self.dgst = dgst
+//        self.fileManager = fileManager
+//    }
 }

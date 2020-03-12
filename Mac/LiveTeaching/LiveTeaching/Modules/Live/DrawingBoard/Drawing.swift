@@ -15,7 +15,7 @@ public struct Drawing {
         case little16Xrgb = 2//最高位填充0
         public static let deviceRgb: CGColorSpace = CGColorSpaceCreateDeviceRGB()
 
-        public var bytesPerPixel: UInt32 {
+        public var bytesPerPixel: Int32 {
             switch self {
             case .little32Argb:
                 return 4
@@ -23,7 +23,7 @@ public struct Drawing {
                 return 2
             }
         }
-        public var bitsPerComponent: UInt32 {
+        public var bitsPerComponent: Int32 {
             switch self {
             case .little32Argb:
                 return 8
@@ -31,7 +31,7 @@ public struct Drawing {
                 return 5
             }
         }
-        public var bitsPerPixel: UInt32 {
+        public var bitsPerPixel: Int32 {
             switch self {
             case .little32Argb:
                 return 32

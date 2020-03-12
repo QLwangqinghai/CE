@@ -17,7 +17,7 @@ typedef struct {
 #if BUILD_TARGET_RT_64_BIT
     UInteger contextSize: 63;
 #else
-    CCUInt contextSize: 31;
+    UInteger contextSize: 31;
 #endif
 } CCClosureBase;
 

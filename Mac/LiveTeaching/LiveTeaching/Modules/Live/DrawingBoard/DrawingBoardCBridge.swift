@@ -40,12 +40,12 @@ extension Point: Equatable {
 }
 
 extension Rect {
-    public init(x: Int32, y: Int32, width: UInt32, height: UInt32) {
+    public init(x: Int32, y: Int32, width: Int32, height: Int32) {
         self.init()
         self.size = CCSize32Make(width, height)
         self.origin = CCPoint32Make(x, y)
     }
-    public init(width: UInt32, height: UInt32) {
+    public init(width: Int32, height: Int32) {
         self.init()
         self.size = CCSize32Make(width, height)
         self.origin = CCPoint32Make(0, 0)

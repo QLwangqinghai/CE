@@ -16,6 +16,11 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
+
+//官方
+//http://www.ffmpeg.org/doxygen/4.0/examples.html
+
+
 @interface FFAVStream ()
 
 @end

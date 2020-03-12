@@ -142,7 +142,7 @@ typedef struct {
 #if BUILD_TARGET_RT_64_BIT
     UInteger count: 56;
 #else
-    CCUInt count: 24;
+    UInteger count: 24;
 #endif
     UInteger hasWeak: 1;
     UInteger domain: 7;

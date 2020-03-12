@@ -25,6 +25,8 @@
 		D64D036F2408D51300210537 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64D036E2408D51300210537 /* User.swift */; };
 		D64D03772409048700210537 /* region.json in Resources */ = {isa = PBXBuildFile; fileRef = D64D03762409048700210537 /* region.json */; };
 		D64EE7252417649300AD0795 /* params.md in Resources */ = {isa = PBXBuildFile; fileRef = D64EE7242417649300AD0795 /* params.md */; };
+		D64EE72A2418E7BF00AD0795 /* Bitmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64EE7292418E7BF00AD0795 /* Bitmap.swift */; };
+		D64EE72F2419EF4600AD0795 /* DrawingBitmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64EE72E2419EF4600AD0795 /* DrawingBitmap.swift */; };
 		D6690E7223F93EAE00B5FA44 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6690E7123F93EAE00B5FA44 /* DrawingView.swift */; };
 		D673AF8923F93F2000D37AFF /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8023F93F1F00D37AFF /* Controller.swift */; };
 		D673AF8A23F93F2000D37AFF /* DrawingBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */; };
@@ -63,6 +65,8 @@
 		D64D036E2408D51300210537 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		D64D03762409048700210537 /* region.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = region.json; sourceTree = "<group>"; };
 		D64EE7242417649300AD0795 /* params.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = params.md; sourceTree = "<group>"; };
+		D64EE7292418E7BF00AD0795 /* Bitmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bitmap.swift; sourceTree = "<group>"; };
+		D64EE72E2419EF4600AD0795 /* DrawingBitmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingBitmap.swift; sourceTree = "<group>"; };
 		D6690E7123F93EAE00B5FA44 /* DrawingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
 		D673AF8023F93F1F00D37AFF /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingBoard.swift; sourceTree = "<group>"; };
@@ -223,6 +227,8 @@
 				D673AF8623F93F1F00D37AFF /* DrawingSliceController.swift */,
 				D6690E7123F93EAE00B5FA44 /* DrawingView.swift */,
 				D64EE7242417649300AD0795 /* params.md */,
+				D64EE7292418E7BF00AD0795 /* Bitmap.swift */,
+				D64EE72E2419EF4600AD0795 /* DrawingBitmap.swift */,
 			);
 			path = DrawingBoard;
 			sourceTree = "<group>";
@@ -367,6 +373,7 @@
 				D673AF9723F9689500D37AFF /* DrawingBoardCBridge.swift in Sources */,
 				D6D1EA8623FEB828009DD55F /* BCKeychainUtil.m in Sources */,
 				D63F4DD1240675AE00D1FE62 /* Presentation.swift in Sources */,
+				D64EE72A2418E7BF00AD0795 /* Bitmap.swift in Sources */,
 				D673AF9523F93FB700D37AFF /* Log.swift in Sources */,
 				D6165D3B23F9A04200CE6B07 /* DrawingContext.swift in Sources */,
 				D673AF8A23F93F2000D37AFF /* DrawingBoard.swift in Sources */,
@@ -383,6 +390,7 @@
 				D673AF8C23F93F2000D37AFF /* DrawingController.swift in Sources */,
 				D673AF8F23F93F2000D37AFF /* DrawingSliceController.swift in Sources */,
 				D63F4DBA2403ECC700D1FE62 /* TestDrawViewController.swift in Sources */,
+				D64EE72F2419EF4600AD0795 /* DrawingBitmap.swift in Sources */,
 				D606702A23DC9904009BA4B0 /* MePageViewController.swift in Sources */,
 				D606702923DC9904009BA4B0 /* LiveViewController.swift in Sources */,
 				D64D036F2408D51300210537 /* User.swift in Sources */,

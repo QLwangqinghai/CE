@@ -1,0 +1,747 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D668F913241A3E59007AF7EA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D668F912241A3E59007AF7EA /* AppDelegate.m */; };
+		D668F916241A3E59007AF7EA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D668F915241A3E59007AF7EA /* ViewController.m */; };
+		D668F918241A3E5B007AF7EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D668F917241A3E5B007AF7EA /* Assets.xcassets */; };
+		D668F91B241A3E5B007AF7EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D668F919241A3E5B007AF7EA /* Main.storyboard */; };
+		D668F91E241A3E5B007AF7EA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D668F91D241A3E5B007AF7EA /* main.m */; };
+		D668F9B0241A3E76007AF7EA /* qdrawhelper_mips_dsp_asm.S in Sources */ = {isa = PBXBuildFile; fileRef = D668F928241A3E76007AF7EA /* qdrawhelper_mips_dsp_asm.S */; };
+		D668F9B1241A3E76007AF7EA /* qpaintdevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F92B241A3E76007AF7EA /* qpaintdevice.cpp */; };
+		D668F9B2241A3E76007AF7EA /* qpaintengine_blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F92C241A3E76007AF7EA /* qpaintengine_blitter.cpp */; };
+		D668F9B3241A3E76007AF7EA /* qcolor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F92D241A3E76007AF7EA /* qcolor.cpp */; };
+		D668F9B4241A3E76007AF7EA /* qcoregraphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = D668F92E241A3E76007AF7EA /* qcoregraphics.mm */; };
+		D668F9B5241A3E76007AF7EA /* qoutlinemapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F930241A3E76007AF7EA /* qoutlinemapper.cpp */; };
+		D668F9B6241A3E76007AF7EA /* qcosmeticstroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F934241A3E76007AF7EA /* qcosmeticstroker.cpp */; };
+		D668F9B7241A3E76007AF7EA /* qcompositionfunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F936241A3E76007AF7EA /* qcompositionfunctions.cpp */; };
+		D668F9B8241A3E76007AF7EA /* qrasterizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F937241A3E76007AF7EA /* qrasterizer.cpp */; };
+		D668F9B9241A3E76007AF7EA /* QIMAGETRANSFORM_LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = D668F938241A3E76007AF7EA /* QIMAGETRANSFORM_LICENSE.txt */; };
+		D668F9BA241A3E76007AF7EA /* qemulationpaintengine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F93A241A3E76007AF7EA /* qemulationpaintengine.cpp */; };
+		D668F9BB241A3E76007AF7EA /* qtriangulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F93C241A3E76007AF7EA /* qtriangulator.cpp */; };
+		D668F9BC241A3E76007AF7EA /* qstroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F93E241A3E76007AF7EA /* qstroker.cpp */; };
+		D668F9BD241A3E76007AF7EA /* qplatformbackingstore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F93F241A3E76007AF7EA /* qplatformbackingstore.cpp */; };
+		D668F9BE241A3E76007AF7EA /* qpolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F941241A3E76007AF7EA /* qpolygon.cpp */; };
+		D668F9BF241A3E76007AF7EA /* qgrayraster.c in Sources */ = {isa = PBXBuildFile; fileRef = D668F943241A3E76007AF7EA /* qgrayraster.c */; };
+		D668F9C0241A3E76007AF7EA /* qpagelayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F944241A3E76007AF7EA /* qpagelayout.cpp */; };
+		D668F9C1241A3E76007AF7EA /* WEBGRADIENTS_LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = D668F945241A3E76007AF7EA /* WEBGRADIENTS_LICENSE.txt */; };
+		D668F9C2241A3E76007AF7EA /* qcolortransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F947241A3E76007AF7EA /* qcolortransform.cpp */; };
+		D668F9C3241A3E76007AF7EA /* qpaintengineex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F948241A3E76007AF7EA /* qpaintengineex.cpp */; };
+		D668F9C4241A3E76007AF7EA /* qimagescale_neon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F94B241A3E76007AF7EA /* qimagescale_neon.cpp */; };
+		D668F9C5241A3E76007AF7EA /* painting.pri in Resources */ = {isa = PBXBuildFile; fileRef = D668F94C241A3E76007AF7EA /* painting.pri */; };
+		D668F9C6241A3E76007AF7EA /* qpen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F951241A3E76007AF7EA /* qpen.cpp */; };
+		D668F9C7241A3E76007AF7EA /* qbezier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F953241A3E76007AF7EA /* qbezier.cpp */; };
+		D668F9C8241A3E76007AF7EA /* qdrawhelper_sse2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F954241A3E76007AF7EA /* qdrawhelper_sse2.cpp */; };
+		D668F9C9241A3E76007AF7EA /* qtriangulatingstroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F955241A3E76007AF7EA /* qtriangulatingstroker.cpp */; };
+		D668F9CA241A3E76007AF7EA /* qcolorspace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F956241A3E76007AF7EA /* qcolorspace.cpp */; };
+		D668F9CB241A3E76007AF7EA /* qcssutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F957241A3E76007AF7EA /* qcssutil.cpp */; };
+		D668F9CC241A3E76007AF7EA /* qpagedpaintdevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F95B241A3E76007AF7EA /* qpagedpaintdevice.cpp */; };
+		D668F9CD241A3E76007AF7EA /* webgradients.css in Resources */ = {isa = PBXBuildFile; fileRef = D668F95D241A3E76007AF7EA /* webgradients.css */; };
+		D668F9CE241A3E76007AF7EA /* qpdf.qrc in Resources */ = {isa = PBXBuildFile; fileRef = D668F961241A3E76007AF7EA /* qpdf.qrc */; };
+		D668F9CF241A3E76007AF7EA /* qdrawhelper_sse4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F966241A3E76007AF7EA /* qdrawhelper_sse4.cpp */; };
+		D668F9D0241A3E76007AF7EA /* qpaintengine_raster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F967241A3E76007AF7EA /* qpaintengine_raster.cpp */; };
+		D668F9D1241A3E76007AF7EA /* qcolortrclut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F96C241A3E76007AF7EA /* qcolortrclut.cpp */; };
+		D668F9D2241A3E76007AF7EA /* qpaintdevice.qdoc in Resources */ = {isa = PBXBuildFile; fileRef = D668F96E241A3E76007AF7EA /* qpaintdevice.qdoc */; };
+		D668F9D3241A3E76007AF7EA /* qdrawhelper_neon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F974241A3E76007AF7EA /* qdrawhelper_neon.cpp */; };
+		D668F9D4241A3E76007AF7EA /* qdrawhelper_mips_dspr2_asm.S in Sources */ = {isa = PBXBuildFile; fileRef = D668F975241A3E76007AF7EA /* qdrawhelper_mips_dspr2_asm.S */; };
+		D668F9D5241A3E76007AF7EA /* qpdfa_metadata.xml in Resources */ = {isa = PBXBuildFile; fileRef = D668F978241A3E76007AF7EA /* qpdfa_metadata.xml */; };
+		D668F9D6241A3E76007AF7EA /* qbrush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F97B241A3E76007AF7EA /* qbrush.cpp */; };
+		D668F9D7241A3E76007AF7EA /* qimagescale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F97E241A3E76007AF7EA /* qimagescale.cpp */; };
+		D668F9D8241A3E76007AF7EA /* qt_attribution.json in Resources */ = {isa = PBXBuildFile; fileRef = D668F97F241A3E76007AF7EA /* qt_attribution.json */; };
+		D668F9D9241A3E76007AF7EA /* qblittable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F980241A3E76007AF7EA /* qblittable.cpp */; };
+		D668F9DA241A3E76007AF7EA /* qdrawhelper_neon_asm.S in Sources */ = {isa = PBXBuildFile; fileRef = D668F981241A3E76007AF7EA /* qdrawhelper_neon_asm.S */; };
+		D668F9DB241A3E76007AF7EA /* qdrawhelper_ssse3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F982241A3E76007AF7EA /* qdrawhelper_ssse3.cpp */; };
+		D668F9DC241A3E76007AF7EA /* XCONSORTIUM_LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = D668F984241A3E76007AF7EA /* XCONSORTIUM_LICENSE.txt */; };
+		D668F9DD241A3E76007AF7EA /* qpaintengine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F985241A3E76007AF7EA /* qpaintengine.cpp */; };
+		D668F9DE241A3E76007AF7EA /* qbackingstore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F986241A3E76007AF7EA /* qbackingstore.cpp */; };
+		D668F9DF241A3E76007AF7EA /* qpdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F98A241A3E76007AF7EA /* qpdf.cpp */; };
+		D668F9E0241A3E76007AF7EA /* qmatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F98B241A3E76007AF7EA /* qmatrix.cpp */; };
+		D668F9E1241A3E76007AF7EA /* qpathclipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F98C241A3E76007AF7EA /* qpathclipper.cpp */; };
+		D668F9E2241A3E76007AF7EA /* qdrawhelper_mips_dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F98D241A3E76007AF7EA /* qdrawhelper_mips_dsp.cpp */; };
+		D668F9E3241A3E76007AF7EA /* qmemrotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F990241A3E76007AF7EA /* qmemrotate.cpp */; };
+		D668F9E4241A3E76007AF7EA /* qpainterpath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F991241A3E76007AF7EA /* qpainterpath.cpp */; };
+		D668F9E5241A3E76007AF7EA /* qdrawhelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F996241A3E76007AF7EA /* qdrawhelper.cpp */; };
+		D668F9E6241A3E76007AF7EA /* qimagescale_sse4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F998241A3E76007AF7EA /* qimagescale_sse4.cpp */; };
+		D668F9E7241A3E76007AF7EA /* qtextureglyphcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F99A241A3E76007AF7EA /* qtextureglyphcache.cpp */; };
+		D668F9E8241A3E76007AF7EA /* qregion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F99B241A3E76007AF7EA /* qregion.cpp */; };
+		D668F9E9241A3E76007AF7EA /* qblendfunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F99C241A3E76007AF7EA /* qblendfunctions.cpp */; };
+		D668F9EA241A3E76007AF7EA /* qtransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F99D241A3E76007AF7EA /* qtransform.cpp */; };
+		D668F9EB241A3E76007AF7EA /* qpdfwriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F99E241A3E76007AF7EA /* qpdfwriter.cpp */; };
+		D668F9EC241A3E76007AF7EA /* qrgba64.qdoc in Resources */ = {isa = PBXBuildFile; fileRef = D668F9A1241A3E76007AF7EA /* qrgba64.qdoc */; };
+		D668F9ED241A3E76007AF7EA /* qpainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F9A2241A3E76007AF7EA /* qpainter.cpp */; };
+		D668F9EE241A3E76007AF7EA /* qpagesize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F9A3241A3E76007AF7EA /* qpagesize.cpp */; };
+		D668F9EF241A3E76007AF7EA /* qicc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F9A8241A3E76007AF7EA /* qicc.cpp */; };
+		D668F9F0241A3E76007AF7EA /* qdrawhelper_avx2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F9AB241A3E76007AF7EA /* qdrawhelper_avx2.cpp */; };
+		D668F9F1241A3E76007AF7EA /* webgradients.binaryjson in Resources */ = {isa = PBXBuildFile; fileRef = D668F9AC241A3E76007AF7EA /* webgradients.binaryjson */; };
+		D668F9F2241A3E76007AF7EA /* qpathsimplifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D668F9AF241A3E76007AF7EA /* qpathsimplifier.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		D668F90E241A3E59007AF7EA /* QD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QD.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D668F911241A3E59007AF7EA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		D668F912241A3E59007AF7EA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		D668F914241A3E59007AF7EA /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		D668F915241A3E59007AF7EA /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		D668F917241A3E5B007AF7EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D668F91A241A3E5B007AF7EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D668F91C241A3E5B007AF7EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D668F91D241A3E5B007AF7EA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D668F91F241A3E5B007AF7EA /* QD.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QD.entitlements; sourceTree = "<group>"; };
+		D668F926241A3E76007AF7EA /* qpaintengineex_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpaintengineex_p.h; sourceTree = "<group>"; };
+		D668F927241A3E76007AF7EA /* qcolortransform_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolortransform_p.h; sourceTree = "<group>"; };
+		D668F928241A3E76007AF7EA /* qdrawhelper_mips_dsp_asm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = qdrawhelper_mips_dsp_asm.S; sourceTree = "<group>"; };
+		D668F929241A3E76007AF7EA /* qpaintengine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpaintengine.h; sourceTree = "<group>"; };
+		D668F92A241A3E76007AF7EA /* qcolortransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolortransform.h; sourceTree = "<group>"; };
+		D668F92B241A3E76007AF7EA /* qpaintdevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpaintdevice.cpp; sourceTree = "<group>"; };
+		D668F92C241A3E76007AF7EA /* qpaintengine_blitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpaintengine_blitter.cpp; sourceTree = "<group>"; };
+		D668F92D241A3E76007AF7EA /* qcolor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qcolor.cpp; sourceTree = "<group>"; };
+		D668F92E241A3E76007AF7EA /* qcoregraphics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = qcoregraphics.mm; sourceTree = "<group>"; };
+		D668F92F241A3E76007AF7EA /* qtriangulator_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qtriangulator_p.h; sourceTree = "<group>"; };
+		D668F930241A3E76007AF7EA /* qoutlinemapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qoutlinemapper.cpp; sourceTree = "<group>"; };
+		D668F931241A3E76007AF7EA /* qdrawhelper_x86_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qdrawhelper_x86_p.h; sourceTree = "<group>"; };
+		D668F932241A3E76007AF7EA /* qstroker_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qstroker_p.h; sourceTree = "<group>"; };
+		D668F933241A3E76007AF7EA /* qemulationpaintengine_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qemulationpaintengine_p.h; sourceTree = "<group>"; };
+		D668F934241A3E76007AF7EA /* qcosmeticstroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qcosmeticstroker.cpp; sourceTree = "<group>"; };
+		D668F935241A3E76007AF7EA /* qpen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpen.h; sourceTree = "<group>"; };
+		D668F936241A3E76007AF7EA /* qcompositionfunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qcompositionfunctions.cpp; sourceTree = "<group>"; };
+		D668F937241A3E76007AF7EA /* qrasterizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qrasterizer.cpp; sourceTree = "<group>"; };
+		D668F938241A3E76007AF7EA /* QIMAGETRANSFORM_LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QIMAGETRANSFORM_LICENSE.txt; sourceTree = "<group>"; };
+		D668F939241A3E76007AF7EA /* qrbtree_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qrbtree_p.h; sourceTree = "<group>"; };
+		D668F93A241A3E76007AF7EA /* qemulationpaintengine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qemulationpaintengine.cpp; sourceTree = "<group>"; };
+		D668F93B241A3E76007AF7EA /* qcosmeticstroker_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcosmeticstroker_p.h; sourceTree = "<group>"; };
+		D668F93C241A3E76007AF7EA /* qtriangulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qtriangulator.cpp; sourceTree = "<group>"; };
+		D668F93D241A3E76007AF7EA /* qoutlinemapper_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qoutlinemapper_p.h; sourceTree = "<group>"; };
+		D668F93E241A3E76007AF7EA /* qstroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qstroker.cpp; sourceTree = "<group>"; };
+		D668F93F241A3E76007AF7EA /* qplatformbackingstore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qplatformbackingstore.cpp; sourceTree = "<group>"; };
+		D668F940241A3E76007AF7EA /* qgrayraster_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qgrayraster_p.h; sourceTree = "<group>"; };
+		D668F941241A3E76007AF7EA /* qpolygon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpolygon.cpp; sourceTree = "<group>"; };
+		D668F942241A3E76007AF7EA /* qrasterizer_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qrasterizer_p.h; sourceTree = "<group>"; };
+		D668F943241A3E76007AF7EA /* qgrayraster.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = qgrayraster.c; sourceTree = "<group>"; };
+		D668F944241A3E76007AF7EA /* qpagelayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpagelayout.cpp; sourceTree = "<group>"; };
+		D668F945241A3E76007AF7EA /* WEBGRADIENTS_LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WEBGRADIENTS_LICENSE.txt; sourceTree = "<group>"; };
+		D668F946241A3E76007AF7EA /* qpaintdevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpaintdevice.h; sourceTree = "<group>"; };
+		D668F947241A3E76007AF7EA /* qcolortransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qcolortransform.cpp; sourceTree = "<group>"; };
+		D668F948241A3E76007AF7EA /* qpaintengineex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpaintengineex.cpp; sourceTree = "<group>"; };
+		D668F949241A3E76007AF7EA /* qtransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qtransform.h; sourceTree = "<group>"; };
+		D668F94A241A3E76007AF7EA /* qcolormatrix_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolormatrix_p.h; sourceTree = "<group>"; };
+		D668F94B241A3E76007AF7EA /* qimagescale_neon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qimagescale_neon.cpp; sourceTree = "<group>"; };
+		D668F94C241A3E76007AF7EA /* painting.pri */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = painting.pri; sourceTree = "<group>"; };
+		D668F94D241A3E76007AF7EA /* qpaintengine_blitter_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpaintengine_blitter_p.h; sourceTree = "<group>"; };
+		D668F94E241A3E76007AF7EA /* qcolor_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolor_p.h; sourceTree = "<group>"; };
+		D668F94F241A3E76007AF7EA /* qcoregraphics_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcoregraphics_p.h; sourceTree = "<group>"; };
+		D668F950241A3E76007AF7EA /* qrgb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qrgb.h; sourceTree = "<group>"; };
+		D668F951241A3E76007AF7EA /* qpen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpen.cpp; sourceTree = "<group>"; };
+		D668F952241A3E76007AF7EA /* qcolortrclut_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolortrclut_p.h; sourceTree = "<group>"; };
+		D668F953241A3E76007AF7EA /* qbezier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qbezier.cpp; sourceTree = "<group>"; };
+		D668F954241A3E76007AF7EA /* qdrawhelper_sse2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qdrawhelper_sse2.cpp; sourceTree = "<group>"; };
+		D668F955241A3E76007AF7EA /* qtriangulatingstroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qtriangulatingstroker.cpp; sourceTree = "<group>"; };
+		D668F956241A3E76007AF7EA /* qcolorspace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qcolorspace.cpp; sourceTree = "<group>"; };
+		D668F957241A3E76007AF7EA /* qcssutil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qcssutil.cpp; sourceTree = "<group>"; };
+		D668F958241A3E76007AF7EA /* qdrawingprimitive_sse2_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qdrawingprimitive_sse2_p.h; sourceTree = "<group>"; };
+		D668F959241A3E76007AF7EA /* qbrush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qbrush.h; sourceTree = "<group>"; };
+		D668F95A241A3E76007AF7EA /* qplatformbackingstore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qplatformbackingstore.h; sourceTree = "<group>"; };
+		D668F95B241A3E76007AF7EA /* qpagedpaintdevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpagedpaintdevice.cpp; sourceTree = "<group>"; };
+		D668F95C241A3E76007AF7EA /* qpdfwriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpdfwriter.h; sourceTree = "<group>"; };
+		D668F95D241A3E76007AF7EA /* webgradients.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = webgradients.css; sourceTree = "<group>"; };
+		D668F95E241A3E76007AF7EA /* qpaintengine_raster_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpaintengine_raster_p.h; sourceTree = "<group>"; };
+		D668F95F241A3E76007AF7EA /* qcolortrc_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolortrc_p.h; sourceTree = "<group>"; };
+		D668F960241A3E76007AF7EA /* qbackingstore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qbackingstore.h; sourceTree = "<group>"; };
+		D668F961241A3E76007AF7EA /* qpdf.qrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = qpdf.qrc; sourceTree = "<group>"; };
+		D668F962241A3E76007AF7EA /* qfixed_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qfixed_p.h; sourceTree = "<group>"; };
+		D668F963241A3E76007AF7EA /* qmath_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qmath_p.h; sourceTree = "<group>"; };
+		D668F964241A3E76007AF7EA /* qpagedpaintdevice_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpagedpaintdevice_p.h; sourceTree = "<group>"; };
+		D668F965241A3E76007AF7EA /* qpolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpolygon.h; sourceTree = "<group>"; };
+		D668F966241A3E76007AF7EA /* qdrawhelper_sse4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qdrawhelper_sse4.cpp; sourceTree = "<group>"; };
+		D668F967241A3E76007AF7EA /* qpaintengine_raster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpaintengine_raster.cpp; sourceTree = "<group>"; };
+		D668F968241A3E76007AF7EA /* qrasterdefs_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qrasterdefs_p.h; sourceTree = "<group>"; };
+		D668F969241A3E76007AF7EA /* qvectorpath_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qvectorpath_p.h; sourceTree = "<group>"; };
+		D668F96A241A3E76007AF7EA /* qbezier_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qbezier_p.h; sourceTree = "<group>"; };
+		D668F96B241A3E76007AF7EA /* qcolortransferfunction_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolortransferfunction_p.h; sourceTree = "<group>"; };
+		D668F96C241A3E76007AF7EA /* qcolortrclut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qcolortrclut.cpp; sourceTree = "<group>"; };
+		D668F96D241A3E76007AF7EA /* qpen_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpen_p.h; sourceTree = "<group>"; };
+		D668F96E241A3E76007AF7EA /* qpaintdevice.qdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = qpaintdevice.qdoc; sourceTree = "<group>"; };
+		D668F96F241A3E76007AF7EA /* qmatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qmatrix.h; sourceTree = "<group>"; };
+		D668F970241A3E76007AF7EA /* qcolorspace_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolorspace_p.h; sourceTree = "<group>"; };
+		D668F971241A3E76007AF7EA /* qtriangulatingstroker_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qtriangulatingstroker_p.h; sourceTree = "<group>"; };
+		D668F972241A3E76007AF7EA /* qcssutil_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcssutil_p.h; sourceTree = "<group>"; };
+		D668F973241A3E76007AF7EA /* qrgba64_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qrgba64_p.h; sourceTree = "<group>"; };
+		D668F974241A3E76007AF7EA /* qdrawhelper_neon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qdrawhelper_neon.cpp; sourceTree = "<group>"; };
+		D668F975241A3E76007AF7EA /* qdrawhelper_mips_dspr2_asm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = qdrawhelper_mips_dspr2_asm.S; sourceTree = "<group>"; };
+		D668F976241A3E76007AF7EA /* qpdf_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpdf_p.h; sourceTree = "<group>"; };
+		D668F977241A3E76007AF7EA /* qpagesize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpagesize.h; sourceTree = "<group>"; };
+		D668F978241A3E76007AF7EA /* qpdfa_metadata.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = qpdfa_metadata.xml; sourceTree = "<group>"; };
+		D668F979241A3E76007AF7EA /* qimagescale_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qimagescale_p.h; sourceTree = "<group>"; };
+		D668F97A241A3E76007AF7EA /* qblittable_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qblittable_p.h; sourceTree = "<group>"; };
+		D668F97B241A3E76007AF7EA /* qbrush.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qbrush.cpp; sourceTree = "<group>"; };
+		D668F97C241A3E76007AF7EA /* qpagelayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpagelayout.h; sourceTree = "<group>"; };
+		D668F97D241A3E76007AF7EA /* qpaintengine_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpaintengine_p.h; sourceTree = "<group>"; };
+		D668F97E241A3E76007AF7EA /* qimagescale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qimagescale.cpp; sourceTree = "<group>"; };
+		D668F97F241A3E76007AF7EA /* qt_attribution.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = qt_attribution.json; sourceTree = "<group>"; };
+		D668F980241A3E76007AF7EA /* qblittable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qblittable.cpp; sourceTree = "<group>"; };
+		D668F981241A3E76007AF7EA /* qdrawhelper_neon_asm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = qdrawhelper_neon_asm.S; sourceTree = "<group>"; };
+		D668F982241A3E76007AF7EA /* qdrawhelper_ssse3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qdrawhelper_ssse3.cpp; sourceTree = "<group>"; };
+		D668F983241A3E76007AF7EA /* qt_mips_asm_dsp_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qt_mips_asm_dsp_p.h; sourceTree = "<group>"; };
+		D668F984241A3E76007AF7EA /* XCONSORTIUM_LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XCONSORTIUM_LICENSE.txt; sourceTree = "<group>"; };
+		D668F985241A3E76007AF7EA /* qpaintengine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpaintengine.cpp; sourceTree = "<group>"; };
+		D668F986241A3E76007AF7EA /* qbackingstore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qbackingstore.cpp; sourceTree = "<group>"; };
+		D668F987241A3E76007AF7EA /* qcolorspace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolorspace.h; sourceTree = "<group>"; };
+		D668F988241A3E76007AF7EA /* qpainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpainter.h; sourceTree = "<group>"; };
+		D668F989241A3E76007AF7EA /* qdrawhelper_neon_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qdrawhelper_neon_p.h; sourceTree = "<group>"; };
+		D668F98A241A3E76007AF7EA /* qpdf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpdf.cpp; sourceTree = "<group>"; };
+		D668F98B241A3E76007AF7EA /* qmatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qmatrix.cpp; sourceTree = "<group>"; };
+		D668F98C241A3E76007AF7EA /* qpathclipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpathclipper.cpp; sourceTree = "<group>"; };
+		D668F98D241A3E76007AF7EA /* qdrawhelper_mips_dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qdrawhelper_mips_dsp.cpp; sourceTree = "<group>"; };
+		D668F98E241A3E76007AF7EA /* qrgba64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qrgba64.h; sourceTree = "<group>"; };
+		D668F98F241A3E76007AF7EA /* qicc_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qicc_p.h; sourceTree = "<group>"; };
+		D668F990241A3E76007AF7EA /* qmemrotate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qmemrotate.cpp; sourceTree = "<group>"; };
+		D668F991241A3E76007AF7EA /* qpainterpath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpainterpath.cpp; sourceTree = "<group>"; };
+		D668F992241A3E76007AF7EA /* qcolor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolor.h; sourceTree = "<group>"; };
+		D668F993241A3E76007AF7EA /* qpathsimplifier_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpathsimplifier_p.h; sourceTree = "<group>"; };
+		D668F994241A3E76007AF7EA /* qblendfunctions_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qblendfunctions_p.h; sourceTree = "<group>"; };
+		D668F995241A3E76007AF7EA /* qregion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qregion.h; sourceTree = "<group>"; };
+		D668F996241A3E76007AF7EA /* qdrawhelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qdrawhelper.cpp; sourceTree = "<group>"; };
+		D668F997241A3E76007AF7EA /* qdatabuffer_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qdatabuffer_p.h; sourceTree = "<group>"; };
+		D668F998241A3E76007AF7EA /* qimagescale_sse4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qimagescale_sse4.cpp; sourceTree = "<group>"; };
+		D668F999241A3E76007AF7EA /* qpainter_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpainter_p.h; sourceTree = "<group>"; };
+		D668F99A241A3E76007AF7EA /* qtextureglyphcache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qtextureglyphcache.cpp; sourceTree = "<group>"; };
+		D668F99B241A3E76007AF7EA /* qregion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qregion.cpp; sourceTree = "<group>"; };
+		D668F99C241A3E76007AF7EA /* qblendfunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qblendfunctions.cpp; sourceTree = "<group>"; };
+		D668F99D241A3E76007AF7EA /* qtransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qtransform.cpp; sourceTree = "<group>"; };
+		D668F99E241A3E76007AF7EA /* qpdfwriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpdfwriter.cpp; sourceTree = "<group>"; };
+		D668F99F241A3E76007AF7EA /* qpolygonclipper_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpolygonclipper_p.h; sourceTree = "<group>"; };
+		D668F9A0241A3E76007AF7EA /* qpagedpaintdevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpagedpaintdevice.h; sourceTree = "<group>"; };
+		D668F9A1241A3E76007AF7EA /* qrgba64.qdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = qrgba64.qdoc; sourceTree = "<group>"; };
+		D668F9A2241A3E76007AF7EA /* qpainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpainter.cpp; sourceTree = "<group>"; };
+		D668F9A3241A3E76007AF7EA /* qpagesize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpagesize.cpp; sourceTree = "<group>"; };
+		D668F9A4241A3E76007AF7EA /* qtextureglyphcache_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qtextureglyphcache_p.h; sourceTree = "<group>"; };
+		D668F9A5241A3E76007AF7EA /* qdrawhelper_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qdrawhelper_p.h; sourceTree = "<group>"; };
+		D668F9A6241A3E76007AF7EA /* qcolortransfertable_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qcolortransfertable_p.h; sourceTree = "<group>"; };
+		D668F9A7241A3E76007AF7EA /* qdrawhelper_mips_dsp_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qdrawhelper_mips_dsp_p.h; sourceTree = "<group>"; };
+		D668F9A8241A3E76007AF7EA /* qicc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qicc.cpp; sourceTree = "<group>"; };
+		D668F9A9241A3E76007AF7EA /* qpainterpath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpainterpath.h; sourceTree = "<group>"; };
+		D668F9AA241A3E76007AF7EA /* qpathclipper_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpathclipper_p.h; sourceTree = "<group>"; };
+		D668F9AB241A3E76007AF7EA /* qdrawhelper_avx2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qdrawhelper_avx2.cpp; sourceTree = "<group>"; };
+		D668F9AC241A3E76007AF7EA /* webgradients.binaryjson */ = {isa = PBXFileReference; lastKnownFileType = file; path = webgradients.binaryjson; sourceTree = "<group>"; };
+		D668F9AD241A3E76007AF7EA /* qmemrotate_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qmemrotate_p.h; sourceTree = "<group>"; };
+		D668F9AE241A3E76007AF7EA /* qpainterpath_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpainterpath_p.h; sourceTree = "<group>"; };
+		D668F9AF241A3E76007AF7EA /* qpathsimplifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpathsimplifier.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D668F90B241A3E59007AF7EA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D668F905241A3E59007AF7EA = {
+			isa = PBXGroup;
+			children = (
+				D668F925241A3E76007AF7EA /* painting */,
+				D668F910241A3E59007AF7EA /* QD */,
+				D668F90F241A3E59007AF7EA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D668F90F241A3E59007AF7EA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D668F90E241A3E59007AF7EA /* QD.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D668F910241A3E59007AF7EA /* QD */ = {
+			isa = PBXGroup;
+			children = (
+				D668F911241A3E59007AF7EA /* AppDelegate.h */,
+				D668F912241A3E59007AF7EA /* AppDelegate.m */,
+				D668F914241A3E59007AF7EA /* ViewController.h */,
+				D668F915241A3E59007AF7EA /* ViewController.m */,
+				D668F917241A3E5B007AF7EA /* Assets.xcassets */,
+				D668F919241A3E5B007AF7EA /* Main.storyboard */,
+				D668F91C241A3E5B007AF7EA /* Info.plist */,
+				D668F91D241A3E5B007AF7EA /* main.m */,
+				D668F91F241A3E5B007AF7EA /* QD.entitlements */,
+			);
+			path = QD;
+			sourceTree = "<group>";
+		};
+		D668F925241A3E76007AF7EA /* painting */ = {
+			isa = PBXGroup;
+			children = (
+				D668F94C241A3E76007AF7EA /* painting.pri */,
+				D668F986241A3E76007AF7EA /* qbackingstore.cpp */,
+				D668F960241A3E76007AF7EA /* qbackingstore.h */,
+				D668F96A241A3E76007AF7EA /* qbezier_p.h */,
+				D668F953241A3E76007AF7EA /* qbezier.cpp */,
+				D668F994241A3E76007AF7EA /* qblendfunctions_p.h */,
+				D668F99C241A3E76007AF7EA /* qblendfunctions.cpp */,
+				D668F97A241A3E76007AF7EA /* qblittable_p.h */,
+				D668F980241A3E76007AF7EA /* qblittable.cpp */,
+				D668F97B241A3E76007AF7EA /* qbrush.cpp */,
+				D668F959241A3E76007AF7EA /* qbrush.h */,
+				D668F94E241A3E76007AF7EA /* qcolor_p.h */,
+				D668F92D241A3E76007AF7EA /* qcolor.cpp */,
+				D668F992241A3E76007AF7EA /* qcolor.h */,
+				D668F94A241A3E76007AF7EA /* qcolormatrix_p.h */,
+				D668F970241A3E76007AF7EA /* qcolorspace_p.h */,
+				D668F956241A3E76007AF7EA /* qcolorspace.cpp */,
+				D668F987241A3E76007AF7EA /* qcolorspace.h */,
+				D668F96B241A3E76007AF7EA /* qcolortransferfunction_p.h */,
+				D668F9A6241A3E76007AF7EA /* qcolortransfertable_p.h */,
+				D668F927241A3E76007AF7EA /* qcolortransform_p.h */,
+				D668F947241A3E76007AF7EA /* qcolortransform.cpp */,
+				D668F92A241A3E76007AF7EA /* qcolortransform.h */,
+				D668F95F241A3E76007AF7EA /* qcolortrc_p.h */,
+				D668F952241A3E76007AF7EA /* qcolortrclut_p.h */,
+				D668F96C241A3E76007AF7EA /* qcolortrclut.cpp */,
+				D668F936241A3E76007AF7EA /* qcompositionfunctions.cpp */,
+				D668F94F241A3E76007AF7EA /* qcoregraphics_p.h */,
+				D668F92E241A3E76007AF7EA /* qcoregraphics.mm */,
+				D668F93B241A3E76007AF7EA /* qcosmeticstroker_p.h */,
+				D668F934241A3E76007AF7EA /* qcosmeticstroker.cpp */,
+				D668F972241A3E76007AF7EA /* qcssutil_p.h */,
+				D668F957241A3E76007AF7EA /* qcssutil.cpp */,
+				D668F997241A3E76007AF7EA /* qdatabuffer_p.h */,
+				D668F9AB241A3E76007AF7EA /* qdrawhelper_avx2.cpp */,
+				D668F928241A3E76007AF7EA /* qdrawhelper_mips_dsp_asm.S */,
+				D668F9A7241A3E76007AF7EA /* qdrawhelper_mips_dsp_p.h */,
+				D668F98D241A3E76007AF7EA /* qdrawhelper_mips_dsp.cpp */,
+				D668F975241A3E76007AF7EA /* qdrawhelper_mips_dspr2_asm.S */,
+				D668F981241A3E76007AF7EA /* qdrawhelper_neon_asm.S */,
+				D668F989241A3E76007AF7EA /* qdrawhelper_neon_p.h */,
+				D668F974241A3E76007AF7EA /* qdrawhelper_neon.cpp */,
+				D668F9A5241A3E76007AF7EA /* qdrawhelper_p.h */,
+				D668F954241A3E76007AF7EA /* qdrawhelper_sse2.cpp */,
+				D668F966241A3E76007AF7EA /* qdrawhelper_sse4.cpp */,
+				D668F982241A3E76007AF7EA /* qdrawhelper_ssse3.cpp */,
+				D668F931241A3E76007AF7EA /* qdrawhelper_x86_p.h */,
+				D668F996241A3E76007AF7EA /* qdrawhelper.cpp */,
+				D668F958241A3E76007AF7EA /* qdrawingprimitive_sse2_p.h */,
+				D668F933241A3E76007AF7EA /* qemulationpaintengine_p.h */,
+				D668F93A241A3E76007AF7EA /* qemulationpaintengine.cpp */,
+				D668F962241A3E76007AF7EA /* qfixed_p.h */,
+				D668F940241A3E76007AF7EA /* qgrayraster_p.h */,
+				D668F943241A3E76007AF7EA /* qgrayraster.c */,
+				D668F98F241A3E76007AF7EA /* qicc_p.h */,
+				D668F9A8241A3E76007AF7EA /* qicc.cpp */,
+				D668F94B241A3E76007AF7EA /* qimagescale_neon.cpp */,
+				D668F979241A3E76007AF7EA /* qimagescale_p.h */,
+				D668F998241A3E76007AF7EA /* qimagescale_sse4.cpp */,
+				D668F97E241A3E76007AF7EA /* qimagescale.cpp */,
+				D668F938241A3E76007AF7EA /* QIMAGETRANSFORM_LICENSE.txt */,
+				D668F963241A3E76007AF7EA /* qmath_p.h */,
+				D668F98B241A3E76007AF7EA /* qmatrix.cpp */,
+				D668F96F241A3E76007AF7EA /* qmatrix.h */,
+				D668F9AD241A3E76007AF7EA /* qmemrotate_p.h */,
+				D668F990241A3E76007AF7EA /* qmemrotate.cpp */,
+				D668F93D241A3E76007AF7EA /* qoutlinemapper_p.h */,
+				D668F930241A3E76007AF7EA /* qoutlinemapper.cpp */,
+				D668F964241A3E76007AF7EA /* qpagedpaintdevice_p.h */,
+				D668F95B241A3E76007AF7EA /* qpagedpaintdevice.cpp */,
+				D668F9A0241A3E76007AF7EA /* qpagedpaintdevice.h */,
+				D668F944241A3E76007AF7EA /* qpagelayout.cpp */,
+				D668F97C241A3E76007AF7EA /* qpagelayout.h */,
+				D668F9A3241A3E76007AF7EA /* qpagesize.cpp */,
+				D668F977241A3E76007AF7EA /* qpagesize.h */,
+				D668F92B241A3E76007AF7EA /* qpaintdevice.cpp */,
+				D668F946241A3E76007AF7EA /* qpaintdevice.h */,
+				D668F96E241A3E76007AF7EA /* qpaintdevice.qdoc */,
+				D668F94D241A3E76007AF7EA /* qpaintengine_blitter_p.h */,
+				D668F92C241A3E76007AF7EA /* qpaintengine_blitter.cpp */,
+				D668F97D241A3E76007AF7EA /* qpaintengine_p.h */,
+				D668F95E241A3E76007AF7EA /* qpaintengine_raster_p.h */,
+				D668F967241A3E76007AF7EA /* qpaintengine_raster.cpp */,
+				D668F985241A3E76007AF7EA /* qpaintengine.cpp */,
+				D668F929241A3E76007AF7EA /* qpaintengine.h */,
+				D668F926241A3E76007AF7EA /* qpaintengineex_p.h */,
+				D668F948241A3E76007AF7EA /* qpaintengineex.cpp */,
+				D668F999241A3E76007AF7EA /* qpainter_p.h */,
+				D668F9A2241A3E76007AF7EA /* qpainter.cpp */,
+				D668F988241A3E76007AF7EA /* qpainter.h */,
+				D668F9AE241A3E76007AF7EA /* qpainterpath_p.h */,
+				D668F991241A3E76007AF7EA /* qpainterpath.cpp */,
+				D668F9A9241A3E76007AF7EA /* qpainterpath.h */,
+				D668F9AA241A3E76007AF7EA /* qpathclipper_p.h */,
+				D668F98C241A3E76007AF7EA /* qpathclipper.cpp */,
+				D668F993241A3E76007AF7EA /* qpathsimplifier_p.h */,
+				D668F9AF241A3E76007AF7EA /* qpathsimplifier.cpp */,
+				D668F976241A3E76007AF7EA /* qpdf_p.h */,
+				D668F98A241A3E76007AF7EA /* qpdf.cpp */,
+				D668F961241A3E76007AF7EA /* qpdf.qrc */,
+				D668F978241A3E76007AF7EA /* qpdfa_metadata.xml */,
+				D668F99E241A3E76007AF7EA /* qpdfwriter.cpp */,
+				D668F95C241A3E76007AF7EA /* qpdfwriter.h */,
+				D668F96D241A3E76007AF7EA /* qpen_p.h */,
+				D668F951241A3E76007AF7EA /* qpen.cpp */,
+				D668F935241A3E76007AF7EA /* qpen.h */,
+				D668F93F241A3E76007AF7EA /* qplatformbackingstore.cpp */,
+				D668F95A241A3E76007AF7EA /* qplatformbackingstore.h */,
+				D668F941241A3E76007AF7EA /* qpolygon.cpp */,
+				D668F965241A3E76007AF7EA /* qpolygon.h */,
+				D668F99F241A3E76007AF7EA /* qpolygonclipper_p.h */,
+				D668F968241A3E76007AF7EA /* qrasterdefs_p.h */,
+				D668F942241A3E76007AF7EA /* qrasterizer_p.h */,
+				D668F937241A3E76007AF7EA /* qrasterizer.cpp */,
+				D668F939241A3E76007AF7EA /* qrbtree_p.h */,
+				D668F99B241A3E76007AF7EA /* qregion.cpp */,
+				D668F995241A3E76007AF7EA /* qregion.h */,
+				D668F950241A3E76007AF7EA /* qrgb.h */,
+				D668F973241A3E76007AF7EA /* qrgba64_p.h */,
+				D668F98E241A3E76007AF7EA /* qrgba64.h */,
+				D668F9A1241A3E76007AF7EA /* qrgba64.qdoc */,
+				D668F932241A3E76007AF7EA /* qstroker_p.h */,
+				D668F93E241A3E76007AF7EA /* qstroker.cpp */,
+				D668F97F241A3E76007AF7EA /* qt_attribution.json */,
+				D668F983241A3E76007AF7EA /* qt_mips_asm_dsp_p.h */,
+				D668F9A4241A3E76007AF7EA /* qtextureglyphcache_p.h */,
+				D668F99A241A3E76007AF7EA /* qtextureglyphcache.cpp */,
+				D668F99D241A3E76007AF7EA /* qtransform.cpp */,
+				D668F949241A3E76007AF7EA /* qtransform.h */,
+				D668F971241A3E76007AF7EA /* qtriangulatingstroker_p.h */,
+				D668F955241A3E76007AF7EA /* qtriangulatingstroker.cpp */,
+				D668F92F241A3E76007AF7EA /* qtriangulator_p.h */,
+				D668F93C241A3E76007AF7EA /* qtriangulator.cpp */,
+				D668F969241A3E76007AF7EA /* qvectorpath_p.h */,
+				D668F945241A3E76007AF7EA /* WEBGRADIENTS_LICENSE.txt */,
+				D668F9AC241A3E76007AF7EA /* webgradients.binaryjson */,
+				D668F95D241A3E76007AF7EA /* webgradients.css */,
+				D668F984241A3E76007AF7EA /* XCONSORTIUM_LICENSE.txt */,
+			);
+			path = painting;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D668F90D241A3E59007AF7EA /* QD */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D668F922241A3E5B007AF7EA /* Build configuration list for PBXNativeTarget "QD" */;
+			buildPhases = (
+				D668F90A241A3E59007AF7EA /* Sources */,
+				D668F90B241A3E59007AF7EA /* Frameworks */,
+				D668F90C241A3E59007AF7EA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QD;
+			productName = QD;
+			productReference = D668F90E241A3E59007AF7EA /* QD.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D668F906241A3E59007AF7EA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1130;
+				ORGANIZATIONNAME = angfung;
+				TargetAttributes = {
+					D668F90D241A3E59007AF7EA = {
+						CreatedOnToolsVersion = 11.3.1;
+					};
+				};
+			};
+			buildConfigurationList = D668F909241A3E59007AF7EA /* Build configuration list for PBXProject "QD" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D668F905241A3E59007AF7EA;
+			productRefGroup = D668F90F241A3E59007AF7EA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D668F90D241A3E59007AF7EA /* QD */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D668F90C241A3E59007AF7EA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D668F9EC241A3E76007AF7EA /* qrgba64.qdoc in Resources */,
+				D668F9CD241A3E76007AF7EA /* webgradients.css in Resources */,
+				D668F9D5241A3E76007AF7EA /* qpdfa_metadata.xml in Resources */,
+				D668F9B9241A3E76007AF7EA /* QIMAGETRANSFORM_LICENSE.txt in Resources */,
+				D668F918241A3E5B007AF7EA /* Assets.xcassets in Resources */,
+				D668F9DC241A3E76007AF7EA /* XCONSORTIUM_LICENSE.txt in Resources */,
+				D668F9D2241A3E76007AF7EA /* qpaintdevice.qdoc in Resources */,
+				D668F91B241A3E5B007AF7EA /* Main.storyboard in Resources */,
+				D668F9CE241A3E76007AF7EA /* qpdf.qrc in Resources */,
+				D668F9C1241A3E76007AF7EA /* WEBGRADIENTS_LICENSE.txt in Resources */,
+				D668F9D8241A3E76007AF7EA /* qt_attribution.json in Resources */,
+				D668F9F1241A3E76007AF7EA /* webgradients.binaryjson in Resources */,
+				D668F9C5241A3E76007AF7EA /* painting.pri in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D668F90A241A3E59007AF7EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D668F9E6241A3E76007AF7EA /* qimagescale_sse4.cpp in Sources */,
+				D668F9D4241A3E76007AF7EA /* qdrawhelper_mips_dspr2_asm.S in Sources */,
+				D668F9D0241A3E76007AF7EA /* qpaintengine_raster.cpp in Sources */,
+				D668F9E3241A3E76007AF7EA /* qmemrotate.cpp in Sources */,
+				D668F9E1241A3E76007AF7EA /* qpathclipper.cpp in Sources */,
+				D668F9EB241A3E76007AF7EA /* qpdfwriter.cpp in Sources */,
+				D668F9C6241A3E76007AF7EA /* qpen.cpp in Sources */,
+				D668F9CB241A3E76007AF7EA /* qcssutil.cpp in Sources */,
+				D668F9D3241A3E76007AF7EA /* qdrawhelper_neon.cpp in Sources */,
+				D668F9B0241A3E76007AF7EA /* qdrawhelper_mips_dsp_asm.S in Sources */,
+				D668F9C0241A3E76007AF7EA /* qpagelayout.cpp in Sources */,
+				D668F9DA241A3E76007AF7EA /* qdrawhelper_neon_asm.S in Sources */,
+				D668F9CF241A3E76007AF7EA /* qdrawhelper_sse4.cpp in Sources */,
+				D668F9E0241A3E76007AF7EA /* qmatrix.cpp in Sources */,
+				D668F9BC241A3E76007AF7EA /* qstroker.cpp in Sources */,
+				D668F9C8241A3E76007AF7EA /* qdrawhelper_sse2.cpp in Sources */,
+				D668F9E7241A3E76007AF7EA /* qtextureglyphcache.cpp in Sources */,
+				D668F916241A3E59007AF7EA /* ViewController.m in Sources */,
+				D668F9E8241A3E76007AF7EA /* qregion.cpp in Sources */,
+				D668F9E5241A3E76007AF7EA /* qdrawhelper.cpp in Sources */,
+				D668F9DD241A3E76007AF7EA /* qpaintengine.cpp in Sources */,
+				D668F9E4241A3E76007AF7EA /* qpainterpath.cpp in Sources */,
+				D668F9C2241A3E76007AF7EA /* qcolortransform.cpp in Sources */,
+				D668F9EE241A3E76007AF7EA /* qpagesize.cpp in Sources */,
+				D668F9C7241A3E76007AF7EA /* qbezier.cpp in Sources */,
+				D668F9D9241A3E76007AF7EA /* qblittable.cpp in Sources */,
+				D668F9B5241A3E76007AF7EA /* qoutlinemapper.cpp in Sources */,
+				D668F9B6241A3E76007AF7EA /* qcosmeticstroker.cpp in Sources */,
+				D668F9B8241A3E76007AF7EA /* qrasterizer.cpp in Sources */,
+				D668F9BA241A3E76007AF7EA /* qemulationpaintengine.cpp in Sources */,
+				D668F9D1241A3E76007AF7EA /* qcolortrclut.cpp in Sources */,
+				D668F9BF241A3E76007AF7EA /* qgrayraster.c in Sources */,
+				D668F9EF241A3E76007AF7EA /* qicc.cpp in Sources */,
+				D668F9EA241A3E76007AF7EA /* qtransform.cpp in Sources */,
+				D668F9B7241A3E76007AF7EA /* qcompositionfunctions.cpp in Sources */,
+				D668F9D7241A3E76007AF7EA /* qimagescale.cpp in Sources */,
+				D668F9CA241A3E76007AF7EA /* qcolorspace.cpp in Sources */,
+				D668F9B1241A3E76007AF7EA /* qpaintdevice.cpp in Sources */,
+				D668F9E2241A3E76007AF7EA /* qdrawhelper_mips_dsp.cpp in Sources */,
+				D668F9E9241A3E76007AF7EA /* qblendfunctions.cpp in Sources */,
+				D668F9F2241A3E76007AF7EA /* qpathsimplifier.cpp in Sources */,
+				D668F9DF241A3E76007AF7EA /* qpdf.cpp in Sources */,
+				D668F9C3241A3E76007AF7EA /* qpaintengineex.cpp in Sources */,
+				D668F9DE241A3E76007AF7EA /* qbackingstore.cpp in Sources */,
+				D668F9B4241A3E76007AF7EA /* qcoregraphics.mm in Sources */,
+				D668F9C4241A3E76007AF7EA /* qimagescale_neon.cpp in Sources */,
+				D668F9DB241A3E76007AF7EA /* qdrawhelper_ssse3.cpp in Sources */,
+				D668F9C9241A3E76007AF7EA /* qtriangulatingstroker.cpp in Sources */,
+				D668F9BB241A3E76007AF7EA /* qtriangulator.cpp in Sources */,
+				D668F9B3241A3E76007AF7EA /* qcolor.cpp in Sources */,
+				D668F9D6241A3E76007AF7EA /* qbrush.cpp in Sources */,
+				D668F9BD241A3E76007AF7EA /* qplatformbackingstore.cpp in Sources */,
+				D668F9BE241A3E76007AF7EA /* qpolygon.cpp in Sources */,
+				D668F9F0241A3E76007AF7EA /* qdrawhelper_avx2.cpp in Sources */,
+				D668F9B2241A3E76007AF7EA /* qpaintengine_blitter.cpp in Sources */,
+				D668F9CC241A3E76007AF7EA /* qpagedpaintdevice.cpp in Sources */,
+				D668F91E241A3E5B007AF7EA /* main.m in Sources */,
+				D668F9ED241A3E76007AF7EA /* qpainter.cpp in Sources */,
+				D668F913241A3E59007AF7EA /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		D668F919241A3E5B007AF7EA /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D668F91A241A3E5B007AF7EA /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D668F920241A3E5B007AF7EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		D668F921241A3E5B007AF7EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		D668F923241A3E5B007AF7EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = QD/QD.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = QD/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.QD;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D668F924241A3E5B007AF7EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = QD/QD.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = QD/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.QD;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D668F909241A3E59007AF7EA /* Build configuration list for PBXProject "QD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D668F920241A3E5B007AF7EA /* Debug */,
+				D668F921241A3E5B007AF7EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D668F922241A3E5B007AF7EA /* Build configuration list for PBXNativeTarget "QD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D668F923241A3E5B007AF7EA /* Debug */,
+				D668F924241A3E5B007AF7EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D668F906241A3E59007AF7EA /* Project object */;
+}

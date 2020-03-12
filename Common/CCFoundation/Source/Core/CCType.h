@@ -155,10 +155,10 @@ static inline CBool CCPoint64Equal(CCPoint64 lhs, CCPoint64 rhs) {
 
 #pragma mark - CCSize
 typedef struct {
-    uint32_t width;
-    uint32_t height;
+    int32_t width;
+    int32_t height;
 } CCSize32;
-static inline CCSize32 CCSize32Make(uint32_t width, uint32_t height) {
+static inline CCSize32 CCSize32Make(int32_t width, int32_t height) {
     CCSize32 size = {
         .width = width,
         .height = height,
@@ -170,10 +170,10 @@ static inline CBool CCSize32Equal(CCSize32 lhs, CCSize32 rhs) {
 }
 
 typedef struct {
-    uint64_t width;
-    uint64_t height;
+    int64_t width;
+    int64_t height;
 } CCSize64;
-static inline CCSize64 CCSize64Make(uint64_t width, uint64_t height) {
+static inline CCSize64 CCSize64Make(int64_t width, int64_t height) {
     CCSize64 size = {
         .width = width,
         .height = height,
@@ -190,7 +190,7 @@ typedef struct {
     CCPoint32 origin;
     CCSize32 size;
 } CCRect32;
-static inline CCRect32 CCRect32Make(int32_t x, int32_t y, uint32_t width, uint32_t height) {
+static inline CCRect32 CCRect32Make(int32_t x, int32_t y, int32_t width, int32_t height) {
     CCRect32 rect = {
         .origin = CCPoint32Make(x, y),
         .size = CCSize32Make(width, height),
@@ -210,7 +210,7 @@ typedef struct {
     CCPoint64 origin;
     CCSize64 size;
 } CCRect64;
-static inline CCRect64 CCRect64Make(int64_t x, int64_t y, uint64_t width, uint64_t height) {
+static inline CCRect64 CCRect64Make(int64_t x, int64_t y, int64_t width, int64_t height) {
     CCRect64 rect = {
         .origin = CCPoint64Make(x, y),
         .size = CCSize64Make(width, height),

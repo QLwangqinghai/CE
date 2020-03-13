@@ -14,10 +14,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+    
         let v = UIView(frame: CGRect.init(x: 120, y: 120, width: 200, height: 200))
         self.view.addSubview(v)
         
-        
+        v.backgroundColor = .red
         v.layer.cornerRadius = 100
         v.layer.masksToBounds = true
     }

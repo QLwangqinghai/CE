@@ -86,28 +86,6 @@ public struct Drawing {
             return lhs.color32 == rhs.color32
         }
     }
-    
-    public class BitmapLayout: Hashable {
-        public let colorSpace: Drawing.ColorSpace
-        public let bytesPerRow: Int
-        public let countPerRow: UInt32
-        public let backgroundColor: Drawing.Color
-        
-        public init(width: UInt32, colorSpace: Drawing.ColorSpace, backgroundColor: Drawing.Color) {
-            self.bytesPerRow = Int(width * colorSpace.bytesPerPixel)
-            self.countPerRow = width
-            self.colorSpace = colorSpace
-            self.backgroundColor = backgroundColor
-        }
-        
-        public static func == (lhs: BitmapLayout, rhs: BitmapLayout) -> Bool {
-            return lhs.bytesPerRow == rhs.bytesPerRow && lhs.colorSpace == rhs.colorSpace && lhs.countPerRow == rhs.countPerRow && lhs.backgroundColor == rhs.backgroundColor
-        }
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(self.bytesPerRow)
-            hasher.combine(self.bytesPerRow)
-        }
-    }
 
 }
 

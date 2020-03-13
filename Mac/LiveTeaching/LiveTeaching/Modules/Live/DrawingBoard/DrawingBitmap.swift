@@ -89,7 +89,6 @@ public class DrawingBitmap: BaseBitmap {
         let colorSpace = bitmapLayout.colorSpace
         let bitmapContext = CGContext(data: ptr, width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bytesPerRow: bitmapLayout.bytesPerRow, space: colorSpace.space, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
         }, releaseInfo: nil)!
-        
         let layer: BitmapLayer = BitmapLayer()
         layer.zPosition = -100
         let scale = UIScreen.main.scale

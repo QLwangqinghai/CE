@@ -204,6 +204,18 @@ static inline CBool CCRect32IsValid(CCRect32 rect) {
     return 0;
 }
 
+static inline CCRect32 CCRect32Standardize(CCRect32 rect) {
+    CCRect32 result = rect;
+    if (result.size.width < 0) {
+        result.origin.x += result.size.width;
+        result.size.width *= -1;
+    }
+    if (result.size.height < 0) {
+        result.origin.y += result.size.height;
+        result.size.height *= -1;
+    }
+    return result;
+}
 
 
 typedef struct {
@@ -222,6 +234,18 @@ static inline CBool CCRect64Equal(CCRect64 lhs, CCRect64 rhs) {
 }
 static inline CBool CCRect64IsValid(CCRect32 rect) {
     return 0;
+}
+static inline CCRect64 CCRect64Standardize(CCRect64 rect) {
+    CCRect64 result = rect;
+    if (result.size.width < 0) {
+        result.origin.x += result.size.width;
+        result.size.width *= -1;
+    }
+    if (result.size.height < 0) {
+        result.origin.y += result.size.height;
+        result.size.height *= -1;
+    }
+    return result;
 }
 
 ////并集

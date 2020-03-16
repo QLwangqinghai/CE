@@ -11,8 +11,6 @@ import CoreGraphics
 
 
 public class BitmapByteBuffer {
-    public static let chunkSize: Int32 = 128
-    
     public let byteCount: Int
     public let ptr: UnsafeMutableRawPointer
     public let bitmapInfo: BitmapInfo
@@ -22,8 +20,6 @@ public class BitmapByteBuffer {
     public init(size: Size, bitmapInfo: BitmapInfo) {
         assert(size.height > 0)
         assert(size.width > 0)
-        assert(size.width % BitmapByteBuffer.chunkSize == 0)
-        assert(size.height % BitmapByteBuffer.chunkSize == 0)
         
         let bytesPerRow = Int(bitmapInfo.bytesPerPixel) * Int(size.width)
         let bufferSize = bytesPerRow * Int(size.height)
@@ -95,11 +91,26 @@ public class BitmapByteBuffer {
 public final class BitmapInfo: Hashable {
     public static let colorSpace: CGColorSpace = CGColorSpaceCreateDeviceRGB()
     
-    public static let littleArgb8888: BitmapInfo = BitmapInfo(bitsPerComponent: 8, bitsPerPixel: 32, bytesPerPixel: 4, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.premultipliedFirst, pixelFormatInfo: CGImagePixelFormatInfo.packed, orderInfo: CGImageByteOrderInfo.order32Little)
+    public static let littleArgb8888: BitmapInfo = {
+        if #available(iOS 13, *) {
+            return BitmapInfo(bitsPerComponent: 8, bitsPerPixel: 32, bytesPerPixel: 4, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.premultipliedFirst.rawValue, pixelFormatInfo: CGImagePixelFormatInfo.packed.rawValue, orderInfo: CGImageByteOrderInfo.order32Little.rawValue)
+        } else {
+            return BitmapInfo(bitsPerComponent: 8, bitsPerPixel: 32, bytesPerPixel: 4, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.premultipliedFirst.rawValue, pixelFormatInfo: 0, orderInfo: CGImageByteOrderInfo.order32Little.rawValue)
+        }
+    }()
     
-    public static let littleXrgb555: BitmapInfo = BitmapInfo(bitsPerComponent: 5, bitsPerPixel: 16, bytesPerPixel: 2, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.noneSkipFirst, pixelFormatInfo: CGImagePixelFormatInfo.RGB555, orderInfo: CGImageByteOrderInfo.order16Little)
+    public static let littleXrgb555: BitmapInfo = {
+        if #available(iOS 13, *) {
+            return BitmapInfo(bitsPerComponent: 5, bitsPerPixel: 16, bytesPerPixel: 2, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.noneSkipFirst.rawValue, pixelFormatInfo: CGImagePixelFormatInfo.RGB555.rawValue, orderInfo: CGImageByteOrderInfo.order16Little.rawValue)
+        } else {
+            return BitmapInfo(bitsPerComponent: 5, bitsPerPixel: 16, bytesPerPixel: 2, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.noneSkipFirst.rawValue, pixelFormatInfo: 0, orderInfo: CGImageByteOrderInfo.order16Little.rawValue)
+        }
+   }()
+        
+        
     
-    public static let littleXrgb565: BitmapInfo = BitmapInfo(bitsPerComponent: 5, bitsPerPixel: 16, bytesPerPixel: 2, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.noneSkipFirst, pixelFormatInfo: CGImagePixelFormatInfo.RGB565, orderInfo: CGImageByteOrderInfo.order16Little)
+    @available(iOS 12.0, *)
+    public static let littleXrgb565: BitmapInfo = BitmapInfo(bitsPerComponent: 5, bitsPerPixel: 16, bytesPerPixel: 2, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.noneSkipFirst.rawValue, pixelFormatInfo: CGImagePixelFormatInfo.RGB565.rawValue, orderInfo: CGImageByteOrderInfo.order16Little.rawValue)
 
     
     public let bitsPerComponent: Int32
@@ -107,15 +118,15 @@ public final class BitmapInfo: Hashable {
     public let bytesPerPixel: Int32
     public let space: CGColorSpace
 
-    public let alphaInfo: CGImageAlphaInfo
-    public let pixelFormatInfo: CGImagePixelFormatInfo
-    public let orderInfo: CGImageByteOrderInfo
+    public let alphaInfo: UInt32
+    public let pixelFormatInfo: UInt32
+    public let orderInfo: UInt32
     
     public var bitmapInfo: UInt32 {
-        return self.alphaInfo.rawValue | self.orderInfo.rawValue | self.pixelFormatInfo.rawValue
+        return self.alphaInfo | self.orderInfo | self.pixelFormatInfo
     }
     
-    fileprivate init(bitsPerComponent: Int32, bitsPerPixel: Int32, bytesPerPixel: Int32, space: CGColorSpace, alphaInfo: CGImageAlphaInfo, pixelFormatInfo: CGImagePixelFormatInfo, orderInfo: CGImageByteOrderInfo) {
+    fileprivate init(bitsPerComponent: Int32, bitsPerPixel: Int32, bytesPerPixel: Int32, space: CGColorSpace, alphaInfo: UInt32, pixelFormatInfo: UInt32, orderInfo: UInt32) {
         self.bitsPerComponent = bitsPerComponent
         self.bitsPerPixel = bitsPerPixel
         self.bytesPerPixel = bytesPerPixel
@@ -150,8 +161,8 @@ open class BitmapLayer: CALayer {
 
 open class BaseBitmap: NSObject {
     public let size: Size
-    public let layer: BitmapLayer
-    fileprivate init(size: Size, layer: BitmapLayer) {
+    public let layer: CALayer
+    fileprivate init(size: Size, layer: CALayer) {
         assert(size.height > 0)
         assert(size.width > 0)
 
@@ -161,14 +172,17 @@ open class BaseBitmap: NSObject {
 }
 
 open class BaseScrollBitmap: BaseBitmap {
+    
+    public let content: BitmapLayer
+    //visibleFrame 一定是当前bounds 的一个子集
     public fileprivate(set) var visibleFrame: Rect {
         didSet(old) {
             if self.visibleFrame != old {
-                self.displayContent()
+                self.visibleFrameDidChange(from: old, to: self.visibleFrame)
             }
         }
     }
-    fileprivate init(size: Size, visibleFrame: Rect, layer: BitmapLayer) {
+    fileprivate init(size: Size, visibleFrame: Rect, layer: CALayer) {
         self.visibleFrame = visibleFrame
         super.init(size: size, layer: layer)
     }
@@ -176,24 +190,14 @@ open class BaseScrollBitmap: BaseBitmap {
         fatalError("displayContent must override by subclass")
     }
     
-    open func updateVisibleFrame(origin: Point, size: Size) -> Bool {
-        if origin.x < 0 || origin.y < 0 {
-            return false
-        }
-        if size.height < 0 || size.width < 0 {
-            return false
-        }
-        if origin.x + size.width > self.size.width {
-            return false
-        }
-        if origin.y + size.height > self.size.height {
-            return false
-        }
-        self.visibleFrame = Rect(origin: origin, size: size)
-        return true
+    open func updateVisibleFrame(origin: Point, size: Size) {
+        self.update(visibleFrame: Rect(origin: origin, size: size))
     }
-    open func update(visibleFrame: Rect) -> Bool {
-        self.updateVisibleFrame(origin: visibleFrame.origin, size: visibleFrame.size)
+    open func update(visibleFrame: Rect) {
+        let frame = visibleFrame.standardize()
+        self.visibleFrame = frame
+    }
+    open func visibleFrameDidChange(from: Rect, to: Rect) {
     }
 }
 
@@ -206,18 +210,20 @@ public class ScrollBitmap: BaseScrollBitmap {
     public init(size: Size, bitmapInfo: BitmapInfo) {
         assert(size.height > 0)
         assert(size.width > 0)
+        
         let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
         self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
         let layer: BitmapLayer = BitmapLayer()
         super.init(size: size, visibleFrame: Rect(), layer: layer)
     }
-    
-    open override func displayContent() {
-        self.layer.cgImage = self.buffer.makeImage(frame: self.visibleFrame)
+
+    open override func visibleFrameDidChange(from: Rect, to: Rect) {
+        self.displayContent()
     }
-//    public override func displayContent() {
-//        self.layer.cgImage = self.makeImage(frame: visibleFrame)
-//    }
+
+    open override func displayContent() {
+        self.layer.cgImage = buffer.makeImage(frame: visibleFrame)
+    }
 }
 
 public class BitmapContent {
@@ -235,54 +241,98 @@ public class BitmapContent {
     internal func makeImage() -> CGImage? {
         return self.buffer.makeImage(origin: self.origin, size: self.size)
     }
-
 }
 
-public class BitmapChunk: BaseBitmap {
-    //相对于bitmap整体中的位置
-    public let origin: Point
-    public var content: BitmapContent? = nil {
-        didSet(old) {
-            if old !== self.content {
-                self.displayContent()
-            }
+public class BitmapTile {
+    public static let tileSize: Int32 = 128
+    public static func sizeAlignment(size: Size) -> Size {
+        var result = Size()
+        if size.width >= 0 {
+            result.width = (size.width + tileSize - 1) / tileSize * tileSize
+        } else {
+            result.width = (size.width - tileSize + 1) / tileSize * tileSize
         }
+        if size.height >= 0 {
+            result.height = (size.height + tileSize - 1) / tileSize * tileSize
+        } else {
+            result.height = (size.height - tileSize + 1) / tileSize * tileSize
+        }
+        return result
     }
     
+    //相对于bitmap整体中的位置
+    public let origin: Point
+    public let size: Size
+
+    public var content: BitmapContent? = nil
     //size 宽高必须>0
-    public init(frame: Rect) {
-        self.origin = frame.origin
-        let layer: BitmapLayer = BitmapLayer()
-        super.init(size: frame.size, layer: layer)
-    }
-    open func displayContent() {
-        guard let content = self.content else {
-            self.layer.cgImage = nil
-            return
-        }
-        self.layer.cgImage = content.makeImage()
+    public init(origin: Point, size: Size) {
+        assert(size.width > 0)
+        assert(size.height > 0)
+
+        assert(size.width % BitmapTile.tileSize == 0)
+        assert(size.height % BitmapTile.tileSize == 0)
+
+        self.origin = origin
+        self.size = size
     }
 }
 
 public class TiledScrollBitmap: BaseScrollBitmap {
-    public let buffer: BitmapByteBuffer
-    public let bitmapContext: CGContext
-    public private(set) var chunks: [BitmapChunk] = []
+    public let tiles: [[BitmapTile]]
+    public private(set) var visibleTiles: [Point: BitmapTile]
 
     //size 宽高必须>0
     public init(size: Size, bitmapInfo: BitmapInfo) {
         assert(size.height > 0)
         assert(size.width > 0)
-        let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
-        self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
-        let layer: BitmapLayer = BitmapLayer()
+        
+        var yRow: Int32 = 0
+        
+        let tileSize = Size(width: BitmapTile.tileSize, height: BitmapTile.tileSize)
+        var lines: [[BitmapTile]] = []
+
+        while yRow < size.height {
+            var items: [BitmapTile] = []
+            var xRow: Int32 = 0
+            while xRow < size.width {
+                let tile = BitmapTile(origin: Point(x: xRow, y: yRow), size: tileSize)
+                items.append(tile)
+                xRow += tileSize.width
+            }
+            lines.append(items)
+            yRow += tileSize.height
+        }
+        self.tiles = lines
         super.init(size: size, visibleFrame: Rect(), layer: layer)
     }
-    
-    open override func displayContent() {
-        self.layer.cgImage = self.buffer.makeImage(frame: self.visibleFrame)
+    open override func visibleFrameDidChange(from: Rect, to: Rect) {
+        var set: Set<Point> = []
+        if to.size.height > 0 && to.size.height > 0 {
+            
+        }
+        assert(to.size.width > 0)
+
+        var yRow: Int32 = to.origin.x
+        
+        var lines: [[BitmapTile]] = []
+
+        while yRow < size.height {
+            var items: [BitmapTile] = []
+            var xRow: Int32 = 0
+            while xRow < size.width {
+                let chunk = BitmapChunk(frame: Rect(x: xRow, y: yRow, width: BitmapByteBuffer.tileSize, height: BitmapByteBuffer.tileSize))
+                items.append(chunk)
+                xRow += BitmapByteBuffer.tileSize
+            }
+            lines.append(items)
+            yRow += BitmapByteBuffer.tileSize
+        }
+        
+        
+//        self.displayContent()
     }
-//    public override func displayContent() {
-//        self.layer.cgImage = self.makeImage(frame: visibleFrame)
-//    }
+    open override func displayContent() {
+
+    }
 }

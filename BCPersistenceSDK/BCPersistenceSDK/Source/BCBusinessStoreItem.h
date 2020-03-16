@@ -11,6 +11,8 @@
 @class FMResultSet;
 @interface BCBusinessStoreItem : NSObject
 
+//service + name + feature 唯一
+
 //服务
 @property (nonatomic, copy, readonly) NSString *service;
 
@@ -27,8 +29,6 @@
 
 
 - (instancetype)initWithService:(NSString *)service name:(NSString *)name feature:(NSString *)feature;
-
-
 
 + (BCBusinessStoreItem *)itemWithDatabaseResultSet:(FMResultSet *)set;
 

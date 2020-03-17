@@ -159,20 +159,16 @@ open class BitmapLayer: CALayer {
     }
 }
 
-open class BaseBitmap: NSObject {
+open class BaseBitmap {
     public let size: Size
-    public let layer: CALayer
-    fileprivate init(size: Size, layer: CALayer) {
+    fileprivate init(size: Size) {
         assert(size.height > 0)
         assert(size.width > 0)
-
         self.size = size
-        self.layer = layer
     }
 }
 
 open class BaseScrollBitmap: BaseBitmap {
-    
     public let content: BitmapLayer
     //visibleFrame 一定是当前bounds 的一个子集
     public fileprivate(set) var visibleFrame: Rect {
@@ -222,7 +218,7 @@ public class ScrollBitmap: BaseScrollBitmap {
     }
 
     open override func displayContent() {
-        self.layer.cgImage = buffer.makeImage(frame: visibleFrame)
+//        self.layer.cgImage = buffer.makeImage(frame: visibleFrame)
     }
 }
 
@@ -230,7 +226,6 @@ public class BitmapContent {
     //相对于buffer中的位置
     public let origin: Point
     public let size: Size
-
     public let buffer: BitmapByteBuffer
 
     public init(buffer: BitmapByteBuffer, origin: Point, size: Size) {
@@ -244,7 +239,7 @@ public class BitmapContent {
 }
 
 public class BitmapTile {
-    public static let tileSize: Int32 = 128
+    public static let tileSize: Int32 = 256
     public static func sizeAlignment(size: Size) -> Size {
         var result = Size()
         if size.width >= 0 {
@@ -278,8 +273,16 @@ public class BitmapTile {
     }
 }
 
+
+public class TiledLine {
+    public fileprivate(set) var items: [BitmapTile] = []
+    init() {
+        
+    }
+    
+}
 public class TiledScrollBitmap: BaseScrollBitmap {
-    public let tiles: [[BitmapTile]]
+    public let tiles: [TiledLine]
     public private(set) var visibleTiles: [Point: BitmapTile]
 
     //size 宽高必须>0
@@ -290,17 +293,17 @@ public class TiledScrollBitmap: BaseScrollBitmap {
         var yRow: Int32 = 0
         
         let tileSize = Size(width: BitmapTile.tileSize, height: BitmapTile.tileSize)
-        var lines: [[BitmapTile]] = []
+        var lines: [TiledLine] = []
 
         while yRow < size.height {
-            var items: [BitmapTile] = []
+            let line = TiledLine()
             var xRow: Int32 = 0
             while xRow < size.width {
                 let tile = BitmapTile(origin: Point(x: xRow, y: yRow), size: tileSize)
-                items.append(tile)
+                line.items.append(tile)
                 xRow += tileSize.width
             }
-            lines.append(items)
+            lines.append(line)
             yRow += tileSize.height
         }
         self.tiles = lines

@@ -10,7 +10,6 @@ import UIKit
 @_exported import CCFoundation
 @_exported import Basic
 
-//需要个正方形
 public class DrawingBoard {
     public struct DrawingBoardContext: Equatable {
         public var identifier: String
@@ -24,28 +23,21 @@ public class DrawingBoard {
     public private(set) var context: DrawingBoardContext? = nil
     public let size: Size
     
-    private let mirroring: UnsafeMutableRawPointer
-    public let ptr: UnsafeMutableRawPointer
+    public let bitmapBuffer: BitmapByteBuffer
     public let bitmapContext: CGContext
-    public let bitmapLayout: Drawing.BitmapLayout
-    public init(size: Size, bitmapLayout: Drawing.BitmapLayout) {
+    public let bitmapInfo: BitmapInfo
+    public init(size: Size, bitmapInfo: BitmapInfo) {
         assert(size.height > 0)
-        assert(size.width <= bitmapLayout.countPerRow)
-        self.bitmapLayout = bitmapLayout
-        let ptr = UnsafeMutableRawPointer.allocate(byteCount: bitmapLayout.bytesPerRow * Int(size.height), alignment: CCGetCachelineSize())
-        self.ptr = ptr
-        
-        let mirroring = UnsafeMutableRawPointer.allocate(byteCount: bitmapLayout.bytesPerRow * Int(size.height), alignment: CCGetCachelineSize())
-        self.mirroring = mirroring
+        assert(size.width > 0)
+        let bytesPerRow = Int(bitmapInfo.bytesPerPixel * size.width)
+        self.bitmapInfo = bitmapInfo
+        let bitmapBuffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
+        self.bitmapBuffer = bitmapBuffer
 
-        let colorSpace = bitmapLayout.colorSpace
-        self.bitmapContext = CGContext(data: ptr, width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bytesPerRow: bitmapLayout.bytesPerRow, space: colorSpace.space, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
+        let colorSpace = bitmapInfo.space
+        self.bitmapContext = CGContext(data: bitmapBuffer.ptr, width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(bitmapInfo.bitsPerComponent), bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo.bitmapInfo, releaseCallback: { (context, ptr) in
         }, releaseInfo: nil)!
         self.size = size
-    }
-    
-    deinit {
-        self.ptr.deallocate()
     }
     
     private func clear() {
@@ -75,19 +67,20 @@ public class DrawingBoard {
             bounds.size.height -= Int32(rect.origin.y * -1)
             bounds.origin.y = 0
         }
-
-        let alignment = Int32(CCGetCachelineSize()) / self.bitmapLayout.colorSpace.bytesPerPixel
+///TODO: F
         
-        if alignment > 1 {
-            let xOffset = bounds.origin.x % Int32(alignment)
-            bounds.origin.x -= xOffset
-            bounds.size.width += Int32(xOffset)
-
-            let widthOffset = bounds.size.width % Int32(alignment)
-            if widthOffset > 0 {
-                bounds.size.width += (Int32(alignment) - widthOffset)
-            }
-        }
+//        let alignment = Int32(CCGetCachelineSize()) / self.bitmapInfo.colorSpace.bytesPerPixel
+//
+//        if alignment > 1 {
+//            let xOffset = bounds.origin.x % Int32(alignment)
+//            bounds.origin.x -= xOffset
+//            bounds.size.width += Int32(xOffset)
+//
+//            let widthOffset = bounds.size.width % Int32(alignment)
+//            if widthOffset > 0 {
+//                bounds.size.width += (Int32(alignment) - widthOffset)
+//            }
+//        }
         return bounds
     }
 

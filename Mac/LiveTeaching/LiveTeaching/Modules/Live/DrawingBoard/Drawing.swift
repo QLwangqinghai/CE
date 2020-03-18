@@ -8,84 +8,10 @@
 
 import UIKit
 
+
+//https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_context/dq_context.html#//apple_ref/doc/uid/TP30001066-CH203-BCIBHHBB
 public struct Drawing {
-    public enum ColorSpace: UInt32 {
-        //android 只有argb模式
-        case little32Argb = 1
-        case little16Xrgb = 2//最高位填充0
-        public static let deviceRgb: CGColorSpace = CGColorSpaceCreateDeviceRGB()
 
-        public var bytesPerPixel: Int32 {
-            switch self {
-            case .little32Argb:
-                return 4
-            case .little16Xrgb:
-                return 2
-            }
-        }
-        public var bitsPerComponent: Int32 {
-            switch self {
-            case .little32Argb:
-                return 8
-            case .little16Xrgb:
-                return 5
-            }
-        }
-        public var bitsPerPixel: Int32 {
-            switch self {
-            case .little32Argb:
-                return 32
-            case .little16Xrgb:
-                return 16
-            }
-        }
-        
-        public var space: CGColorSpace {
-            return ColorSpace.deviceRgb
-        }
-        
-        public var bitmapInfo: UInt32 {
-            switch self {
-            case .little32Argb:
-                return CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue
-            case .little16Xrgb:
-                return CGBitmapInfo.byteOrder16Little.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue
-            }
-        }
-    }
-
-   /*
-     RGB
-     16 bpp, 5 bpc, kCGImageAlphaNoneSkipFirst
-     Mac OS X, iOS
-     RGB
-     32 bpp, 8 bpc, kCGImageAlphaNoneSkipFirst
-     Mac OS X, iOS
-     RGB
-     32 bpp, 8 bpc, kCGImageAlphaNoneSkipLast
-     Mac OS X, iOS
-     RGB
-     32 bpp, 8 bpc, kCGImageAlphaPremultipliedFirst
-     Mac OS X, iOS
-     RGB
-     32 bpp, 8 bpc, kCGImageAlphaPremultipliedLast
-     Mac OS X, iOS
-     */ //https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_context/dq_context.html#//apple_ref/doc/uid/TP30001066-CH203-BCIBHHBB
-    public struct Color: Equatable {
-        public static let clear: Color = Color(little32Argb: 0)
-        
-        public let color32: UInt32
-        public init(little32Argb: UInt32) {
-            self.color32 = little32Argb
-//            let a = little32Argb & 0xf0_00_00_00
-//            let r = little32Argb & 0x00_f0_00_00
-//            let g = little32Argb & 0x00_00_f0_00
-//            let b = little32Argb & 0x00_00_00_f0
-        }
-        public static func == (lhs: Color, rhs: Color) -> Bool {
-            return lhs.color32 == rhs.color32
-        }
-    }
 
 }
 
@@ -193,30 +119,6 @@ public enum DrawingSize {
         let s = self.rawValue
         return CGSize(width: CGFloat(s.width) / UIScreen.main.scale, height: CGFloat(s.height) / UIScreen.main.scale)
     }
-}
-
-
-extension Drawing {
-
-
-//    public struct BoxConfig {
-//        public let boxSize: BoxSize
-//        public let scale: CGFloat
-//        public let backgroundColor: Drawing.Color
-//        public let bitmapLayout: BitmapLayout
-//
-//        public init(boxSize: BoxSize, scale: CGFloat = UIScreen.main.scale, backgroundColor: Drawing.Color = Color.clear, colorSpace: Drawing.ColorSpace = .little32Argb) {
-//            self.boxSize = boxSize
-//            self.scale = scale
-//            self.bitmapLayout = BitmapLayout(boxSize: boxSize, colorSpace: colorSpace, backgroundColor: backgroundColor)
-//            self.backgroundColor = backgroundColor
-//        }
-//    }
-    
-
-    
-
-
 }
 
 

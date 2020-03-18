@@ -107,8 +107,6 @@ public final class BitmapInfo: Hashable {
         }
    }()
         
-        
-    
     @available(iOS 12.0, *)
     public static let littleXrgb565: BitmapInfo = BitmapInfo(bitsPerComponent: 5, bitsPerPixel: 16, bytesPerPixel: 2, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.noneSkipFirst.rawValue, pixelFormatInfo: CGImagePixelFormatInfo.RGB565.rawValue, orderInfo: CGImageByteOrderInfo.order16Little.rawValue)
 
@@ -178,12 +176,9 @@ open class BaseScrollBitmap: BaseBitmap {
             }
         }
     }
-    fileprivate init(size: Size, visibleFrame: Rect, layer: CALayer) {
+    fileprivate init(size: Size, visibleFrame: Rect) {
         self.visibleFrame = visibleFrame
-        super.init(size: size, layer: layer)
-    }
-    open func displayContent() {
-        fatalError("displayContent must override by subclass")
+        super.init(size: size)
     }
     
     open func updateVisibleFrame(origin: Point, size: Size) {
@@ -209,16 +204,7 @@ public class ScrollBitmap: BaseScrollBitmap {
         
         let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
         self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
-        let layer: BitmapLayer = BitmapLayer()
-        super.init(size: size, visibleFrame: Rect(), layer: layer)
-    }
-
-    open override func visibleFrameDidChange(from: Rect, to: Rect) {
-        self.displayContent()
-    }
-
-    open override func displayContent() {
-//        self.layer.cgImage = buffer.makeImage(frame: visibleFrame)
+        super.init(size: size, visibleFrame: Rect())
     }
 }
 
@@ -275,9 +261,10 @@ public class BitmapTile {
 
 
 public class TiledLine {
+    public let y: Int32
     public fileprivate(set) var items: [BitmapTile] = []
-    init() {
-        
+    init(y: Int32) {
+        self.y = y
     }
     
 }
@@ -296,7 +283,7 @@ public class TiledScrollBitmap: BaseScrollBitmap {
         var lines: [TiledLine] = []
 
         while yRow < size.height {
-            let line = TiledLine()
+            let line = TiledLine(y: yRow)
             var xRow: Int32 = 0
             while xRow < size.width {
                 let tile = BitmapTile(origin: Point(x: xRow, y: yRow), size: tileSize)
@@ -307,35 +294,43 @@ public class TiledScrollBitmap: BaseScrollBitmap {
             yRow += tileSize.height
         }
         self.tiles = lines
-        super.init(size: size, visibleFrame: Rect(), layer: layer)
+        super.init(size: size, visibleFrame: Rect())
     }
     open override func visibleFrameDidChange(from: Rect, to: Rect) {
-        var set: Set<Point> = []
-        if to.size.height > 0 && to.size.height > 0 {
-            
-        }
-        assert(to.size.width > 0)
+        let xEnd = to.origin.x + to.size.width
+        let yEnd = to.origin.y + to.size.height
 
-        var yRow: Int32 = to.origin.x
+        let xBegin = to.origin.x / BitmapTile.tileSize * BitmapTile.tileSize
+        let yBegin = to.origin.y / BitmapTile.tileSize * BitmapTile.tileSize
+        var visibleTiles: [Point: BitmapTile] = [:]
         
-        var lines: [[BitmapTile]] = []
-
-        while yRow < size.height {
-            var items: [BitmapTile] = []
-            var xRow: Int32 = 0
-            while xRow < size.width {
-                let chunk = BitmapChunk(frame: Rect(x: xRow, y: yRow, width: BitmapByteBuffer.tileSize, height: BitmapByteBuffer.tileSize))
-                items.append(chunk)
-                xRow += BitmapByteBuffer.tileSize
+        let lines = self.tiles.filter { (line) -> Bool in
+            return line.y >= yBegin && line.y < yEnd
+        }
+        lines.forEach { (line) in
+            line.items.forEach { (tile) in
+                if tile.origin.x >= xBegin && tile.origin.x < xEnd {
+                    visibleTiles[tile.origin] = tile
+                }
             }
-            lines.append(items)
-            yRow += BitmapByteBuffer.tileSize
         }
-        
-        
-//        self.displayContent()
-    }
-    open override func displayContent() {
-
+//        self.visibleTiles.keys.forEach { (origin) in
+//            if !set.contains(origin) {
+//                self.visibleTiles.removeValue(forKey: origin)
+//            }
+//        }
+//        set.forEach { (origin) in
+//            if let _ = self.visibleTile[origin] {
+//                
+//                
+//            } else {
+//                self.visibleTiles[origin] =
+//            }
+//        }
+//        self.visibleTiles.keys.forEach { (origin) in
+//            if !set.contains(origin) {
+//                self.visibleTiles.removeValue(forKey: origin)
+//            }
+//        }
     }
 }

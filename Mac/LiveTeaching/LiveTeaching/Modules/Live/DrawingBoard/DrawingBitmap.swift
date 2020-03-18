@@ -126,7 +126,7 @@ public class DrawingBitmap: BaseBitmap {
         CCMemorySetUInt64(self.ptr, 0x7f_ff_7f_80_70_ff_7f_ff, self.bufferSize/8)
         let timeEnd2 = CFAbsoluteTimeGetCurrent();
         print(timeEnd2 - timeEnd)
-        super.init(size: size, visibleFrame: <#Rect#>, layer: layer)
+        super.init(size: size, visibleFrame: <#Rect#>)
 //        status.addObserver(self.observer)
 //        self.observer.didUpdate = {[weak self] (_ observer: DrawingStatus.Observer, _ context: DrawingStatus, _ from: DrawingStatus.Status, _ to: DrawingStatus.Status) in
 //            guard let strongSelf = self else {

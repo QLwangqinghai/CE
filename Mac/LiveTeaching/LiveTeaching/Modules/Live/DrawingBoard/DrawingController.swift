@@ -112,12 +112,12 @@ public class DrawingContainerController: NSObject {
         }
     }
     public private(set) var currentSection: DrawingSectionHandle?
-    public let container: DrawingContainer
+    public let container: DrawingWindow
     let observer: StackView.Observer = StackView.Observer()
 
     public init(frame: CGRect, drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
         self.frame = frame
-        self.container = DrawingContainer(frame: frame, drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
+        self.container = DrawingWindow(frame: frame, drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
     }
 //    public override func loadContent() -> DrawingContainer {
 //        let container: DrawingContainer = DrawingContainer(frame: self.frame)

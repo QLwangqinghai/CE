@@ -600,6 +600,13 @@ public protocol DrawingViewDrawDelegate: class {
 }
 
 public class DrawingView: UIView {
+    /*
+     background
+     content
+     foreground
+     */
+    
+    
     public let status: DrawingStatus
     public let bitmap: DrawingBitmap
     

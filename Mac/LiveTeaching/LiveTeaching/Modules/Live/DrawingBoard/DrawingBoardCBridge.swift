@@ -29,12 +29,11 @@ extension Point: Hashable {
     }
 }
 
-public extension Size {
-//    init(width: CCUInt32, height: CCUInt32) {
-//        self.init()
-//        self.width = width
-//        self.height = height
-//    }
+extension Size {
+    public var cgSize: CGSize {
+        let scale = UIScreen.main.scale
+        return CGSize(width: CGFloat(self.width) / scale, height: CGFloat(self.height) / scale)
+    }
 }
 extension Size: Equatable {
     public static func == (_ lhs: Size, _ rhs: Size) -> Bool {

@@ -142,24 +142,27 @@ public class DrawingStatus {
 }
 
 
-public class DrawingContainer: StackView {
-    public let container: StackView
-
-    public let drawingView: DrawingView
-    public let operationView: ViewContainer
-    public private(set) var status: DrawingStatus
+public class DrawingWindow: StackView {
     
-    public init(frame: CGRect, drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
-        let container: StackView = StackView(frame: CGRect(origin: CGPoint(), size: drawingSize.cgSize))
-        let status = DrawingStatus(drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
-        self.drawingView = DrawingView(status: status)
+    //承载内容
+    public let content: StackView
+    public var drawingView: DrawingView? {
+        didSet(old) {
+            if old !== self.drawingView {
+            
+            }
+        }
+    }
+    public let operationView: ViewContainer
+    
+    public init(frame: CGRect, size: Size) {
+        let content: StackView = StackView(frame: CGRect(origin: CGPoint(), size: size.cgSize))        
         self.operationView = ViewContainer(frame: CGRect())
-        self.status = status
-        self.container = container
+        self.content = content
         super.init(frame: frame)
-        self.addSubview(container)
+        self.addSubview(content)
 
-        container.addSubview(self.drawingView)
+        content.addSubview(self.drawingView)
         self.addSubview(self.operationView)
         self.layoutSubviews()
     }
@@ -192,9 +195,9 @@ public class DrawingContainer: StackView {
         super.layout()
         let bounds = self.bounds
         let drawingSize = self.status.drawingSize.cgSize
-        self.container.bounds = CGRect(origin: CGPoint(), size: drawingSize)
-        self.container.transform = CGAffineTransform.identity.scaledBy(x: bounds.size.width / drawingSize.width, y: bounds.size.height / drawingSize.height)
-        self.container.center = CGPoint(x: bounds.size.width/2, y: bounds.size.height/2)
+        self.content.bounds = CGRect(origin: CGPoint(), size: drawingSize)
+        self.content.transform = CGAffineTransform.identity.scaledBy(x: bounds.size.width / drawingSize.width, y: bounds.size.height / drawingSize.height)
+        self.content.center = CGPoint(x: bounds.size.width/2, y: bounds.size.height/2)
         self.operationView.frame = CGRect(origin: CGPoint(), size: bounds.size)
     }
 }

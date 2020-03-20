@@ -606,7 +606,6 @@ public class DrawingView: UIView {
      foreground
      */
     
-    
     public let status: DrawingStatus
     public let bitmap: DrawingBitmap
     

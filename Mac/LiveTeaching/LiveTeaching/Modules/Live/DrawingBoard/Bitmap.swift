@@ -266,8 +266,8 @@ public class TiledLine {
     init(y: Int32) {
         self.y = y
     }
-    
 }
+
 public class TiledScrollBitmap: BaseScrollBitmap {
     public let tiles: [TiledLine]
     public private(set) var visibleTiles: [Point: BitmapTile]

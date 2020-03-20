@@ -606,21 +606,33 @@ public class DrawingView: UIView {
      foreground
      */
     
+    public let content: CATiledLayer
+    
+    //图形容器层
+    public let shapeContainer: ViewContainer
+    
     public let status: DrawingStatus
     public let bitmap: DrawingBitmap
     
     private let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
-    
+
     private var isDispatchEventToRecognizer: Bool = false
     
     internal var drawDelegate: DrawingViewDrawDelegate? = nil
 
     public init(status: DrawingStatus) {
         self.status = status
+        var bounds = CGRect(origin: CGPoint(), size: status.drawingSize.cgSize)
+        let content = CATiledLayer()
+        content.contentsScale = UIScreen.main.scale
+//        content.delegate = self
+//        content.frame = bounds
+
+        let shapeContainer: ViewContainer = ViewContainer(frame: bounds)
         var size = status.drawingSize.rawValue
         size.height = status.contentHeightLimit
         self.bitmap = DrawingBitmap(size: size, status: status)
-        super.init(frame: CGRect(origin: CGPoint(), size: status.drawingSize.cgSize))
+        super.init(frame: bounds)
         self.clipsToBounds = true
         self.layer.masksToBounds = true
         self.layer.addSublayer(bitmap.layer)

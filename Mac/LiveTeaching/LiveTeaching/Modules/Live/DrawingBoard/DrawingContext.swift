@@ -109,13 +109,11 @@ public class DrawingStatus {
     public let drawingSize: DrawingSize
     //最大值
     public let contentHeightLimit: UInt32
-    public let bitmapLayout: Drawing.BitmapLayout
     public private(set) var status: Status = Status()
     private var observers: [Observer] = []
     
-    public init(drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
+    public init(drawingSize: DrawingSize, contentHeightLimit: UInt32) {
         self.drawingSize = drawingSize
-        self.bitmapLayout = bitmapLayout
         self.contentHeightLimit = contentHeightLimit
     }
     

@@ -26,7 +26,7 @@ public class DrawingWindow: StackView {
     
     //承载内容
     public let content: DrawingContentView
-    public var drawingView: DrawingView? {
+    public var drawingView: TiledDrawingView? {
         didSet(old) {
             if old !== self.drawingView {
                 if let oldValue = old {

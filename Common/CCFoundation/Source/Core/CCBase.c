@@ -123,26 +123,61 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
         memcpy(dst, src, size);
     }
 }
-void CCMemorySetUInt32(void * _Nonnull dst, uint32_t v, size_t count) {
-    size_t r = count;
-    uint32_t * _Nonnull to = dst;
-    while (r > 0) {
-        *to = v;
-        to ++;
+
+void CCMemorySet(void * _Nonnull dst, uint32_t value, size_t count) {
+    if (0 == count) {
+        return;
+    }
+    assert(dst);
+#if BUILD_TARGET_RT_64_BIT
+    uint64_t v = value;
+    v = (v << 32) + value;
+
+    uintptr_t tmp = (uintptr_t)dst;
+    size_t offset = (tmp & 0x7);
+
+    if (offset == 0) {
+        size_t r = count;
+        uint64_t * to = dst;
+        while (r > 1) {
+            *to = v;
+            to ++;
+            r -= 2;
+        }
+        if (r == 1) {
+            uint32_t * to32 = (uint32_t *)to;
+            *to32 = value;
+            r --;
+        }
+    } else if (offset == 4) {
+        size_t r = count;
+        uint32_t * to32 = dst;
+        *to32 = value;
+        to32 ++;
         r --;
+        uint64_t * to = (uint64_t *)to32;
+        while (r > 1) {
+            *to = v;
+            to ++;
+            r -= 2;
+        }
+        if (r == 1) {
+            uint32_t * to32 = (uint32_t *)to;
+            *to32 = value;
+            r --;
+        }
+    } else
+#endif
+    {
+        size_t r = count;
+        uint32_t * to = dst;
+        while (r > 0) {
+            *to = value;
+            to ++;
+            r --;
+        }
     }
 }
-void CCMemorySetUInt64(void * _Nonnull dst, uint64_t v, size_t count) {
-    size_t r = count;
-    uint64_t * _Nonnull to = dst;
-    while (r > 0) {
-        *to = v;
-        to ++;
-        r --;
-    }
-}
-
-
 
 //const CCType CCTypeArray = 0x1;
 //const CCType CCTypeMutableArray = 0x1 | CCTypeMutableMask;

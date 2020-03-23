@@ -31,10 +31,10 @@ public class MePageViewController: BaseViewController {
 
     
     @objc private func handleTapped(recognizer: UITapGestureRecognizer) {
-        let controller = TestDrawViewController()
-        self.present(controller, animated: true) {
-            print("present finish")
-        }
+//        let controller = TestDrawViewController()
+//        self.present(controller, animated: true) {
+//            print("present finish")
+//        }
     }
     
 }

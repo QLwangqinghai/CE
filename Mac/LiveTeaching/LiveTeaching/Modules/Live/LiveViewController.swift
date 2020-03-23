@@ -9,7 +9,9 @@
 import UIKit
 
 class LiveViewController: ViewController, UIScrollViewDelegate {
-    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+    }
     
 //    public let drawingBoard: DrawingBoard
     public let containerController: DrawingContainerController = {
@@ -23,11 +25,9 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
             drawingSize = .preset960x720
         }
         
-        let controller = DrawingContainerController(frame: CGRect(), drawingSize:drawingSize, contentHeightLimit: drawingSize.rawValue.width * 16, bitmapLayout: Drawing.BitmapLayout(width: drawingSize.rawValue.width, colorSpace: Drawing.ColorSpace.little16Xrgb, backgroundColor: Drawing.Color(little32Argb: 0)))
-        var status = DrawingStatus.Status()
-        status.offset = 0
-        status.contentHeight = drawingSize.rawValue.width * 16
-        controller.container.updateStatus(status)
+        //Drawing.BitmapLayout(width: drawingSize.rawValue.width, colorSpace: Drawing.ColorSpace.little16Xrgb, backgroundColor: Drawing.Color(little32Argb: 0))
+        
+        let controller = DrawingContainerController(frame: CGRect(), contentSize:drawingSize.rawValue)
         return controller
     } ()
     let textField: UITextField = UITextField(frame: CGRect(x: 20, y: 20, width: 80, height: 30))
@@ -35,7 +35,7 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        self.view.addSubview(self.drawingController.content)
-        self.view.addSubview(self.containerController.container)
+        self.view.addSubview(self.containerController.window)
         self.resetContainerControllerLayout()
         
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: 30, height: 400))
@@ -76,9 +76,9 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         self.textField.resignFirstResponder()
         if let text = self.textField.text {
             if let offset = Double(text) {
-                var status = self.containerController.container.status.status
-                status.offset = CGFloat(offset)
-                self.containerController.container.updateStatus(status)
+//                var status = self.containerController.container.status.status
+//                status.offset = CGFloat(offset)
+//                self.containerController.container.updateStatus(status)
             }
         }
     }
@@ -100,9 +100,6 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         
 //        self.drawingController.pageContext.updateOffset(Int32(scrollView.contentOffset.y * self.drawingController.pageContext.zoomScale))
     }
-
-    
-    
     
     
     

@@ -10,28 +10,39 @@ import CoreFoundation
 import CoreGraphics
 
 
-public class BitmapByteBuffer {
-    public let byteCount: Int
-    public let ptr: UnsafeMutableRawPointer
-    public let bitmapInfo: BitmapInfo
+public final class BitmapByteBuffer {
     public let size: Size
+    public let bitmapInfo: BitmapInfo
+    public let byteCount: Int
     public let bytesPerRow: Int
+    public let ptr: UnsafeMutableRawPointer
 
-    public init(size: Size, bitmapInfo: BitmapInfo) {
-        assert(size.height > 0)
-        assert(size.width > 0)
-        
-        let bytesPerRow = Int(bitmapInfo.bytesPerPixel) * Int(size.width)
-        let bufferSize = bytesPerRow * Int(size.height)
-        let ptr = UnsafeMutableRawPointer.allocate(byteCount: bufferSize, alignment: 0)
+    
+    private init(size: Size, bitmapInfo: BitmapInfo, byteCount: Int, bytesPerRow: Int) {
+        let ptr = UnsafeMutableRawPointer.allocate(byteCount: byteCount, alignment: 0)
         self.size = size
         self.ptr = ptr
         self.bytesPerRow = bytesPerRow
         self.bitmapInfo = bitmapInfo
-        self.byteCount = bufferSize
+        self.byteCount = byteCount
+    }
+    
+    public convenience init(size: Size, bitmapInfo: BitmapInfo) {
+        assert(size.height > 0)
+        assert(size.width > 0)
+        
+        let bytesPerRow = Int(bitmapInfo.bytesPerPixel) * Int(size.width)
+        let byteCount = bytesPerRow * Int(size.height)
+        self.init(size: size, bitmapInfo: bitmapInfo, byteCount: byteCount, bytesPerRow: bytesPerRow)
     }
     deinit {
         self.ptr.deallocate()
+    }
+    
+    public func deepCopy() -> BitmapByteBuffer {
+        let buffer = BitmapByteBuffer(size: self.size, bitmapInfo: self.bitmapInfo, byteCount: self.byteCount, bytesPerRow: self.bytesPerRow)
+        memcpy(buffer.ptr, self.ptr, self.byteCount)
+        return buffer
     }
     
     //frame 必须是当前bounds的子集
@@ -166,34 +177,7 @@ open class BaseBitmap {
     }
 }
 
-open class BaseScrollBitmap: BaseBitmap {
-    public let content: BitmapLayer
-    //visibleFrame 一定是当前bounds 的一个子集
-    public fileprivate(set) var visibleFrame: Rect {
-        didSet(old) {
-            if self.visibleFrame != old {
-                self.visibleFrameDidChange(from: old, to: self.visibleFrame)
-            }
-        }
-    }
-    fileprivate init(size: Size, visibleFrame: Rect) {
-        self.visibleFrame = visibleFrame
-        super.init(size: size)
-    }
-    
-    open func updateVisibleFrame(origin: Point, size: Size) {
-        self.update(visibleFrame: Rect(origin: origin, size: size))
-    }
-    open func update(visibleFrame: Rect) {
-        let frame = visibleFrame.standardize()
-        self.visibleFrame = frame
-    }
-    open func visibleFrameDidChange(from: Rect, to: Rect) {
-    }
-}
-
-
-public class ScrollBitmap: BaseScrollBitmap {
+public class Bitmap: BaseBitmap {
     public let buffer: BitmapByteBuffer
     public let bitmapContext: CGContext
     
@@ -204,24 +188,12 @@ public class ScrollBitmap: BaseScrollBitmap {
         
         let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
         self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
-        super.init(size: size, visibleFrame: Rect())
+        super.init(size: size)
     }
 }
 
-public class BitmapContent {
-    //相对于buffer中的位置
-    public let origin: Point
-    public let size: Size
-    public let buffer: BitmapByteBuffer
-
-    public init(buffer: BitmapByteBuffer, origin: Point, size: Size) {
-        self.origin = origin
-        self.buffer = buffer
-        self.size = size
-    }
-    internal func makeImage() -> CGImage? {
-        return self.buffer.makeImage(origin: self.origin, size: self.size)
-    }
+public protocol BitmapTileContent: class {
+    func draw(in ctx: CGContext)
 }
 
 public class BitmapTile {
@@ -245,7 +217,7 @@ public class BitmapTile {
     public let origin: Point
     public let size: Size
 
-    public var content: BitmapContent? = nil
+    public var content: BitmapTileContent? = nil
     //size 宽高必须>0
     public init(origin: Point, size: Size) {
         assert(size.width > 0)
@@ -259,7 +231,6 @@ public class BitmapTile {
     }
 }
 
-
 public class TiledLine {
     public let y: Int32
     public fileprivate(set) var items: [BitmapTile] = []
@@ -268,12 +239,29 @@ public class TiledLine {
     }
 }
 
-public class TiledScrollBitmap: BaseScrollBitmap {
+
+public protocol TiledBitmapDataSource: class {
+
+    
+    
+}
+
+public class TiledBitmap: BaseBitmap {
+    //visibleFrame 一定是当前bounds 的一个子集
+    public fileprivate(set) var visibleFrame: Rect {
+        didSet(old) {
+            if self.visibleFrame != old {
+                self.visibleFrameDidChange(from: old, to: self.visibleFrame)
+            }
+        }
+    }
+    
     public let tiles: [TiledLine]
     public private(set) var visibleTiles: [Point: BitmapTile]
-
+    
+    public var drawing: Bitmap?
     //size 宽高必须>0
-    public init(size: Size, bitmapInfo: BitmapInfo) {
+    public init(size: Size, visibleFrame: Rect, bitmapInfo: BitmapInfo) {
         assert(size.height > 0)
         assert(size.width > 0)
         
@@ -294,26 +282,23 @@ public class TiledScrollBitmap: BaseScrollBitmap {
             yRow += tileSize.height
         }
         self.tiles = lines
-        super.init(size: size, visibleFrame: Rect())
+        self.visibleFrame = visibleFrame
+        super.init(size: size)
     }
-    open override func visibleFrameDidChange(from: Rect, to: Rect) {
-        let xEnd = to.origin.x + to.size.width
-        let yEnd = to.origin.y + to.size.height
-
-        let xBegin = to.origin.x / BitmapTile.tileSize * BitmapTile.tileSize
-        let yBegin = to.origin.y / BitmapTile.tileSize * BitmapTile.tileSize
+    
+    open func updateVisibleFrame(origin: Point, size: Size) {
+        self.update(visibleFrame: Rect(origin: origin, size: size))
+    }
+    open func update(visibleFrame: Rect) {
+        let frame = visibleFrame.standardize()
+        self.visibleFrame = frame
+    }
+    open func visibleFrameDidChange(from: Rect, to: Rect) {
         var visibleTiles: [Point: BitmapTile] = [:]
+        self.tiles(in: to).forEach { (tile) in
+            visibleTiles[tile.origin] = tile
+        }
         
-        let lines = self.tiles.filter { (line) -> Bool in
-            return line.y >= yBegin && line.y < yEnd
-        }
-        lines.forEach { (line) in
-            line.items.forEach { (tile) in
-                if tile.origin.x >= xBegin && tile.origin.x < xEnd {
-                    visibleTiles[tile.origin] = tile
-                }
-            }
-        }
 //        self.visibleTiles.keys.forEach { (origin) in
 //            if !set.contains(origin) {
 //                self.visibleTiles.removeValue(forKey: origin)
@@ -332,5 +317,27 @@ public class TiledScrollBitmap: BaseScrollBitmap {
 //                self.visibleTiles.removeValue(forKey: origin)
 //            }
 //        }
+    }
+    
+    
+    
+    open func tiles(in bounds: Rect) -> [BitmapTile] {
+        var result: [BitmapTile] = []
+        let xEnd = bounds.origin.x + bounds.size.width
+        let yEnd = bounds.origin.y + bounds.size.height
+
+        let xBegin = bounds.origin.x / BitmapTile.tileSize * BitmapTile.tileSize
+        let yBegin = bounds.origin.y / BitmapTile.tileSize * BitmapTile.tileSize
+        
+        let lines = self.tiles.filter { (line) -> Bool in
+            return line.y >= yBegin && line.y < yEnd
+        }
+        lines.forEach { (line) in
+            line.items.forEach { (tile) in
+                if tile.origin.x >= xBegin && tile.origin.x < xEnd {
+                    result.append(tile)
+                }
+            }
+        }
     }
 }

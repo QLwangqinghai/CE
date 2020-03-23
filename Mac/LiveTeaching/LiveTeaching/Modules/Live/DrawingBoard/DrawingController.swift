@@ -12,10 +12,10 @@ import UIKit
 
 
 public protocol DrawingHandle: class {
-    var drawingView: DrawingView? { get }
+    var drawingView: TiledDrawingView? { get }
     
-    func willAppear(drawingView: DrawingView)
-    func didAppear(drawingView: DrawingView)
+    func willAppear(drawingView: TiledDrawingView)
+    func didAppear(drawingView: TiledDrawingView)
 }
 public protocol DrawingSectionHandle: DrawingHandle {
     func hasPrev() -> Bool
@@ -23,12 +23,42 @@ public protocol DrawingSectionHandle: DrawingHandle {
 }
 
 public class DrawingController: NSObject, DrawingViewDrawDelegate {
-    public func drawingViewShouldBeginRecognize(_ view: DrawingView, point: TouchPoint) -> Data? {
-        return Data()
+    
+    
+    //MARK: DrawingViewDrawDelegate
+
+    public func drawingView(_ view: BaseDrawingView, shouldBeginRecognizeAt point: TouchPoint) -> AnyHashable? {
+        //即将识别
+
+    }
+    
+    public func drawingView(_ view: BaseDrawingView, didBeginRecognize context: TouchPointCollection) {
+        //开始识别
+
+    }
+    
+    public func drawingView(_ view: BaseDrawingView, didRecognizedFailed context: TouchPointCollection) {
+        //识别失败
+    }
+    
+    public func drawingView(_ view: BaseDrawingView, didRecognizedSuccess context: TouchPointCollection) {
+        //识别成功
+
     }
     
     
-    public private(set) var drawingView: DrawingView? = nil
+    //以下2个api是识别成功后的调用
+    public func drawingView(_ view: BaseDrawingView, draw context: TouchPointCollection) {
+        //内容有变化
+        
+    }
+    
+    public func drawingView(_ view: TiledDrawingView, finish context: TouchPointCollection) {
+        //结束
+    }
+    
+    
+    public private(set) var drawingView: TiledDrawingView? = nil
 
 //    public private(set) var status: DrawingView.Status
 //    public init(status: DrawingView.Status, bitmapLayout: Drawing.BitmapLayout, zoomScale: CGFloat, backgroundDataSource: DrawingContentDataSource, contentDataSource: DrawingContentDataSource) {
@@ -42,29 +72,6 @@ public class DrawingController: NSObject, DrawingViewDrawDelegate {
 //        self.observer = observer
 //    }
 
-    
-    //MARK: DrawingViewDrawDelegate
-    public func drawingViewDidBeginRecognize(_ view: DrawingView, point: TouchPoint) {
-        //开始识别
-    }
-    public func drawingViewDidRecognizedFailed(_ view: DrawingView) {
-        //识别失败
-    }
-    public func drawingViewDidRecognizedSuccess(_ view: DrawingView) {
-        //识别成功
-
-    }
-
-    //以下3个api是识别成功后的调用
-    public func drawingView(_ view: DrawingView, beginDraw points:[TouchPoint]) {
-        
-    }
-    public func drawingView(_ view: DrawingView, draw to:TouchPoint) {
-        
-    }
-    public func drawingViewFinishDraw(_ view: DrawingView) {
-        
-    }
 
 }
 
@@ -103,21 +110,19 @@ public class DrawingSectionController: NSObject {
     
 }
 
-
-
 public class DrawingContainerController: NSObject {
     public var frame: CGRect {
         didSet {
-            self.container.frame = self.frame
+            self.window.frame = self.frame
         }
     }
     public private(set) var currentSection: DrawingSectionHandle?
-    public let container: DrawingWindow
+    public let window: DrawingWindow
     let observer: StackView.Observer = StackView.Observer()
 
-    public init(frame: CGRect, drawingSize: DrawingSize, contentHeightLimit: UInt32, bitmapLayout: Drawing.BitmapLayout) {
+    public init(frame: CGRect, contentSize: Size) {
         self.frame = frame
-        self.container = DrawingWindow(frame: frame, drawingSize: drawingSize, contentHeightLimit: contentHeightLimit, bitmapLayout: bitmapLayout)
+        self.window = DrawingWindow(frame: frame, contentSize: contentSize)
     }
 //    public override func loadContent() -> DrawingContainer {
 //        let container: DrawingContainer = DrawingContainer(frame: self.frame)

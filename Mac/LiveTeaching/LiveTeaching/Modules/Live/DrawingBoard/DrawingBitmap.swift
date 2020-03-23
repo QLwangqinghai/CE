@@ -8,21 +8,48 @@
 
 import UIKit
 
-public class DrawingBitmap: BaseBitmap {
+public class BitmapTileCell: BitmapTileContent {
+    //相对于buffer中的位置
+    public let origin: Point
+    public let size: Size
+    public let buffer: BitmapByteBuffer
+
+    public init(buffer: BitmapByteBuffer, origin: Point, size: Size) {
+        self.origin = origin
+        self.buffer = buffer
+        self.size = size
+    }
+    public func makeImage() -> CGImage? {
+        return self.buffer.makeImage(origin: self.origin, size: self.size)
+    }
+
+    public func draw(in ctx: CGContext) {
+        let bounds = ctx.boundingBoxOfClipPath
+        let red = CGFloat(drand48())
+        let green = CGFloat(drand48())
+        let blue = CGFloat(drand48())
+        ctx.setFillColor(UIColor(red: red, green: green, blue: blue, alpha: 1).cgColor)
+        ctx.fill(bounds)
+        
+        print("draw(_ layer  \(bounds)")
+    }
+    
+}
+
+
+public class DrawingBitmap: TiledBitmap {
     var onSequenceUpdate: ((DrawingBitmap) -> Void)? = nil
     public private(set) var sequence: UInt64 = 0
     public let sliceSize: Size
     
     public let bitmapContext: CGContext
 
-    public let bufferSize: Int
-    public let ptr: UnsafeMutableRawPointer
-    public var image: CGImage {
-        let bitmapLayout = self.status.bitmapLayout
-        let colorSpace = bitmapLayout.colorSpace
-        let image = CGImage(width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: colorSpace.bitmapInfo), provider: self.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)!
-        return image
-    }
+//    public var image: CGImage {
+//        let bitmapLayout = self.status.bitmapLayout
+//        let colorSpace = bitmapLayout.colorSpace
+//        let image = CGImage(width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: colorSpace.bitmapInfo), provider: self.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)!
+//        return image
+//    }
     public private(set) var slices: [DrawingBitmapSliceLayer] = []
     
     public let dataProvider: CGDataProvider
@@ -102,30 +129,31 @@ public class DrawingBitmap: BaseBitmap {
 //        let image = CGImage(width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: colorSpace.bitmapInfo), provider: self.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)!
 //        self.image = image
         
-        let timer: DispatchSourceTimer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(), queue: DispatchQueue.main)
-        timer.schedule(deadline: DispatchTime.now(), repeating: 2)
-        self.timer = timer
-        timer.setEventHandler {
-            print("timer setmem")
-            let size = Int(self.bufferSize)
-            let random = Int(arc4random()) % 10 * self.status.bitmapLayout.bytesPerRow * 64
-            memset(self.ptr.advanced(by: random), Int32(arc4random()/2), self.status.bitmapLayout.bytesPerRow * 64)
-            self.displayContent()
-        }
-        timer.resume()
-        
-        print("self.bufferSize: \(self.bufferSize)")
-        
-        
-        let timeBegin = CFAbsoluteTimeGetCurrent();
-        self.bitmapContext.setFillColor(UIColor.white.cgColor)
-        self.bitmapContext.fill(CGRect.init(x: 0, y: 0, width: 100000, height: 2000000))
-        let timeEnd = CFAbsoluteTimeGetCurrent();
-        print(timeEnd - timeBegin)
-        
-        CCMemorySetUInt64(self.ptr, 0x7f_ff_7f_80_70_ff_7f_ff, self.bufferSize/8)
-        let timeEnd2 = CFAbsoluteTimeGetCurrent();
-        print(timeEnd2 - timeEnd)
+//        let timer: DispatchSourceTimer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(), queue: DispatchQueue.main)
+//        timer.schedule(deadline: DispatchTime.now(), repeating: 2)
+//        self.timer = timer
+//        timer.setEventHandler {
+//            print("timer setmem")
+//            let size = Int(self.bufferSize)
+//            let random = Int(arc4random()) % 10 * self.status.bitmapLayout.bytesPerRow * 64
+//            memset(self.ptr.advanced(by: random), Int32(arc4random()/2), self.status.bitmapLayout.bytesPerRow * 64)
+//            self.displayContent()
+//        }
+//        timer.resume()
+//
+//        print("self.bufferSize: \(self.bufferSize)")
+//
+//
+//        let timeBegin = CFAbsoluteTimeGetCurrent();
+//        self.bitmapContext.setFillColor(UIColor.white.cgColor)
+//        self.bitmapContext.fill(CGRect.init(x: 0, y: 0, width: 100000, height: 2000000))
+//        let timeEnd = CFAbsoluteTimeGetCurrent();
+//        print(timeEnd - timeBegin)
+//
+//        CCMemorySetUInt64(self.ptr, 0x7f_ff_7f_80_70_ff_7f_ff, self.bufferSize/8)
+//        let timeEnd2 = CFAbsoluteTimeGetCurrent();
+//        print(timeEnd2 - timeEnd)
+
         super.init(size: size, visibleFrame: <#Rect#>)
 //        status.addObserver(self.observer)
 //        self.observer.didUpdate = {[weak self] (_ observer: DrawingStatus.Observer, _ context: DrawingStatus, _ from: DrawingStatus.Status, _ to: DrawingStatus.Status) in
@@ -221,32 +249,32 @@ public class DrawingBitmap: BaseBitmap {
 //        self.sequence += 1
     }
   
-    fileprivate func makeDataProvider(y: UInt32, height: UInt32) -> CGDataProvider {
-        let bitmapLayout = self.status.bitmapLayout
-        let offset = bitmapLayout.bytesPerRow * Int(y)
-        let size = bitmapLayout.bytesPerRow * Int(height)
-        return CGDataProvider(dataInfo: nil, data: self.ptr.advanced(by: offset), size: size) { (mptr, ptr, size) in
-            print("dataProvider release")
-            }!
-    }
-    
-    func makeImage(y: UInt32, height: UInt32) -> CGImage? {
-        if height <= 0 {
-            return nil
-        }
-        if y >= self.contentHeight {
-            return nil
-        }
-        let bitmapLayout = self.status.bitmapLayout
-        let colorSpace = bitmapLayout.colorSpace
-        let bitmapInfo: UInt32 = colorSpace.bitmapInfo
-        let offset = bitmapLayout.bytesPerRow * Int(y)
-        let size = bitmapLayout.bytesPerRow * Int(height)
-        let dataProvider = CGDataProvider(dataInfo: nil, data: self.ptr.advanced(by: offset), size: size) { (mptr, ptr, size) in
-            print("dataProvider release")
-            }!
-        return CGImage(width: Int(self.size.width), height: Int(height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
-    }
+//    fileprivate func makeDataProvider(y: UInt32, height: UInt32) -> CGDataProvider {
+//        let bitmapLayout = self.status.bitmapLayout
+//        let offset = bitmapLayout.bytesPerRow * Int(y)
+//        let size = bitmapLayout.bytesPerRow * Int(height)
+//        return CGDataProvider(dataInfo: nil, data: self.ptr.advanced(by: offset), size: size) { (mptr, ptr, size) in
+//            print("dataProvider release")
+//            }!
+//    }
+//
+//    func makeImage(y: UInt32, height: UInt32) -> CGImage? {
+//        if height <= 0 {
+//            return nil
+//        }
+//        if y >= self.contentHeight {
+//            return nil
+//        }
+//        let bitmapLayout = self.status.bitmapLayout
+//        let colorSpace = bitmapLayout.colorSpace
+//        let bitmapInfo: UInt32 = colorSpace.bitmapInfo
+//        let offset = bitmapLayout.bytesPerRow * Int(y)
+//        let size = bitmapLayout.bytesPerRow * Int(height)
+//        let dataProvider = CGDataProvider(dataInfo: nil, data: self.ptr.advanced(by: offset), size: size) { (mptr, ptr, size) in
+//            print("dataProvider release")
+//            }!
+//        return CGImage(width: Int(self.size.width), height: Int(height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+//    }
     
 //    func makeImage(x: UInt32, y: UInt32, width: UInt32, height: UInt32) -> CGImage? {
 //        let right = UInt64(x) + UInt64(width)

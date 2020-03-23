@@ -37,6 +37,7 @@
 		D673AF9923F9692A00D37AFF /* Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D673AF9823F9692A00D37AFF /* Drawing.swift */; };
 		D682FD0D23FD04C400DC25DE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D682FD0C23FD04C400DC25DE /* UIKit.framework */; };
 		D68C74082424AB9D00364332 /* DrawingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C74072424AB9D00364332 /* DrawingWindow.swift */; };
+		D68C740D2428A48100364332 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C740C2428A48100364332 /* Path.swift */; };
 		D6D1EA8023FEB2E6009DD55F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D1EA7F23FEB2E6009DD55F /* Network.swift */; };
 		D6D1EA8623FEB828009DD55F /* BCKeychainUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D1EA8423FEB828009DD55F /* BCKeychainUtil.m */; };
 /* End PBXBuildFile section */
@@ -79,6 +80,7 @@
 		D682FD0C23FD04C400DC25DE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		D683A4C123FFE7FD0014CCAC /* LT.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = LT.entitlements; sourceTree = "<group>"; };
 		D68C74072424AB9D00364332 /* DrawingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingWindow.swift; sourceTree = "<group>"; };
+		D68C740C2428A48100364332 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		D6D1EA7F23FEB2E6009DD55F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		D6D1EA8423FEB828009DD55F /* BCKeychainUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCKeychainUtil.m; sourceTree = "<group>"; };
 		D6D1EA8523FEB828009DD55F /* BCKeychainUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCKeychainUtil.h; sourceTree = "<group>"; };
@@ -221,6 +223,10 @@
 			children = (
 				D673AF9823F9692A00D37AFF /* Drawing.swift */,
 				D6165D3A23F9A04200CE6B07 /* DrawingContext.swift */,
+				D68C740C2428A48100364332 /* Path.swift */,
+				D64EE7292418E7BF00AD0795 /* Bitmap.swift */,
+				D64EE72E2419EF4600AD0795 /* DrawingBitmap.swift */,
+				D6690E7123F93EAE00B5FA44 /* DrawingView.swift */,
 				D673AF9623F9689400D37AFF /* DrawingBoardCBridge.swift */,
 				D673AF9423F93FB700D37AFF /* Log.swift */,
 				D673AF8023F93F1F00D37AFF /* Controller.swift */,
@@ -228,10 +234,7 @@
 				D673AF8123F93F1F00D37AFF /* DrawingBoard.swift */,
 				D673AF8323F93F1F00D37AFF /* DrawingController.swift */,
 				D673AF8623F93F1F00D37AFF /* DrawingSliceController.swift */,
-				D6690E7123F93EAE00B5FA44 /* DrawingView.swift */,
 				D64EE7242417649300AD0795 /* params.md */,
-				D64EE7292418E7BF00AD0795 /* Bitmap.swift */,
-				D64EE72E2419EF4600AD0795 /* DrawingBitmap.swift */,
 			);
 			path = DrawingBoard;
 			sourceTree = "<group>";
@@ -397,6 +400,7 @@
 				D68C74082424AB9D00364332 /* DrawingWindow.swift in Sources */,
 				D606702A23DC9904009BA4B0 /* MePageViewController.swift in Sources */,
 				D606702923DC9904009BA4B0 /* LiveViewController.swift in Sources */,
+				D68C740D2428A48100364332 /* Path.swift in Sources */,
 				D64D036F2408D51300210537 /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -542,7 +546,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = LiveTeaching/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -568,7 +572,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J97FN9Y7WR;
 				INFOPLIST_FILE = LiveTeaching/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -38,6 +38,7 @@
 		D682FD0D23FD04C400DC25DE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D682FD0C23FD04C400DC25DE /* UIKit.framework */; };
 		D68C74082424AB9D00364332 /* DrawingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C74072424AB9D00364332 /* DrawingWindow.swift */; };
 		D68C740D2428A48100364332 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C740C2428A48100364332 /* Path.swift */; };
+		D68C74152429AFEE00364332 /* Painter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C74142429AFEE00364332 /* Painter.swift */; };
 		D6D1EA8023FEB2E6009DD55F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D1EA7F23FEB2E6009DD55F /* Network.swift */; };
 		D6D1EA8623FEB828009DD55F /* BCKeychainUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D1EA8423FEB828009DD55F /* BCKeychainUtil.m */; };
 /* End PBXBuildFile section */
@@ -81,6 +82,7 @@
 		D683A4C123FFE7FD0014CCAC /* LT.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = LT.entitlements; sourceTree = "<group>"; };
 		D68C74072424AB9D00364332 /* DrawingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingWindow.swift; sourceTree = "<group>"; };
 		D68C740C2428A48100364332 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
+		D68C74142429AFEE00364332 /* Painter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Painter.swift; sourceTree = "<group>"; };
 		D6D1EA7F23FEB2E6009DD55F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		D6D1EA8423FEB828009DD55F /* BCKeychainUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCKeychainUtil.m; sourceTree = "<group>"; };
 		D6D1EA8523FEB828009DD55F /* BCKeychainUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCKeychainUtil.h; sourceTree = "<group>"; };
@@ -235,6 +237,7 @@
 				D673AF8323F93F1F00D37AFF /* DrawingController.swift */,
 				D673AF8623F93F1F00D37AFF /* DrawingSliceController.swift */,
 				D64EE7242417649300AD0795 /* params.md */,
+				D68C74142429AFEE00364332 /* Painter.swift */,
 			);
 			path = DrawingBoard;
 			sourceTree = "<group>";
@@ -394,6 +397,7 @@
 				D673AF9923F9692A00D37AFF /* Drawing.swift in Sources */,
 				D6690E7223F93EAE00B5FA44 /* DrawingView.swift in Sources */,
 				D673AF8C23F93F2000D37AFF /* DrawingController.swift in Sources */,
+				D68C74152429AFEE00364332 /* Painter.swift in Sources */,
 				D673AF8F23F93F2000D37AFF /* DrawingSliceController.swift in Sources */,
 				D63F4DBA2403ECC700D1FE62 /* TestDrawViewController.swift in Sources */,
 				D64EE72F2419EF4600AD0795 /* DrawingBitmap.swift in Sources */,

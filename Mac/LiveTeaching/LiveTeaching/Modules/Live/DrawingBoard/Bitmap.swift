@@ -17,7 +17,6 @@ public final class BitmapByteBuffer {
     public let bytesPerRow: Int
     public let ptr: UnsafeMutableRawPointer
 
-    
     private init(size: Size, bitmapInfo: BitmapInfo, byteCount: Int, bytesPerRow: Int) {
         let ptr = UnsafeMutableRawPointer.allocate(byteCount: byteCount, alignment: 0)
         self.size = size
@@ -98,12 +97,11 @@ public final class BitmapByteBuffer {
     }
 }
 
-
 public final class BitmapInfo: Hashable {
     public static let colorSpace: CGColorSpace = CGColorSpaceCreateDeviceRGB()
     
     public static let littleArgb8888: BitmapInfo = {
-        if #available(iOS 13, *) {
+        if #available(iOS 12, *) {
             return BitmapInfo(bitsPerComponent: 8, bitsPerPixel: 32, bytesPerPixel: 4, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.premultipliedFirst.rawValue, pixelFormatInfo: CGImagePixelFormatInfo.packed.rawValue, orderInfo: CGImageByteOrderInfo.order32Little.rawValue)
         } else {
             return BitmapInfo(bitsPerComponent: 8, bitsPerPixel: 32, bytesPerPixel: 4, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.premultipliedFirst.rawValue, pixelFormatInfo: 0, orderInfo: CGImageByteOrderInfo.order32Little.rawValue)
@@ -111,7 +109,7 @@ public final class BitmapInfo: Hashable {
     }()
     
     public static let littleXrgb555: BitmapInfo = {
-        if #available(iOS 13, *) {
+        if #available(iOS 12, *) {
             return BitmapInfo(bitsPerComponent: 5, bitsPerPixel: 16, bytesPerPixel: 2, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.noneSkipFirst.rawValue, pixelFormatInfo: CGImagePixelFormatInfo.RGB555.rawValue, orderInfo: CGImageByteOrderInfo.order16Little.rawValue)
         } else {
             return BitmapInfo(bitsPerComponent: 5, bitsPerPixel: 16, bytesPerPixel: 2, space: BitmapInfo.colorSpace, alphaInfo: CGImageAlphaInfo.noneSkipFirst.rawValue, pixelFormatInfo: 0, orderInfo: CGImageByteOrderInfo.order16Little.rawValue)
@@ -177,7 +175,7 @@ open class BaseBitmap {
     }
 }
 
-public class Bitmap: BaseBitmap {
+public class ARGBBitmap: BaseBitmap {
     public let buffer: BitmapByteBuffer
     public let bitmapContext: CGContext
     
@@ -185,10 +183,65 @@ public class Bitmap: BaseBitmap {
     public init(size: Size, bitmapInfo: BitmapInfo) {
         assert(size.height > 0)
         assert(size.width > 0)
-        
+
         let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
         self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
         super.init(size: size)
+    }
+}
+
+//16位 bitmap, 不支持透明通道
+public class RGBBitmap: BaseBitmap {
+    
+    @available(iOS 12.0, *)
+    public enum Mode {
+        case littleXrgb555
+        case littleRgb565
+    }
+    
+
+    
+    
+    public enum Background {
+        //premultiplied
+        case color(value: UInt16)
+        //纹理
+        case pattern(image: CGImage)
+    }
+    public let background: Background
+    public let buffer: BitmapByteBuffer
+    public let bitmapContext: CGContext
+    
+    //size 宽高必须>0
+    
+    private init(size: Size, background: Background, bitmapInfo: BitmapInfo) {
+        assert(size.height > 0)
+        assert(size.width > 0)
+        let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
+        self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
+        self.background = background
+        super.init(size: size)
+    }
+    
+    @available(iOS 12.0, *)
+    public convenience init(size: Size, background: Background, mode: Mode) {
+        assert(size.height > 0)
+        assert(size.width > 0)
+        
+        let bitmapInfo: BitmapInfo
+        switch mode {
+        case .littleXrgb555:
+            bitmapInfo = BitmapInfo.littleXrgb555
+            break
+        case .littleRgb565:
+            bitmapInfo = BitmapInfo.littleXrgb565
+            break
+        }
+        
+        let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
+        self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
+        self.background = background
+        self.init(size: size, background:background, bitmapInfo: bitmapInfo)
     }
 }
 
@@ -259,14 +312,12 @@ public class TiledBitmap: BaseBitmap {
     public let tiles: [TiledLine]
     public private(set) var visibleTiles: [Point: BitmapTile]
     
-    public var drawing: Bitmap?
     //size 宽高必须>0
-    public init(size: Size, visibleFrame: Rect, bitmapInfo: BitmapInfo) {
+    public init(size: Size, background: Background, visibleFrame: Rect, bitmapInfo: BitmapInfo) {
         assert(size.height > 0)
         assert(size.width > 0)
         
         var yRow: Int32 = 0
-        
         let tileSize = Size(width: BitmapTile.tileSize, height: BitmapTile.tileSize)
         var lines: [TiledLine] = []
 
@@ -283,7 +334,7 @@ public class TiledBitmap: BaseBitmap {
         }
         self.tiles = lines
         self.visibleFrame = visibleFrame
-        super.init(size: size)
+        super.init(size: size, background:background)
     }
     
     open func updateVisibleFrame(origin: Point, size: Size) {
@@ -318,8 +369,6 @@ public class TiledBitmap: BaseBitmap {
 //            }
 //        }
     }
-    
-    
     
     open func tiles(in bounds: Rect) -> [BitmapTile] {
         var result: [BitmapTile] = []

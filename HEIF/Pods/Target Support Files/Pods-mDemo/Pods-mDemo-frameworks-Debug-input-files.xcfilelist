@@ -1,0 +1,6 @@
+${PODS_ROOT}/Target Support Files/Pods-mDemo/Pods-mDemo-frameworks.sh
+${BUILT_PRODUCTS_DIR}/SDWebImage-macOS/SDWebImage.framework
+${BUILT_PRODUCTS_DIR}/SDWebImageHEIFCoder-macOS/SDWebImageHEIFCoder.framework
+${BUILT_PRODUCTS_DIR}/libde265-macOS/libde265.framework
+${BUILT_PRODUCTS_DIR}/libheif-macOS/libheif.framework
+${BUILT_PRODUCTS_DIR}/libx265-macOS/libx265.framework

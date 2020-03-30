@@ -99,7 +99,8 @@ static heif_error WriteImageData(heif_context * ctx, const void * data, size_t s
         heif_context_free(ctx);
         return nil;
     }
-    
+    int icount = heif_context_get_number_of_top_level_images(ctx);
+    NSLog(@"%ld", icount);
     // get a handle to the primary image
     heif_image_handle* handle;
     error = heif_context_get_primary_image_handle(ctx, &handle);

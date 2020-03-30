@@ -180,11 +180,11 @@ public class ARGBBitmap: BaseBitmap {
     public let bitmapContext: CGContext
     
     //size 宽高必须>0
-    public init(size: Size, bitmapInfo: BitmapInfo) {
+    public init(size: Size) {
         assert(size.height > 0)
         assert(size.width > 0)
 
-        let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
+        let buffer = BitmapByteBuffer(size: size, bitmapInfo: BitmapInfo.littleArgb8888)
         self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
         super.init(size: size)
     }
@@ -199,15 +199,13 @@ public class RGBBitmap: BaseBitmap {
         case littleRgb565
     }
     
-
-    
-    
     public enum Background {
-        //premultiplied
-        case color(value: UInt16)
+        case color(r: UInt8, g: UInt8, b: UInt8)
         //纹理
         case pattern(image: CGImage)
     }
+    public let backgroundColor: UIColor
+    private let _backgroundColor: UInt32
     public let background: Background
     public let buffer: BitmapByteBuffer
     public let bitmapContext: CGContext
@@ -237,11 +235,13 @@ public class RGBBitmap: BaseBitmap {
             bitmapInfo = BitmapInfo.littleXrgb565
             break
         }
-        
-        let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
-        self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
-        self.background = background
         self.init(size: size, background:background, bitmapInfo: bitmapInfo)
+    }
+    
+    public convenience init(size: Size, background: Background) {
+        assert(size.height > 0)
+        assert(size.width > 0)
+        self.init(size: size, background:background, bitmapInfo: BitmapInfo.littleXrgb555)
     }
 }
 

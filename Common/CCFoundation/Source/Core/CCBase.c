@@ -124,6 +124,40 @@ void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size) {
     }
 }
 
+void _CCMemorySetUInt16(void * _Nonnull dst, uint16_t value, size_t valueCount) {
+    
+}
+void _CCMemorySetUInt32(void * _Nonnull dst, uint32_t value, size_t valueCount) {
+    
+}
+
+void CCMemorySetUInt8(void * _Nonnull dst, uint8_t value, size_t valueCount) {
+    size_t count = valueCount;
+    uint8_t * ptr = dst;
+    if (count > 0) {
+        uintptr_t tmp = (uintptr_t)ptr;
+        if ((tmp & 0x1) != 0) {
+            ptr[0] = value;
+            ptr ++;
+            count --;
+        }
+    }
+    if (count % 2 != 0) {
+        ptr[count - 1] = value;
+    }
+    uint16_t v = value;
+    v = (v << 8) + value;
+    _CCMemorySetUInt16(ptr, v, value / 2);
+}
+void CCMemorySetUInt16(void * _Nonnull dst, uint16_t value, size_t valueCount) {
+    
+}
+void CCMemorySetUInt32(void * _Nonnull dst, uint32_t value, size_t valueCount) {
+    
+}
+
+
+
 void CCMemorySet(void * _Nonnull dst, uint32_t value, size_t count) {
     if (0 == count) {
         return;

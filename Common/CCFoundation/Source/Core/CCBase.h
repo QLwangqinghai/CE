@@ -52,6 +52,11 @@ static inline CCIndex CCPowerAlign2(CCIndex capacity) {
 void CCMemoryCopy(void * _Nonnull dst, const void * _Nonnull src, size_t size);
 void CCMemorySet(void * _Nonnull dst, uint32_t value, size_t count);
 
+void CCMemorySetUInt8(void * _Nonnull dst, uint8_t value, size_t valueCount);
+void CCMemorySetUInt16(void * _Nonnull dst, uint16_t value, size_t valueCount);
+void CCMemorySetUInt32(void * _Nonnull dst, uint32_t value, size_t valueCount);
+
+
 extern SInteger CCByteBase64EncodeBytes(const uint8_t * _Nonnull bytes, SInteger length, CCChar * _Nonnull outputBuffer, SInteger bufferLength);
 extern SInteger CCByteBase64DecodeBytes(const CCChar * _Nonnull encoded, SInteger length, uint8_t * _Nonnull outputBuffer, SInteger bufferLength);
 

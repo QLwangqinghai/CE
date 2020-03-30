@@ -54,7 +54,7 @@ DEPENDENCIES:
   - SDWebImageHEIFCoder/libx265
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - libde265
     - libheif
     - libx265
@@ -68,6 +68,6 @@ SPEC CHECKSUMS:
   SDWebImage: c739016e4bdf0a4a1f9a04b5e0385395ad63a282
   SDWebImageHEIFCoder: f202cd904b30069bccce2bc2ef770d537ffafcc1
 
-PODFILE CHECKSUM: e20735c4b29ec2635266cbc3ae62b67e09ceac4a
+PODFILE CHECKSUM: 05655f1e6cb34d533b5a64e35af4c869711e8188
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.8.4

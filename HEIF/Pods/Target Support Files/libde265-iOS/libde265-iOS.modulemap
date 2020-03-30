@@ -1,0 +1,6 @@
+framework module libde265 {
+  umbrella header "libde265-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

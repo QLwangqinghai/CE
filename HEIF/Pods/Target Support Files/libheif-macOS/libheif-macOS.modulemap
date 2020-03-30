@@ -1,0 +1,6 @@
+framework module libheif {
+  umbrella header "libheif-macOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

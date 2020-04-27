@@ -18,7 +18,7 @@ extern "C" {
 
 #pragma mark - equalTo
 
-extern XBool XObjectIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern XBool XObjectEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
 
 #pragma mark - hash
 

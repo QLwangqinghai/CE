@@ -34,16 +34,28 @@ extern XBoolean _Nonnull XBooleanCreate(XBool value);
 
 
 #pragma mark - XNumber
+
 extern const XNumberType XNumberTypeSInt8;
-extern const XNumberType XNumberTypeSInt16;
-extern const XNumberType XNumberTypeSInt32;
-extern const XNumberType XNumberTypeSInt64;
 extern const XNumberType XNumberTypeUInt8;
+
+extern const XNumberType XNumberTypeSInt16;
 extern const XNumberType XNumberTypeUInt16;
+
+extern const XNumberType XNumberTypeSInt32;
 extern const XNumberType XNumberTypeUInt32;
-extern const XNumberType XNumberTypeUInt64;
 extern const XNumberType XNumberTypeFloat32;
+
+extern const XNumberType XNumberTypeSInt64;
+extern const XNumberType XNumberTypeUInt64;
 extern const XNumberType XNumberTypeFloat64;
+
+extern XNumber _Nonnull XNumberCreate(XNumberType theType, const void * _Nonnull valuePtr);
+
+extern XComparisonResult XNumberCompare(XNumber _Nonnull lhs, XNumber _Nonnull rhs);
+
+extern XBool XNumberGetValue(XNumber _Nonnull ref, XNumberType theType, void * _Nonnull valuePtr);
+extern XNumberType XNumberGetType(XNumber _Nonnull ref);
+extern XBool XNumberIsFloatType(XNumber _Nonnull ref);
 
 
 
@@ -63,11 +75,14 @@ extern const XString _Nonnull XStringEmpty;
 
 #pragma mark - XData
 
-//extern const XData _Nonnull XDataEmpty;
+extern const XData _Nonnull XDataEmpty;
 
 #pragma mark - XDate
 
 #pragma mark - XValue
+
+extern const XValue _Nonnull XValueEmpty;
+
 
 #pragma mark - XStorageRef
 
@@ -79,14 +94,14 @@ extern const XString _Nonnull XStringEmpty;
 
 #pragma mark - equalTo
 
-extern XBool XClassIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern XBool XNullIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern XBool XBooleanIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern XBool XNumberIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern XBool XStringIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern XBool XDataIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern XBool XDateIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern XBool XValueIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern XBool XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern XBool XNullEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern XBool XBooleanEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern XBool XNumberEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern XBool XDataEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern XBool XDateEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
 
 #pragma mark - hash
 

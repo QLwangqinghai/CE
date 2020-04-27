@@ -16,7 +16,7 @@ class aa {
     
   
     void test() {
-        XBool a = XBooleanIsEqualTo(NULL, NULL);
+        XBool a = XBooleanEqual(NULL, NULL);
         
     };
     

@@ -48,12 +48,13 @@ extern "C" {
 
 
 typedef struct {
-    _Atomic(XFastUInt32) _refCount;
-    XUInt32 size;
+    _Atomic(XFastUInt) _refCount;
+    XUInt clearOnDealloc: 1;
+    XUInt size: (XUIntBitsCount - 1);
     XUInt8 content[0];
 } _XBuffer;
 
-extern _XBuffer * _Nonnull _XBufferAllocate(XUInt32 size);
+extern _XBuffer * _Nonnull _XBufferAllocate(XUInt size);
 extern XPtr _Nonnull _XBufferGetContent(_XBuffer * _Nonnull buffer);
 
 extern _XBuffer * _Nonnull _XBufferRetain(_XBuffer * _Nonnull buffer);

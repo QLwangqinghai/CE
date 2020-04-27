@@ -24,9 +24,9 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 
 
 #if BUILD_TARGET_RT_64_BIT
-#pragma pack(push, 8)
+    #pragma pack(push, 8)
 #elif BUILD_TARGET_RT_32_BIT
-#pragma pack(push, 4)
+    #pragma pack(push, 4)
 #else
     #error unknown rt
 #endif
@@ -40,10 +40,17 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 
 
 //64bit 压缩的头
- /* flagBegin:3 type:6 (rcInfo54(flag:4 count:18+32)) flagEnd:1  */
+ /* flagBegin:2 type:6 rcInfo:55 flagEnd:1  */
 
 //32bit rc info
-/* flag:4 count:18+32 */
+/*
+ count://d高位
+ 
+ flags: 低4位
+ flag0:clear on dealloc
+ flag1:hasWeak
+ 
+ */
 
 #if BUILD_TARGET_RT_64_BIT
 
@@ -56,14 +63,7 @@ typedef struct {
     _Atomic(XFastUInt) rcInfo;
 } _XObjectBase;
 
-#define X_BUILD_TypeInfoCompressedMask (uintptr_t)(0xE000000000000001ULL)
-
-
-/*
-  flagBegin:3 type:6 (rcInfo54(flag:4 count:18+32)) flagEnd:1
- 
- 
- */
+#define X_BUILD_TypeInfoCompressedMask (uintptr_t)(0xC000000000000001ULL)
 
 #define X_BUILD_TypeInfoConstantCompressed (uintptr_t)(0xE00FFFFFFFFFFFFFULL)
 
@@ -108,8 +108,6 @@ struct _XTypeIdentifier {
     XRefEqualTo_f _Nonnull equalTo;
 };
 
-typedef XBool (*XRefEqualTo_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
-
 
 
 struct _XTypeBase;
@@ -120,7 +118,6 @@ struct _XTypeBase {
 
 #if BUILD_TARGET_RT_64_BIT
     XUInt64 kind: 4;
-    //是否是压缩的
     XUInt64 xx: 4;
     XUInt64 domain: 8;
     XUInt64 tableSize: 48;
@@ -133,7 +130,7 @@ struct _XTypeBase {
     #error unknown rt
 #endif
     uintptr_t /* _XType_s * _Nullable */ super;
-    _XAllocatorPtr _Nullable allocator;
+    _XAllocatorPtr _Nonnull allocator;
 
     //对象方法
     XObjectDeinit_f _Nullable deinit;
@@ -163,9 +160,10 @@ typedef struct {
     #error unknown rt
 #endif
 
+
+#pragma mark - XClass
+
 extern const XClassIdentifier _Nonnull XMateClassIdentifier;
-
-
 extern const _XType_s _XClassTable[];
 extern const _XType_s _XClassNull;
 extern const _XType_s _XClassBoolean;
@@ -178,21 +176,8 @@ static inline XClass _Nullable _XRefGetCompressedType(XUInt id) {
     }
 }
 
+#pragma mark - XNull
 
-/*
- typedef XObject XNumber;
- typedef XObject XString;
- typedef XObject XArray;
- typedef XObject XMap;
- 
- typedef XObject XData;
- typedef XObject XDate;
- typedef XObject XValue;
- typedef XObject XSet;
- 
- _XObjectBase base;
- _XObjectCompressedBase base;
- */
 typedef struct {
     XUInt __;
 } _XNullContent_t;
@@ -202,6 +187,7 @@ typedef struct {
     _XNullContent_t content;
 } _XNull;
 
+#pragma mark - XBoolean
 
 typedef struct {
     XBool value;
@@ -212,33 +198,121 @@ typedef struct {
     _XBooleanContent_t content;
 } _XBoolean;
 
+#pragma mark - XNumber
 
+typedef union {
+    XSInt32 s;
+    XUInt32 u;
+    XFloat32 f;
+} _XNumberBits32_u;
+
+typedef union {
+    XSInt64 s;
+    XUInt64 u;
+    XFloat64 f;
+} _XNumberBits64_u;
 
 typedef struct {
-    XUInt64 type: 8;
-    XUInt64 sign: 1;
-
-    XSize size;
-    XUInt8 content[0];
-} _XNumberContent11_t;
-
-typedef struct {
-    XUInt64 type: 8;
-    XUInt64 sign: 1;
-
-    XSize size;
-    XUInt8 content[0];
+    XUInt32 type;
+    _XNumberBits32_u bits32;
+    XUInt8 extended[0];/* 可能有0、8、16 3种可能 */
 } _XNumberContent_t;
+
 
 typedef struct {
     _XObjectCompressedBase _runtime;
     _XNumberContent_t content;
 } _XNumber;
 
+#pragma mark - XString
+/*
+ 
+ */
+
+//inline buffer
+typedef XUInt32 _XExtendedLayout;
+
+
+/*
+32: (8 + 4 + 4 + opt12 = 16 or 28)
+16 48 (128-16)
+64: (8 + 4 + 4 + opt16 = 16 or 32)
+16 48 (128-16) (256-16)
+*/
+typedef struct {
+    _XExtendedLayout layout: 4;
+    XUInt32 hasHashCode: 1;
+    XUInt32 clearOnDealloc: 1;
+    XUInt32 __unuse: 10;
+    XUInt32 inlineLength: 16;//layout == _XStringLayoutInline 时有效
+    XUInt32 hashCode;
+    XUInt8 extended[0];/* 可能有0、16、48、112、 240 5种可能 */
+} _XByteStorageContent_t;
 
 typedef struct {
-    XSize size;
-    XUInt8 content[0];
+    XUInt offset: 32;
+    XUInt length: 32;
+    _XBuffer * _Nonnull buffer;
+} _XByteBufferContent_t;
+
+typedef struct {
+    _XObjectCompressedBase _runtime;
+    _XByteStorageContent_t content;
+} _XByteStorage;
+
+
+
+//typedef void (*XCustomRelease_f)(XPtr _Nullable context, XPtr _Nonnull content, XUInt length);
+//typedef struct {
+//    XPtr _Nullable context;
+//    XUInt length;
+//    XCustomRelease_f _Nullable customRelease;
+//    XPtr _Nonnull content;
+//} _XByteCustomContent_t;
+
+
+typedef struct _XByteStorageContent_t _XStringContent_t;
+typedef struct _XByteBufferContent_t _XStringBufferContent_t;
+
+
+typedef _XByteStorage _XString;
+
+
+typedef struct {
+    _XString _base;
+    XUInt8 extended[sizeof(XUInt)];
+} _XInlineEmptyString;
+
+#pragma mark - XData
+
+typedef _XByteStorage _XData;
+
+#pragma mark - XDate
+
+typedef struct {
+    XTimeInterval time;
+} _XDateContent_t;
+
+typedef struct {
+    _XObjectCompressedBase _runtime;
+    _XDateContent_t content;
+} _XDate;
+
+#pragma mark - XValue
+
+/*
+32: (8 + 4 + 4 = 16)
+16 48
+64: (8 + 4 + 4 = 16)
+16 48
+*/
+
+typedef struct {
+    XUInt32 clearOnDealloc: 1;
+    XUInt32 hasHashCode: 1;
+    XUInt32 extendedSize: 30;
+    XUInt32 hashCode;
+    XUInt8 extended[0];
 } _XValueContent_t;
 
 typedef struct {
@@ -246,13 +320,12 @@ typedef struct {
     _XValueContent_t content;
 } _XValue;
 
-
 typedef void (*XStorageClear_f)(XUInt8 * _Nullable content, XSize size);
 
 typedef struct {
-    XSize contentSize;
+    XSize extendedSize;
     XStorageClear_f _Nullable clear;
-    XUInt8 content[0];
+    XUInt8 extended[0];
 } _XStorageContent_t;
 
 typedef struct {
@@ -266,106 +339,17 @@ typedef struct {
     #error unknown rt
 #endif
 
-typedef struct {
-    XUInt32 offset;
-    XUInt32 length;
-    _XBuffer * _Nonnull buffer;
-} _XStringBufferContent_t;
-
-typedef struct {
-    XUInt layout: 4;
-    XUInt hasHashCode: 1;
-    XUInt __unuse: 3;
-    XUInt mask: 8;
-    XUInt inlineLength: 16;
-    XUInt hashCode: 32;
-    XUInt8 extended[0];
-} _XStringContent_t;
-
-
-typedef XUInt _XStringLayout;
-typedef XUInt _XStringMask;
-
-typedef struct {
-    _XObjectCompressedBase _runtime;
-    _XStringContent_t content;
-} _XString;
-
-
-typedef struct {
-    XUInt layout: 4;
-    XUInt hasHashCode: 1;
-    XUInt __unuse: 3;
-    XUInt mask: 8;
-    XUInt inlineLength: 16;
-    XUInt hashCode: 32;
-    XUInt8 extended[sizeof(XUInt)];
-} _XStringInlineEmptyContent_t;
-
-typedef struct {
-    _XObjectCompressedBase _runtime;
-    _XStringInlineEmptyContent_t content;
-} _XInlineEmptyString;
-
-
-/*
-32:
-base: 4
-length: 4
-hashCode: 4
-content: 4, 20, 52
- 
-64:
-base: 8
-length: 4
-hashCode: 4
-content: 16, 48, 112
-
- 32: =24
- base: 4
- length: 4
- hashCode: 4
- xxx: 4
- offset: 4
- buffer: 4
- 
- 64: = 32
- base: 8
- length: 4
- hashCode: 4
- xxx: 4
- offset: 4
- buffer: 8
- */
-
-typedef struct {
-    XUInt length: 32;
-    XUInt hashCode: 32;
-    XUInt8 extended[0];
-} _XDataContent_t;
-
-typedef struct {
-    _XObjectCompressedBase _runtime;
-    _XDataContent_t content;
-} _XData;
-
-
-typedef struct {
-    XTimeInterval time;
-} _XDateContent_t;
-
-typedef struct {
-    _XObjectCompressedBase _runtime;
-    _XDateContent_t content;
-} _XDate;
 
 #pragma pack(pop)
 
+extern XCompressedType _XRefInlineTypeToCompressedType(XUInt id);
 
 
 extern uintptr_t _XRefGetTypeInfo(XRef _Nonnull ref);
 extern XClass _Nullable _XRefGetCompressedType(XUInt id);
 
+extern XHashCode _XHashUInt64(XUInt64 i);
+extern XHashCode _XHashFloat64(XFloat64 d);
 
 #if defined(__cplusplus)
 }  // extern C

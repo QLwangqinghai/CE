@@ -46,13 +46,11 @@ const XCompressedType XCompressedTypeArray = 7;
 const XCompressedType XCompressedTypeMap = 8;
 const XCompressedType XCompressedTypeSet = 9;
 
-XBool XNumberIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-XBool XStringIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-XBool XDataIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-XBool XDateIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-XBool XValueIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
+XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
+XBool XDataEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
+XBool XDateEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
+XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 
-XHashCode XNumberHash(XRef _Nonnull obj) {return 0;};
 XHashCode XStringHash(XRef _Nonnull obj) {return 0;};
 XHashCode XDataHash(XRef _Nonnull obj) {return 0;};
 XHashCode XDateHash(XRef _Nonnull obj) {return 0;};
@@ -63,7 +61,7 @@ XHashCode XValueHash(XRef _Nonnull obj) {return 0;};
     .super = NULL,\
     .name = #Type,\
     .hashCode = X##Type##Hash,\
-    .equalTo = X##Type##IsEqualTo,\
+    .equalTo = X##Type##Equal,\
 }\
 
 #define _XTypeIdentifierMakeRootObject(Type) \
@@ -71,7 +69,7 @@ XHashCode XValueHash(XRef _Nonnull obj) {return 0;};
     .super = NULL,\
     .name = #Type,\
     .hashCode = XObjectHash,\
-    .equalTo = XObjectIsEqualTo,\
+    .equalTo = XObjectEqual,\
 }\
 
 const _XTypeIdentifier_s _XTypeIdentifierTable[] = {
@@ -105,10 +103,27 @@ const _XTypeIdentifier_s _XTypeIdentifierTable[] = {
 const XClassIdentifier _Nonnull XMateClassIdentifier = (XClassIdentifier)&(_XTypeIdentifierTable[X_BUILD_TypeIdentifier_Class]);
 
 
+//这是一个常量
+const _XType_s _XRootMetaClass = {
+    ._runtime = {
+        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClass),
+        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),
+    },
+    .base = {
+        .identifier = &_XTypeIdentifierTable[0],
+        .kind = XTypeKindMetaClass,
+        .domain = 0,
+        .tableSize = 0,
+        .super = (uintptr_t)NULL,
+        .allocator = &_XConstantClassAllocator,
+        .deinit = NULL,
+        .describe = NULL,
+    },
+};
 
 const _XType_s _XMetaClass = {
     ._runtime = {
-        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XMetaClass),
+        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClass),
         .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),
     },
     .base = {
@@ -124,10 +139,11 @@ const _XType_s _XMetaClass = {
 };
 
 
+
 #define _XCompressedValueClassMake(Type) \
 {\
     ._runtime = {\
-        .typeInfo = (uintptr_t)&_XMetaClass,\
+        .typeInfo = (uintptr_t)&_XRootMetaClass,\
         .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),\
     },\
     .base = {\
@@ -137,7 +153,7 @@ const _XType_s _XMetaClass = {
         .domain = 0,\
         .tableSize = 0,\
         .super = (uintptr_t)NULL,\
-        .allocator = &_XObjectAllocator,\
+        .allocator = &_XCompressedObjectAllocator,\
         .deinit = NULL,\
         .describe = NULL,\
     },\
@@ -146,7 +162,7 @@ const _XType_s _XMetaClass = {
 #define _XConstantValueClassMake(Type) \
 {\
     ._runtime = {\
-        .typeInfo = (uintptr_t)&_XMetaClass,\
+        .typeInfo = (uintptr_t)&_XRootMetaClass,\
         .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),\
     },\
     .base = {\
@@ -156,7 +172,7 @@ const _XType_s _XMetaClass = {
         .domain = 0,\
         .tableSize = 0,\
         .super = (uintptr_t)NULL,\
-        .allocator = NULL,\
+        .allocator = &_XConstantAllocator,\
         .deinit = NULL,\
         .describe = NULL,\
     },\
@@ -165,7 +181,7 @@ const _XType_s _XMetaClass = {
 #define _XValueClassMake(kind, Type) \
 {\
     ._runtime = {\
-        .typeInfo = (uintptr_t)&_XMetaClass,\
+        .typeInfo = (uintptr_t)&_XRootMetaClass,\
         .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),\
     },\
     .base = {\
@@ -178,6 +194,11 @@ const _XType_s _XMetaClass = {
         .deinit = NULL,\
         .describe = NULL,\
     },\
+}
+
+void aaa() {
+    
+    fprintf(stdout, "");
 }
 
 
@@ -202,7 +223,7 @@ const _XType_s _XClassNull = _XConstantValueClassMake(Null);
 const _XType_s _XClassBoolean = _XConstantValueClassMake(Boolean);
 
 
-const XClass _Nonnull XClassType = (XClass)&_XMetaClass;//0
+const XClass _Nonnull XClassType = (XClass)&_XRootMetaClass;//0
 const XClass _Nonnull XClassNull = (XClass)&_XClassNull;//1
 const XClass _Nonnull XClassBoolean = (XClass)&_XClassBoolean;//2
 
@@ -317,7 +338,50 @@ uintptr_t _XRefGetTypeInfo(XRef _Nonnull ref) {
     return info;
 }
 
+#if BUILD_TARGET_RT_64_BIT
+    
+#elif BUILD_TARGET_RT_32_BIT
+    #define X_BUILD_UInt(value) value##UL
+#else
+    #error unknown rt
+#endif
+
+
+static const XCompressedType _XRefInlineTypeTable[8] = {0, XCompressedTypeNumber, XCompressedTypeString, XCompressedTypeData, XCompressedTypeDate, 0, 0, 0};
+XCompressedType _XRefInlineTypeToCompressedType(XUInt id) {
+    if (id > 0x7) {
+        return 0;
+    } else {
+        return _XRefInlineTypeTable[id];
+    }
+}
+
+/*
+ 32:
+ bitcount: 6 .. 25 .. 1
+ bitcount: 6 .. 57 .. 1
+ */
 XClass _Nullable _XRefGetType(XRef _Nonnull ref) {
+    XUInt v = (XUInt)((uintptr_t)ref);
+#if BUILD_TARGET_RT_64_BIT
+    if ((v & 0xE000000000000001ULL) == 0xE000000000000001ULL) {
+        XUInt id = (v >> 58) & 0x7;
+        
+        //Number String Data Date
+        assert(id >= 1 && id <= 4);
+        return _XRefGetCompressedType(id);
+    }
+#elif BUILD_TARGET_RT_32_BIT
+    if ((v & 0xE0000001UL) == v & 0xE0000001UL) {
+        XUInt id = (v >> 26) & 0x7;
+        //Number String Data Date
+        assert(id >= 1 && id <= 4);
+        return _XRefGetCompressedType(id);
+    }
+#else
+    #error unknown rt
+#endif
+
     uintptr_t info = _XRefGetTypeInfo(ref);
     
 #if BUILD_TARGET_RT_64_BIT
@@ -338,3 +402,31 @@ XClass _Nonnull XRefGetType(XRef _Nonnull ref) {
     return info;
 }
 
+
+
+
+
+#define HASHFACTOR 2654435761U
+
+XHashCode _XHashUInt64(XUInt64 i) {
+    return (XHashCode)(i);
+}
+
+XHashCode _XHashFloat64(XFloat64 d) {
+    //转化成正数
+    const XFloat64 positive = (d < 0) ? -d : d;
+    
+    //四舍五入
+    const XFloat64 positiveInt = floor(positive + 0.5);
+    
+    //小数部分
+    const XFloat64 fractional = (positive - positiveInt) * 18446744073709551616.0L;
+
+    XUInt64 result = (XUInt64)fmod(positiveInt, 18446744073709551616.0L);
+    if (fractional < 0) {
+        result += -((XUInt64)(fabs(fractional)));
+    } else if (fractional > 0) {
+        result += (XUInt64)fractional;
+    }
+    return result;
+}

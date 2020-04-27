@@ -16,7 +16,6 @@ typedef void (*XObjectDescribe_f)(XObject _Nonnull obj, _XDescriptionBuffer buff
 typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 
 
-
 #pragma pack(push, 1)
 
 
@@ -41,14 +40,15 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 //    .count = 1,
 //};
 
-_XBuffer * _Nonnull _XBufferAllocate(XUInt32 size) {
+_XBuffer * _Nonnull _XBufferAllocate(XUInt size) {
+    assert(size <= (XUIntMax >> 1));
     XSize s = size;
     if (s < 8) {
         s = 8;
     }
     _XBuffer * buffer = XAlignedAllocate(size, 8);
     buffer->size = size;
-    _Atomic(uint_fast32_t) * rcPtr = &(buffer->_refCount);
+    _Atomic(XFastUInt) * rcPtr = &(buffer->_refCount);
     atomic_store(rcPtr, 1);
     return buffer;
 }
@@ -64,14 +64,14 @@ XPtr _Nonnull _XBufferGetContent(_XBuffer * _Nonnull buffer) {
 
 _XBuffer * _Nonnull _XBufferRetain(_XBuffer * _Nonnull buffer) {
     assert(buffer);
-    _Atomic(uint_fast32_t) * rcInfoPtr = &(buffer->_refCount);
+    _Atomic(XFastUInt) * rcInfoPtr = &(buffer->_refCount);
 
-    uint_fast32_t rcInfo = 0;
-    uint_fast32_t newRcInfo = 0;
+    XFastUInt rcInfo = 0;
+    XFastUInt newRcInfo = 0;
     
     do {
         rcInfo = atomic_load(rcInfoPtr);
-        if (rcInfo == UINT_FAST32_MAX) {
+        if (rcInfo == XFastUIntMax) {
             return buffer;
         }
         assert(rcInfo > 0);
@@ -83,14 +83,14 @@ _XBuffer * _Nonnull _XBufferRetain(_XBuffer * _Nonnull buffer) {
 
 void _XBufferRelease(_XBuffer * _Nonnull buffer) {
     assert(buffer);
-    _Atomic(uint_fast32_t) * rcInfoPtr = &(buffer->_refCount);
+    _Atomic(XFastUInt) * rcInfoPtr = &(buffer->_refCount);
 
-    uint_fast32_t rcInfo = 0;
-    uint_fast32_t newRcInfo = 0;
+    XFastUInt rcInfo = 0;
+    XFastUInt newRcInfo = 0;
 
     do {
         rcInfo = atomic_load(rcInfoPtr);
-        if (rcInfo == UINT_FAST32_MAX) {
+        if (rcInfo == XFastUIntMax) {
             return;
         }
         assert(rcInfo > 0);
@@ -134,7 +134,7 @@ XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length) {
 
 
 
-XBool XObjectIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+XBool XObjectEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     assert(XRefKindNormal == XRefGetKind(lhs));
     assert(XRefKindNormal == XRefGetKind(rhs));
     return lhs == rhs;

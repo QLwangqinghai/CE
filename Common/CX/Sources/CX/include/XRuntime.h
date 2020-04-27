@@ -103,7 +103,6 @@ extern XClass _Nonnull XRefGetType(XRef _Nonnull ref);
 extern XBool XRefIsMetaClass(XRef _Nonnull ref);
 
 
-
 #if defined(__cplusplus)
 }  // extern C
 #endif

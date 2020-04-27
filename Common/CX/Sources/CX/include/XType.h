@@ -61,6 +61,9 @@ typedef intptr_t XSIntptr;
     typedef int64_t XSInt;
     typedef uint64_t XUInt;
 
+    #define XSIntBitsCount 64
+    #define XUIntBitsCount 64
+
     #define XSIntMin INT64_MIN
     #define XSIntMax INT64_MAX
 
@@ -69,6 +72,9 @@ typedef intptr_t XSIntptr;
 #elif BUILD_TARGET_RT_32_BIT
     typedef int32_t XSInt;
     typedef uint32_t XUInt;
+
+    #define XSIntBitsCount 32
+    #define XUIntBitsCount 32
 
     #define XSIntMin INT32_MIN
     #define XSIntMax INT32_MAX
@@ -116,9 +122,20 @@ typedef XUInt XHashCode;
 
 typedef int64_t XTimeInterval;
 
+#define XUInt8Max UINT8_MAX
 #define XUInt16Max UINT16_MAX
 #define XUInt32Max UINT32_MAX
 #define XUInt64Max UINT64_MAX
+
+#define XSInt8Max INT8_MAX
+#define XSInt16Max INT16_MAX
+#define XSInt32Max INT32_MAX
+#define XSInt64Max INT64_MAX
+
+#define XSInt8Min INT8_MIN
+#define XSInt16Min INT16_MIN
+#define XSInt32Min INT32_MIN
+#define XSInt64Min INT64_MIN
 
 typedef XSInt XComparisonResult;
 extern const XComparisonResult XCompareLessThan;
@@ -284,6 +301,16 @@ typedef enum {
 //static inline _Bool XTypeIsValid(XType_e t) {
 //    return (t >= XTypeBool && t <= XTypeBuffer);
 //}
+
+
+#define XAssert(cond, func, desc) {\
+    if (!(cond)) {\
+        fprintf(stderr, "%s error, %s", func, desc);\
+        abort();\
+    }\
+}
+
+
 
 
 #if defined(__cplusplus)

@@ -7,25 +7,17 @@
 //
 
 #include "include/XRef.h"
-
 #include "internal/XRuntimeInternal.h"
+#include "private/XByteStorage.h"
 
 
-//XBool XClassIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-//XBool XNullIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-//XBool XBooleanIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-//XBool XNumberIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-//XBool XStringIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-//XBool XDataIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-//XBool XDateIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-//XBool XValueIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-//XBool XObjectIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
+//XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
+//XBool XDataEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
+//XBool XDateEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
+//XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
+//XBool XObjectEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 //
 //
-//XHashCode XClassHash(XRef _Nonnull obj) {return 0;};
-//XHashCode XNullHash(XRef _Nonnull obj) {return 0;};
-//XHashCode XBooleanHash(XRef _Nonnull obj) {return 0;};
-//XHashCode XNumberHash(XRef _Nonnull obj) {return 0;};
 //XHashCode XStringHash(XRef _Nonnull obj) {return 0;};
 //XHashCode XDataHash(XRef _Nonnull obj) {return 0;};
 //XHashCode XDateHash(XRef _Nonnull obj) {return 0;};
@@ -34,7 +26,7 @@
 
 #pragma mark - XClass
 
-XBool XClassIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+XBool XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     assert(lhs);
     assert(rhs);
     XClassIdentifier lclsId = XRefGetIdentfierIfIsClass(lhs);
@@ -60,7 +52,7 @@ const _XNull _XNullShared = {
 };
 const XNull _Nonnull XNullShared = (XNull)&_XNullShared;
 
-XBool XNullIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+XBool XNullEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     //XNull 不允许自己构建， 只可以使用 XNullShared;
     assert(lhs == XNullShared);
     assert(rhs == XNullShared);
@@ -89,7 +81,7 @@ const _XBoolean _XBooleanFalse = {
 const XBoolean _Nonnull XBooleanTrue = (XBoolean)&_XBooleanTrue;
 const XBoolean _Nonnull XBooleanFalse = (XBoolean)&_XBooleanFalse;
 
-XBool XBooleanIsEqualTo(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+XBool XBooleanEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     //XBoolean 不允许自己构建， 只可以使用 XBooleanTrue、XBooleanFalse;
     assert(lhs == XBooleanTrue || lhs == XBooleanFalse);
     assert(rhs == XBooleanTrue || rhs == XBooleanFalse);
@@ -110,69 +102,76 @@ extern XBoolean _Nonnull XBooleanCreate(XBool value) {
 
 //XNumber.c
 
+
+#pragma mark - private _XByteStorage
+
+//XByteStorage.c
+
+
+/*
+32: (8 + 4 + 4 + opt12 = 16 or 28)
+16 48 (128-16)
+64: (8 + 4 + 4 + opt16 = 16 or 32)
+16 48 (128-16) (256-16)
+*/
+//typedef struct {
+//    _XExtendedLayout layout: 4;
+//    XUInt32 hasHashCode: 1;
+//    XUInt32 clearOnDealloc: 1;
+//    XUInt32 __unuse: 10;
+//    XUInt32 inlineLength: 16;//layout == _XStringLayoutInline 时有效
+//    XUInt32 hashCode;
+//    XUInt8 extended[0];/* 可能有0、16、48、112、 240 5种可能 */
+//} _XByteContent_t;
+//
+//typedef struct {
+//    XUInt offset: 32;
+//    XUInt length: 32;
+//    _XBuffer * _Nonnull buffer;
+//} _XByteBufferContent_t;
+//
+//typedef struct {
+//    _XObjectCompressedBase _runtime;
+//    _XByteBufferContent_t content;
+//} _XByteStorage;
+
+
 #pragma mark - XString
 
-/*
-32:
-base: 4
-layout + length: 4
-hashCode: 4
-content: 4, 20, 52
-
-64:
-base: 8
-layout + length: 4
-hashCode: 4
-content: 16, 48, 112
-*/
-const _XStringLayout _XStringLayoutInline = 0;
-
-/*
- 32: =24
- base: 4
- layout + xxx: 4
- hashCode: 4
- length: 4
- offset: 4
- buffer: 4
- 
- 64: = 32
- base: 8
- layout + xxx: 4
- hashCode: 4
- length: 4
- offset: 4
- buffer: 8
- */
-const _XStringLayout _XStringLayoutBuffer = 1;
-
-/*
- typedef struct {
-     XUInt layout: 4;
-     XUInt hasHashCode: 1;
-     XUInt __unuse: 3;
-     XUInt mask: 8;
-     XUInt inlineLength: 16;
-     XUInt hashCode: 32;
- } _XStringContent_t;
-
- */
 const _XInlineEmptyString _XStringEmpty = {
-    ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_String),
-    .content = {
-        .layout = 0,
-        .hasHashCode = 1,
-        .__unuse = 0,
-        .mask = 0,
-        .inlineLength = sizeof(XUInt),
-        .hashCode = 0,
-        .extended = {0},
+    ._base = {
+        ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_String),
+        .content = {
+            .layout = X_BUILD_ExtendedLayoutInline,
+            .hasHashCode = 1,
+            .clearOnDealloc = 0,
+            .__unuse = 0,
+            .inlineLength = 0,
+            .hashCode = 0,
+        },
     },
+    .extended = {0},
 };
 
 const XString _Nonnull XStringEmpty = (XString)&_XStringEmpty;
 
 #pragma mark - XData
+
+
+const _XData _XDataEmpty = {
+    ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_Data),
+    .content = {
+        .layout = X_BUILD_ExtendedLayoutInline,
+        .hasHashCode = 1,
+        .clearOnDealloc = 0,
+        .__unuse = 0,
+        .inlineLength = 0,
+        .hashCode = 0,
+    },
+};
+
+const XData _Nonnull XDataEmpty = (XData)&_XDataEmpty;
+
 
 #pragma mark - XDate
 

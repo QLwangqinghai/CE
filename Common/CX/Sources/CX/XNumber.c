@@ -5,190 +5,87 @@
 //  Created by vector on 2020/4/13.
 //
 
-#include "XNumber.h"
+#include "XRuntime.h"
 #include "XRef.h"
+#include "internal/XRuntimeInternal.h"
 
 #include <math.h>
 #include <float.h>
 
 
-const XNumberType XNumberType_sint8 = 1;
-const XNumberType XNumberType_sint16 = 2;
-const XNumberType XNumberType_sint32 = 3;
-const XNumberType XNumberType_sint64 = 4;
-const XNumberType XNumberType_uint8 = 5;
-const XNumberType XNumberType_uint16 = 6;
-const XNumberType XNumberType_uint32 = 7;
-const XNumberType XNumberType_uint64 = 8;
-const XNumberType XNumberType_float32 = 9;
-const XNumberType XNumberType_float64 = 10;
+const XNumberType XNumberTypeSInt8 = 1;
+const XNumberType XNumberTypeUInt8 = 2;
+
+const XNumberType XNumberTypeSInt16 = 3;
+const XNumberType XNumberTypeUInt16 = 4;
+
+const XNumberType XNumberTypeSInt32 = 5;
+const XNumberType XNumberTypeUInt32 = 6;
+const XNumberType XNumberTypeFloat32 = 7;
+
+const XNumberType XNumberTypeSInt64 = 8;
+const XNumberType XNumberTypeUInt64 = 9;
+const XNumberType XNumberTypeFloat64 = 10;
+
+static inline XBool XNumberTypeIsValid(XNumberType type) {
+    return (0 > type && type <= XNumberTypeFloat64);
+}
 
 
+typedef union {
+    XSInt64 s;
+    XUInt64 u;
+    XFloat64 f;
+} _XNumberBits_u;
+
+typedef struct {
+    XNumberType type;
+    XUInt32 xx;
+    _XNumberBits_u bits;
+} _XNumberStruct;
 
 
-#if 0
-
-#include "CFInternal.h"
-#include "CFRuntime_Internal.h"
-#include <CoreFoundation/CFPriv.h>
-
-
-enum {
-    kCFNumberSInt128Type = 17
-};
-
-typedef CF_ENUM(uint8_t, _CFNumberCanonicalTypeIndex) {
-    kCFNumberSInt8CanonicalTypeIndex   = 0x0,
-    kCFNumberSInt16CanonicalTypeIndex  = 0x1,
-    kCFNumberSInt32CanonicalTypeIndex  = 0x2,
-    kCFNumberSInt64CanonicalTypeIndex  = 0x3,
-    kCFNumberFloat32CanonicalTypeIndex = 0x4,
-    kCFNumberFloat64CanonicalTypeIndex = 0x5,
-    kCFNumberSInt128CanonicalTypeIndex = 0x6,
-};
-
-static const CFNumberType __CFNumberCanonicalTypes[] = {
-    [kCFNumberSInt8CanonicalTypeIndex] = kCFNumberSInt8Type,
-    [kCFNumberSInt16CanonicalTypeIndex] = kCFNumberSInt16Type,
-    [kCFNumberSInt32CanonicalTypeIndex] = kCFNumberSInt32Type,
-    [kCFNumberSInt64CanonicalTypeIndex] = kCFNumberSInt64Type,
-    [kCFNumberFloat32CanonicalTypeIndex] = kCFNumberFloat32Type,
-    [kCFNumberFloat64CanonicalTypeIndex] = kCFNumberFloat64Type,
-    [kCFNumberSInt128CanonicalTypeIndex] = kCFNumberSInt128Type,
-};
-
-static const uint8_t __CFNumberCanonicalTypeIndex[] = {
-    [kCFNumberSInt8Type] = kCFNumberSInt8CanonicalTypeIndex,
-    [kCFNumberSInt16Type] = kCFNumberSInt16CanonicalTypeIndex,
-    [kCFNumberSInt32Type] = kCFNumberSInt32CanonicalTypeIndex,
-    [kCFNumberSInt64Type] = kCFNumberSInt64CanonicalTypeIndex,
-    [kCFNumberFloat32Type] = kCFNumberFloat32CanonicalTypeIndex,
-    [kCFNumberFloat64Type] = kCFNumberFloat64CanonicalTypeIndex,
-    [kCFNumberSInt128Type] = kCFNumberSInt128CanonicalTypeIndex,
-};
-
-/*
- ____ ____ ____ ____   ____ ____ ____ ____
- 63                    47                32
- ____ ____ ____ ____   ____ ____ __pp fttt
- 31                    15                0
- 
- t: The type index of the canonical type
- f: A flag to tell if the type is a preserved type or a non preserved type (1 means preserved 0 means not preserved)
- p: Bits reserved for reinterpreting both the range of `p` and `t` as a preserved type
- _: Bits reserved for the remainder of the CFRuntime field.
- 
-*/
-
-// NOTE: Only 6 bits are allowed in the runtime values!
-#define __CFRuntimeGetNumberType(num) (__CFNumberCanonicalTypes[__CFRuntimeGetValue((num), 5, 0) & 0x7])
-#define __CFRuntimeGetNumberPreservedType(num) (__CFRuntimeGetValue((num), 5, 0) & 0x3f)
-
-#define __CFRuntimeSetNumberType(num, type) (__CFRuntimeSetValue((num), 5, 0, (__CFNumberCanonicalTypeIndex[type] & 0x7)))
-#define __CFRuntimeSetNumberPreservedType(num, type) (__CFRuntimeSetValue((num), 5, 0, (type & 0x3f)))
-
-#define __CFRuntimeIsPreservedNumber(num) (__CFRuntimeGetValue((num), 5, 0) & 0x8)
-
-
-
-#if TARGET_OS_WIN32
+#if BUILD_TARGET_OS_WINDOWS
 #define copysign(A, B) _copysign(A, B)
 #endif
 
-#define __CFAssertIsBoolean(cf) __CFGenericValidateType(cf, CFBooleanGetTypeID())
-
-struct __CFBoolean {
-    CFRuntimeBase _base;
-};
-
-DECLARE_STATIC_CLASS_REF(__NSCFBoolean);
-
-static _CF_CONSTANT_OBJECT_BACKING struct __CFBoolean __kCFBooleanTrue = {
-    INIT_CFRUNTIME_BASE_WITH_CLASS(__NSCFBoolean, _kCFRuntimeIDCFBoolean)
-};
-const CFBooleanRef kCFBooleanTrue = &__kCFBooleanTrue;
-
-static _CF_CONSTANT_OBJECT_BACKING struct __CFBoolean __kCFBooleanFalse = {
-    INIT_CFRUNTIME_BASE_WITH_CLASS(__NSCFBoolean, _kCFRuntimeIDCFBoolean)
-};
-const CFBooleanRef kCFBooleanFalse = &__kCFBooleanFalse;
-
-static CFStringRef __CFBooleanCopyDescription(CFTypeRef cf) {
-    CFBooleanRef boolean = (CFBooleanRef)cf;
-    return CFStringCreateWithFormat(kCFAllocatorSystemDefault, NULL, CFSTR("<CFBoolean %p [%p]>{value = %s}"), cf, CFGetAllocator(cf), (boolean == kCFBooleanTrue) ? "true" : "false");
-}
-
-CF_PRIVATE CFStringRef __CFBooleanCopyFormattingDescription(CFTypeRef cf, CFDictionaryRef formatOptions) {
-    CFBooleanRef boolean = (CFBooleanRef)cf;
-    return (CFStringRef)CFRetain((boolean == kCFBooleanTrue) ? CFSTR("true") : CFSTR("false"));
-}
-
-static CFHashCode __CFBooleanHash(CFTypeRef cf) {
-    CFBooleanRef boolean = (CFBooleanRef)cf;
-    return (boolean == kCFBooleanTrue) ? _CFHashInt(1) : _CFHashInt(0);
-}
-
-static void __CFBooleanDeallocate(CFTypeRef cf) {
-    CFAssert(false, __kCFLogAssertion, "Deallocated CFBoolean!");
-}
-
-const CFRuntimeClass __CFBooleanClass = {
-    0,
-    "CFBoolean",
-    NULL,      // init
-    NULL,      // copy
-    __CFBooleanDeallocate,
-    NULL,
-    __CFBooleanHash,
-    __CFBooleanCopyFormattingDescription,
-    __CFBooleanCopyDescription
-};
-
-CFTypeID CFBooleanGetTypeID(void) {
-    return _kCFRuntimeIDCFBoolean;
-}
-
-Boolean CFBooleanGetValue(CFBooleanRef boolean) {
-    CF_OBJC_FUNCDISPATCHV(CFBooleanGetTypeID(), Boolean, (NSNumber *)boolean, boolValue);
-    return (boolean == kCFBooleanTrue) ? true : false;
-}
-
-
-/*** CFNumber ***/
-
-#define __CFAssertIsNumber(cf) __CFGenericValidateType(cf, CFNumberGetTypeID())
-#define __CFAssertIsValidNumberType(type) CFAssert2((0 < type && type <= kCFNumberMaxType) || (type == kCFNumberSInt128Type), __kCFLogAssertion, "%s(): bad CFNumber type %ld", __PRETTY_FUNCTION__, type);
 
 /* The IEEE bit patterns... Also have:
 0x7f800000        float +Inf
 0x7fc00000        float NaN
 0xff800000        float -Inf
 */
+#define BITSFORDOUBLEPOSINF32     ((uint32_t)0x7f800000UL)
+#define BITSFORDOUBLENAN32   ((uint32_t)0x7fc00000UL)
+#define BITSFORDOUBLENEGINF32    ((uint32_t)0xff800000UL)
+
 #define BITSFORDOUBLENAN    ((uint64_t)0x7ff8000000000000ULL)
 #define BITSFORDOUBLEPOSINF    ((uint64_t)0x7ff0000000000000ULL)
 #define BITSFORDOUBLENEGINF    ((uint64_t)0xfff0000000000000ULL)
 
 // The union dance is to avoid needing hard coded values for different floating point ABIs, technically would be safe to hardcode values, but this way is future proofed
 typedef union {
-    Float32 floatValue;
+    XFloat32 floatValue;
     int32_t bits;
-} Float32Bits;
+} XFloat32Bits;
 
 typedef union {
-    Float64 floatValue;
+    XFloat64 floatValue;
     int64_t bits;
-} Float64Bits;
+} XFloat64Bits;
 
-typedef union {
-    Float32Bits _32;
-    Float64Bits _64;
-} FloatBits;
 
-static const Float32Bits floatZeroBits = {.floatValue = 0.0f};
-static const Float32Bits floatOneBits = {.floatValue = 1.0f};
+//正无穷
+static const _XNumberBits32_u _XNumberBits32PositiveInfinity = {.u = BITSFORDOUBLEPOSINF32};
+static const _XNumberBits32_u _XNumberBits32Nan = {.u = BITSFORDOUBLENAN32};
+//负无穷
+static const _XNumberBits32_u _XNumberBits32NegativeInfinity = {.u = BITSFORDOUBLENEGINF32};
 
-static const Float64Bits doubleZeroBits = {.floatValue = 0.0f};
-static const Float64Bits doubleOneBits = {.floatValue = 1.0f};
+
+static const _XNumberBits64_u _XNumberBits64PositiveInfinity = {.u = BITSFORDOUBLEPOSINF};
+static const _XNumberBits64_u _XNumberBits64Nan = {.u = BITSFORDOUBLENAN};
+static const _XNumberBits64_u _XNumberBits64NegativeInfinity = {.u = BITSFORDOUBLENEGINF};
+
 
 #define BITSFORFLOATZERO floatZeroBits.bits
 #define BITSFORFLOATONE  floatOneBits.bits
@@ -196,11 +93,11 @@ static const Float64Bits doubleOneBits = {.floatValue = 1.0f};
 #define BITSFORDOUBLEZERO doubleZeroBits.bits
 #define BITSFORDOUBLEONE  doubleOneBits.bits
 
-#if TARGET_OS_MAC || TARGET_OS_LINUX || TARGET_OS_BSD
+#if BUILD_TARGET_OS_DARWIN || BUILD_TARGET_OS_LINUX || BUILD_TARGET_OS_ANDROID || BUILD_TARGET_OS_BSD
 #define FLOAT_POSITIVE_2_TO_THE_64    0x1.0p+64L
 #define FLOAT_NEGATIVE_2_TO_THE_127    -0x1.0p+127L
 #define FLOAT_POSITIVE_2_TO_THE_127    0x1.0p+127L
-#elif TARGET_OS_WIN32
+#elif BUILD_TARGET_OS_WINDOWS
 #define FLOAT_POSITIVE_2_TO_THE_64    18446744073709551616.0
 #define FLOAT_NEGATIVE_2_TO_THE_127    -170141183460469231731687303715884105728.0
 #define FLOAT_POSITIVE_2_TO_THE_127    170141183460469231731687303715884105728.0
@@ -211,23 +108,23 @@ static const Float64Bits doubleOneBits = {.floatValue = 1.0f};
 typedef struct {    // NOTE WELL: these two fields may switch position someday, do not use '= {high, low}' -style initialization
     int64_t high;
     uint64_t low;
-} CFSInt128Struct;
+} XSInt128Struct;
 
-static uint8_t isNeg128(const CFSInt128Struct *in) {
+static XBool isNeg128(const XSInt128Struct *in) {
     return in->high < 0;
 }
 
-static CFComparisonResult cmp128(const CFSInt128Struct *in1, const CFSInt128Struct *in2) {
-    if (in1->high < in2->high) return kCFCompareLessThan;
-    if (in1->high > in2->high) return kCFCompareGreaterThan;
-    if (in1->low < in2->low) return kCFCompareLessThan;
-    if (in1->low > in2->low) return kCFCompareGreaterThan;
-    return kCFCompareEqualTo;
+static XComparisonResult cmp128(const XSInt128Struct *in1, const XSInt128Struct *in2) {
+    if (in1->high < in2->high) return XCompareLessThan;
+    if (in1->high > in2->high) return XCompareGreaterThan;
+    if (in1->low < in2->low) return XCompareLessThan;
+    if (in1->low > in2->low) return XCompareGreaterThan;
+    return XCompareEqualTo;
 }
 
 // allows out to be the same as in1 or in2
-static void add128(CFSInt128Struct *out, CFSInt128Struct *in1, CFSInt128Struct *in2) {
-    CFSInt128Struct tmp;
+static void add128(XSInt128Struct *out, XSInt128Struct *in1, XSInt128Struct *in2) {
+    XSInt128Struct tmp;
     tmp.low = in1->low + in2->low;
     tmp.high = in1->high + in2->high;
     if (UINT64_MAX - in1->low < in2->low) {
@@ -237,7 +134,7 @@ static void add128(CFSInt128Struct *out, CFSInt128Struct *in1, CFSInt128Struct *
 }
 
 // allows out to be the same as in
-static void neg128(CFSInt128Struct *out, CFSInt128Struct *in) {
+static void neg128(XSInt128Struct *out, XSInt128Struct *in) {
     uint64_t tmplow = ~in->low;
     out->low = tmplow + 1;
     out->high = ~in->high;
@@ -246,7 +143,7 @@ static void neg128(CFSInt128Struct *out, CFSInt128Struct *in) {
     }
 }
 
-static const CFSInt128Struct powersOf10[] = {
+static const XSInt128Struct powersOf10[] = {
     { 0x4B3B4CA85A86C47ALL, 0x098A224000000000ULL },
     { 0x0785EE10D5DA46D9LL, 0x00F436A000000000ULL },
     { 0x00C097CE7BC90715LL, 0xB34B9F1000000000ULL },
@@ -288,7 +185,7 @@ static const CFSInt128Struct powersOf10[] = {
     { 0x0000000000000000LL, 0x0000000000000001ULL },
 };
 
-static const CFSInt128Struct neg_powersOf10[] = {
+static const XSInt128Struct neg_powersOf10[] = {
     { 0xB4C4B357A5793B85LL, 0xF675DDC000000000ULL },
     { 0xF87A11EF2A25B926LL, 0xFF0BC96000000000ULL },
     { 0xFF3F68318436F8EALL, 0x4CB460F000000000ULL },
@@ -330,26 +227,26 @@ static const CFSInt128Struct neg_powersOf10[] = {
     { 0xFFFFFFFFFFFFFFFFLL, 0xFFFFFFFFFFFFFFFFULL },
 };
 
-static void emit128(char *buffer, const CFSInt128Struct *in, Boolean forcePlus) {
-    CFSInt128Struct tmp = *in;
+static void emit128(char *buffer, const XSInt128Struct *in, XBool forcePlus) {
+    XSInt128Struct tmp = *in;
     if (isNeg128(&tmp)) {
     neg128(&tmp, &tmp);
     *buffer++ = '-';
     } else if (forcePlus) {
     *buffer++ = '+';
     }
-    Boolean doneOne = false;
+    XBool doneOne = false;
     int idx;
     for (idx = 0; idx < sizeof(powersOf10) / sizeof(powersOf10[0]); idx++) {
-    int count = 0;
+        int count = 0;
         while (cmp128(&powersOf10[idx], &tmp) <= 0) {
-        add128(&tmp, &tmp, (CFSInt128Struct *)&neg_powersOf10[idx]);
-        count++;
-    }
-    if (0 != count || doneOne) {
-        *buffer++ = '0' + count;
-        doneOne = true;
-    }
+            add128(&tmp, &tmp, (XSInt128Struct *)&neg_powersOf10[idx]);
+            count++;
+        }
+        if (0 != count || doneOne) {
+            *buffer++ = '0' + count;
+            doneOne = true;
+        }
     }
     if (!doneOne) {
     *buffer++ = '0';
@@ -357,24 +254,52 @@ static void emit128(char *buffer, const CFSInt128Struct *in, Boolean forcePlus) 
     *buffer = '\0';
 }
 
-static void cvtSInt128ToFloat64(Float64 *out, const CFSInt128Struct *in) {
+
+static void cvtUInt64ToSInt128(XSInt128Struct *out, XUInt64 v) {
+    XSInt128Struct i;
+    i.high = 0;
+    i.low = (XUInt64)v;
+    *out = i;
+}
+static void cvtSInt64ToSInt128(XSInt128Struct *out, XSInt64 v) {
+    XSInt128Struct i;
+
+    if (v < 0) {
+        i.high = 0x8000000000000000LL;
+        i.low = (XUInt64)(v * -1);
+    } else {
+        i.high = 0;
+        i.low = (XUInt64)v;
+    }
+    *out = i;
+}
+
+
+static void cvtSInt128ToFloat64(XFloat64 *out, const XSInt128Struct *in) {
     // switching to a positive number results in better accuracy
     // for negative numbers close to zero, because the multiply
     // of -1 by 2^64 (scaling the Float64 high) is avoided
-    Boolean wasNeg = false;
-    CFSInt128Struct tmp = *in;
+    XBool wasNeg = false;
+    XSInt128Struct tmp = *in;
     if (isNeg128(&tmp)) {
     neg128(&tmp, &tmp);
     wasNeg = true;
     }
-    Float64 d = (Float64)tmp.high * FLOAT_POSITIVE_2_TO_THE_64 + (Float64)tmp.low;
+    XFloat64 d = (XFloat64)tmp.high * FLOAT_POSITIVE_2_TO_THE_64 + (XFloat64)tmp.low;
     if (wasNeg) d = -d;
     *out = d;
 }
 
-static void cvtFloat64ToSInt128(CFSInt128Struct *out, const Float64 *in) {
-    CFSInt128Struct i;
-    Float64 d = *in;
+static void cvtFloat64ToSInt128(XSInt128Struct *out, const XFloat64 *in) {
+    XSInt128Struct i;
+    XFloat64 d = *in;
+    if (isnan(d)) {
+        out->high = 0;
+        out->low = 0;
+        return;
+    }
+    
+    //i 的取值范围 是 [FLOAT_NEGATIVE_2_TO_THE_127, (FLOAT_POSITIVE_2_TO_THE_127-1)]
     if (d < FLOAT_NEGATIVE_2_TO_THE_127) {
     i.high = 0x8000000000000000LL;
     i.low = 0x0000000000000000ULL;
@@ -387,112 +312,434 @@ static void cvtFloat64ToSInt128(CFSInt128Struct *out, const Float64 *in) {
     *out = i;
     return;
     }
-    Float64 t = floor(d / FLOAT_POSITIVE_2_TO_THE_64);
+    
+    //比FLOAT_POSITIVE_2_TO_THE_127小的double 是170141183460469212842221372237303250944 (2^127 - 2^74)， 也就是说 只要比FLOAT_POSITIVE_2_TO_THE_127 小的double 一定能用XSInt128Struct 保存整数部分
+    
+    XFloat64 t = floor(d / FLOAT_POSITIVE_2_TO_THE_64);
     i.high = (int64_t)t;
     i.low = (uint64_t)(d - t * FLOAT_POSITIVE_2_TO_THE_64);
     *out = i;
 }
 
-struct __CFNumber {
-    CFRuntimeBase _base;
-    FloatBits _bits; // need this space here for the constant objects
-    /* 0 or 8 more bytes allocated here */
-};
 
-/* Seven bits in base:
-    Bits 6..5: unused
-    Bits 4..0: CFNumber type
-*/
+//static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberFloat32Zero = {
+//    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat32typeIndex),
+//    { ._32.floatValue = 0.0f }
+//};
+//static const CFNumberRef kCFNumberFloat32Zero = &__kCFNumberFloat32Zero;
+//
+//static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberFloat32One = {
+//    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat32typeIndex),
+//    { ._32.floatValue = 1.0f }
+//};
+//static const CFNumberRef kCFNumberFloat32One = &__kCFNumberFloat32One;
+//
+//static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberFloat64Zero = {
+//    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat64typeIndex),
+//    { ._64.floatValue = 0.0f }
+//};
+//static const CFNumberRef kCFNumberFloat64Zero = &__kCFNumberFloat64Zero;
+//
+//static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberFloat64One = {
+//    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat64typeIndex),
+//    { ._64.floatValue = 1.0f }
+//};
+//static const CFNumberRef kCFNumberFloat64One = &__kCFNumberFloat64One;
 
-DECLARE_STATIC_CLASS_REF(__NSCFNumber);
 
-// Note: The isa for these things is fixed up later
-static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberNaN = {
-    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat64CanonicalTypeIndex),
-    { ._64.bits = BITSFORDOUBLENAN }
-};
-const CFNumberRef kCFNumberNaN = &__kCFNumberNaN;
-
-static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberNegativeInfinity = {
-    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat64CanonicalTypeIndex),
-    { ._64.bits = BITSFORDOUBLENEGINF }
-};
-const CFNumberRef kCFNumberNegativeInfinity = &__kCFNumberNegativeInfinity;
-
-static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberPositiveInfinity = {
-    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat64CanonicalTypeIndex),
-    { ._64.bits = BITSFORDOUBLEPOSINF }
-};
-const CFNumberRef kCFNumberPositiveInfinity = &__kCFNumberPositiveInfinity;
-
-static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberFloat32Zero = {
-    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat32CanonicalTypeIndex),
-    { ._32.floatValue = 0.0f }
-};
-static const CFNumberRef kCFNumberFloat32Zero = &__kCFNumberFloat32Zero;
-
-static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberFloat32One = {
-    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat32CanonicalTypeIndex),
-    { ._32.floatValue = 1.0f }
-};
-static const CFNumberRef kCFNumberFloat32One = &__kCFNumberFloat32One;
-
-static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberFloat64Zero = {
-    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat64CanonicalTypeIndex),
-    { ._64.floatValue = 0.0f }
-};
-static const CFNumberRef kCFNumberFloat64Zero = &__kCFNumberFloat64Zero;
-
-static _CF_CONSTANT_OBJECT_BACKING struct __CFNumber __kCFNumberFloat64One = {
-    INIT_CFRUNTIME_BASE_WITH_CLASS_AND_FLAGS(__NSCFNumber, _kCFRuntimeIDCFNumber, kCFNumberFloat64CanonicalTypeIndex),
-    { ._64.floatValue = 1.0f }
-};
-static const CFNumberRef kCFNumberFloat64One = &__kCFNumberFloat64One;
-
-static const struct {
-    uint16_t canonicalType:5;    // canonical fixed-width type
-    uint16_t floatBit:1;    // is float
-    uint16_t storageBit:1;    // storage size (0: (float ? 4 : 8), 1: (float ? 8 : 16) bits)
-    uint16_t lgByteSize:3;    // base-2 log byte size of public type
-    uint16_t unused:6;
-} __CFNumberTypeTable[] = {
-    /* 0 */            {0, 0, 0, 0},
-
-    /* kCFNumberSInt8Type */    {kCFNumberSInt8Type, 0, 0, 0, 0},
-    /* kCFNumberSInt16Type */    {kCFNumberSInt16Type, 0, 0, 1, 0},
-    /* kCFNumberSInt32Type */    {kCFNumberSInt32Type, 0, 0, 2, 0},
-    /* kCFNumberSInt64Type */    {kCFNumberSInt64Type, 0, 0, 3, 0},
-    /* kCFNumberFloat32Type */    {kCFNumberFloat32Type, 1, 0, 2, 0},
-    /* kCFNumberFloat64Type */    {kCFNumberFloat64Type, 1, 1, 3, 0},
-
-    /* kCFNumberCharType */    {kCFNumberSInt8Type, 0, 0, 0, 0},
-    /* kCFNumberShortType */    {kCFNumberSInt16Type, 0, 0, 1, 0},
-    /* kCFNumberIntType */    {kCFNumberSInt32Type, 0, 0, 2, 0},
-#if TARGET_RT_64_BIT
-    /* kCFNumberLongType */    {kCFNumberSInt64Type, 0, 0, 3, 0},
+static inline XNumber _Nullable ___XNumberMakeSInt(XNumberType type, XSInt64 value, const char * _Nonnull func) {
+#if BUILD_TARGET_RT_64_BIT
+    if (-0x10000000000000LL <= value && value < 0x10000000000000LL) {
+        XUInt64 tmp = *(XUInt64 *)(&value);
+        XUInt64 content = tmp & 0x1FFFFFFFFFFFFFUL;
+        XUInt64 typeFlag = type;
+        typeFlag = typeFlag << 58;
+        XUInt64 result = 0xE000000000000001ULL | (content << 1) | typeFlag;
+        XNumber ref = (XNumber)((uintptr_t)result);
+        XAssert((XUInt64)((uintptr_t)ref) == result, func, "unknown error");
+        return ref;
+    } else
+#elif BUILD_TARGET_RT_32_BIT
+    if (-0x100000L <= value && value < 0x100000L) {
+        XUInt32 tmp = *(XUInt32 *)(&value);
+        XUInt32 content = tmp & 0x1FFFFFU;
+        XUInt32 typeFlag = type;
+        typeFlag = typeFlag << 26;
+        XUInt32 result = 0xE0000001UL | (content << 1) | typeFlag;
+        XNumber ref = (XNumber)((uintptr_t)result);
+        XAssert((XUInt32)((uintptr_t)ref) == result, func, "unknown error");
+    } else
 #else
-    /* kCFNumberLongType */    {kCFNumberSInt32Type, 0, 0, 2, 0},
+    #error unknown rt
 #endif
-    /* kCFNumberLongLongType */    {kCFNumberSInt64Type, 0, 0, 3, 0},
-    /* kCFNumberFloatType */    {kCFNumberFloat32Type, 1, 0, 2, 0},
-    /* kCFNumberDoubleType */    {kCFNumberFloat64Type, 1, 1, 3, 0},
-
-#if TARGET_RT_64_BIT
-    /* kCFNumberCFIndexType */    {kCFNumberSInt64Type, 0, 0, 3, 0},
-    /* kCFNumberNSIntegerType */ {kCFNumberSInt64Type, 0, 0, 3, 0},
-    /* kCFNumberCGFloatType */    {kCFNumberFloat64Type, 1, 1, 3, 0},
-#else
-    /* kCFNumberCFIndexType */    {kCFNumberSInt32Type, 0, 0, 2, 0},
-    /* kCFNumberNSIntegerType */ {kCFNumberSInt32Type, 0, 0, 2, 0},
-    /* kCFNumberCGFloatType */    {kCFNumberFloat32Type, 1, 0, 2, 0},
-#endif
-
-    /* kCFNumberSInt128Type */    {kCFNumberSInt128Type, 0, 1, 4, 0},
-};
-
-CF_INLINE CFNumberType __CFNumberGetType(CFNumberRef num) {
-    return __CFRuntimeGetNumberType(num);
+    {
+        return NULL;
+    }
 }
+static inline  XNumber _Nullable ___XNumberMakeUInt(XNumberType type, XUInt64 value, const char * _Nonnull func) {
+#if BUILD_TARGET_RT_64_BIT
+    if (-0x10000000000000LL <= value && value < 0x10000000000000LL) {
+        XUInt64 tmp = *(XUInt64 *)(&value);
+        XUInt64 content = tmp & 0x1FFFFFFFFFFFFFUL;
+        XUInt64 typeFlag = type;
+        typeFlag = typeFlag << 58;
+        XUInt64 result = 0xE000000000000001ULL | (content << 1) | typeFlag;
+        XNumber ref = (XNumber)((uintptr_t)result);
+        XAssert((XUInt64)((uintptr_t)ref) == result, func, "unknown error");
+        return ref;
+    } else
+#elif BUILD_TARGET_RT_32_BIT
+    if (-0x100000L <= value && value < 0x100000L) {
+        XUInt32 tmp = *(XUInt32 *)(&value);
+        XUInt32 content = tmp & 0x1FFFFFU;
+        XUInt32 typeFlag = type;
+        typeFlag = typeFlag << 26;
+        XUInt32 result = 0xE0000001UL | (content << 1) | typeFlag;
+        XNumber ref = (XNumber)((uintptr_t)result);
+        XAssert((XUInt32)((uintptr_t)ref) == result, func, "unknown error");
+    } else
+#else
+    #error unknown rt
+#endif
+    {
+        return NULL;
+    }
+}
+
+XNumber _Nonnull __XNumberCreate32(XNumberType type, _XNumberBits32_u value, const char * _Nonnull func) {
+    
+    
+    return NULL;
+}
+XNumber _Nonnull __XNumberCreate64(XNumberType type, _XNumberBits64_u value, const char * _Nonnull func) {
+    
+    
+    return NULL;
+}
+
+static XNumber _Nonnull __XNumberCreateSInt32(XNumberType type, XSInt32 value, const char * _Nonnull func) {
+    XNumber result = ___XNumberMakeSInt(type, (XSInt64)value, func);
+    if (NULL == result) {
+        _XNumberBits32_u bits = {};
+        bits.s = value;
+        result = __XNumberCreate32(type, bits, func);
+    }
+    return result;
+}
+static XNumber _Nonnull __XNumberCreateUInt32(XNumberType type, XUInt32 value, const char * _Nonnull func) {
+    XNumber result = ___XNumberMakeUInt(type, (XUInt64)value, func);
+    if (NULL == result) {
+        _XNumberBits32_u bits = {};
+        bits.u = value;
+        result = __XNumberCreate32(type, bits, func);
+    }
+    return result;
+}
+static XNumber _Nonnull __XNumberCreateSInt64(XNumberType type, XSInt64 value, const char * _Nonnull func) {
+    XNumber result = ___XNumberMakeSInt(type, value, func);
+    if (NULL == result) {
+        _XNumberBits64_u bits = {};
+        bits.s = value;
+        result = __XNumberCreate64(type, bits, func);
+    }
+    return result;
+}
+static XNumber _Nonnull __XNumberCreateUInt64(XNumberType type, XUInt64 value, const char * _Nonnull func) {
+    XNumber result = ___XNumberMakeUInt(type, value, func);
+    if (NULL == result) {
+        _XNumberBits64_u bits = {};
+        bits.u = value;
+        result = __XNumberCreate64(type, bits, func);
+    }
+    return result;
+}
+
+#if BUILD_TARGET_RT_64_BIT
+static inline XNumber _Nonnull ___XNumberMakeFloat32(XNumberType type, XFloat32 value, const char * _Nonnull func) {
+    XUInt32 tmp = *(XUInt32 *)(&value);
+    XUInt64 content = tmp;
+    XUInt64 typeFlag = type;
+    typeFlag = typeFlag << 58;
+    XUInt64 result = 0xE000000000000001ULL | (content << 1) | typeFlag;
+    XNumber ref = (XNumber)((uintptr_t)result);
+    XAssert((XUInt64)((uintptr_t)ref) == result, func, "unknown error");
+    return ref;
+}
+#endif
+
+XNumber _Nonnull __XNumberCreateFloat32(XNumberType type, XFloat32 value, const char * _Nonnull func) {
+#if BUILD_TARGET_RT_64_BIT
+    return ___XNumberMakeFloat32(type, value, func);
+#elif BUILD_TARGET_RT_32_BIT
+    _XNumberBits32_u bits = {};
+    bits.f = value;
+    return __XNumberCreate32(type, bits, func);
+#else
+#error unknown rt
+#endif
+}
+
+XNumber _Nonnull __XNumberCreateFloat64(XNumberType type, XFloat64 value, const char * _Nonnull func) {
+#if BUILD_TARGET_RT_64_BIT
+    if (isnan(value)) {
+        XFloat32 f32 = _XNumberBits32Nan.f;
+        return ___XNumberMakeFloat32(type, f32, func);
+    } else {
+        XFloat32 f32 = (XFloat32)value;
+        XFloat64 f64 = (XFloat64)f32;
+        if (value == f64) {
+            return ___XNumberMakeFloat32(type, f32, func);
+        }
+    }
+#endif
+    _XNumberBits64_u bits = {};
+    bits.f = value;
+    return __XNumberCreate64(type, bits, func);
+}
+
+
+
+XNumber _Nonnull XNumberCreate(XNumberType theType, const void * _Nonnull valuePtr) {
+    XAssert(NULL != valuePtr, __func__, "valuePtr connot be NULL");
+    XAssert(XNumberTypeIsValid(theType), __func__, "number type error");
+    switch (theType) {
+        case XNumberTypeSInt8: {
+            XSInt8 s8 = 0;
+            memcpy(&s8, valuePtr, sizeof(XSInt8));
+            XSInt32 s32 = (XSInt32)s8;
+            return __XNumberCreateSInt32(theType, s32, __func__);
+        }
+            break;
+        case XNumberTypeSInt16: {
+            XSInt16 s16 = 0;
+            memcpy(&s16, valuePtr, sizeof(XSInt16));
+            XSInt32 s32 = (XSInt32)s16;
+            return __XNumberCreateSInt32(theType, s32, __func__);
+       }
+           break;
+        case XNumberTypeSInt32: {
+            XSInt32 s32 = 0;
+            memcpy(&s32, valuePtr, sizeof(XSInt32));
+            return __XNumberCreateSInt32(theType, s32, __func__);
+        }
+            break;
+        case XNumberTypeSInt64: {
+            XSInt64 s64 = 0;
+            memcpy(&s64, valuePtr, sizeof(XSInt64));
+            return __XNumberCreateSInt64(theType, s64, __func__);
+        }
+            break;
+        case XNumberTypeUInt8: {
+            XUInt8 u8 = 0;
+            memcpy(&u8, valuePtr, sizeof(XUInt8));
+            XSInt32 u32 = (XUInt32)u8;
+            return __XNumberCreateUInt32(theType, u32, __func__);
+        }
+            break;
+        case XNumberTypeUInt16: {
+            XUInt16 u16 = 0;
+            memcpy(&u16, valuePtr, sizeof(XUInt16));
+            XSInt32 u32 = (XUInt32)u16;
+            return __XNumberCreateUInt32(theType, u32, __func__);
+        }
+           break;
+        case XNumberTypeUInt32: {
+            XUInt32 u32 = 0;
+            memcpy(&u32, valuePtr, sizeof(XUInt32));
+            return __XNumberCreateUInt32(theType, u32, __func__);
+        }
+            break;
+        case XNumberTypeUInt64: {
+            XUInt64 u64 = 0;
+            memcpy(&u64, valuePtr, sizeof(XUInt64));
+            return __XNumberCreateUInt64(theType, u64, __func__);
+        }
+            break;
+        case XNumberTypeFloat32: {
+            XFloat32 f32 = 0;
+            memcpy(&f32, valuePtr, sizeof(XFloat32));
+            return __XNumberCreateFloat32(theType, f32, __func__);
+        }
+            break;
+        case XNumberTypeFloat64: {
+            XFloat64 f64 = 0;
+            memcpy(&f64, valuePtr, sizeof(XFloat64));
+            return __XNumberCreateFloat64(theType, f64, __func__);
+        }
+            break;
+        default: {
+            XAssert(false, __func__, "number type error");
+        }
+            break;
+    }
+}
+
+
+void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const char * _Nonnull func) {
+    _XNumberStruct content = {};
+#if BUILD_TARGET_RT_64_BIT
+    XUInt64 v = (XUInt64)((uintptr_t)ref);
+    if ((v & 0xE000000000000001ULL) == 0xE000000000000001ULL) {
+        //53bits
+        XUInt64 id = (v >> 58) & 0x7;
+        XAssert(XCompressedTypeNumber == id, func, "not Number instance");
+        content.type = (XNumberType)((id >> 54) & 0xf);
+        switch (content.type) {
+            case XNumberTypeSInt8:
+            case XNumberTypeSInt16:
+            case XNumberTypeSInt32:
+            case XNumberTypeSInt64: {
+                XUInt64 tmp = (v >> 1) & 0x1FFFFFFFFFFFFFUL;
+                XUInt64 bits = 0;
+                if (tmp & 0x10000000000000UL) {
+                    bits = XUInt64Max;
+                    bits = bits & tmp;
+                } else {
+                    bits = tmp;
+                }
+                XSInt64 number = *(XSInt64 *)(&bits);
+                content.bits.s = number;
+            }
+                break;
+            case XNumberTypeUInt8:
+            case XNumberTypeUInt16:
+            case XNumberTypeUInt32:
+            case XNumberTypeUInt64: {
+                XUInt64 number = (v >> 1) & 0x1FFFFFFFFFFFFFUL;
+                content.bits.u = number;
+            }
+                break;
+            case XNumberTypeFloat32:
+            case XNumberTypeFloat64: {
+                XUInt32 tmp = (XUInt32)((v >> 1) & 0xFFFFFFFFU);
+                XFloat32 f = *(XFloat32 *)(&tmp);
+                XFloat64 number = (XFloat64)f;
+                content.bits.f = number;
+            }
+                break;
+            default: {
+                XAssert(false, func, "number type error");
+            }
+                break;
+        }
+    } else
+#elif BUILD_TARGET_RT_32_BIT
+    if ((v & 0xE0000001UL) == v & 0xE0000001UL) {
+        //21 bits
+        XUInt32 id = (v >> 26) & 0x7;
+        //Number String Data Date
+        
+        XAssert(XCompressedTypeNumber == id, func, "not Number instance");
+        content.type = (XNumberType)((id >> 22) & 0xf);
+        switch (contentOfLhs.type) {
+            case XNumberTypeSInt8:
+            case XNumberTypeSInt16:
+            case XNumberTypeSInt32:
+            case XNumberTypeSInt64: {
+                XUInt32 tmp = (v >> 1) & 0x1FFFFFU;
+                XSInt64 number = (XSInt64)(tmp & 0xFFFFFU);
+                if (tmp & 0x100000U) {
+                    number = number * (-1L);
+                }
+                content.bits.s = number;
+            }
+                break;
+            case XNumberTypeUInt8:
+            case XNumberTypeUInt16:
+            case XNumberTypeUInt32:
+            case XNumberTypeUInt64: {
+                XUInt32 tmp = (v >> 1) & 0x1FFFFFU;
+                XUInt64 number = tmp;
+                content.bits.u = number;
+            }
+                break;
+            case XNumberTypeFloat32:
+            case XNumberTypeFloat64:
+            default: {
+                XAssert(false, func, );
+            }
+                break;
+        }
+    } else
+#else
+    #error unknown rt
+#endif
+    {
+           
+        uintptr_t info = _XRefGetTypeInfo(ref);
+            
+    #if BUILD_TARGET_RT_64_BIT
+        /* flagBegin:3 type:6 flag:4 count:18+32 flagEnd:1  */
+        if (0 == (info & X_BUILD_TypeInfoCompressedMask)) {
+            uintptr_t id = (info >> 55) & 0x3f;
+            XAssert(XCompressedTypeNumber == id, func, "number type error");
+        }
+    #else
+        const _XType_s * type = (const _XType_s *)info;
+        XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Number - 1].base.identifier, func, "not Number instance");
+
+    #endif
+        
+        _XNumber * obj = (_XNumber *)ref;
+        _XNumberContent_t * ncontent = &(obj->content);
+        content.type = ncontent->type;
+        switch (content.type) {
+            case XNumberTypeSInt8:
+            case XNumberTypeSInt16:
+            case XNumberTypeSInt32: {
+                XSInt32 s32 = ncontent->bits32.s;
+                XSInt64 s64 = (XSInt64)s32;
+                content.bits.s = s64;
+            }
+                break;
+            case XNumberTypeSInt64: {
+                _XNumberBits64_u * bits64 = (_XNumberBits64_u *)(&(ncontent->extended[0]));
+                content.bits.s = bits64->s;
+            }
+                break;
+            case XNumberTypeUInt8:
+            case XNumberTypeUInt16:
+            case XNumberTypeUInt32: {
+                XUInt32 u32 = ncontent->bits32.u;
+                XUInt64 u64 = (XUInt64)u32;
+                content.bits.u = u64;
+            }
+                break;
+            case XNumberTypeUInt64: {
+                _XNumberBits64_u * bits64 = (_XNumberBits64_u *)(&(ncontent->extended[0]));
+                content.bits.u = bits64->u;
+            }
+                break;
+            case XNumberTypeFloat32: {
+                XFloat32 f32 = ncontent->bits32.f;
+                XFloat64 f64 = (XFloat64)f32;
+               content.bits.f = f64;
+           }
+               break;
+            case XNumberTypeFloat64: {
+                _XNumberBits64_u * bits64 = (_XNumberBits64_u *)(&(ncontent->extended[0]));
+                 XFloat64 f64 = bits64->f;
+                content.bits.f = f64;
+            }
+                break;
+            default: {
+                XAssert(false, func, "number type error");
+            }
+                break;
+        }
+    }
+    memcpy(ptr, &content, sizeof(_XNumberStruct));
+}
+
+
+
+#define CVT2(SRC_TYPE, DST_TYPE, DST_MIN, DST_MAX) do { \
+SRC_TYPE sv = value; \
+DST_TYPE dv = (sv < DST_MIN) ? (DST_TYPE)DST_MIN : (DST_TYPE)(((DST_MAX < sv) ? DST_MAX : sv)); \
+memcpy(valuePtr, &dv, sizeof(DST_TYPE)); \
+SRC_TYPE vv = (SRC_TYPE)dv; return (vv == sv); \
+} while (0)
+
 
 #define CVT(SRC_TYPE, DST_TYPE, DST_MIN, DST_MAX) do { \
     SRC_TYPE sv; memmove(&sv, data, sizeof(SRC_TYPE)); \
@@ -516,184 +763,354 @@ CF_INLINE CFNumberType __CFNumberGetType(CFNumberRef num) {
         return noLoss; \
         } while (0)
 
-// returns false if the output value is not the same as the number's value, which
-// can occur due to accuracy loss and the value not being within the target range
-static Boolean __CFNumberGetValue(CFNumberRef number, CFNumberType type, void *valuePtr) {
-    type = __CFNumberTypeTable[type].canonicalType;
-    CFNumberType ntype = __CFNumberGetType(number);
-    const void *data = &(number->_bits._64.bits);
-    Boolean floatBit = __CFNumberTypeTable[ntype].floatBit;
-    Boolean storageBit = __CFNumberTypeTable[ntype].storageBit;
+//返回true 表示完全相等、否则是个约数
+static XBool __XNumberGetSInt128StructValue(_XNumberStruct * _Nonnull number, XSInt128Struct * _Nonnull valuePtr) {
+    XNumberType type = number->type;
     switch (type) {
-    case kCFNumberSInt8Type:
-    if (floatBit) {
-        if (!storageBit) {
-        CVT(Float32, int8_t, INT8_MIN, INT8_MAX);
-        } else {
-        CVT(Float64, int8_t, INT8_MIN, INT8_MAX);
-        }
-    } else {
-        if (!storageBit) {
-        CVT(int64_t, int8_t, INT8_MIN, INT8_MAX);
-        } else {
-        CVT128ToInt(CFSInt128Struct, int8_t, INT8_MIN, INT8_MAX);
-        }
-    }
-    return true;
-    case kCFNumberSInt16Type:
-    if (floatBit) {
-        if (!storageBit) {
-                CVT(Float32, int16_t, INT16_MIN, INT16_MAX);
-        } else {
-                CVT(Float64, int16_t, INT16_MIN, INT16_MAX);
-        }
-    } else {
-        if (!storageBit) {
-                CVT(int64_t, int16_t, INT16_MIN, INT16_MAX);
-        } else {
-        CVT128ToInt(CFSInt128Struct, int16_t, INT16_MIN, INT16_MAX);
-        }
-    }
-    return true;
-    case kCFNumberSInt32Type:
-    if (floatBit) {
-        if (!storageBit) {
-                CVT(Float32, int32_t, INT32_MIN, INT32_MAX);
-        } else {
-                CVT(Float64, int32_t, INT32_MIN, INT32_MAX);
-        }
-    } else {
-        if (!storageBit) {
-                CVT(int64_t, int32_t, INT32_MIN, INT32_MAX);
-        } else {
-        CVT128ToInt(CFSInt128Struct, int32_t, INT32_MIN, INT32_MAX);
-        }
-    }
-    return true;
-    case kCFNumberSInt64Type:
-    if (floatBit) {
-        if (!storageBit) {
-                CVT(Float32, int64_t, INT64_MIN, INT64_MAX);
-        } else {
-                CVT(Float64, int64_t, INT64_MIN, INT64_MAX);
-        }
-    } else {
-        if (!storageBit) {
-        memmove(valuePtr, data, 8);
-        } else {
-        CVT128ToInt(CFSInt128Struct, int64_t, INT64_MIN, INT64_MAX);
-        }
-    }
-    return true;
-    case kCFNumberSInt128Type:
-    if (floatBit) {
-        if (!storageBit) {
-        Float32 f;
-        memmove(&f, data, 4);
-        Float64 d = f;
-        CFSInt128Struct i;
-        cvtFloat64ToSInt128(&i, &d);
-        memmove(valuePtr, &i, 16);
-        Float64 d2;
-        cvtSInt128ToFloat64(&d2, &i);
-        Float32 f2 = (Float32)d2;
-        return (f2 == f);
-        } else {
-        Float64 d;
-        memmove(&d, data, 8);
-        CFSInt128Struct i;
-        cvtFloat64ToSInt128(&i, &d);
-        memmove(valuePtr, &i, 16);
-        Float64 d2;
-        cvtSInt128ToFloat64(&d2, &i);
-        return (d2 == d);
-        }
-    } else {
-        if (!storageBit) {
-        int64_t j;
-        memmove(&j, data, 8);
-        CFSInt128Struct i;
-        i.low = j;
-        i.high = (j < 0) ? -1LL : 0LL;
-        memmove(valuePtr, &i, 16);
-        } else {
-        memmove(valuePtr, data, 16);
-        }
-    }
-    return true;
-    case kCFNumberFloat32Type:
-    if (floatBit) {
-        if (!storageBit) {
-        memmove(valuePtr, data, 4);
-        } else {
-        double d;
-        memmove(&d, data, 8);
-        if (isnan(d)) {
-            uint32_t l = 0x7fc00000;
-            memmove(valuePtr, &l, 4);
-            return true;
-        } else if (isinf(d)) {
-            uint32_t l = 0x7f800000;
-            if (d < 0.0) l += 0x80000000UL;
-            memmove(valuePtr, &l, 4);
+        case XNumberTypeSInt8:
+        case XNumberTypeSInt16:
+        case XNumberTypeSInt32:
+        case XNumberTypeSInt64: {
+            XSInt64 value = number->bits.s;
+            cvtSInt64ToSInt128(valuePtr, value);
             return true;
         }
-        CVT(Float64, Float32, -FLT_MAX, FLT_MAX);
-        }
-    } else {
-        if (!storageBit) {
-        CVT(int64_t, Float32, -FLT_MAX, FLT_MAX);
-        } else {
-        CFSInt128Struct i;
-        memmove(&i, data, 16);
-        Float64 d;
-        cvtSInt128ToFloat64(&d, &i);
-        Float32 f = (Float32)d;
-        memmove(valuePtr, &f, 4);
-        d = f;
-        CFSInt128Struct i2;
-        cvtFloat64ToSInt128(&i2, &d);
-        return cmp128(&i2, &i) == kCFCompareEqualTo;
-        }
-    }
-    return true;
-    case kCFNumberFloat64Type:
-    if (floatBit) {
-        if (!storageBit) {
-        float f;
-        memmove(&f, data, 4);
-        if (isnan(f)) {
-            uint64_t l = BITSFORDOUBLENAN;
-            memmove(valuePtr, &l, 8);
-            return true;
-        } else if (isinf(f)) {
-            uint64_t l = BITSFORDOUBLEPOSINF;
-            if (f < 0.0) l += 0x8000000000000000ULL;
-            memmove(valuePtr, &l, 8);
+            break;
+        case XNumberTypeUInt8:
+        case XNumberTypeUInt16:
+        case XNumberTypeUInt32:
+        case XNumberTypeUInt64: {
+            XUInt64 value = number->bits.u;
+            cvtUInt64ToSInt128(valuePtr, value);
             return true;
         }
-        CVT(Float32, Float64, -DBL_MAX, DBL_MAX);
-        } else {
-        memmove(valuePtr, data, 8);
+            break;
+        case XNumberTypeFloat64: {
+            XSInt128Struct i;
+            XFloat64 d = number->bits.f;
+            cvtFloat64ToSInt128(&i, &d);
+            memmove(valuePtr, &i, 16);
+            XFloat64 d2;
+            cvtSInt128ToFloat64(&d2, &i);
+            return (d2 == d);
         }
-    } else {
-        if (!storageBit) {
-        CVT(int64_t, Float64, -DBL_MAX, DBL_MAX);
-        } else {
-                CFSInt128Struct i;
-                memmove(&i, data, 16);
-                Float64 d;
-                cvtSInt128ToFloat64(&d, &i);
-                memmove(valuePtr, &d, 8);
-                CFSInt128Struct i2;
-                cvtFloat64ToSInt128(&i2, &d);
-                return cmp128(&i2, &i) == kCFCompareEqualTo;
-        }
-    }
-    return true;
+            break;
+        default:
+            break;
     }
     return false;
 }
+
+#define XCVTSInt64ToS(DST_TYPE, DST_MIN, DST_MAX) do { \
+XSInt64 sv = value; \
+DST_TYPE dv = (sv < DST_MIN) ? (DST_TYPE)DST_MIN : (DST_TYPE)(((DST_MAX < sv) ? DST_MAX : sv)); \
+memcpy(valuePtr, &dv, sizeof(DST_TYPE)); \
+XSInt64 vv = (XSInt64)dv; return (vv == sv); \
+} while (0)
+
+#define XCVTSInt64ToU(DST_TYPE, DST_MAX) do { \
+XSInt64 sv = value; \
+DST_TYPE dv = (sv < 0) ? 0 : (DST_TYPE)(((DST_MAX < sv) ? DST_MAX : sv)); \
+memcpy(valuePtr, &dv, sizeof(DST_TYPE)); \
+XSInt64 vv = (XSInt64)dv; return (vv == sv); \
+} while (0)
+
+static inline XBool __XNumberConvertSInt64(XSInt64 value, XNumberType type, void * valuePtr) {
+    switch (type) {
+        case XNumberTypeSInt8: {
+            XCVTSInt64ToS(int8_t, INT8_MIN, INT8_MAX);
+        }
+            break;
+        case XNumberTypeSInt16: {
+            XCVTSInt64ToS(int16_t, INT16_MIN, INT16_MAX);
+        }
+            break;
+        case XNumberTypeSInt32: {
+            XCVTSInt64ToS(int32_t, INT32_MIN, INT32_MAX);
+        }
+            break;
+        case XNumberTypeSInt64: {
+            memcpy(valuePtr, &value, sizeof(XSInt64));
+            return true;
+        }
+            break;
+        case XNumberTypeUInt8: {
+            XCVTSInt64ToU(uint8_t, UINT8_MAX);
+        }
+            break;
+        case XNumberTypeUInt16: {
+            XCVTSInt64ToU(uint16_t, UINT16_MAX);
+        }
+            break;
+        case XNumberTypeUInt32: {
+            XCVTSInt64ToU(uint32_t, UINT32_MAX);
+        }
+            break;
+        case XNumberTypeUInt64: {
+            XCVTSInt64ToU(uint64_t, UINT64_MAX);
+        }
+            break;
+        case XNumberTypeFloat32: {
+            XFloat32 dv = (value < -FLT_MAX) ? -FLT_MAX : (((FLT_MAX < value) ? FLT_MAX : (XFloat32)value)); ;
+            memcpy(valuePtr, &dv, sizeof(XFloat32));
+            XSInt64 vv = (XSInt64)dv;
+            return (vv == value);
+        }
+            break;
+        case XNumberTypeFloat64: {
+            XFloat64 dv = (value < -DBL_MAX) ? -DBL_MAX : (((DBL_MAX < value) ? DBL_MAX : (XFloat64)value)); ;
+            memcpy(valuePtr, &dv, sizeof(XFloat64));
+            XSInt64 vv = (XSInt64)dv;
+            return (vv == value);
+        }
+            break;
+    }
+    return true;
+}
+
+
+#define XCVTUInt64To(DST_TYPE, DST_MAX) do { \
+XUInt64 sv = value; \
+DST_TYPE dv = (DST_TYPE)(((DST_MAX < sv) ? DST_MAX : sv)); \
+memcpy(valuePtr, &dv, sizeof(DST_TYPE)); \
+XUInt64 vv = (XUInt64)dv; return (vv == sv); \
+} while (0)
+
+static inline XBool __XNumberConvertUInt64(XUInt64 value, XNumberType type, void * valuePtr) {
+    switch (type) {
+        case XNumberTypeSInt8: {
+            XCVTUInt64To(int8_t, INT8_MAX);
+        }
+            break;
+        case XNumberTypeSInt16: {
+            XCVTUInt64To(int16_t, INT16_MAX);
+        }
+            break;
+        case XNumberTypeSInt32: {
+            XCVTUInt64To(int32_t, INT32_MAX);
+        }
+            break;
+        case XNumberTypeSInt64: {
+            XCVTUInt64To(int32_t, INT64_MAX);
+            return true;
+        }
+            break;
+        case XNumberTypeUInt8: {
+            XCVTUInt64To(uint8_t, UINT8_MAX);
+        }
+            break;
+        case XNumberTypeUInt16: {
+            XCVTUInt64To(uint16_t, UINT16_MAX);
+        }
+            break;
+        case XNumberTypeUInt32: {
+            XCVTUInt64To(uint32_t, UINT32_MAX);
+        }
+            break;
+        case XNumberTypeUInt64: {
+            memcpy(valuePtr, &value, sizeof(XUInt64));
+            return true;
+        }
+            break;
+        case XNumberTypeFloat32: {
+            XFloat32 dv = (((FLT_MAX < value) ? FLT_MAX : (XFloat32)value)); ;
+            memcpy(valuePtr, &dv, sizeof(XFloat32));
+            XUInt64 vv = (XUInt64)dv;
+            return (vv == value);
+        }
+            break;
+        case XNumberTypeFloat64: {
+            XFloat64 dv = (((DBL_MAX < value) ? DBL_MAX : (XFloat64)value)); ;
+            memcpy(valuePtr, &dv, sizeof(XFloat64));
+            XUInt64 vv = (XUInt64)dv;
+            return (vv == value);
+        }
+            break;
+    }
+    return true;
+}
+
+#define XCVTFloat64ToS(DST_TYPE, DST_MIN, DST_MAX) do { \
+XSInt64 sv = value; \
+DST_TYPE dv = (sv < DST_MIN) ? (DST_TYPE)DST_MIN : (DST_TYPE)(((DST_MAX < sv) ? DST_MAX : sv)); \
+memcpy(valuePtr, &dv, sizeof(DST_TYPE)); \
+XSInt64 vv = (XSInt64)dv; return (vv == sv); \
+} while (0)
+
+#define XCVTFloat64ToU(DST_TYPE, DST_MAX) do { \
+XSInt64 sv = value; \
+DST_TYPE dv = (sv < 0.0) ? 0 : (DST_TYPE)(((DST_MAX < sv) ? DST_MAX : sv)); \
+memcpy(valuePtr, &dv, sizeof(DST_TYPE)); \
+XSInt64 vv = (XSInt64)dv; return (vv == sv); \
+} while (0)
+static inline XBool __XNumberConvertFloat64(XFloat64 value, XNumberType type, void * valuePtr) {
+    switch (type) {
+        case XNumberTypeSInt8: {
+            XCVTFloat64ToS(int8_t, INT8_MIN, INT8_MAX);
+        }
+            break;
+        case XNumberTypeSInt16: {
+            XCVTFloat64ToS(int16_t, INT16_MIN, INT16_MAX);
+        }
+            break;
+        case XNumberTypeSInt32: {
+            XCVTFloat64ToS(int32_t, INT32_MIN, INT32_MAX);
+        }
+            break;
+        case XNumberTypeSInt64: {
+            XCVTFloat64ToS(int64_t, INT64_MIN, INT64_MAX);
+        }
+            break;
+        case XNumberTypeUInt8: {
+            XCVTFloat64ToU(uint8_t, UINT8_MAX);
+        }
+            break;
+        case XNumberTypeUInt16: {
+            XCVTFloat64ToU(uint16_t, UINT16_MAX);
+        }
+            break;
+        case XNumberTypeUInt32: {
+            XCVTFloat64ToU(uint32_t, UINT32_MAX);
+        }
+            break;
+        case XNumberTypeUInt64: {
+            XCVTFloat64ToU(uint64_t, UINT64_MAX);
+        }
+            break;
+        case XNumberTypeFloat32: {
+            XFloat32 dv = 0;
+            if (isnan(value)) {
+                dv = _XNumberBits32Nan.f;
+            } else if (isinf(value)) {
+                if (value < 0.0) {
+                    dv = _XNumberBits32NegativeInfinity.f;
+                } else {
+                    dv = _XNumberBits32PositiveInfinity.f;
+                }
+            } else {
+                dv = (value < -FLT_MAX) ? -FLT_MAX : (((FLT_MAX < value) ? FLT_MAX : (XFloat32)value)); ;
+            }
+            memcpy(valuePtr, &dv, sizeof(XFloat32));
+            XFloat64 vv = (XFloat64)dv;
+            return (vv == value);
+        }
+            break;
+        case XNumberTypeFloat64: {
+            memcpy(valuePtr, &value, sizeof(XFloat64));
+            return true;
+        }
+            break;
+    }
+    return true;
+}
+
+
+XNumberType __XNumberGetType(XNumber _Nonnull ref, const char * _Nonnull func) {
+
+#if BUILD_TARGET_RT_64_BIT
+    XUInt64 v = (XUInt64)((uintptr_t)ref);
+    if ((v & 0xE000000000000001ULL) == 0xE000000000000001ULL) {
+        //53bits
+        XUInt64 id = (v >> 58) & 0x7;
+        XAssert(XCompressedTypeNumber == id, func, "not Number instance");
+
+        XNumberType type = (XNumberType)((id >> 54) & 0xf);
+        
+        XAssert(XNumberTypeIsValid(type), func, "number type error");
+        return type;
+    } else
+#elif BUILD_TARGET_RT_32_BIT
+    if ((v & 0xE0000001UL) == v & 0xE0000001UL) {
+        //21 bits
+        XUInt32 id = (v >> 26) & 0x7;
+        //Number String Data Date
+        
+        XAssert(XCompressedTypeNumber == id, func, "not Number instance");
+        XNumberType type = (XNumberType)((id >> 22) & 0xf);
+        XAssert(XNumberTypeIsValid(type), func, "number type error");
+        return type;
+    } else
+#else
+    #error unknown rt
+#endif
+    {
+        uintptr_t info = _XRefGetTypeInfo(ref);
+            
+    #if BUILD_TARGET_RT_64_BIT
+        /* flagBegin:3 type:6 flag:4 count:18+32 flagEnd:1  */
+        if (0 == (info & X_BUILD_TypeInfoCompressedMask)) {
+            uintptr_t id = (info >> 55) & 0x3f;
+            XAssert(XCompressedTypeNumber == id, func, "number type error");
+        }
+    #else
+        const _XType_s * type = (const _XType_s *)info;
+        XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Number - 1].base.identifier, __func__, "not Number instance");
+    #endif
+        
+        _XNumber * obj = (_XNumber *)ref;
+        _XNumberContent_t * ncontent = &(obj->content);
+        XNumberType type = ncontent->type;
+        XAssert(XNumberTypeIsValid(type), func, "number type error");
+        return type;
+    }
+}
+
+XNumberType XNumberGetType(XNumber _Nonnull ref) {
+    return __XNumberGetType(ref, __func__);
+}
+
+XBool XNumberIsFloatType(XNumber _Nonnull ref) {
+    XNumberType type = __XNumberGetType(ref, __func__);
+    return (XNumberTypeFloat32 == type || XNumberTypeFloat64 == type);
+}
+
+
+// returns false if the output value is not the same as the number's value, which
+// can occur due to accuracy loss and the value not being within the target range
+static XBool __XNumberGetValue(_XNumberStruct * _Nonnull number, XNumberType type, void * valuePtr) {
+    XNumberType ntype = number->type;
+    switch (ntype) {
+        case XNumberTypeSInt8:
+        case XNumberTypeSInt16:
+        case XNumberTypeSInt32:
+        case XNumberTypeSInt64: {
+            XSInt64 value = number->bits.s;
+            return __XNumberConvertSInt64(value, type, valuePtr);
+        }
+            break;
+        case XNumberTypeUInt8:
+        case XNumberTypeUInt16:
+        case XNumberTypeUInt32:
+        case XNumberTypeUInt64: {
+            XUInt64 value = number->bits.u;
+            return __XNumberConvertUInt64(value, type, valuePtr);
+        }
+            break;
+        case XNumberTypeFloat32:
+        case XNumberTypeFloat64: {
+            XFloat64 value = number->bits.f;
+            return __XNumberConvertFloat64(value, type, valuePtr);
+        }
+            break;
+        default: {
+            abort();
+        }
+            break;
+    }
+    return false;
+}
+
+
+
+extern XBool XNumberGetValue(XNumber _Nonnull number, XNumberType theType, void * _Nonnull valuePtr) {
+    XAssert(NULL != number, __func__, "number connot be NULL");
+    XAssert(NULL != valuePtr, __func__, "valuePtr connot be NULL");
+    _XNumberStruct content = {};
+    __XNumberUnpack(number, &content, __func__);
+    
+    return __XNumberGetValue(&content, theType, valuePtr);
+}
+
 
 #define CVT_COMPAT(SRC_TYPE, DST_TYPE, FT) do { \
     SRC_TYPE sv; memmove(&sv, data, sizeof(SRC_TYPE)); \
@@ -709,623 +1126,443 @@ static Boolean __CFNumberGetValue(CFNumberRef number, CFNumberType type, void *v
     uint64_t vv = (uint64_t)dv; return (vv == sv.low); \
         } while (0)
 
-// this has the old cast-style behavior
-static Boolean __CFNumberGetValueCompat(CFNumberRef number, CFNumberType type, void *valuePtr) {
-    type = __CFNumberTypeTable[type].canonicalType;
-    CFNumberType ntype = __CFNumberGetType(number);
-    const void *data = &(number->_bits._64.bits);
-    switch (type) {
-    case kCFNumberSInt8Type:
-    if (__CFNumberTypeTable[ntype].floatBit) {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        CVT_COMPAT(Float32, int8_t, 0);
-        } else {
-        CVT_COMPAT(Float64, int8_t, 0);
-        }
-    } else {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        // Leopard's implementation of this always returned true. We should only return true when the conversion is lossless. However, there are some clients who use CFNumber with small unsigned values disguised as signed values. Since there is no CFNumber API yet for unsigned values, we need to accommodate those clients for now. <rdar://problem/6471866>
-        // This accommodation should be removed if CFNumber ever provides API for unsigned values. <rdar://problem/6473890>
-        int64_t sv; memmove(&sv, data, sizeof(int64_t));
-        int8_t dv = (int8_t)(sv);
-        memmove(valuePtr, &dv, sizeof(int8_t));
-        int64_t vv = (int64_t)dv; return !_CFExecutableLinkedOnOrAfter(CFSystemVersionSnowLeopard) || ((sv >> 8LL) == 0LL) || (vv == sv);
-        } else {
-        CVT128ToInt_COMPAT(CFSInt128Struct, int8_t);
-        }
-    }
-    return true;
-    case kCFNumberSInt16Type:
-    if (__CFNumberTypeTable[ntype].floatBit) {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        CVT_COMPAT(Float32, int16_t, 0);
-        } else {
-        CVT_COMPAT(Float64, int16_t, 0);
-        }
-    } else {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        // Leopard's implementation of this always returned true. We should only return true when the conversion is lossless. However, there are some clients who use CFNumber with small unsigned values disguised as signed values. Since there is no CFNumber API yet for unsigned values, we need to accommodate those clients for now. <rdar://problem/6471866>
-        // This accommodation should be removed if CFNumber ever provides API for unsigned values. <rdar://problem/6473890>
-        int64_t sv; memmove(&sv, data, sizeof(int64_t));
-        int16_t dv = (int16_t)(sv);
-        memmove(valuePtr, &dv, sizeof(int16_t));
-        int64_t vv = (int64_t)dv; return !_CFExecutableLinkedOnOrAfter(CFSystemVersionSnowLeopard) || ((sv >> 16LL) == 0LL) || (vv == sv);
-        } else {
-        CVT128ToInt_COMPAT(CFSInt128Struct, int16_t);
-        }
-    }
-    return true;
-    case kCFNumberSInt32Type:
-    if (__CFNumberTypeTable[ntype].floatBit) {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        CVT_COMPAT(Float32, int32_t, 0);
-        } else {
-        CVT_COMPAT(Float64, int32_t, 0);
-        }
-    } else {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-                CVT_COMPAT(int64_t, int32_t, 0);
-        } else {
-        CVT128ToInt_COMPAT(CFSInt128Struct, int32_t);
-        }
-    }
-    return true;
-    case kCFNumberSInt64Type:
-    if (__CFNumberTypeTable[ntype].floatBit) {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        CVT_COMPAT(Float32, int64_t, 0);
-        } else {
-        CVT_COMPAT(Float64, int64_t, 0);
-        }
-    } else {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-                CVT_COMPAT(int64_t, int64_t, 0);
-        } else {
-        CVT128ToInt_COMPAT(CFSInt128Struct, int64_t);
-        }
-    }
-    return true;
-    case kCFNumberSInt128Type:
-    if (__CFNumberTypeTable[ntype].floatBit) {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        Float32 f;
-        memmove(&f, data, 4);
-        Float64 d = f;
-        CFSInt128Struct i;
-        cvtFloat64ToSInt128(&i, &d);
-        memmove(valuePtr, &i, 16);
-        Float64 d2;
-        cvtSInt128ToFloat64(&d2, &i);
-        Float32 f2 = (Float32)d2;
-        return (f2 == f);
-        } else {
-        Float64 d;
-        memmove(&d, data, 8);
-        CFSInt128Struct i;
-        cvtFloat64ToSInt128(&i, &d);
-        memmove(valuePtr, &i, 16);
-        Float64 d2;
-        cvtSInt128ToFloat64(&d2, &i);
-        return (d2 == d);
-        }
-    } else {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        int64_t j;
-        memmove(&j, data, 8);
-        CFSInt128Struct i;
-        i.low = j;
-        i.high = (j < 0) ? -1LL : 0LL;
-        memmove(valuePtr, &i, 16);
-        } else {
-        memmove(valuePtr, data, 16);
-        }
-    }
-    return true;
-    case kCFNumberFloat32Type:
-    if (__CFNumberTypeTable[ntype].floatBit) {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        memmove(valuePtr, data, 4);
-        } else {
-        CVT_COMPAT(Float64, Float32, 0);
-        }
-    } else {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        CVT_COMPAT(int64_t, Float32, 0);
-        } else {
-        CFSInt128Struct i;
-        memmove(&i, data, 16);
-        Float64 d;
-        cvtSInt128ToFloat64(&d, &i);
-        Float32 f = (Float32)d;
-        memmove(valuePtr, &f, 4);
-        d = f;
-        CFSInt128Struct i2;
-        cvtFloat64ToSInt128(&i2, &d);
-        return cmp128(&i2, &i) == kCFCompareEqualTo;
-        }
-    }
-    return true;
-    case kCFNumberFloat64Type:
-    if (__CFNumberTypeTable[ntype].floatBit) {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        CVT_COMPAT(Float32, Float64, 0);
-        } else {
-        memmove(valuePtr, data, 8);
-        }
-    } else {
-        if (0 == __CFNumberTypeTable[ntype].storageBit) {
-        CVT_COMPAT(int64_t, Float64, 0);
-        } else {
-        CFSInt128Struct i;
-        memmove(&i, data, 16);
-        Float64 d;
-        cvtSInt128ToFloat64(&d, &i);
-        memmove(valuePtr, &d, 8);
-        CFSInt128Struct i2;
-        cvtFloat64ToSInt128(&i2, &d);
-        return cmp128(&i2, &i) == kCFCompareEqualTo;
-        }
-    }
-    return true;
-    }
-    return false;
-}
 
-static CFStringRef __CFNumberCopyDescription(CFTypeRef cf) {
-    CFNumberRef number = (CFNumberRef)cf;
-    CFNumberType type = __CFNumberGetType(number);
-    CFMutableStringRef mstr = CFStringCreateMutable(kCFAllocatorSystemDefault, 0);
-    CFStringAppendFormat(mstr, NULL, CFSTR("<CFNumber %p [%p]>{value = "), cf, CFGetAllocator(cf));
-    if (__CFNumberTypeTable[type].floatBit) {
-    Float64 d;
-        __CFNumberGetValue(number, kCFNumberFloat64Type, &d);
-    if (isnan(d)) {
-        CFStringAppend(mstr, CFSTR("nan"));
-    } else if (isinf(d)) {
-        CFStringAppend(mstr, (0.0 < d) ? CFSTR("+infinity") : CFSTR("-infinity"));
-    } else if (0.0 == d) {
-        CFStringAppend(mstr, (copysign(1.0, d) < 0.0) ? CFSTR("-0.0") : CFSTR("+0.0"));
-    } else {
-        CFStringAppendFormat(mstr, NULL, CFSTR("%+.*f"), (__CFNumberTypeTable[type].storageBit ? 20 : 10), d);
-    }
-    const char *typeName = "unknown float";
-    switch (type) {
-    case kCFNumberFloat32Type: typeName = "kCFNumberFloat32Type"; break;
-    case kCFNumberFloat64Type: typeName = "kCFNumberFloat64Type"; break;
-    }
-    CFStringAppendFormat(mstr, NULL, CFSTR(", type = %s}"), typeName);
-    } else {
-    CFSInt128Struct i;
-    __CFNumberGetValue(number, kCFNumberSInt128Type, &i);
-    char buffer[128];
-    emit128(buffer, &i, true);
-    const char *typeName = "unknown integer";
-    switch (type) {
-    case kCFNumberSInt8Type: typeName = "kCFNumberSInt8Type"; break;
-    case kCFNumberSInt16Type: typeName = "kCFNumberSInt16Type"; break;
-    case kCFNumberSInt32Type: typeName = "kCFNumberSInt32Type"; break;
-    case kCFNumberSInt64Type: typeName = "kCFNumberSInt64Type"; break;
-    case kCFNumberSInt128Type: typeName = "kCFNumberSInt128Type"; break;
-    }
-    CFStringAppendFormat(mstr, NULL, CFSTR("%s, type = %s}"), buffer, typeName);
-    }
-    return mstr;
-}
+//static CFStringRef __CFNumberCopyDescription(CFTypeRef cf) {
+//    CFNumberRef number = (CFNumberRef)cf;
+//    XNumberType type = __XNumberGetType(number);
+//    CFMutableStringRef mstr = CFStringCreateMutable(kCFAllocatorSystemDefault, 0);
+//    CFStringAppendFormat(mstr, NULL, CFSTR("<CFNumber %p [%p]>{value = "), cf, CFGetAllocator(cf));
+//    if (_XNumberTypeInfoTable[type].floatBit) {
+//    Float64 d;
+//        __XNumberGetValue(number, kCFNumberFloat64Type, &d);
+//    if (isnan(d)) {
+//        CFStringAppend(mstr, CFSTR("nan"));
+//    } else if (isinf(d)) {
+//        CFStringAppend(mstr, (0.0 < d) ? CFSTR("+infinity") : CFSTR("-infinity"));
+//    } else if (0.0 == d) {
+//        CFStringAppend(mstr, (copysign(1.0, d) < 0.0) ? CFSTR("-0.0") : CFSTR("+0.0"));
+//    } else {
+//        CFStringAppendFormat(mstr, NULL, CFSTR("%+.*f"), (_XNumberTypeInfoTable[type].storageBit ? 20 : 10), d);
+//    }
+//    const char *typeName = "unknown float";
+//    switch (type) {
+//    case kCFNumberFloat32Type: typeName = "kCFNumberFloat32Type"; break;
+//    case kCFNumberFloat64Type: typeName = "kCFNumberFloat64Type"; break;
+//    }
+//    CFStringAppendFormat(mstr, NULL, CFSTR(", type = %s}"), typeName);
+//    } else {
+//    XSInt128Struct i;
+//    __XNumberGetValue(number, kCFNumberSInt128Type, &i);
+//    char buffer[128];
+//    emit128(buffer, &i, true);
+//    const char *typeName = "unknown integer";
+//    switch (type) {
+//    case kCFNumberSInt8Type: typeName = "kCFNumberSInt8Type"; break;
+//    case kCFNumberSInt16Type: typeName = "kCFNumberSInt16Type"; break;
+//    case kCFNumberSInt32Type: typeName = "kCFNumberSInt32Type"; break;
+//    case kCFNumberSInt64Type: typeName = "kCFNumberSInt64Type"; break;
+//    case kCFNumberSInt128Type: typeName = "kCFNumberSInt128Type"; break;
+//    }
+//    CFStringAppendFormat(mstr, NULL, CFSTR("%s, type = %s}"), buffer, typeName);
+//    }
+//    return mstr;
+//}
 
 // This function separated out from __CFNumberCopyFormattingDescription() so the plist creation can use it as well.
 
-static CFStringRef __CFNumberCreateFormattingDescriptionAsFloat64(CFAllocatorRef allocator, CFTypeRef cf) {
-    Float64 d;
-    CFNumberGetValue((CFNumberRef)cf, kCFNumberFloat64Type, &d);
-    if (isnan(d)) {
-    return (CFStringRef)CFRetain(CFSTR("nan"));
-    }
-    if (isinf(d)) {
-    return (CFStringRef)CFRetain((0.0 < d) ? CFSTR("+infinity") : CFSTR("-infinity"));
-    }
-    if (0.0 == d) {
-    return (CFStringRef)CFRetain(CFSTR("0.0"));
-    }
-    // if %g is used here, need to use DBL_DIG + 2 on Mac OS X, but %f needs +1
-    return CFStringCreateWithFormat(allocator, NULL, CFSTR("%.*g"), DBL_DIG + 2, d);
-}
+//static CFStringRef __CFNumberCreateFormattingDescriptionAsFloat64(CFAllocatorRef allocator, CFTypeRef cf) {
+//    Float64 d;
+//    CFNumberGetValue((CFNumberRef)cf, kCFNumberFloat64Type, &d);
+//    if (isnan(d)) {
+//    return (CFStringRef)CFRetain(CFSTR("nan"));
+//    }
+//    if (isinf(d)) {
+//    return (CFStringRef)CFRetain((0.0 < d) ? CFSTR("+infinity") : CFSTR("-infinity"));
+//    }
+//    if (0.0 == d) {
+//    return (CFStringRef)CFRetain(CFSTR("0.0"));
+//    }
+//    // if %g is used here, need to use DBL_DIG + 2 on Mac OS X, but %f needs +1
+//    return CFStringCreateWithFormat(allocator, NULL, CFSTR("%.*g"), DBL_DIG + 2, d);
+//}
 
-CF_PRIVATE CFStringRef __CFNumberCopyFormattingDescriptionAsFloat64(CFTypeRef cf) {
-    CFStringRef result = __CFNumberCreateFormattingDescriptionAsFloat64(kCFAllocatorSystemDefault, cf);
-    return result;
-}
+//CF_PRIVATE CFStringRef __CFNumberCopyFormattingDescriptionAsFloat64(CFTypeRef cf) {
+//    CFStringRef result = __CFNumberCreateFormattingDescriptionAsFloat64(kCFAllocatorSystemDefault, cf);
+//    return result;
+//}
 
-CF_PRIVATE CFStringRef __CFNumberCreateFormattingDescription(CFAllocatorRef allocator, CFTypeRef cf, CFDictionaryRef formatOptions) {
-    CFNumberRef number = (CFNumberRef)cf;
-    CFNumberType type = __CFNumberGetType(number);
-    if (__CFNumberTypeTable[type].floatBit) {
-        return __CFNumberCreateFormattingDescriptionAsFloat64(allocator, number);
-    }
-    CFSInt128Struct i;
-    __CFNumberGetValue(number, kCFNumberSInt128Type, &i);
-    char buffer[128];
-    emit128(buffer, &i, false);
-    return CFStringCreateWithFormat(allocator, NULL, CFSTR("%s"), buffer);
-}
+//CF_PRIVATE CFStringRef __CFNumberCreateFormattingDescription(CFAllocatorRef allocator, CFTypeRef cf, CFDictionaryRef formatOptions) {
+//    CFNumberRef number = (CFNumberRef)cf;
+//    XNumberType type = __XNumberGetType(number);
+//    if (_XNumberTypeInfoTable[type].floatBit) {
+//        return __CFNumberCreateFormattingDescriptionAsFloat64(allocator, number);
+//    }
+//    XSInt128Struct i;
+//    __XNumberGetValue(number, kCFNumberSInt128Type, &i);
+//    char buffer[128];
+//    emit128(buffer, &i, false);
+//    return CFStringCreateWithFormat(allocator, NULL, CFSTR("%s"), buffer);
+//}
 
-static CFStringRef __CFNumberCopyFormattingDescription_new(CFTypeRef cf, CFDictionaryRef formatOptions) {
-    CFNumberRef number = (CFNumberRef)cf;
-    CFNumberType type = __CFNumberGetType(number);
-    if (__CFNumberTypeTable[type].floatBit) {
-        return __CFNumberCopyFormattingDescriptionAsFloat64(number);
-    }
-    CFSInt128Struct i;
-    __CFNumberGetValue(number, kCFNumberSInt128Type, &i);
-    char buffer[128];
-    emit128(buffer, &i, false);
-    return CFStringCreateWithFormat(kCFAllocatorSystemDefault, NULL, CFSTR("%s"), buffer);
-}
+//static CFStringRef __CFNumberCopyFormattingDescription_new(CFTypeRef cf, CFDictionaryRef formatOptions) {
+//    CFNumberRef number = (CFNumberRef)cf;
+//    XNumberType type = __XNumberGetType(number);
+//    if (_XNumberTypeInfoTable[type].floatBit) {
+//        return __CFNumberCopyFormattingDescriptionAsFloat64(number);
+//    }
+//    XSInt128Struct i;
+//    __XNumberGetValue(number, kCFNumberSInt128Type, &i);
+//    char buffer[128];
+//    emit128(buffer, &i, false);
+//    return CFStringCreateWithFormat(kCFAllocatorSystemDefault, NULL, CFSTR("%s"), buffer);
+//}
 
-CF_PRIVATE CFStringRef __CFNumberCopyFormattingDescription(CFTypeRef cf, CFDictionaryRef formatOptions) {
-    CFStringRef result = __CFNumberCopyFormattingDescription_new(cf, formatOptions);
-    return result;
-}
-
-
-static Boolean __CFNumberEqual(CFTypeRef cf1, CFTypeRef cf2) {
-    Boolean b = CFNumberCompare((CFNumberRef)cf1, (CFNumberRef)cf2, 0) == kCFCompareEqualTo;
-    return b;
-}
-
-static CFHashCode __CFNumberHash(CFTypeRef cf) {
-    CFHashCode h;
-    CFNumberRef number = (CFNumberRef)cf;
-    switch (__CFNumberGetType(number)) {
-    case kCFNumberSInt8Type:
-    case kCFNumberSInt16Type:
-    case kCFNumberSInt32Type: {
-        SInt32 i;
-        __CFNumberGetValue(number, kCFNumberSInt32Type, &i);
-        h = _CFHashInt(i);
-        break;
-    }
-    default: {
-        Float64 d;
-        __CFNumberGetValue(number, kCFNumberFloat64Type, &d);
-        h = _CFHashDouble((double)d);
-        break;
-    }
-    }
-    return h;
-}
+//CF_PRIVATE CFStringRef __CFNumberCopyFormattingDescription(CFTypeRef cf, CFDictionaryRef formatOptions) {
+//    CFStringRef result = __CFNumberCopyFormattingDescription_new(cf, formatOptions);
+//    return result;
+//}
 
 
-enum {
-  kCFNumberCachingEnabled = 0,
-  kCFNumberCachingDisabled = 1,
-  kCFNumberCachingFullyDisabled = 2
-};
-static char __CFNumberCaching = kCFNumberCachingEnabled;
-
-const CFRuntimeClass __CFNumberClass = {
-    0,
-    "CFNumber",
-    NULL,      // init
-    NULL,      // copy
-    NULL,
-    __CFNumberEqual,
-    __CFNumberHash,
-    __CFNumberCopyFormattingDescription,
-    __CFNumberCopyDescription
-};
 
 
-CFTypeID CFNumberGetTypeID(void) {
-    // TODO: Move other work out of here
-    static dispatch_once_t initOnce;
-    dispatch_once(&initOnce, ^{
-        
-
-        const char *caching = __CFgetenv("CFNumberDisableCache");    // "all" to disable caching and tagging; anything else to disable caching; nothing to leave both enabled
-        if (caching) __CFNumberCaching = (!strcmp(caching, "all")) ? kCFNumberCachingFullyDisabled : kCFNumberCachingDisabled;    // initial state above is kCFNumberCachingEnabled
-    });
-    return _kCFRuntimeIDCFNumber;
-}
-
-#define MinCachedInt (-1)
-#define MaxCachedInt (12)
-#define NotToBeCached (MinCachedInt - 1)
-static CFNumberRef __CFNumberCache[MaxCachedInt - MinCachedInt + 1] = {NULL};    // Storing CFNumberRefs for range MinCachedInt..MaxCachedInt
-
-static inline void __CFNumberInit(CFNumberRef result, CFNumberType type, const void *valuePtr) {
-    __CFAssertIsValidNumberType(type);
-    
-    uint64_t value;
-    switch (__CFNumberTypeTable[type].canonicalType) {
-        case kCFNumberSInt8Type:   value = (uint64_t)(int64_t)*(int8_t *)valuePtr; goto smallVal;
-        case kCFNumberSInt16Type:  value = (uint64_t)(int64_t)*(int16_t *)valuePtr; goto smallVal;
-        case kCFNumberSInt32Type:  value = (uint64_t)(int64_t)*(int32_t *)valuePtr; goto smallVal;
-        smallVal: memmove((void *)&result->_bits._64.bits, &value, 8); break;
-        case kCFNumberSInt64Type:  memmove((void *)&result->_bits._64.bits, valuePtr, 8); break;
-        case kCFNumberSInt128Type: memmove((void *)&result->_bits._64.bits, valuePtr, 16); break;
-        case kCFNumberFloat32Type: memmove((void *)&result->_bits._64.bits, valuePtr, 4); break;
-        case kCFNumberFloat64Type: memmove((void *)&result->_bits._64.bits, valuePtr, 8); break;
-    }
-}
-
-static inline void _CFNumberInit(CFNumberRef result, CFNumberType type, const void *valuePtr) {
-    __CFNumberInit(result, type, valuePtr);
-}
-
-void _CFNumberInitBool(CFNumberRef result, Boolean value) {
-    _CFNumberInit(result, kCFNumberCharType, &value);
-}
-
-void _CFNumberInitInt8(CFNumberRef result, int8_t value) {
-    _CFNumberInit(result, kCFNumberCharType, &value);
-}
-
-void _CFNumberInitUInt8(CFNumberRef result, uint8_t value) {
-    _CFNumberInit(result, kCFNumberCharType, &value);
-}
-
-void _CFNumberInitInt16(CFNumberRef result, int16_t value) {
-    _CFNumberInit(result, kCFNumberShortType, &value);
-}
-
-void _CFNumberInitUInt16(CFNumberRef result, uint16_t value) {
-    _CFNumberInit(result, kCFNumberShortType, &value);
-}
-
-void _CFNumberInitInt32(CFNumberRef result, int32_t value) {
-    _CFNumberInit(result, kCFNumberIntType, &value);
-}
-
-void _CFNumberInitUInt32(CFNumberRef result, uint32_t value) {
-    _CFNumberInit(result, kCFNumberIntType, &value);
-}
-
-void _CFNumberInitInt(CFNumberRef result, long value) {
-    _CFNumberInit(result, kCFNumberLongType, &value);
-}
-
-void _CFNumberInitUInt(CFNumberRef result, unsigned long value) {
-    _CFNumberInit(result, kCFNumberLongType, &value);
-}
-
-void _CFNumberInitInt64(CFNumberRef result, int64_t value) {
-    _CFNumberInit(result, kCFNumberLongLongType, &value);
-}
-
-void _CFNumberInitUInt64(CFNumberRef result, uint64_t value) {
-    _CFNumberInit(result, kCFNumberLongLongType, &value);
-}
-
-void _CFNumberInitFloat(CFNumberRef result, float value) {
-    _CFNumberInit(result, kCFNumberFloatType, &value);
-}
-
-void _CFNumberInitDouble(CFNumberRef result, double value) {
-    _CFNumberInit(result, kCFNumberDoubleType, &value);
-}
-
-static CFNumberRef _CFNumberCreate(CFAllocatorRef allocator, CFNumberType type, const void *valuePtr) {
-    __CFAssertIsValidNumberType(type);
-//printf("+ [%p] CFNumberCreate(%p, %d, %p)\n", pthread_self(), allocator, type, valuePtr);
-
-    if (!allocator) allocator = __CFGetDefaultAllocator();
 
 
-    // Look for cases where we can return a cached instance.
-    // We only use cached objects if the allocator is the system
-    // default allocator, except for the special floating point
-    // constant objects, where we return the cached object
-    // regardless of allocator, since that is what has always
-    // been done (and now must for compatibility).
-    int64_t valToBeCached = NotToBeCached;
-    if (__CFNumberTypeTable[type].floatBit) {
-        CFNumberRef cached = NULL;
-        if (0 == __CFNumberTypeTable[type].storageBit) {
-            Float32Bits f = *(Float32Bits *)valuePtr;
-            if (f.bits == BITSFORFLOATZERO) cached = kCFNumberFloat32Zero;
-            else if (f.bits == BITSFORFLOATONE) cached = kCFNumberFloat32One;
-            else if (isnan(f.floatValue)) cached = kCFNumberNaN;
-            else if (isinf(f.floatValue)) cached = (f.floatValue < 0.0) ? kCFNumberNegativeInfinity : kCFNumberPositiveInfinity;
+//static inline void __CFNumberInit(CFNumberRef result, XNumberType type, const void *valuePtr) {
+//    __XAssertIsValidNumberType(type);
+//
+//    uint64_t value;
+//    switch (_XNumberTypeInfoTable[type].type) {
+//        case kCFNumberSInt8Type:   value = (uint64_t)(int64_t)*(int8_t *)valuePtr; goto smallVal;
+//        case kCFNumberSInt16Type:  value = (uint64_t)(int64_t)*(int16_t *)valuePtr; goto smallVal;
+//        case kCFNumberSInt32Type:  value = (uint64_t)(int64_t)*(int32_t *)valuePtr; goto smallVal;
+//        smallVal: memmove((void *)&result->_bits._64.bits, &value, 8); break;
+//        case kCFNumberSInt64Type:  memmove((void *)&result->_bits._64.bits, valuePtr, 8); break;
+//        case kCFNumberSInt128Type: memmove((void *)&result->_bits._64.bits, valuePtr, 16); break;
+//        case kCFNumberFloat32Type: memmove((void *)&result->_bits._64.bits, valuePtr, 4); break;
+//        case kCFNumberFloat64Type: memmove((void *)&result->_bits._64.bits, valuePtr, 8); break;
+//    }
+//}
+//
+//static inline void _CFNumberInit(CFNumberRef result, XNumberType type, const void *valuePtr) {
+//    __CFNumberInit(result, type, valuePtr);
+//}
+//
+//void _CFNumberInitBool(CFNumberRef result, Boolean value) {
+//    _CFNumberInit(result, kCFNumberCharType, &value);
+//}
+//
+//void _CFNumberInitInt8(CFNumberRef result, int8_t value) {
+//    _CFNumberInit(result, kCFNumberCharType, &value);
+//}
+//
+//void _CFNumberInitUInt8(CFNumberRef result, uint8_t value) {
+//    _CFNumberInit(result, kCFNumberCharType, &value);
+//}
+//
+//void _CFNumberInitInt16(CFNumberRef result, int16_t value) {
+//    _CFNumberInit(result, kCFNumberShortType, &value);
+//}
+//
+//void _CFNumberInitUInt16(CFNumberRef result, uint16_t value) {
+//    _CFNumberInit(result, kCFNumberShortType, &value);
+//}
+//
+//void _CFNumberInitInt32(CFNumberRef result, int32_t value) {
+//    _CFNumberInit(result, kCFNumberIntType, &value);
+//}
+//
+//void _CFNumberInitUInt32(CFNumberRef result, uint32_t value) {
+//    _CFNumberInit(result, kCFNumberIntType, &value);
+//}
+//
+//void _CFNumberInitInt(CFNumberRef result, long value) {
+//    _CFNumberInit(result, kCFNumberLongType, &value);
+//}
+//
+//void _CFNumberInitUInt(CFNumberRef result, unsigned long value) {
+//    _CFNumberInit(result, kCFNumberLongType, &value);
+//}
+//
+//void _CFNumberInitInt64(CFNumberRef result, int64_t value) {
+//    _CFNumberInit(result, kCFNumberLongLongType, &value);
+//}
+//
+//void _CFNumberInitUInt64(CFNumberRef result, uint64_t value) {
+//    _CFNumberInit(result, kCFNumberLongLongType, &value);
+//}
+//
+//void _CFNumberInitFloat(CFNumberRef result, float value) {
+//    _CFNumberInit(result, kCFNumberFloatType, &value);
+//}
+//
+//void _CFNumberInitDouble(CFNumberRef result, double value) {
+//    _CFNumberInit(result, kCFNumberDoubleType, &value);
+//}
 
+//static CFNumberRef _CFNumberCreate(CFAllocatorRef allocator, XNumberType type, const void *valuePtr) {
+//    __XAssertIsValidNumberType(type);
+////printf("+ [%p] CFNumberCreate(%p, %d, %p)\n", pthread_self(), allocator, type, valuePtr);
+//
+//    if (!allocator) allocator = __CFGetDefaultAllocator();
+//
+//
+//    // Look for cases where we can return a cached instance.
+//    // We only use cached objects if the allocator is the system
+//    // default allocator, except for the special floating point
+//    // constant objects, where we return the cached object
+//    // regardless of allocator, since that is what has always
+//    // been done (and now must for compatibility).
+//    int64_t valToBeCached = NotToBeCached;
+//    if (_XNumberTypeInfoTable[type].floatBit) {
+//        CFNumberRef cached = NULL;
+//        if (0 == _XNumberTypeInfoTable[type].storageBit) {
+//            XFloat32Bits f = *(XFloat32Bits *)valuePtr;
+//            if (f.bits == BITSFORFLOATZERO) cached = kCFNumberFloat32Zero;
+//            else if (f.bits == BITSFORFLOATONE) cached = kCFNumberFloat32One;
+//            else if (isnan(f.floatValue)) cached = kCFNumberNaN;
+//            else if (isinf(f.floatValue)) cached = (f.floatValue < 0.0) ? kCFNumberNegativeInfinity : kCFNumberPositiveInfinity;
+//
+//
+//        } else {
+//            XFloat64Bits d = *(XFloat64Bits *)valuePtr;
+//            if (d.bits == BITSFORDOUBLEZERO) cached = kCFNumberFloat64Zero;
+//            else if (d.bits == BITSFORDOUBLEONE) cached = kCFNumberFloat64One;
+//            else if (isnan(d.floatValue)) cached = kCFNumberNaN;
+//            else if (isinf(d.floatValue)) cached = (d.floatValue < 0.0) ? kCFNumberNegativeInfinity : kCFNumberPositiveInfinity;
+//        }
+//        if (cached) return (CFNumberRef)CFRetain(cached);
+//    } else if (_CFAllocatorIsSystemDefault(allocator) && (__CFNumberCaching == kCFNumberCachingEnabled)) {
+//        switch (_XNumberTypeInfoTable[type].type) {
+//        case kCFNumberSInt8Type:   {int8_t  val = *(int8_t *)valuePtr;  if (MinCachedInt <= val && val <= MaxCachedInt) valToBeCached = (int64_t)val; break;}
+//        case kCFNumberSInt16Type:  {int16_t val = *(int16_t *)valuePtr; if (MinCachedInt <= val && val <= MaxCachedInt) valToBeCached = (int64_t)val; break;}
+//        case kCFNumberSInt32Type:  {int32_t val = *(int32_t *)valuePtr; if (MinCachedInt <= val && val <= MaxCachedInt) valToBeCached = (int64_t)val; break;}
+//        case kCFNumberSInt64Type:  {int64_t val = *(int64_t *)valuePtr; if (MinCachedInt <= val && val <= MaxCachedInt) valToBeCached = (int64_t)val; break;}
+//        }
+//        if (NotToBeCached != valToBeCached) {
+//            CFNumberRef cached = __CFNumberCache[valToBeCached - MinCachedInt];        // Atomic to access the value in the cache
+//            if (NULL != cached) return (CFNumberRef)CFRetain(cached);
+//        }
+//    }
+//
+//    CFIndex size = 8 + ((!_XNumberTypeInfoTable[type].floatBit && _XNumberTypeInfoTable[type].storageBit) ? 8 : 0);
+//    CFNumberRef result = (CFNumberRef)_CFRuntimeCreateInstance(allocator, CFNumberGetTypeID(), size, NULL);
+//    if (NULL == result) {
+//    return NULL;
+//    }
+//
+//    __CFRuntimeSetNumberType(result, (uint8_t)_XNumberTypeInfoTable[type].type);
+//
+//
+//    // should be initialized BEFORE ever caching it!
+//    __CFNumberInit(result, type, valuePtr);
+//
+//    // for a value to be cached, we already have the value handy
+//    if (NotToBeCached != valToBeCached) {
+//    memmove((void *)&result->_bits._64.bits, &valToBeCached, 8);
+//    // Put this in the cache unless the cache is already filled (by another thread).  If we do put it in the cache, retain it an extra time for the cache.
+//    // Note that we don't bother freeing this result and returning the cached value if the cache was filled, since cached CFNumbers are not guaranteed unique.
+//    // Barrier assures that the number that is placed in the cache is properly formed.
+//    XNumberType origType = __XNumberGetType(result);
+//    // Force all cached numbers to have the same type, so that the type does not
+//    // depend on the order and original type in/with which the numbers are created.
+//    // Forcing the type AFTER it was cached would cause a race condition with other
+//    // threads pulling the number object out of the cache and using it.
+//        __CFRuntimeSetNumberType(result, (uint8_t)kCFNumberSInt32Type);
+//    if (OSAtomicCompareAndSwapPtrBarrier(NULL, (void *)result, (void *volatile *)&__CFNumberCache[valToBeCached - MinCachedInt])) {
+//        CFRetain(result);
+//    } else {
+//        // Did not cache the number object, put original type back.
+//            __CFRuntimeSetNumberType(result, origType);
+//    }
+//    return result;
+//    }
+//
+//    return result;
+//}
+//
+//CFNumberRef CFNumberCreate(CFAllocatorRef allocator, XNumberType type, const void *valuePtr) {
+//    return _CFNumberCreate(allocator, type, valuePtr);
+//}
+//
+//XNumberType CFNumberGetType(CFNumberRef number) {
+//    CF_OBJC_FUNCDISPATCHV(CFNumberGetTypeID(), XNumberType, (NSNumber *)number, _XNumberType);
+//    CF_SWIFT_FUNCDISPATCHV(CFNumberGetTypeID(), XNumberType, (CFSwiftRef)number, NSNumber._cfNumberGetType);
+//    __XAssertIsNumber(number);
+//    XNumberType type = __XNumberGetType(number);
+//    if (kCFNumberSInt128Type == type) type = kCFNumberSInt64Type; // must hide this type, since it is not public
+//    return type;
+//}
+//
+//CF_EXPORT XNumberType _CFNumberGetType2(CFNumberRef number) {
+//    CF_OBJC_FUNCDISPATCHV(CFNumberGetTypeID(), XNumberType, (NSNumber *)number, _XNumberType);
+//    __XAssertIsNumber(number);
+//    return __XNumberGetType(number);
+//}
+//
+//CFIndex CFNumberGetByteSize(CFNumberRef number) {
+//    __XAssertIsNumber(number);
+//    CFIndex r = 1 << _XNumberTypeInfoTable[CFNumberGetType(number)].lgByteSize;
+//    return r;
+//}
+//
+//Boolean CFNumberIsFloatType(CFNumberRef number) {
+//    __XAssertIsNumber(number);
+//    Boolean r = _XNumberTypeInfoTable[CFNumberGetType(number)].floatBit;
+//    return r;
+//}
 
-        } else {
-            Float64Bits d = *(Float64Bits *)valuePtr;
-            if (d.bits == BITSFORDOUBLEZERO) cached = kCFNumberFloat64Zero;
-            else if (d.bits == BITSFORDOUBLEONE) cached = kCFNumberFloat64One;
-            else if (isnan(d.floatValue)) cached = kCFNumberNaN;
-            else if (isinf(d.floatValue)) cached = (d.floatValue < 0.0) ? kCFNumberNegativeInfinity : kCFNumberPositiveInfinity;
-        }
-        if (cached) return (CFNumberRef)CFRetain(cached);
-    } else if (_CFAllocatorIsSystemDefault(allocator) && (__CFNumberCaching == kCFNumberCachingEnabled)) {
-        switch (__CFNumberTypeTable[type].canonicalType) {
-        case kCFNumberSInt8Type:   {int8_t  val = *(int8_t *)valuePtr;  if (MinCachedInt <= val && val <= MaxCachedInt) valToBeCached = (int64_t)val; break;}
-        case kCFNumberSInt16Type:  {int16_t val = *(int16_t *)valuePtr; if (MinCachedInt <= val && val <= MaxCachedInt) valToBeCached = (int64_t)val; break;}
-        case kCFNumberSInt32Type:  {int32_t val = *(int32_t *)valuePtr; if (MinCachedInt <= val && val <= MaxCachedInt) valToBeCached = (int64_t)val; break;}
-        case kCFNumberSInt64Type:  {int64_t val = *(int64_t *)valuePtr; if (MinCachedInt <= val && val <= MaxCachedInt) valToBeCached = (int64_t)val; break;}
-        }
-        if (NotToBeCached != valToBeCached) {
-            CFNumberRef cached = __CFNumberCache[valToBeCached - MinCachedInt];        // Atomic to access the value in the cache
-            if (NULL != cached) return (CFNumberRef)CFRetain(cached);
-        }
-    }
+//XBool CFNumberGetValue(CFNumberRef number, XNumberType type, void *valuePtr) {
+////printf("+ [%p] CFNumberGetValue(%p, %d, %p)\n", pthread_self(), number, type, valuePtr);
+//
+//    CF_OBJC_FUNCDISPATCHV(CFNumberGetTypeID(), Boolean, (NSNumber *)number, _getValue:(void *)valuePtr forType:(XNumberType)_XNumberTypeInfoTable[type].type);
+//    CF_SWIFT_FUNCDISPATCHV(CFNumberGetTypeID(), Boolean, (CFSwiftRef)number, NSNumber._getValue, valuePtr, (XNumberType)_XNumberTypeInfoTable[type].type);
+//    __XAssertIsNumber(number);
+//    __XAssertIsValidNumberType(type);
+//    uint8_t localMemory[128];
+//    Boolean r = __XNumberGetValueCompat(number, type, valuePtr ? valuePtr : localMemory);
+//    return r;
+//}
 
-    CFIndex size = 8 + ((!__CFNumberTypeTable[type].floatBit && __CFNumberTypeTable[type].storageBit) ? 8 : 0);
-    CFNumberRef result = (CFNumberRef)_CFRuntimeCreateInstance(allocator, CFNumberGetTypeID(), size, NULL);
-    if (NULL == result) {
-    return NULL;
-    }
-    
-    __CFRuntimeSetNumberType(result, (uint8_t)__CFNumberTypeTable[type].canonicalType);
-    
-    
-    // should be initialized BEFORE ever caching it!
-    __CFNumberInit(result, type, valuePtr);
+XComparisonResult __XNumberCompare(_XNumberStruct * _Nonnull number1, _XNumberStruct * _Nonnull number2) {
+    //限定： -0.000...001 < NaN < 0, NaN 大于任何double能表示的负数， 小于0
 
-    // for a value to be cached, we already have the value handy
-    if (NotToBeCached != valToBeCached) {
-    memmove((void *)&result->_bits._64.bits, &valToBeCached, 8);
-    // Put this in the cache unless the cache is already filled (by another thread).  If we do put it in the cache, retain it an extra time for the cache.
-    // Note that we don't bother freeing this result and returning the cached value if the cache was filled, since cached CFNumbers are not guaranteed unique.
-    // Barrier assures that the number that is placed in the cache is properly formed.
-    CFNumberType origType = __CFNumberGetType(result);
-    // Force all cached numbers to have the same type, so that the type does not
-    // depend on the order and original type in/with which the numbers are created.
-    // Forcing the type AFTER it was cached would cause a race condition with other
-    // threads pulling the number object out of the cache and using it.
-        __CFRuntimeSetNumberType(result, (uint8_t)kCFNumberSInt32Type);
-    if (OSAtomicCompareAndSwapPtrBarrier(NULL, (void *)result, (void *volatile *)&__CFNumberCache[valToBeCached - MinCachedInt])) {
-        CFRetain(result);
-    } else {
-        // Did not cache the number object, put original type back.
-            __CFRuntimeSetNumberType(result, origType);
-    }
-    return result;
-    }
+    XNumberType type1 = number1->type;
+    XNumberType type2 = number2->type;
+    XBool isFloat1 = (XNumberTypeFloat32 == type1 || XNumberTypeFloat64 == type1);
+    XBool isFloat2 = (XNumberTypeFloat32 == type2 || XNumberTypeFloat64 == type2);
 
-    return result;
-}
-
-CFNumberRef CFNumberCreate(CFAllocatorRef allocator, CFNumberType type, const void *valuePtr) {
-    return _CFNumberCreate(allocator, type, valuePtr);
-}
-
-CFNumberType CFNumberGetType(CFNumberRef number) {
-    CF_OBJC_FUNCDISPATCHV(CFNumberGetTypeID(), CFNumberType, (NSNumber *)number, _cfNumberType);
-    CF_SWIFT_FUNCDISPATCHV(CFNumberGetTypeID(), CFNumberType, (CFSwiftRef)number, NSNumber._cfNumberGetType);
-    __CFAssertIsNumber(number);
-    CFNumberType type = __CFNumberGetType(number);
-    if (kCFNumberSInt128Type == type) type = kCFNumberSInt64Type; // must hide this type, since it is not public
-    return type;
-}
-
-CF_EXPORT CFNumberType _CFNumberGetType2(CFNumberRef number) {
-    CF_OBJC_FUNCDISPATCHV(CFNumberGetTypeID(), CFNumberType, (NSNumber *)number, _cfNumberType);
-    __CFAssertIsNumber(number);
-    return __CFNumberGetType(number);
-}
-
-CFIndex CFNumberGetByteSize(CFNumberRef number) {
-    __CFAssertIsNumber(number);
-    CFIndex r = 1 << __CFNumberTypeTable[CFNumberGetType(number)].lgByteSize;
-    return r;
-}
-
-Boolean CFNumberIsFloatType(CFNumberRef number) {
-    __CFAssertIsNumber(number);
-    Boolean r = __CFNumberTypeTable[CFNumberGetType(number)].floatBit;
-    return r;
-}
-
-Boolean CFNumberGetValue(CFNumberRef number, CFNumberType type, void *valuePtr) {
-//printf("+ [%p] CFNumberGetValue(%p, %d, %p)\n", pthread_self(), number, type, valuePtr);
-
-    CF_OBJC_FUNCDISPATCHV(CFNumberGetTypeID(), Boolean, (NSNumber *)number, _getValue:(void *)valuePtr forType:(CFNumberType)__CFNumberTypeTable[type].canonicalType);
-    CF_SWIFT_FUNCDISPATCHV(CFNumberGetTypeID(), Boolean, (CFSwiftRef)number, NSNumber._getValue, valuePtr, (CFNumberType)__CFNumberTypeTable[type].canonicalType);
-    __CFAssertIsNumber(number);
-    __CFAssertIsValidNumberType(type);
-    uint8_t localMemory[128];
-    Boolean r = __CFNumberGetValueCompat(number, type, valuePtr ? valuePtr : localMemory);
-    return r;
-}
-
-static CFComparisonResult CFNumberCompare_new(CFNumberRef number1, CFNumberRef number2, void *context) {
-    CF_OBJC_FUNCDISPATCHV(CFNumberGetTypeID(), CFComparisonResult, (NSNumber *)number1, compare:(NSNumber *)number2);
-    CF_OBJC_FUNCDISPATCHV(CFNumberGetTypeID(), CFComparisonResult, (NSNumber *)number2, _reverseCompare:(NSNumber *)number1);
-    __CFAssertIsNumber(number1);
-    __CFAssertIsNumber(number2);
-
-    CFNumberType type1 = __CFNumberGetType(number1);
-    CFNumberType type2 = __CFNumberGetType(number2);
     // Both numbers are integers
-    if (!__CFNumberTypeTable[type1].floatBit && !__CFNumberTypeTable[type2].floatBit) {
-        CFSInt128Struct i1, i2;
-        __CFNumberGetValue(number1, kCFNumberSInt128Type, &i1);
-        __CFNumberGetValue(number2, kCFNumberSInt128Type, &i2);
+    if (!isFloat1 && !isFloat2) {
+        XSInt128Struct i1, i2;
+        __XNumberGetSInt128StructValue(number1, &i1);
+        __XNumberGetSInt128StructValue(number2, &i2);
         return cmp128(&i1, &i2);
     }
     // Both numbers are floats
-    if (__CFNumberTypeTable[type1].floatBit && __CFNumberTypeTable[type2].floatBit) {
-    Float64 d1, d2;
-        __CFNumberGetValue(number1, kCFNumberFloat64Type, &d1);
-        __CFNumberGetValue(number2, kCFNumberFloat64Type, &d2);
-    double s1 = copysign(1.0, d1);
-    double s2 = copysign(1.0, d2);
-    if (isnan(d1) && isnan(d2)) return kCFCompareEqualTo;
-    if (isnan(d1)) return (s2 < 0.0) ? kCFCompareGreaterThan : kCFCompareLessThan;
-    if (isnan(d2)) return (s1 < 0.0) ? kCFCompareLessThan : kCFCompareGreaterThan;
-    // at this point, we know we don't have any NaNs
-    if (s1 < s2) return kCFCompareLessThan;
-    if (s2 < s1) return kCFCompareGreaterThan;
-    // at this point, we know the signs are the same; do not combine these tests
-    if (d1 < d2) return kCFCompareLessThan;
-    if (d2 < d1) return kCFCompareGreaterThan;
-        return kCFCompareEqualTo;
+    if (isFloat1 && isFloat2) {
+        XFloat64 d1 = number1->bits.f;
+        XFloat64 d2 = number2->bits.f;
+        double s1 = copysign(1.0, d1);
+        double s2 = copysign(1.0, d2);
+        if (isnan(d1) && isnan(d2)) return XCompareEqualTo;
+        if (isnan(d1)) return (s2 < 0.0) ? XCompareGreaterThan : XCompareLessThan;
+        if (isnan(d2)) return (s1 < 0.0) ? XCompareLessThan : XCompareGreaterThan;
+        // at this point, we know we don't have any NaNs
+        if (s1 < s2) return XCompareLessThan;
+        if (s2 < s1) return XCompareGreaterThan;
+        // at this point, we know the signs are the same; do not combine these tests
+        if (d1 < d2) return XCompareLessThan;
+        if (d2 < d1) return XCompareGreaterThan;
+        return XCompareEqualTo;
     }
     // One float, one integer; swap if necessary so number1 is the float
-    Boolean swapResult = false;
-    if (__CFNumberTypeTable[type2].floatBit) {
-        CFNumberRef tmp = number1;
-    number1 = number2;
-    number2 = tmp;
-    swapResult = true;
+    XBool swapResult = false;
+    if (isFloat2) {
+        _XNumberStruct * tmp = number1;
+        number1 = number2;
+        number2 = tmp;
+        swapResult = true;
     }
     // At large integer values, the precision of double is quite low
     // e.g. all values roughly 2^127 +- 2^73 are represented by 1 double, 2^127.
     // If we just used double compare, that would make the 2^73 largest 128-bit
     // integers look equal, so we have to use integer comparison when possible.
-    Float64 d1, d2;
-    __CFNumberGetValue(number1, kCFNumberFloat64Type, &d1);
+    XFloat64 d1, d2;
+    __XNumberGetValue(number1, XNumberTypeFloat64, &d1);
     // if the double value is really big, cannot be equal to integer
     // nan d1 will not compare true here
-    if (d1 < FLOAT_NEGATIVE_2_TO_THE_127) {
-    return !swapResult ? kCFCompareLessThan : kCFCompareGreaterThan;
-    }
-    if (FLOAT_POSITIVE_2_TO_THE_127 <= d1) {
-    return !swapResult ? kCFCompareGreaterThan : kCFCompareLessThan;
-    }
-    CFSInt128Struct i1, i2;
-    __CFNumberGetValue(number1, kCFNumberSInt128Type, &i1);
-    __CFNumberGetValue(number2, kCFNumberSInt128Type, &i2);
-    CFComparisonResult res = cmp128(&i1, &i2);
-    if (kCFCompareEqualTo != res) {
-    return !swapResult ? res : -res;
-    }
-    // now things are equal, but perhaps due to rounding or nan
+    XSInt128Struct i1, i2;
     if (isnan(d1)) {
-    if (isNeg128(&i2)) {
-        return !swapResult ? kCFCompareGreaterThan : kCFCompareLessThan;
+        __XNumberGetSInt128StructValue(number2, &i2);
+        if (isNeg128(&i2)) {
+            return !swapResult ? XCompareGreaterThan : XCompareLessThan;
+        }
+        // nan compares less than positive 0 too
+        return !swapResult ? XCompareLessThan : XCompareGreaterThan;
+    } else {
+        if (d1 < FLOAT_NEGATIVE_2_TO_THE_127) {//d1 小于 XSInt128Struct 的最小值
+            return !swapResult ? XCompareLessThan : XCompareGreaterThan;
+        } else if (FLOAT_POSITIVE_2_TO_THE_127 <= d1) {//d1 大于等于 XSInt128Struct 的最大值+1
+            return !swapResult ? XCompareGreaterThan : XCompareLessThan;
+        } else {
+            __XNumberGetSInt128StructValue(number1, &i1);
+            __XNumberGetSInt128StructValue(number2, &i2);
+            XComparisonResult res = cmp128(&i1, &i2);
+            if (XCompareEqualTo != res) {
+                return !swapResult ? res : -res;
+            }
+            //整数部分、符号部分完全相同
+            
+            double s1 = copysign(1.0, d1);
+            double s2 = isNeg128(&i2) ? -1.0 : 1.0;
+            if (s1 < s2) return !swapResult ? XCompareLessThan : XCompareGreaterThan;
+            if (s2 < s1) return !swapResult ? XCompareGreaterThan : XCompareLessThan;
+            // at this point, we know the signs are the same; do not combine these tests
+            __XNumberGetValue(number2, XNumberTypeFloat64, &d2);
+            if (d1 < d2) return !swapResult ? XCompareLessThan : XCompareGreaterThan;
+            if (d2 < d1) return !swapResult ? XCompareGreaterThan : XCompareLessThan;
+            return XCompareEqualTo;
+        }
     }
-    // nan compares less than positive 0 too
-    return !swapResult ? kCFCompareLessThan : kCFCompareGreaterThan;
-    }
-    // at this point, we know we don't have NaN
-    double s1 = copysign(1.0, d1);
-    double s2 = isNeg128(&i2) ? -1.0 : 1.0;
-    if (s1 < s2) return !swapResult ? kCFCompareLessThan : kCFCompareGreaterThan;
-    if (s2 < s1) return !swapResult ? kCFCompareGreaterThan : kCFCompareLessThan;
-    // at this point, we know the signs are the same; do not combine these tests
-    __CFNumberGetValue(number2, kCFNumberFloat64Type, &d2);
-    if (d1 < d2) return !swapResult ? kCFCompareLessThan : kCFCompareGreaterThan;
-    if (d2 < d1) return !swapResult ? kCFCompareGreaterThan : kCFCompareLessThan;
-    return kCFCompareEqualTo;
 }
 
-CFComparisonResult CFNumberCompare(CFNumberRef number1, CFNumberRef number2, void *context) {
-    CFComparisonResult r = CFNumberCompare_new(number1, number2, context);
-    return r;
+
+
+
+
+XComparisonResult XNumberCompare(XNumber _Nonnull lhs, XNumber _Nonnull rhs) {
+    _XNumberStruct contentOfLhs = {};
+    _XNumberStruct contentOfRhs = {};
+    __XNumberUnpack(lhs, &contentOfLhs, __func__);
+    __XNumberUnpack(rhs, &contentOfRhs, __func__);
+    return __XNumberCompare(&contentOfLhs, &contentOfRhs);
 }
 
 
+XBool XNumberEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+    _XNumberStruct contentOfLhs = {};
+    _XNumberStruct contentOfRhs = {};
+    __XNumberUnpack(lhs, &contentOfLhs, __func__);
+    __XNumberUnpack(rhs, &contentOfRhs, __func__);
+    XBool b = __XNumberCompare(&contentOfLhs, &contentOfRhs) == XCompareEqualTo;
+    return b;
+}
 
-#undef __CFAssertIsBoolean
-#undef __CFAssertIsNumber
-#undef __CFAssertIsValidNumberType
+XHashCode XNumberHash(XRef _Nonnull ref) {
+    XAssert(NULL != ref, __func__, "ref is NULL");
+    _XNumberStruct content = {};
+    __XNumberUnpack(ref, &content, __func__);
+    switch (content.type) {
+        case XNumberTypeSInt8:
+        case XNumberTypeSInt16:
+        case XNumberTypeSInt32:
+        case XNumberTypeSInt64: {
+            XSInt64 s = content.bits.s;
+            XUInt64 u = s > 0 ? (XUInt64)s : (XUInt64)(s * -1);
+            return _XHashUInt64(u);
+        }
+            break;
+        case XNumberTypeUInt8:
+        case XNumberTypeUInt16:
+        case XNumberTypeUInt32:
+        case XNumberTypeUInt64: {
+            XUInt64 u = content.bits.u;
+            return _XHashUInt64(u);
+        }
+            break;
+        case XNumberTypeFloat32:
+        case XNumberTypeFloat64: {
+            XFloat64 f = content.bits.f;
+            return _XHashFloat64(f);
+        }
+            break;
+        default: {
+            abort();
+        }
+            break;
+    }
+}
+
 #undef BITSFORDOUBLENAN
 #undef BITSFORDOUBLEPOSINF
 #undef BITSFORDOUBLENEGINF
-#undef MinCachedInt
-#undef MaxCachedInt
-#undef NotToBeCached
-
-
-#endif

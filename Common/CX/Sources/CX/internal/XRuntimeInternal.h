@@ -14,7 +14,8 @@ extern "C" {
 
 #include "XRuntime.h"
 #include "XAllocator.h"
-#include "XObjectInternal.h"
+#include "XAtomic.h"
+#include "XRef.h"
 
 typedef XPtr _XDescriptionBuffer;
 
@@ -32,6 +33,58 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 #endif
 
 
+
+/*
+ Tagged32
+ refType: 1
+ taggedContent: 30
+ flag: 1, value = 1
+ */
+
+/*
+Tagged64
+refType: 2
+taggedContent: 61
+flag: 1, value = 1
+*/
+
+
+/*
+ TaggedObject32
+
+ refType: 1, value = 1
+ taggedContent: {
+    class: 2
+    objectContent: 28
+ }
+ flag: 1, value = 1
+*/
+
+/*
+ TaggedObject64
+
+ refType: 2, value = 1
+ taggedContent: 61 {
+    class: 2
+    objectContent: 59
+ }
+ flag: 1, value = 1
+*/
+
+
+/*
+ TaggedIsa64
+ 
+ refType: 2, value = 2
+ taggedContent: 61 {
+    isa: 6
+    counter: 51
+    counterFlag: 4
+ }
+ flag: 1, value = 1
+ */
+
+
 /*
  
  XObjectFlagClearOnDealloc
@@ -39,18 +92,62 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
  */
 
 
-//64bit 压缩的头
+//64bit 压缩的ObjectHeader flagBegin = 2
  /* flagBegin:2 type:6 rcInfo:55 flagEnd:1  */
 
-//32bit rc info
+//64bit 压缩的StackObject flagBegin = 1
+/* flagBegin:2 type:6 rcInfo:55 flagEnd:1  */
+
+//32bit StackObject flagBegin = 1
+/* flagBegin:1 type:6 rcInfo:55 flagEnd:1  */
+
+
+// rc info
 /*
- count://d高位
- 
+ count://其余高位
  flags: 低4位
  flag0:clear on dealloc
  flag1:hasWeak
- 
  */
+
+#if BUILD_TARGET_RT_64_BIT
+
+#define X_BUILD_ObjectRcMax 0xFFFFFFFFFFFFFFF0ULL
+
+#define X_BUILD_TaggedMask 0xC000000000000001ULL
+#define X_BUILD_TaggedObjectFlag 0x8000000000000001ULL
+
+#define X_BUILD_TaggedObjectClassMask    0x3000000000000000ULL
+#define X_BUILD_TaggedObjectClassShift    60ULL
+#define X_BUILD_TaggedObjectClassNumber   0x0ULL
+#define X_BUILD_TaggedObjectClassString  0x1000000000000000ULL
+#define X_BUILD_TaggedObjectClassData    0x2000000000000000ULL
+#define X_BUILD_TaggedObjectClassDate    0x3000000000000000ULL
+
+#define X_BUILD_TaggedObjectHeaderFlag  0x4000000000000001ULL
+#define X_BUILD_TaggedObjectHeaderClassMask    0x3F00000000000000ULL
+#define X_BUILD_TaggedObjectHeaderClassShift   56ULL
+
+
+#elif BUILD_TARGET_RT_32_BIT
+
+#define X_BUILD_ObjectRcMax 0xFFFFFFF0UL
+
+#define X_BUILD_TaggedMask 0x80000001UL
+#define X_BUILD_TaggedObjectFlag 0x80000001UL
+
+#define X_BUILD_TaggedObjectClassMask    0x60000000UL
+#define X_BUILD_TaggedObjectClassShift   29UL
+#define X_BUILD_TaggedObjectClassNumber  0X0UL
+#define X_BUILD_TaggedObjectClassString  0x20000000UL
+#define X_BUILD_TaggedObjectClassData    0x40000000UL
+#define X_BUILD_TaggedObjectClassDate    0x60000000UL
+
+#else
+    #error unknown rt
+#endif
+
+#define X_BUILD_TaggedObjectClassMax    X_BUILD_TaggedObjectClassDate
 
 #if BUILD_TARGET_RT_64_BIT
 
@@ -63,13 +160,12 @@ typedef struct {
     _Atomic(XFastUInt) rcInfo;
 } _XObjectBase;
 
-#define X_BUILD_TypeInfoCompressedMask (uintptr_t)(0xC000000000000001ULL)
+//
+#define X_BUILD_TypeInfoConstantCompressed (uintptr_t)(0xC0FFFFFFFFFFFFE1ULL)
 
-#define X_BUILD_TypeInfoConstantCompressed (uintptr_t)(0xE00FFFFFFFFFFFFFULL)
-
-
+/* flagBegin:2 type:6 rcInfo:55 flagEnd:1  */
 #define _XConstantObjectCompressedBaseMake(type) {\
-    .typeInfo = ATOMIC_VAR_INIT((uintptr_t)(X_BUILD_TypeInfoConstantCompressed | (((type) & 0x3f) << 55))),\
+    .typeInfo = ATOMIC_VAR_INIT((uintptr_t)(X_BUILD_TypeInfoConstantCompressed | (((type) & 0x3f) << 56))),\
 }
 
 #elif BUILD_TARGET_RT_32_BIT
@@ -147,18 +243,6 @@ typedef struct {
 } _XType_s;
 
 
-#if BUILD_TARGET_RT_64_BIT
-
-#define X_BUILD_ObjectRcMax (0xFFFFFFFFFFFFFFF0ULL)
-//#define X_BUILD_ObjectCompressedRcMax (0xFFFFFFFFFFFFFFF0ULL)
-
-#elif BUILD_TARGET_RT_32_BIT
-
-#define X_BUILD_ObjectRcMax (0xFFFFFFF0UL)
-//#define X_BUILD_ObjectCompressedRcMax (0xFFFFFFF0UL)
-#else
-    #error unknown rt
-#endif
 
 
 #pragma mark - XClass
@@ -168,7 +252,7 @@ extern const _XType_s _XClassTable[];
 extern const _XType_s _XClassNull;
 extern const _XType_s _XClassBoolean;
 
-static inline XClass _Nullable _XRefGetCompressedType(XUInt id) {
+static inline XClass _Nullable _XRefGetClassWithCompressedType(XCompressedType id) {
     if (id <= 0 || id > 9) {
         return NULL;
     } else {
@@ -231,6 +315,24 @@ typedef struct {
 
 //inline buffer
 typedef XUInt32 _XExtendedLayout;
+#define X_BUILD_ExtendedLayoutInline 0
+#define X_BUILD_ExtendedLayoutBuffer 1
+extern const _XExtendedLayout _XExtendedLayoutInline;
+extern const _XExtendedLayout _XExtendedLayoutBuffer;
+
+
+typedef struct {
+    _Atomic(XFastUInt) _refCount;
+    XUInt clearOnDealloc: 1;
+    XUInt size: (XUIntBitsCount - 1);
+    XUInt8 content[0];
+} _XBuffer;
+
+extern _XBuffer * _Nonnull _XBufferAllocate(XUInt size);
+extern XPtr _Nonnull _XBufferGetContent(_XBuffer * _Nonnull buffer);
+
+extern _XBuffer * _Nonnull _XBufferRetain(_XBuffer * _Nonnull buffer);
+extern void _XBufferRelease(_XBuffer * _Nonnull buffer);
 
 
 /*
@@ -320,8 +422,6 @@ typedef struct {
     _XValueContent_t content;
 } _XValue;
 
-typedef void (*XStorageClear_f)(XUInt8 * _Nullable content, XSize size);
-
 typedef struct {
     XSize extendedSize;
     XStorageClear_f _Nullable clear;
@@ -342,13 +442,20 @@ typedef struct {
 
 #pragma pack(pop)
 
-extern XCompressedType _XRefInlineTypeToCompressedType(XUInt id);
+//如果ref是个 TaggedObject 返回值有效，否则返回 XCompressedTypeNone
+extern XCompressedType _XRefGetTaggedObjectCompressedType(XRef _Nonnull ref);
 
+//如果ref是个 CompressedObject 返回值有效，否则返回 XCompressedTypeNone
+extern _XType_s * _Nonnull _XRefGetUnpackedType(XRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
 
-extern uintptr_t _XRefGetTypeInfo(XRef _Nonnull ref);
-extern XClass _Nullable _XRefGetCompressedType(XUInt id);
+//如果ref是个 CompressedObject 返回值有效，否则返回 XCompressedTypeNone
+extern _XType_s * _Nonnull _XRefUnpackType(uintptr_t type, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
+
+extern uintptr_t _XRefGetType(XRef _Nonnull ref);
+extern _XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnull func);
 
 extern XHashCode _XHashUInt64(XUInt64 i);
+extern XHashCode _XHashSInt64(XSInt64 i);
 extern XHashCode _XHashFloat64(XFloat64 d);
 
 #if defined(__cplusplus)

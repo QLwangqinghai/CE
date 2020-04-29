@@ -120,7 +120,11 @@ typedef XUInt XHashCode;
 
 #pragma mark - XTimeInterval
 
+
+//微妙时间
 typedef int64_t XTimeInterval;
+#define XTimeIntervalMin INT64_MIN
+#define XTimeIntervalMax INT64_MAX
 
 #define XUInt8Max UINT8_MAX
 #define XUInt16Max UINT16_MAX
@@ -309,8 +313,6 @@ typedef enum {
         abort();\
     }\
 }
-
-
 
 
 #if defined(__cplusplus)

@@ -13,6 +13,69 @@
 #include <float.h>
 
 
+/*
+ TaggedNumber32
+
+ refType: 1, value = 1
+ taggedContent: {
+    class: 2
+    objectContent: 28 {
+        numberType: 4
+        numberContent: 24
+    }
+ }
+ flag: 1, value = 1
+*/
+
+/*
+ TaggedNumber64
+
+ refType: 2, value = 1
+ taggedContent: 61 {
+    class: 2
+    objectContent: 59 {
+        numberType: 4
+        numberContent: 55
+    }
+ }
+ flag: 1, value = 1
+*/
+
+
+
+
+#if BUILD_TARGET_RT_64_BIT
+
+#define X_BUILD_TaggedNumberNumberTypeMask 0xF00000000000000ULL
+#define X_BUILD_TaggedNumberNumberTypeShift 56ULL
+
+#define X_BUILD_TaggedNumberSIntMax  0x3FFFFFFFFFFFFFULL
+#define X_BUILD_TaggedNumberSIntMin -0x40000000000000ULL
+
+#define X_BUILD_TaggedNumberUIntMax  0x7FFFFFFFFFFFFFULL
+#define X_BUILD_TaggedNumberContentMask  0x7FFFFFFFFFFFFFULL
+#define X_BUILD_TaggedNumberContentSignBit  0x40000000000000ULL
+#define X_BUILD_TaggedNumberContentSignHigh  0xFF80000000000000ULL
+
+#elif BUILD_TARGET_RT_32_BIT
+
+#define X_BUILD_TaggedNumberNumberTypeMask 0x1E000000UL
+#define X_BUILD_TaggedNumberNumberTypeShift 25UL
+#define X_BUILD_TaggedNumberContentSignBit  0x400000ULL
+#define X_BUILD_TaggedNumberContentSignHigh  0xFF800000UL
+
+#define X_BUILD_TaggedNumberSIntMax  0x7FFFFFL
+#define X_BUILD_TaggedNumberSIntMin -0x800000L
+
+#define X_BUILD_TaggedNumberUIntMax  0xFFFFFFUL
+#define X_BUILD_TaggedNumberContentMask  0xFFFFFFUL
+
+#else
+    #error unknown rt
+#endif
+
+
+
 const XNumberType XNumberTypeSInt8 = 1;
 const XNumberType XNumberTypeUInt8 = 2;
 
@@ -348,60 +411,57 @@ static void cvtFloat64ToSInt128(XSInt128Struct *out, const XFloat64 *in) {
 
 
 static inline XNumber _Nullable ___XNumberMakeSInt(XNumberType type, XSInt64 value, const char * _Nonnull func) {
-#if BUILD_TARGET_RT_64_BIT
-    if (-0x10000000000000LL <= value && value < 0x10000000000000LL) {
-        XUInt64 tmp = *(XUInt64 *)(&value);
-        XUInt64 content = tmp & 0x1FFFFFFFFFFFFFUL;
+    if (X_BUILD_TaggedNumberSIntMin <= value && value <= X_BUILD_TaggedNumberSIntMax) {
+    #if BUILD_TARGET_RT_64_BIT
+        XSInt64 v = value;
+        XUInt64 tmp = *(XUInt64 *)(&v);
+        XUInt64 content = (tmp & X_BUILD_TaggedNumberContentMask) << 1;
         XUInt64 typeFlag = type;
-        typeFlag = typeFlag << 58;
-        XUInt64 result = 0xE000000000000001ULL | (content << 1) | typeFlag;
+        typeFlag = typeFlag << X_BUILD_TaggedNumberNumberTypeShift;
+        XUInt64 result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
         XNumber ref = (XNumber)((uintptr_t)result);
         XAssert((XUInt64)((uintptr_t)ref) == result, func, "unknown error");
         return ref;
-    } else
-#elif BUILD_TARGET_RT_32_BIT
-    if (-0x100000L <= value && value < 0x100000L) {
-        XUInt32 tmp = *(XUInt32 *)(&value);
-        XUInt32 content = tmp & 0x1FFFFFU;
+    #elif BUILD_TARGET_RT_32_BIT
+        XSInt32 v = (XSInt32)value;
+        XUInt32 tmp = *(XUInt32 *)(&v);
+        XUInt32 content = (tmp & X_BUILD_TaggedNumberContentMask) << 1;
         XUInt32 typeFlag = type;
-        typeFlag = typeFlag << 26;
-        XUInt32 result = 0xE0000001UL | (content << 1) | typeFlag;
+        typeFlag = typeFlag << X_BUILD_TaggedNumberNumberTypeShift;
+        XUInt32 result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
         XNumber ref = (XNumber)((uintptr_t)result);
         XAssert((XUInt32)((uintptr_t)ref) == result, func, "unknown error");
-    } else
-#else
-    #error unknown rt
-#endif
-    {
+        return ref;
+    #else
+        #error unknown rt
+    #endif
+    } else {
         return NULL;
     }
 }
+
 static inline  XNumber _Nullable ___XNumberMakeUInt(XNumberType type, XUInt64 value, const char * _Nonnull func) {
-#if BUILD_TARGET_RT_64_BIT
-    if (-0x10000000000000LL <= value && value < 0x10000000000000LL) {
-        XUInt64 tmp = *(XUInt64 *)(&value);
-        XUInt64 content = tmp & 0x1FFFFFFFFFFFFFUL;
+    if (value <= X_BUILD_TaggedNumberUIntMax) {
+    #if BUILD_TARGET_RT_64_BIT
+        XUInt64 content = value << 1ULL;
         XUInt64 typeFlag = type;
-        typeFlag = typeFlag << 58;
-        XUInt64 result = 0xE000000000000001ULL | (content << 1) | typeFlag;
+        typeFlag = typeFlag << X_BUILD_TaggedNumberNumberTypeShift;
+        XUInt64 result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
         XNumber ref = (XNumber)((uintptr_t)result);
         XAssert((XUInt64)((uintptr_t)ref) == result, func, "unknown error");
         return ref;
-    } else
-#elif BUILD_TARGET_RT_32_BIT
-    if (-0x100000L <= value && value < 0x100000L) {
-        XUInt32 tmp = *(XUInt32 *)(&value);
-        XUInt32 content = tmp & 0x1FFFFFU;
+    #elif BUILD_TARGET_RT_32_BIT
+        XUInt32 content = (XUInt32)(value << 1);
         XUInt32 typeFlag = type;
-        typeFlag = typeFlag << 26;
-        XUInt32 result = 0xE0000001UL | (content << 1) | typeFlag;
+        typeFlag = typeFlag << X_BUILD_TaggedNumberNumberTypeShift;
+        XUInt32 result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
         XNumber ref = (XNumber)((uintptr_t)result);
         XAssert((XUInt32)((uintptr_t)ref) == result, func, "unknown error");
-    } else
-#else
-    #error unknown rt
-#endif
-    {
+        return ref;
+    #else
+        #error unknown rt
+    #endif
+    } else {
         return NULL;
     }
 }
@@ -573,27 +633,45 @@ XNumber _Nonnull XNumberCreate(XNumberType theType, const void * _Nonnull valueP
             break;
     }
 }
+ 
+static _XNumber * _Nonnull __XRefAsNumber(XNumber _Nonnull ref, const char * _Nonnull func) {
+    XCompressedType compressedType = XCompressedTypeNone;
+    
+#if BUILD_TARGET_RT_64_BIT
+    __unused
+#endif
+    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
+    
+#if BUILD_TARGET_RT_64_BIT
+    XAssert(XCompressedTypeNumber == compressedType, func, "not Number instance");
+    return (_XNumber *)ref;
+#elif BUILD_TARGET_RT_32_BIT
+    const _XType_s * type = (const _XType_s *)info;
+    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Number - 1].base.identifier, func, "not Number instance");
+    return (_XNumber *)ref;
+#else
+    #error unknown rt
+#endif
+}
 
 
 void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const char * _Nonnull func) {
     _XNumberStruct content = {};
 #if BUILD_TARGET_RT_64_BIT
     XUInt64 v = (XUInt64)((uintptr_t)ref);
-    if ((v & 0xE000000000000001ULL) == 0xE000000000000001ULL) {
-        //53bits
-        XUInt64 id = (v >> 58) & 0x7;
-        XAssert(XCompressedTypeNumber == id, func, "not Number instance");
-        content.type = (XNumberType)((id >> 54) & 0xf);
+    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
+        XUInt64 clsId = v & X_BUILD_TaggedObjectClassMask;
+        XAssert(X_BUILD_TaggedObjectClassNumber == clsId, func, "not Number instance");
+        content.type = (XNumberType)((v >> X_BUILD_TaggedNumberNumberTypeShift) & 0xf);
         switch (content.type) {
             case XNumberTypeSInt8:
             case XNumberTypeSInt16:
             case XNumberTypeSInt32:
             case XNumberTypeSInt64: {
-                XUInt64 tmp = (v >> 1) & 0x1FFFFFFFFFFFFFUL;
+                XUInt64 tmp = (v >> 1) & X_BUILD_TaggedNumberContentMask;
                 XUInt64 bits = 0;
-                if (tmp & 0x10000000000000UL) {
-                    bits = XUInt64Max;
-                    bits = bits & tmp;
+                if (tmp & X_BUILD_TaggedNumberContentSignBit) {
+                    bits = X_BUILD_TaggedNumberContentSignHigh | tmp;
                 } else {
                     bits = tmp;
                 }
@@ -605,7 +683,7 @@ void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const 
             case XNumberTypeUInt16:
             case XNumberTypeUInt32:
             case XNumberTypeUInt64: {
-                XUInt64 number = (v >> 1) & 0x1FFFFFFFFFFFFFUL;
+                XUInt64 number = (v >> 1) & X_BUILD_TaggedNumberContentMask;
                 content.bits.u = number;
             }
                 break;
@@ -624,31 +702,31 @@ void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const 
         }
     } else
 #elif BUILD_TARGET_RT_32_BIT
-    if ((v & 0xE0000001UL) == v & 0xE0000001UL) {
-        //21 bits
-        XUInt32 id = (v >> 26) & 0x7;
-        //Number String Data Date
-        
-        XAssert(XCompressedTypeNumber == id, func, "not Number instance");
-        content.type = (XNumberType)((id >> 22) & 0xf);
+    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
+        XUInt32 clsId = v & X_BUILD_TaggedObjectClassMask;
+        XAssert(X_BUILD_TaggedObjectClassNumber == clsId, func, "not Number instance");
+        content.type = (XNumberType)((v >> X_BUILD_TaggedNumberNumberTypeShift) & 0xf);
         switch (contentOfLhs.type) {
             case XNumberTypeSInt8:
             case XNumberTypeSInt16:
             case XNumberTypeSInt32:
             case XNumberTypeSInt64: {
-                XUInt32 tmp = (v >> 1) & 0x1FFFFFU;
-                XSInt64 number = (XSInt64)(tmp & 0xFFFFFU);
-                if (tmp & 0x100000U) {
-                    number = number * (-1L);
+                XUInt32 tmp = (v >> 1) & X_BUILD_TaggedNumberContentMask;
+                XUInt32 bits = 0;
+                if (tmp & X_BUILD_TaggedNumberContentSignBit) {
+                    bits = X_BUILD_TaggedNumberContentSignHigh | tmp;
+                } else {
+                    bits = tmp;
                 }
-                content.bits.s = number;
+                XSInt32 number = *(XSInt32 *)(&bits);
+                content.bits.s = (XSInt64)number;
             }
                 break;
             case XNumberTypeUInt8:
             case XNumberTypeUInt16:
             case XNumberTypeUInt32:
             case XNumberTypeUInt64: {
-                XUInt32 tmp = (v >> 1) & 0x1FFFFFU;
+                XUInt32 tmp = (v >> 1) & X_BUILD_TaggedNumberContentMask;
                 XUInt64 number = tmp;
                 content.bits.u = number;
             }
@@ -665,22 +743,7 @@ void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const 
     #error unknown rt
 #endif
     {
-           
-        uintptr_t info = _XRefGetTypeInfo(ref);
-            
-    #if BUILD_TARGET_RT_64_BIT
-        /* flagBegin:3 type:6 flag:4 count:18+32 flagEnd:1  */
-        if (0 == (info & X_BUILD_TypeInfoCompressedMask)) {
-            uintptr_t id = (info >> 55) & 0x3f;
-            XAssert(XCompressedTypeNumber == id, func, "number type error");
-        }
-    #else
-        const _XType_s * type = (const _XType_s *)info;
-        XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Number - 1].base.identifier, func, "not Number instance");
-
-    #endif
-        
-        _XNumber * obj = (_XNumber *)ref;
+        _XNumber * obj = __XRefAsNumber(ref, func);
         _XNumberContent_t * ncontent = &(obj->content);
         content.type = ncontent->type;
         switch (content.type) {
@@ -1034,20 +1097,7 @@ XNumberType __XNumberGetType(XNumber _Nonnull ref, const char * _Nonnull func) {
     #error unknown rt
 #endif
     {
-        uintptr_t info = _XRefGetTypeInfo(ref);
-            
-    #if BUILD_TARGET_RT_64_BIT
-        /* flagBegin:3 type:6 flag:4 count:18+32 flagEnd:1  */
-        if (0 == (info & X_BUILD_TypeInfoCompressedMask)) {
-            uintptr_t id = (info >> 55) & 0x3f;
-            XAssert(XCompressedTypeNumber == id, func, "number type error");
-        }
-    #else
-        const _XType_s * type = (const _XType_s *)info;
-        XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Number - 1].base.identifier, __func__, "not Number instance");
-    #endif
-        
-        _XNumber * obj = (_XNumber *)ref;
+        _XNumber * obj = __XRefAsNumber(ref, func);
         _XNumberContent_t * ncontent = &(obj->content);
         XNumberType type = ncontent->type;
         XAssert(XNumberTypeIsValid(type), func, "number type error");
@@ -1056,12 +1106,19 @@ XNumberType __XNumberGetType(XNumber _Nonnull ref, const char * _Nonnull func) {
 }
 
 XNumberType XNumberGetType(XNumber _Nonnull ref) {
+    XAssert(NULL == ref, __func__, "ref is NULL");
     return __XNumberGetType(ref, __func__);
 }
 
 XBool XNumberIsFloatType(XNumber _Nonnull ref) {
+    XAssert(NULL == ref, __func__, "ref is NULL");
     XNumberType type = __XNumberGetType(ref, __func__);
     return (XNumberTypeFloat32 == type || XNumberTypeFloat64 == type);
+}
+XBool XNumberIsSignedType(XNumber _Nonnull ref) {
+    XAssert(NULL == ref, __func__, "ref is NULL");
+    XNumberType type = __XNumberGetType(ref, __func__);
+    return (XNumberTypeFloat32 == type || XNumberTypeFloat64 == type || XNumberTypeSInt8 == type || XNumberTypeSInt16 == type || XNumberTypeSInt32 == type || XNumberTypeSInt64 == type);
 }
 
 
@@ -1538,8 +1595,7 @@ XHashCode XNumberHash(XRef _Nonnull ref) {
         case XNumberTypeSInt32:
         case XNumberTypeSInt64: {
             XSInt64 s = content.bits.s;
-            XUInt64 u = s > 0 ? (XUInt64)s : (XUInt64)(s * -1);
-            return _XHashUInt64(u);
+            return _XHashSInt64(s);
         }
             break;
         case XNumberTypeUInt8:

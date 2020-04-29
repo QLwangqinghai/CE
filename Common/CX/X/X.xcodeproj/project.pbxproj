@@ -25,6 +25,7 @@
 		D6447014244D7306009E4F57 /* CXX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6447012244D7306009E4F57 /* CXX.cpp */; };
 		D6447016244D757D009E4F57 /* XRef.c in Sources */ = {isa = PBXBuildFile; fileRef = D6447015244D757D009E4F57 /* XRef.c */; };
 		D6447021245018AE009E4F57 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6447020245018AE009E4F57 /* main.m */; };
+		D647EC6E24584E8F008E1D15 /* XDate.c in Sources */ = {isa = PBXBuildFile; fileRef = D647EC6D24584E8F008E1D15 /* XDate.c */; };
 		D681FD7C2456D392001B28EB /* XByteStorage.c in Sources */ = {isa = PBXBuildFile; fileRef = D681FD7B2456D392001B28EB /* XByteStorage.c */; };
 /* End PBXBuildFile section */
 
@@ -67,7 +68,6 @@
 		D6446FFA244D7261009E4F57 /* XMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMemory.h; sourceTree = "<group>"; };
 		D6446FFC244D7261009E4F57 /* CCReferenceBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCReferenceBase.h; sourceTree = "<group>"; };
 		D6446FFD244D7261009E4F57 /* XNumber.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XNumber.c; sourceTree = "<group>"; };
-		D6446FFF244D7261009E4F57 /* XObjectInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XObjectInternal.h; sourceTree = "<group>"; };
 		D6447000244D7261009E4F57 /* XAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XAllocator.h; sourceTree = "<group>"; };
 		D6447001244D7261009E4F57 /* XRuntimeInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRuntimeInternal.h; sourceTree = "<group>"; };
 		D6447003244D7261009E4F57 /* XDevice.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XDevice.c; sourceTree = "<group>"; };
@@ -79,7 +79,8 @@
 		D6447015244D757D009E4F57 /* XRef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XRef.c; sourceTree = "<group>"; };
 		D644701E245018AE009E4F57 /* T */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = T; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6447020245018AE009E4F57 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D681FD7A2456D387001B28EB /* XByteStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XByteStorage.h; sourceTree = "<group>"; };
+		D647EC6A24583E33008E1D15 /* XAtomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XAtomic.h; sourceTree = "<group>"; };
+		D647EC6D24584E8F008E1D15 /* XDate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XDate.c; sourceTree = "<group>"; };
 		D681FD7B2456D392001B28EB /* XByteStorage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XByteStorage.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -149,6 +150,7 @@
 		D6446FEB244D7261009E4F57 /* CX */ = {
 			isa = PBXGroup;
 			children = (
+				D647EC6D24584E8F008E1D15 /* XDate.c */,
 				D681FD7B2456D392001B28EB /* XByteStorage.c */,
 				D6446FEC244D7261009E4F57 /* XAllocator.c */,
 				D6446FED244D7261009E4F57 /* CXInit.c */,
@@ -158,13 +160,13 @@
 				D6447004244D7261009E4F57 /* XRuntime.c */,
 				D6446FFD244D7261009E4F57 /* XNumber.c */,
 				D6446FFC244D7261009E4F57 /* CCReferenceBase.h */,
-				D6446FF1244D7261009E4F57 /* include */,
-				D6446FFE244D7261009E4F57 /* internal */,
-				D6447002244D7261009E4F57 /* private */,
 				D6447003244D7261009E4F57 /* XDevice.c */,
 				D6447005244D7261009E4F57 /* CCReferenceBase.c */,
 				D6447006244D7261009E4F57 /* XProcess.c */,
 				D6447015244D757D009E4F57 /* XRef.c */,
+				D6446FF1244D7261009E4F57 /* include */,
+				D6446FFE244D7261009E4F57 /* internal */,
+				D6447002244D7261009E4F57 /* private */,
 			);
 			path = CX;
 			sourceTree = "<group>";
@@ -181,6 +183,7 @@
 				D6446FF8244D7261009E4F57 /* XType.h */,
 				D6446FF9244D7261009E4F57 /* XObject.h */,
 				D6446FFA244D7261009E4F57 /* XMemory.h */,
+				D647EC6A24583E33008E1D15 /* XAtomic.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -188,7 +191,6 @@
 		D6446FFE244D7261009E4F57 /* internal */ = {
 			isa = PBXGroup;
 			children = (
-				D6446FFF244D7261009E4F57 /* XObjectInternal.h */,
 				D6447000244D7261009E4F57 /* XAllocator.h */,
 				D6447001244D7261009E4F57 /* XRuntimeInternal.h */,
 			);
@@ -198,7 +200,6 @@
 		D6447002244D7261009E4F57 /* private */ = {
 			isa = PBXGroup;
 			children = (
-				D681FD7A2456D387001B28EB /* XByteStorage.h */,
 			);
 			path = private;
 			sourceTree = "<group>";
@@ -325,6 +326,7 @@
 				D6447008244D7261009E4F57 /* CXInit.c in Sources */,
 				D644700E244D7261009E4F57 /* XRuntime.c in Sources */,
 				D644700C244D7261009E4F57 /* XNumber.c in Sources */,
+				D647EC6E24584E8F008E1D15 /* XDate.c in Sources */,
 				D644700A244D7261009E4F57 /* XObject.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

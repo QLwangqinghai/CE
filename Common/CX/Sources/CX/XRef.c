@@ -8,7 +8,6 @@
 
 #include "include/XRef.h"
 #include "internal/XRuntimeInternal.h"
-#include "private/XByteStorage.h"
 
 
 //XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
@@ -83,20 +82,29 @@ const XBoolean _Nonnull XBooleanFalse = (XBoolean)&_XBooleanFalse;
 
 XBool XBooleanEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     //XBoolean 不允许自己构建， 只可以使用 XBooleanTrue、XBooleanFalse;
-    assert(lhs == XBooleanTrue || lhs == XBooleanFalse);
-    assert(rhs == XBooleanTrue || rhs == XBooleanFalse);
+    XAssert((lhs == XBooleanTrue || lhs == XBooleanFalse), __func__, "lhs error");
+    XAssert((rhs == XBooleanTrue || rhs == XBooleanFalse), __func__, "rhs error");
     return lhs == rhs;
 };
 
 XHashCode XBooleanHash(XRef _Nonnull ref) {
-    assert(ref == XBooleanTrue || ref == XBooleanFalse);
+    XAssert((ref == XBooleanTrue || ref == XBooleanFalse), __func__, "ref error");
     return ((const _XBoolean *)ref)->content.value ? 1 : 0;
 }
 
-extern XBoolean _Nonnull XBooleanCreate(XBool value) {
+XBoolean _Nonnull XBooleanCreate(XBool value) {
     return value ? XBooleanTrue : XBooleanFalse;
 }
 
+XBool XBooleanGetValue(XBoolean _Nonnull ref) {
+    if (ref == XBooleanTrue) {
+        return true;
+    } else if (ref == XBooleanFalse) {
+        return false;
+    } else {
+        XAssert(false, __func__, "ref error");
+    }
+}
 
 #pragma mark - XNumber
 
@@ -174,6 +182,9 @@ const XData _Nonnull XDataEmpty = (XData)&_XDataEmpty;
 
 
 #pragma mark - XDate
+
+//XDate.c
+
 
 #pragma mark - XValue
 

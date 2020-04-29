@@ -22,7 +22,7 @@ extern const XTypeKind XTypeKindValue;//1
 extern const XTypeKind XTypeKindObject;//2
 extern const XTypeKind XTypeKindWeakableObject;//3
 
-extern const XRefKind XRefKindUnknown;
+//extern const XRefKind XRefKindUnknown;
 extern const XRefKind XRefKindNormal;
 extern const XRefKind XRefKindClass;
 extern const XRefKind XRefKindMetaClass;
@@ -44,10 +44,6 @@ typedef XUInt32 XNumberType;
 #endif
 
 
-
-
-
-
 #define X_BUILD_CompressedType_Number X_BUILD_UInt(1)
 #define X_BUILD_CompressedType_String X_BUILD_UInt(2)
 #define X_BUILD_CompressedType_Data X_BUILD_UInt(3)
@@ -59,7 +55,7 @@ typedef XUInt32 XNumberType;
 #define X_BUILD_CompressedType_Set X_BUILD_UInt(9)
 
 typedef XUInt XCompressedType;
-
+extern const XCompressedType XCompressedTypeNone;
 extern const XCompressedType XCompressedTypeNumber;
 extern const XCompressedType XCompressedTypeString;
 extern const XCompressedType XCompressedTypeData;
@@ -99,7 +95,7 @@ typedef XHashCode (*XRefHashCode_f)(XObject _Nonnull obj);
 
 extern XRefKind XRefGetKind(XRef _Nonnull ref);
 extern XClassIdentifier _Nullable XRefGetIdentfierIfIsClass(XRef _Nonnull ref);
-extern XClass _Nonnull XRefGetType(XRef _Nonnull ref);
+extern XClass _Nonnull XRefGetClass(XRef _Nonnull ref);
 extern XBool XRefIsMetaClass(XRef _Nonnull ref);
 
 

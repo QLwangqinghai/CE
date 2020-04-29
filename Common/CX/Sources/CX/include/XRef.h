@@ -22,8 +22,6 @@ extern "C" {
 #pragma mark - XNull
 
 extern const XNull _Nonnull XNullShared;
-
-
 extern XNull _Nonnull XNullCreate(void);
 
 #pragma mark - XBoolean
@@ -31,7 +29,7 @@ extern XNull _Nonnull XNullCreate(void);
 extern const XBoolean _Nonnull XBooleanTrue;
 extern const XBoolean _Nonnull XBooleanFalse;
 extern XBoolean _Nonnull XBooleanCreate(XBool value);
-
+extern XBool XBooleanGetValue(XBoolean _Nonnull ref);
 
 #pragma mark - XNumber
 
@@ -56,18 +54,7 @@ extern XComparisonResult XNumberCompare(XNumber _Nonnull lhs, XNumber _Nonnull r
 extern XBool XNumberGetValue(XNumber _Nonnull ref, XNumberType theType, void * _Nonnull valuePtr);
 extern XNumberType XNumberGetType(XNumber _Nonnull ref);
 extern XBool XNumberIsFloatType(XNumber _Nonnull ref);
-
-
-
-//正无穷
-extern const XNumber XNumberPositiveInfinity;
-
-//负无穷
-extern const XNumber kCFNumberNegativeInfinity;
-
-//非数
-extern const XNumber kCFNumberNaN;
-
+extern XBool XNumberIsSignedType(XNumber _Nonnull ref);
 
 #pragma mark - XString
 
@@ -79,17 +66,51 @@ extern const XData _Nonnull XDataEmpty;
 
 #pragma mark - XDate
 
+extern const XDate _Nonnull XDateMin;
+extern const XDate _Nonnull XDateMax;
+
+//time 是以 2020年1月1日00:00 作为原点的时间
+extern XDate _Nonnull XDateCreate(XUInt flag, XTimeInterval time);
+extern XComparisonResult XDateCompare(XDate _Nonnull lhs, XDate _Nonnull rhs);
+extern XTimeInterval XDateGetValue(XDate _Nonnull ref);
+
 #pragma mark - XValue
 
 extern const XValue _Nonnull XValueEmpty;
 
+//通过copy content
+extern XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nonnull content, XSize contentSize);
+extern XSize XValueGetSize(XValue _Nonnull ref);
+extern void XValueCopyContent(XValue _Nonnull ref, XPtr _Nonnull buffer, XSize offset, XSize length);
 
 #pragma mark - XStorageRef
 
+typedef void (*XStorageClear_f)(XUInt8 * _Nullable content, XSize size);
+
+//size 必须 > 0, 当 contentSize > 0 时，content 必须有值
+extern XStorageRef _Nonnull XStorageCreate(XUInt flag, XSize size, XStorageClear_f _Nullable clear, XPtr _Nullable content, XSize contentSize);
+
+extern XSize XStorageGetSize(XStorageRef _Nonnull ref);
+extern XPtr _Nonnull XStorageGetContent(XStorageRef _Nonnull ref);
+
 #pragma mark - XArrayRef
+
+
 #pragma mark - XMapRef
+
+
 #pragma mark - XSetRef
 
+
+
+
+
+#pragma mark - XRef
+
+
+//extern XRef _Nonnull XRefRetain(XRef _Nonnull ref);
+//extern XRef _Nullable XRefTryRetain(XRef _Nonnull ref);
+//extern void XRefRelease(XRef _Nonnull ref);
 
 
 #pragma mark - equalTo

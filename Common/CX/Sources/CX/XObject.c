@@ -5,7 +5,8 @@
 //  Created by vector on 2020/4/4.
 //
 
-#include "internal/XObjectInternal.h"
+#include "internal/XRuntimeInternal.h"
+#include "XAtomic.h"
 #include "internal/XAllocator.h"
 #include "XMemory.h"
 

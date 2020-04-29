@@ -79,6 +79,10 @@ static XComparisonResult _XRealNumberCompare(const _XRealNumber *in1, const _XRe
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
+        int64_t v = -0x10000000000000LL;
+        NSLog(@"v %@", @(v));
+        
+        
         float nanf = _XNumberBits32Nan.f;
         double nanf64 = (double)nanf;
         NSLog(@"nan equal %ld", nanf == nanf64);

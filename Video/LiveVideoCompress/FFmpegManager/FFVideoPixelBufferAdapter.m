@@ -94,30 +94,27 @@
 }
 
 - (void)sendFrame:(AVFrame *)frame {
-    int ret = 0;
-
-    if (frame) {
-        ret = av_frame_is_writable(frame);
-        if (ret != 0) {
-            int wresult = avcodec_send_frame(self.videoAdapter.context, frame);
-            if (0 == wresult) {
-                //success
-            }
-            NSLog(@"avcodec_send_frame wresult: %@", @(wresult == 0));
-        }
+    assert(frame);
+    
+    //能安全写入时 返回值>0, 通过引用计数
+    int safe = av_frame_is_writable(frame);
+    if (safe > 0) {
+        //safe
     } else {
-        int wresult = avcodec_send_frame(self.videoAdapter.context, frame);
-        if (0 == wresult) {
-            //success
-        }
-        NSLog(@"avcodec_send_frame wresult: %@", @(wresult == 0));
+        //unsafe
     }
+    
+    int wresult = avcodec_send_frame(self.videoAdapter.context, frame);
+    if (0 == wresult) {
+        //success
+    }
+    NSLog(@"avcodec_send_frame wresult: %@", @(wresult == 0));
     
     AVPacket pac = {};
     av_init_packet(&pac);
     AVPacket * pkt = &pac;
     
-
+    int ret = 0;
 
     while (ret >= 0) {
         ret = avcodec_receive_packet(self.videoAdapter.context, pkt);
@@ -143,14 +140,16 @@
 
 
 
-- (void)writeFrameAtTime:(int64_t)time handler:(void(^)(CGContextRef context))handler {
-    int64_t tmp = time / self.videoAdapter.context->ticks_per_frame;
-    tmp = time * self.videoAdapter.stream.stream->time_base.den / self.videoAdapter.stream.stream->time_base.num / 1000;
+- (void)writeFrameAtTime:(NSTimeInterval)time handler:(void(^)(CGContextRef context))handler {
+    NSTimeInterval tmp = time * self.videoAdapter.stream.stream->time_base.den / self.videoAdapter.stream.stream->time_base.num;
+    int64_t pts = (int64_t)tmp;
+    
+    //time / (time_base) 
     
     handler(self.bitmapContext);
     BOOL result = [self mapTo];
     AVFrame * to = self.to;
-    to->pts = tmp;
+    to->pts = pts;
 //    AVRational t = {.num = time, .den = self.videoAdapter.stream.stream->time_base.den};
 //    to->sample_aspect_ratio = t;
 //    AVCodecContext

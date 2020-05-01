@@ -108,9 +108,9 @@ extern XPtr _Nonnull XStorageGetContent(XStorageRef _Nonnull ref);
 #pragma mark - XRef
 
 
-//extern XRef _Nonnull XRefRetain(XRef _Nonnull ref);
-//extern XRef _Nullable XRefTryRetain(XRef _Nonnull ref);
-//extern void XRefRelease(XRef _Nonnull ref);
+extern XRef _Nonnull XRefRetain(XRef _Nonnull ref);
+extern XRef _Nullable XRefTryRetain(XRef _Nonnull ref);
+extern void XRefRelease(XRef _Nonnull ref);
 
 
 #pragma mark - equalTo

@@ -70,6 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) FFAudioCodec codec;
 
+
+
 @end
 @interface FFVideoOption : NSObject
 @property (nonatomic, assign) FFVideoCodec codec;

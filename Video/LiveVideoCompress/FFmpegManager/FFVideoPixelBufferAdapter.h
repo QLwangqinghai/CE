@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 //https://www.ffmpeg.org/doxygen/4.0/encode_video_8c-example.html
 
 //time 单位 毫秒
-- (void)writeFrameAtTime:(int64_t)time handler:(void(^)(CGContextRef context))handler;
+- (void)writeFrameAtTime:(NSTimeInterval)time handler:(void(^)(CGContextRef context))handler;
 
 - (void)finish;
 

@@ -23,7 +23,7 @@ extern const XTypeKind XTypeKindObject;//2
 extern const XTypeKind XTypeKindWeakableObject;//3
 
 //extern const XRefKind XRefKindUnknown;
-extern const XRefKind XRefKindNormal;
+extern const XRefKind XRefKindInstance;
 extern const XRefKind XRefKindClass;
 extern const XRefKind XRefKindMetaClass;
 

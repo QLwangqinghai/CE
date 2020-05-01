@@ -32,7 +32,7 @@ const XTypeKind XTypeKindWeakableObject = 3;
 const XTypeKind XTypeKindMetaClass = 0xf;
 
 //const XRefKind XRefKindUnknown = 0;
-const XRefKind XRefKindNormal = 1;
+const XRefKind XRefKindInstance = 1;
 const XRefKind XRefKindClass = 2;
 const XRefKind XRefKindMetaClass = 3;
 
@@ -244,7 +244,7 @@ XRefKind XRefGetKind(XRef _Nonnull ref) {
 
     XCompressedType compressedType = _XRefGetTaggedObjectCompressedType(ref);
     if (XCompressedTypeNone != compressedType) {
-        return XRefKindNormal;
+        return XRefKindInstance;
     }
     const _XType_s * type = _XRefGetUnpackedType(ref, &compressedType, __func__);
     assert(type);
@@ -257,7 +257,7 @@ XRefKind XRefGetKind(XRef _Nonnull ref) {
             return XRefKindClass;
         }
     } else if (XTypeKindValue == type->base.kind || XTypeKindObject == type->base.kind || XTypeKindWeakableObject == type->base.kind) {
-        return XRefKindNormal;
+        return XRefKindInstance;
     } else {
         XAssert(false, __func__, "unknown error");
     }

@@ -15,6 +15,7 @@
 #import "FFVideoPixelBufferAdapter.h"
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <Photos/Photos.h>
 
 
 //官方
@@ -113,7 +114,7 @@
     return self;
 }
 - (BOOL)close {
-    return avcodec_close(self.stream.codec);
+    return avcodec_close(self.context);
 }
 
 
@@ -480,7 +481,7 @@
     context->qcompress  = 0.6;
     
     AVRational framerate = {.num = option.frameRate, .den = 1};
-    context->framerate = framerate;
+    context->framerate = framerate;//帧率 = num/den
     context->bit_rate = option.width * option.height * option.frameRate / 10 * 0.7;//362880
 //    1400 * 1000;
     context->rc_max_rate = option.width * option.height * option.frameRate / 10 * 0.7;
@@ -1026,9 +1027,11 @@
     
     double d = 1000.0 / 10;
         
-    for (int i=0; i<= 60 * 10; i++) {
-        NSLog(@"index: %ld", i);
-        [ada writeFrameAtTime:d * i handler:^(CGContextRef  _Nonnull context) {
+    for (int i=0; i<= 150; i++) {
+        double time = 1.0 / 15 * i;
+        NSLog(@"time: %.03lf", time);
+
+        [ada writeFrameAtTime:time handler:^(CGContextRef  _Nonnull context) {
             if (i % 30 == 0) {
                 CGContextSetFillColorWithColor(context, UIColor.whiteColor.CGColor);
                 CGContextFillRect(context, CGRectMake(0, 0, video.width, video.height));
@@ -1049,7 +1052,67 @@
     NSTimeInterval endTime = [NSDate date].timeIntervalSince1970;
     NSLog(@"used:  %.03lf", endTime - beginTime);
 
+    BOOL success = YES;
+    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+    if (status == PHAuthorizationStatusNotDetermined) {
+        //进行询问
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+            if (status == PHAuthorizationStatusAuthorized) {
+                [writer saveVideo:path];
+            } else {
+                
+            }
+        }];
+        return;
+    } else {
+        if (status == PHAuthorizationStatusRestricted || status == PHAuthorizationStatusDenied) {
+
+        }
+        if (status == PHAuthorizationStatusAuthorized) {
+            
+            [writer saveVideo:path];
+
+        }
+    }
+    
+    
+
 }
+
+
+- (PHAssetCollectionChangeRequest *)getCurrentPhotoCollectionWithAlbumName:(NSString *)albumName {
+    // 1. 创建搜索集合
+    PHFetchResult *result = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
+    
+    // 2. 遍历搜索集合并取出对应的相册，返回当前的相册changeRequest
+    for (PHAssetCollection *assetCollection in result) {
+        if ([assetCollection.localizedTitle containsString:albumName]) {
+            PHAssetCollectionChangeRequest *collectionRuquest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:assetCollection];
+            return collectionRuquest;
+        }
+    }
+    
+    // 3. 如果不存在，创建一个名字为albumName的相册changeRequest
+    PHAssetCollectionChangeRequest *collectionRequest = [PHAssetCollectionChangeRequest creationRequestForAssetCollectionWithTitle:albumName];
+    return collectionRequest;
+}
+
+- (void)saveVideo:(NSString *)path {
+    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+        PHAssetCollectionChangeRequest * collectionChangeRequest = [self getCurrentPhotoCollectionWithAlbumName:@"test"];
+
+        PHAssetChangeRequest * assetRequest = [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:[NSURL fileURLWithPath:path]];
+
+        PHObjectPlaceholder * placeholder = [assetRequest placeholderForCreatedAsset];
+        [collectionChangeRequest addAssets:@[placeholder]];
+    } completionHandler:^(BOOL success, NSError * _Nullable error) {
+        NSLog(@"finished adding %@ error:%@", @(success), error);
+    }];
+    
+
+
+}
+
 
 @end
 

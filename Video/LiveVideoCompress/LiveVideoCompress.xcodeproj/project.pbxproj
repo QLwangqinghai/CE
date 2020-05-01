@@ -1011,7 +1011,7 @@
 					"$(PROJECT_DIR)/LiveVideoCompress/x264-iOS/lib",
 					"$(PROJECT_DIR)/LiveVideoCompress/fdk-aac-ios/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.video;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1043,7 +1043,7 @@
 					"$(PROJECT_DIR)/LiveVideoCompress/x264-iOS/lib",
 					"$(PROJECT_DIR)/LiveVideoCompress/fdk-aac-ios/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.video;
+				PRODUCT_BUNDLE_IDENTIFIER = com.angfung.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

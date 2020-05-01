@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D6446FD8244D7254009E4F57 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6446FD7244D7254009E4F57 /* AppDelegate.m */; };
-		D6446FDB244D7254009E4F57 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D6446FDA244D7254009E4F57 /* ViewController.m */; };
+		D6446FDB244D7254009E4F57 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = D6446FDA244D7254009E4F57 /* ViewController.mm */; };
 		D6446FDD244D7256009E4F57 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6446FDC244D7256009E4F57 /* Assets.xcassets */; };
 		D6446FE0244D7256009E4F57 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6446FDE244D7256009E4F57 /* Main.storyboard */; };
 		D6446FE3244D7256009E4F57 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6446FE2244D7256009E4F57 /* main.m */; };
@@ -24,7 +24,7 @@
 		D6447010244D7261009E4F57 /* XProcess.c in Sources */ = {isa = PBXBuildFile; fileRef = D6447006244D7261009E4F57 /* XProcess.c */; };
 		D6447014244D7306009E4F57 /* CXX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6447012244D7306009E4F57 /* CXX.cpp */; };
 		D6447016244D757D009E4F57 /* XRef.c in Sources */ = {isa = PBXBuildFile; fileRef = D6447015244D757D009E4F57 /* XRef.c */; };
-		D6447021245018AE009E4F57 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6447020245018AE009E4F57 /* main.m */; };
+		D6447021245018AE009E4F57 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = D6447020245018AE009E4F57 /* main.mm */; };
 		D647EC6E24584E8F008E1D15 /* XDate.c in Sources */ = {isa = PBXBuildFile; fileRef = D647EC6D24584E8F008E1D15 /* XDate.c */; };
 		D681FD7C2456D392001B28EB /* XByteStorage.c in Sources */ = {isa = PBXBuildFile; fileRef = D681FD7B2456D392001B28EB /* XByteStorage.c */; };
 /* End PBXBuildFile section */
@@ -46,7 +46,7 @@
 		D6446FD6244D7254009E4F57 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D6446FD7244D7254009E4F57 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		D6446FD9244D7254009E4F57 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		D6446FDA244D7254009E4F57 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		D6446FDA244D7254009E4F57 /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		D6446FDC244D7256009E4F57 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D6446FDF244D7256009E4F57 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D6446FE1244D7256009E4F57 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -78,7 +78,7 @@
 		D6447013244D7306009E4F57 /* CXX.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CXX.hpp; sourceTree = "<group>"; };
 		D6447015244D757D009E4F57 /* XRef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XRef.c; sourceTree = "<group>"; };
 		D644701E245018AE009E4F57 /* T */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = T; sourceTree = BUILT_PRODUCTS_DIR; };
-		D6447020245018AE009E4F57 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D6447020245018AE009E4F57 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		D647EC6A24583E33008E1D15 /* XAtomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XAtomic.h; sourceTree = "<group>"; };
 		D647EC6D24584E8F008E1D15 /* XDate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XDate.c; sourceTree = "<group>"; };
 		D681FD7B2456D392001B28EB /* XByteStorage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XByteStorage.c; sourceTree = "<group>"; };
@@ -128,7 +128,7 @@
 				D6446FD6244D7254009E4F57 /* AppDelegate.h */,
 				D6446FD7244D7254009E4F57 /* AppDelegate.m */,
 				D6446FD9244D7254009E4F57 /* ViewController.h */,
-				D6446FDA244D7254009E4F57 /* ViewController.m */,
+				D6446FDA244D7254009E4F57 /* ViewController.mm */,
 				D6446FDC244D7256009E4F57 /* Assets.xcassets */,
 				D6446FDE244D7256009E4F57 /* Main.storyboard */,
 				D6446FE1244D7256009E4F57 /* Info.plist */,
@@ -216,7 +216,7 @@
 		D644701F245018AE009E4F57 /* T */ = {
 			isa = PBXGroup;
 			children = (
-				D6447020245018AE009E4F57 /* main.m */,
+				D6447020245018AE009E4F57 /* main.mm */,
 			);
 			path = T;
 			sourceTree = "<group>";
@@ -314,7 +314,7 @@
 				D681FD7C2456D392001B28EB /* XByteStorage.c in Sources */,
 				D6447016244D757D009E4F57 /* XRef.c in Sources */,
 				D6447010244D7261009E4F57 /* XProcess.c in Sources */,
-				D6446FDB244D7254009E4F57 /* ViewController.m in Sources */,
+				D6446FDB244D7254009E4F57 /* ViewController.mm in Sources */,
 				D6447009244D7261009E4F57 /* XMemory.c in Sources */,
 				D644700B244D7261009E4F57 /* XType.c in Sources */,
 				D6446FE3244D7256009E4F57 /* main.m in Sources */,
@@ -335,7 +335,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6447021245018AE009E4F57 /* main.m in Sources */,
+				D6447021245018AE009E4F57 /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

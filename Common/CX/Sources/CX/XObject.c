@@ -136,13 +136,13 @@ XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length) {
 
 
 XBool XObjectEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    assert(XRefKindNormal == XRefGetKind(lhs));
-    assert(XRefKindNormal == XRefGetKind(rhs));
+    assert(XRefKindInstance == XRefGetKind(lhs));
+    assert(XRefKindInstance == XRefGetKind(rhs));
     return lhs == rhs;
 };
 
 XHashCode XObjectHash(XRef _Nonnull obj) {
-    assert(XRefKindNormal == XRefGetKind(obj));
+    assert(XRefKindInstance == XRefGetKind(obj));
     return (XHashCode)(((uintptr_t)obj) >> 4);
 };
 

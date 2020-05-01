@@ -219,7 +219,16 @@ const XData _Nonnull XDataEmpty = (XData)&_XDataEmpty;
 //} _XValue;
 
 
+#pragma mark - XRef
 
-
+XRef _Nonnull XRefRetain(XRef _Nonnull ref) {
+    return ref;
+}
+XRef _Nullable XRefTryRetain(XRef _Nonnull ref) {
+    return ref;
+}
+void XRefRelease(XRef _Nonnull ref) {
+    
+}
 
 

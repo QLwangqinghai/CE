@@ -31,9 +31,7 @@ extern const XRefKind XRefKindMetaClass;
 typedef XUInt32 XNumberType;
 
 
-#define X_BUILD_ObjectFlagReadOnly ((XUInt)1)
-#define X_BUILD_ObjectFlagClearOnDealloc ((XUInt)2)
-
+#define X_BUILD_ObjectRcFlagReadOnly ((XUInt)1)
 
 #if BUILD_TARGET_RT_64_BIT
     #define X_BUILD_UInt(value) value##ULL
@@ -66,8 +64,21 @@ extern const XCompressedType XCompressedTypeMap;
 extern const XCompressedType XCompressedTypeSet;
 extern const XCompressedType XCompressedTypeStorage;
 
-extern const XUInt XObjectFlagReadOnly;
-extern const XUInt XObjectFlagClearOnDealloc;
+typedef XUInt XObjectRcFlag;
+extern const XObjectRcFlag XObjectRcFlagReadOnly;
+extern const XObjectRcFlag XObjectRcFlagStatic;
+
+
+typedef XUInt XObjectFlag;
+
+//初始化单例对象， 不进行引用计数、一直不释放
+extern const XObjectFlag XObjectFlagStatic;
+
+//对象释放时clear内存, XString、XData、XValue、XStorage 支持
+extern const XObjectFlag XObjectFlagClearWhenDealloc;
+
+
+
 
 extern const XClass _Nonnull XClassType;//0
 extern const XClass _Nonnull XClassNull;//1
@@ -87,8 +98,8 @@ extern const XClass _Nonnull XClassSet;//11
 struct _XAllocator;
 typedef const struct _XAllocator * _XAllocatorPtr;
 
-typedef XObject _Nonnull (*XObjectAllocate_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XUInt32 flag);
-typedef void (*XObjectDeallocate_f)(_XAllocatorPtr _Nonnull allocator, XObject _Nonnull obj);
+typedef XRef _Nonnull (*XRefAllocate_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
+typedef void (*XRefDeallocate_f)(_XAllocatorPtr _Nonnull allocator, XObject _Nonnull obj);
 
 typedef XBool (*XRefEqualTo_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
 typedef XHashCode (*XRefHashCode_f)(XObject _Nonnull obj);

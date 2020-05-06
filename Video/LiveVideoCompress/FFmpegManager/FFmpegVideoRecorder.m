@@ -299,7 +299,7 @@
 @property (nonatomic, assign) AVCodecContext * audioCodecContext;
 
 @property (nonatomic, strong, nullable) FFAudioAdapter * audioAdapter;
-@property (nonatomic, strong, nullable) FFAudioAdapter * videoAdapter;
+@property (nonatomic, strong, nullable) FFVideoAdapter * videoAdapter;
 
 @end
 @implementation FFAVWriter
@@ -967,7 +967,7 @@
     
     FFVideoAdapter * v = [writer addVideoAdapter2:video];
     
-    
+
     FFVideoPixelBufferAdapter * ada = [[FFVideoPixelBufferAdapter alloc] initWithVideoAdapter:v];
     
     [writer open];
@@ -1295,7 +1295,7 @@
 //        exit(1);
 //    }
 //}
-//
+
 //static void close_audio(AVFormatContext *oc, AVStream *st)
 //{
 //    avcodec_close(st->codec);

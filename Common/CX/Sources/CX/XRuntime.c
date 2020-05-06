@@ -16,15 +16,18 @@ _Static_assert(sizeof(XUInt) == sizeof(size_t), "unknown error");
 _Static_assert(sizeof(_Atomic(uintptr_t)) == sizeof(XUInt), "unknown error");
 _Static_assert(BUILD_TARGET_RT_64_BIT || BUILD_TARGET_RT_32_BIT, "unknown rt");
 
-_Static_assert(X_BUILD_ObjectFlagReadOnly == 1, "X_BUILD_ObjectFlagReadOnly must be 1");
-_Static_assert(X_BUILD_ObjectFlagClearOnDealloc == 2, "X_BUILD_ObjectFlagClearOnDealloc must be 2");
-
+_Static_assert(X_BUILD_ObjectRcFlagReadOnly == 1, "X_BUILD_ObjectRcFlagReadOnly must be 1");
 
 _Static_assert(X_BUILD_ObjectRcMax == (XUIntMax - 15), "X_BUILD_ObjectRcMax error");
 
+const XObjectRcFlag XObjectRcFlagReadOnly = 1;
+const XObjectRcFlag XObjectRcFlagStatic = 1 << 1;
 
-const XUInt XObjectFlagReadOnly = X_BUILD_ObjectFlagReadOnly;
-const XUInt XObjectFlagClearOnDealloc = X_BUILD_ObjectFlagClearOnDealloc;
+//对象释放时clear内存
+const XObjectFlag XObjectFlagClearWhenDealloc = 1;
+
+const XObjectFlag XObjectFlagStatic = 1 << 1;
+
 
 const XTypeKind XTypeKindValue = 1;
 const XTypeKind XTypeKindObject = 2;
@@ -54,7 +57,6 @@ XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 
 XHashCode XStringHash(XRef _Nonnull obj) {return 0;};
 XHashCode XDataHash(XRef _Nonnull obj) {return 0;};
-XHashCode XValueHash(XRef _Nonnull obj) {return 0;};
 
 #define _XTypeIdentifierMakeValue(Type) \
 {\
@@ -105,10 +107,10 @@ const XClassIdentifier _Nonnull XMateClassIdentifier = (XClassIdentifier)&(_XTyp
 
 
 //这是一个常量
-const _XType_s _XRootMetaClass __attribute__((aligned(8))) = {
+const _XType_s _XRootMetaClassStorage __attribute__((aligned(8))) = {
     ._runtime = {
-        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClass),
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),
+        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClassStorage),
+        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),
     },
     .base = {
         .identifier = &_XTypeIdentifierTable[0],
@@ -122,10 +124,10 @@ const _XType_s _XRootMetaClass __attribute__((aligned(8))) = {
     },
 };
 
-const _XType_s _XMetaClass __attribute__((aligned(8))) = {
+const _XType_s _XMetaClassStorage __attribute__((aligned(8))) = {
     ._runtime = {
-        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClass),
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),
+        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClassStorage),
+        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),
     },
     .base = {
         .identifier = &_XTypeIdentifierTable[0],
@@ -143,8 +145,8 @@ const _XType_s _XMetaClass __attribute__((aligned(8))) = {
 #define _XConstantValueClassMake(Type) \
 {\
     ._runtime = {\
-        .typeInfo = (uintptr_t)&_XRootMetaClass,\
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),\
+        .typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
+        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
     },\
     .base = {\
         .identifier = &_XTypeIdentifierTable[X_BUILD_TypeIdentifier_##Type],\
@@ -162,8 +164,8 @@ const _XType_s _XMetaClass __attribute__((aligned(8))) = {
 #define _XValueClassMake(kind, Type) \
 {\
     ._runtime = {\
-        .typeInfo = (uintptr_t)&_XRootMetaClass,\
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),\
+        .typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
+        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
     },\
     .base = {\
         .identifier = &_XTypeIdentifierTable[X_BUILD_TypeIdentifier_##Type],\
@@ -180,8 +182,8 @@ const _XType_s _XMetaClass __attribute__((aligned(8))) = {
 #define _XCompressedValueClassMake(Type) \
 {\
     ._runtime = {\
-        .typeInfo = (uintptr_t)&_XRootMetaClass,\
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectFlagReadOnly)),\
+        .typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
+        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
     },\
     .base = {\
         .identifier = &_XTypeIdentifierTable[X_BUILD_TypeIdentifier_##Type],\
@@ -213,13 +215,13 @@ const _XType_s _XClassTable[] __attribute__((aligned(8))) = {
     _XCompressedValueClassMake(Set),
 };
 
-const _XType_s _XClassNull __attribute__((aligned(8))) = _XConstantValueClassMake(Null);
-const _XType_s _XClassBoolean __attribute__((aligned(8))) = _XConstantValueClassMake(Boolean);
+const _XType_s _XClassNullStorage __attribute__((aligned(8))) = _XConstantValueClassMake(Null);
+const _XType_s _XClassBooleanStorage __attribute__((aligned(8))) = _XConstantValueClassMake(Boolean);
 
 
-const XClass _Nonnull XClassType = (XClass)&_XRootMetaClass;//0
-const XClass _Nonnull XClassNull = (XClass)&_XClassNull;//1
-const XClass _Nonnull XClassBoolean = (XClass)&_XClassBoolean;//2
+const XClass _Nonnull XClassType = (XClass)&_XRootMetaClassStorage;//0
+const XClass _Nonnull XClassNull = (XClass)&_XClassNullStorage;//1
+const XClass _Nonnull XClassBoolean = (XClass)&_XClassBooleanStorage;//2
 
 const XClass _Nonnull XClassNumber = (XClass)&(_XClassTable[X_BUILD_CompressedType_Number - 1]);//3
 const XClass _Nonnull XClassString = (XClass)&(_XClassTable[X_BUILD_CompressedType_String - 1]);//4
@@ -231,6 +233,23 @@ const XClass _Nonnull XClassStorage = (XClass)&(_XClassTable[X_BUILD_CompressedT
 const XClass _Nonnull XClassArray = (XClass)&(_XClassTable[X_BUILD_CompressedType_Array - 1]);//9
 const XClass _Nonnull XClassMap = (XClass)&(_XClassTable[X_BUILD_CompressedType_Map - 1]);//10
 const XClass _Nonnull XClassSet = (XClass)&(_XClassTable[X_BUILD_CompressedType_Set - 1]);//11
+
+
+
+const _XType_s * _Nonnull _XClassNull = &_XClassNullStorage;//1
+const _XType_s * _Nonnull _XClassBoolean = &_XClassBooleanStorage;//2
+
+const _XType_s * _Nonnull _XClassNumber = &(_XClassTable[X_BUILD_CompressedType_Number - 1]);//3
+const _XType_s * _Nonnull _XClassString = &(_XClassTable[X_BUILD_CompressedType_String - 1]);//4
+const _XType_s * _Nonnull _XClassData = &(_XClassTable[X_BUILD_CompressedType_Data - 1]);//5
+const _XType_s * _Nonnull _XClassDate = &(_XClassTable[X_BUILD_CompressedType_Date - 1]);//6
+const _XType_s * _Nonnull _XClassValue = &(_XClassTable[X_BUILD_CompressedType_Value - 1]);//7
+const _XType_s * _Nonnull _XClassStorage = &(_XClassTable[X_BUILD_CompressedType_Storage - 1]);//8
+
+const _XType_s * _Nonnull _XClassArray = &(_XClassTable[X_BUILD_CompressedType_Array - 1]);//9
+const _XType_s * _Nonnull _XClassMap = &(_XClassTable[X_BUILD_CompressedType_Map - 1]);//10
+const _XType_s * _Nonnull _XClassSet = &(_XClassTable[X_BUILD_CompressedType_Set - 1]);//11
+
 
 
 //64bit 压缩的头
@@ -296,14 +315,6 @@ uintptr_t _XRefGetType(XRef _Nonnull ref) {
     uintptr_t info = atomic_load(tmp);
     return info;
 }
-
-#if BUILD_TARGET_RT_64_BIT
-    #define X_BUILD_UInt(value) value##ULL
-#elif BUILD_TARGET_RT_32_BIT
-    #define X_BUILD_UInt(value) value##UL
-#else
-    #error unknown rt
-#endif
 
 
 static const XCompressedType _XRefTaggedObjectClassTable[4] = {XCompressedTypeNumber, XCompressedTypeString, XCompressedTypeData, XCompressedTypeDate};
@@ -406,3 +417,51 @@ XHashCode _XHashFloat64(XFloat64 d) {
     }
     return result;
 }
+
+#define ELF_STEP(B) T1 = (H << 4) + B; T2 = T1 & 0xF0000000; if (T2) T1 ^= (T2 >> 24); T1 &= (~T2); H = T1;
+
+XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length, XUInt32 vi) {
+    if (length > 0) {
+        assert(bytes);
+    }
+    XUInt32 H = vi, T1, T2;
+    XUInt32 rem = length;
+    while (3 < rem) {
+    ELF_STEP(bytes[length - rem]);
+    ELF_STEP(bytes[length - rem + 1]);
+    ELF_STEP(bytes[length - rem + 2]);
+    ELF_STEP(bytes[length - rem + 3]);
+    rem -= 4;
+    }
+    switch (rem) {
+    case 3:  ELF_STEP(bytes[length - 3]);
+    case 2:  ELF_STEP(bytes[length - 2]);
+    case 1:  ELF_STEP(bytes[length - 1]);
+    case 0:  ;
+    }
+    return H;
+}
+
+//XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length) {
+//    if (length > 0) {
+//        assert(bytes);
+//    }
+//    XUInt32 H = 0, T1, T2;
+//    XUInt32 rem = length;
+//    while (3 < rem) {
+//    ELF_STEP(bytes[length - rem]);
+//    ELF_STEP(bytes[length - rem + 1]);
+//    ELF_STEP(bytes[length - rem + 2]);
+//    ELF_STEP(bytes[length - rem + 3]);
+//    rem -= 4;
+//    }
+//    switch (rem) {
+//    case 3:  ELF_STEP(bytes[length - 3]);
+//    case 2:  ELF_STEP(bytes[length - 2]);
+//    case 1:  ELF_STEP(bytes[length - 1]);
+//    case 0:  ;
+//    }
+//    return H;
+//}
+
+#undef ELF_STEP

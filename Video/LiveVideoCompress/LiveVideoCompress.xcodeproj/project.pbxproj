@@ -10,6 +10,7 @@
 		D64D03AE240A448700210537 /* FFmpegVideoRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = D64D03AD240A448700210537 /* FFmpegVideoRecorder.m */; };
 		D64D03B1240DF58E00210537 /* FFDarwinUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = D64D03B0240DF58E00210537 /* FFDarwinUtil.m */; };
 		D64D03C8240DF65A00210537 /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D64D03C7240DF65A00210537 /* libyuv.a */; };
+		D6CE08B52462C51F008854F8 /* FFAudioPCMBufferAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = D6CE08B42462C51F008854F8 /* FFAudioPCMBufferAdapter.m */; };
 		D6D4F25D24111CD200FDBECA /* FFAVAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D4F25C24111CD200FDBECA /* FFAVAdapter.m */; };
 		D6E1B9702410FC6D00E3ED54 /* FFVideoPixelBufferAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E1B96F2410FC6D00E3ED54 /* FFVideoPixelBufferAdapter.m */; };
 		D6E1B973241108AA00E3ED54 /* FFVideoFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = D6E1B972241108AA00E3ED54 /* FFVideoFrame.m */; };
@@ -68,6 +69,8 @@
 		D64D03C5240DF65200210537 /* rotate_argb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rotate_argb.h; sourceTree = "<group>"; };
 		D64D03C6240DF65200210537 /* row.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = row.h; sourceTree = "<group>"; };
 		D64D03C7240DF65A00210537 /* libyuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libyuv.a; sourceTree = "<group>"; };
+		D6CE08B32462C51F008854F8 /* FFAudioPCMBufferAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFAudioPCMBufferAdapter.h; sourceTree = "<group>"; };
+		D6CE08B42462C51F008854F8 /* FFAudioPCMBufferAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFAudioPCMBufferAdapter.m; sourceTree = "<group>"; };
 		D6D4F25B24111CD200FDBECA /* FFAVAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFAVAdapter.h; sourceTree = "<group>"; };
 		D6D4F25C24111CD200FDBECA /* FFAVAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFAVAdapter.m; sourceTree = "<group>"; };
 		D6E1B96E2410FC6D00E3ED54 /* FFVideoPixelBufferAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFVideoPixelBufferAdapter.h; sourceTree = "<group>"; };
@@ -376,6 +379,8 @@
 				D6E1B972241108AA00E3ED54 /* FFVideoFrame.m */,
 				D6D4F25B24111CD200FDBECA /* FFAVAdapter.h */,
 				D6D4F25C24111CD200FDBECA /* FFAVAdapter.m */,
+				D6CE08B32462C51F008854F8 /* FFAudioPCMBufferAdapter.h */,
+				D6CE08B42462C51F008854F8 /* FFAudioPCMBufferAdapter.m */,
 			);
 			path = FFmpegManager;
 			sourceTree = "<group>";
@@ -843,6 +848,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6E5A1A023EA6F0E007FA9AE /* FFmpegConverOC.m in Sources */,
+				D6CE08B52462C51F008854F8 /* FFAudioPCMBufferAdapter.m in Sources */,
 				D6E5A19D23EA6F0E007FA9AE /* ffmpeg.c in Sources */,
 				D6D4F25D24111CD200FDBECA /* FFAVAdapter.m in Sources */,
 				D6E5A19923EA6F0E007FA9AE /* ffmpeg_cuvid.c in Sources */,

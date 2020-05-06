@@ -1,12 +1,12 @@
 //
-//  FFVideoPixelBufferAdaptor.m
+//  FFAudioPCMBufferAdapter.m
 //  LiveVideoCompress
 //
-//  Created by vector on 2020/3/5.
+//  Created by vector on 2020/5/6.
 //  Copyright © 2020 angfung. All rights reserved.
 //
 
-#import "FFVideoPixelBufferAdapter.h"
+#import "FFAudioPCMBufferAdapter.h"
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <mach/mach_time.h>
@@ -24,7 +24,7 @@
  kCVPixelFormatType_32BGRA = 'BGRA', 输出的是BGRA的格式
  */
 
-@interface FFVideoPixelBufferAdapter ()
+@interface FFAudioPCMBufferAdapter ()
 
 @property (nonatomic, assign, readonly) uint32_t width;
 @property (nonatomic, assign, readonly) uint32_t height;
@@ -37,23 +37,17 @@
 @property (nonatomic, assign, readonly) AVFrame * to;
 @property (nonatomic, assign, readonly) struct SwsContext * swsContext;
 @end
-@implementation FFVideoPixelBufferAdapter
+@implementation FFAudioPCMBufferAdapter
 
-+ (CGColorSpaceRef)colorSpace {
-    static CGColorSpaceRef __colorSpace = NULL;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        __colorSpace = CGColorSpaceCreateDeviceRGB();
-    });
-    return __colorSpace;
-}
 
-- (instancetype)initWithVideoAdapter:(FFVideoAdapter *)videoAdapter {
+- (instancetype)initWithAudioAdapter:(FFAudioAdapter *)audioAdapter {
     self = [super init];
     if (self) {
-        _videoAdapter = videoAdapter;
-        uint32_t width = videoAdapter.width;
-        uint32_t height = videoAdapter.height;
+        _audioAdapter = audioAdapter;
+
+        AVSampleFormat;
+        
+        
         _width = width;
         _height = height;
         _from = av_frame_alloc();
@@ -216,7 +210,7 @@
     NSTimeInterval tmp = time * self.videoAdapter.stream.stream->time_base.den / self.videoAdapter.stream.stream->time_base.num;
     int64_t pts = (int64_t)tmp;
     
-    //time / (time_base) 
+    //time / (time_base)
     
     handler(self.bitmapContext);
     BOOL result = [self mapTo];

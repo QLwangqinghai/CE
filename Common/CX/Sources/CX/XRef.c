@@ -20,7 +20,6 @@
 //XHashCode XStringHash(XRef _Nonnull obj) {return 0;};
 //XHashCode XDataHash(XRef _Nonnull obj) {return 0;};
 //XHashCode XDateHash(XRef _Nonnull obj) {return 0;};
-//XHashCode XValueHash(XRef _Nonnull obj) {return 0;};
 //XHashCode XObjectHash(XRef _Nonnull obj) {return 0;};
 
 #pragma mark - XClass
@@ -47,7 +46,7 @@ XHashCode XClassHash(XRef _Nonnull cls) {
 #pragma mark - XNull
 
 const _XNull _XNullShared = {
-    ._runtime = _XConstantObjectBaseMake(&_XClassNull),
+    ._runtime = _XConstantObjectBaseMake(&_XClassNullStorage),
 };
 const XNull _Nonnull XNullShared = (XNull)&_XNullShared;
 
@@ -69,11 +68,11 @@ extern XNull _Nonnull XNullCreate(void) {
 #pragma mark - XBoolean
 
 const _XBoolean _XBooleanTrue = {
-    ._runtime = _XConstantObjectBaseMake(&_XClassBoolean),
+    ._runtime = _XConstantObjectBaseMake(&_XClassBooleanStorage),
     .content = {.value = true},
 };
 const _XBoolean _XBooleanFalse = {
-    ._runtime = _XConstantObjectBaseMake(&_XClassBoolean),
+    ._runtime = _XConstantObjectBaseMake(&_XClassBooleanStorage),
     .content = {.value = false},
 };
 
@@ -113,19 +112,22 @@ XBool XBooleanGetValue(XBoolean _Nonnull ref) {
 
 #pragma mark - private _XByteStorage
 
+extern _XBuffer * _Nonnull _XBufferAllocate(XPtr _Nonnull buffer, XUInt size, XBool clearWhenDealloc);
+extern _XBuffer * _Nonnull _XBufferRetain(_XBuffer * _Nonnull buffer);
+extern void _XBufferRelease(_XBuffer * _Nonnull buffer);
+extern void _XBufferSetClearWhenDealloc(_XBuffer * _Nonnull buffer);
+
 //XByteStorage.c
 
 
 /*
-32: (8 + 4 + 4 + opt12 = 16 or 28)
-16 48 (128-16)
-64: (8 + 4 + 4 + opt16 = 16 or 32)
+(8 + 4 + 4 + opt16 = 16 or 32)
 16 48 (128-16) (256-16)
 */
 //typedef struct {
 //    _XExtendedLayout layout: 4;
 //    XUInt32 hasHashCode: 1;
-//    XUInt32 clearOnDealloc: 1;
+//    XUInt32 clearWhenDealloc: 1;
 //    XUInt32 __unuse: 10;
 //    XUInt32 inlineLength: 16;//layout == _XStringLayoutInline 时有效
 //    XUInt32 hashCode;
@@ -146,19 +148,12 @@ XBool XBooleanGetValue(XBoolean _Nonnull ref) {
 
 #pragma mark - XString
 
-const _XInlineEmptyString _XStringEmpty = {
-    ._base = {
-        ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_String),
-        .content = {
-            .layout = X_BUILD_ExtendedLayoutInline,
-            .hasHashCode = 1,
-            .clearOnDealloc = 0,
-            .__unuse = 0,
-            .inlineLength = 0,
-            .hashCode = 0,
-        },
+const _XString _XStringEmpty = {
+    ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_String),
+    .content = {
+        .length = 0,
+        .__xx = 0,
     },
-    .extended = {0},
 };
 
 const XString _Nonnull XStringEmpty = (XString)&_XStringEmpty;
@@ -169,12 +164,8 @@ const XString _Nonnull XStringEmpty = (XString)&_XStringEmpty;
 const _XData _XDataEmpty = {
     ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_Data),
     .content = {
-        .layout = X_BUILD_ExtendedLayoutInline,
-        .hasHashCode = 1,
-        .clearOnDealloc = 0,
-        .__unuse = 0,
-        .inlineLength = 0,
-        .hashCode = 0,
+        .length = 0,
+        .__xx = 0,
     },
 };
 
@@ -188,7 +179,174 @@ const XData _Nonnull XDataEmpty = (XData)&_XDataEmpty;
 
 #pragma mark - XValue
 
+const XSize XValueSizeMax = X_BUILD_ValueSizeMax;
+
+const _XValue _XValueEmpty = {
+    ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_Value),
+    .content = {
+        .clearWhenDealloc = 0,
+        .hasHashCode = 1,
+        .contentSize = 0,
+        .hashCode = 0,
+    },
+};
+const XValue _Nonnull XValueEmpty = (XValue)&_XValueEmpty;
+
+static inline XSize __XValueSizeAligned(XSize size) {
+    #if BUILD_TARGET_RT_64_BIT
+        XSize s = (size + 7) & (~X_BUILD_UInt(0x7));
+    #elif BUILD_TARGET_RT_32_BIT
+        XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
+    #else
+        #error unknown rt
+    #endif
+    return s;
+};
+//通过copy content
+XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nullable content, XSize contentSize) {
+    if (contentSize > 0) {
+        XAssert(NULL != content, __func__, "contentSize>0, but content is NULL");
+        XAssert(contentSize <= X_BUILD_ValueSizeMax, __func__, "contentSize too large");
+    } else {
+        XAssert(contentSize == 0, __func__, "contentSize < 0");
+        return XValueEmpty;
+    }
+    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassValue->base.allocator);
+//    typedef XRef _Nonnull (*XRefAllocate_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
+
+    XObjectRcFlag rcFlag = 0;
+    
+    XRef ref = allocator->allocateRef((_XAllocatorPtr)allocator, XClassValue, __XValueSizeAligned(contentSize), rcFlag);
+    _XValue * valueRef = (_XValue *)(ref);
+
+    valueRef->content.clearWhenDealloc = ((flag & XObjectFlagClearWhenDealloc) == XObjectFlagClearWhenDealloc) ? 1 : 0;
+    valueRef->content.hasHashCode = 0;
+    valueRef->content.contentSize = (XUInt32)contentSize;
+    valueRef->content.hashCode = 0;
+    return ref;
+}
+static _XValue * _Nonnull __XRefAsValue(XValue _Nonnull ref, const char * _Nonnull func) {
+    XCompressedType compressedType = XCompressedTypeNone;
+    
+#if BUILD_TARGET_RT_64_BIT
+    __unused
+#endif
+    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
+    
+#if BUILD_TARGET_RT_64_BIT
+    XAssert(XCompressedTypeValue == compressedType, func, "not Value instance");
+    return (_XValue *)ref;
+#elif BUILD_TARGET_RT_32_BIT
+    const _XType_s * type = (const _XType_s *)info;
+    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Value - 1].base.identifier, func, "not Value instance");
+    return (_XValue *)ref;
+#else
+    #error unknown rt
+#endif
+}
+XSize XValueGetSize(XValue _Nonnull ref) {
+    XAssert(NULL != ref, __func__, "require ref != NULL");
+    _XValue * valueRef = __XRefAsValue(ref, __func__);
+    return valueRef->content.contentSize;
+}
+void XValueCopyContent(XValue _Nonnull ref, XPtr _Nonnull buffer, XSize offset, XSize length) {
+    XAssert(NULL != ref, __func__, "require ref != NULL");
+    XAssert(NULL != buffer, __func__, "require buffer != NULL");
+
+    _XValue * valueRef = __XRefAsValue(ref, __func__);
+    if (length == 0) {
+        return;
+    }
+    XAssert(length >= 0, __func__, "require length>=0");
+    XAssert(offset >= 0, __func__, "require offset>=0");
+    XAssert(length <= valueRef->content.contentSize, __func__, "range error");
+    XAssert(offset <= valueRef->content.contentSize - length, __func__, "range error");
+    
+    memcpy(buffer, &(valueRef->content.extended[offset]), length);
+}
+XHashCode XValueHash(XValue _Nonnull ref) {
+    XAssert(NULL != ref, __func__, "require ref != NULL");
+
+    _XValue * valueRef = __XRefAsValue(ref, __func__);
+    if (0 == valueRef->content.hasHashCode) {
+        XUInt32 code = _XELFHashBytes(&(valueRef->content.extended[0]), MIN(valueRef->content.contentSize, 128 - 16), valueRef->content.contentSize);
+        valueRef->content.hashCode = code;
+        valueRef->content.hasHashCode = 1;
+    }
+    return valueRef->content.hashCode;
+}
+
 #pragma mark - XStorageRef
+
+const XSize XStorageSizeMax = X_BUILD_StorageSizeMax;
+
+
+static inline XSize __XStorageSizeAligned(XSize size) {
+    #if BUILD_TARGET_RT_64_BIT
+        XSize s = (size + 7) & (~X_BUILD_UInt(0x7));
+    #elif BUILD_TARGET_RT_32_BIT
+        XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
+    #else
+        #error unknown rt
+    #endif
+    return s;
+};
+extern XStorageRef _Nonnull XStorageCreate(XUInt flag, XSize size, XStorageClear_f _Nullable clear, XPtr _Nullable content, XSize contentSize) {
+    if (contentSize > 0) {
+        XAssert(NULL != content, __func__, "contentSize>0, but content is NULL");
+        XAssert(contentSize <= X_BUILD_ValueSizeMax, __func__, "contentSize too large");
+    } else {
+        XAssert(contentSize == 0, __func__, "contentSize < 0");
+        return XValueEmpty;
+    }
+    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassStorage->base.allocator);
+//    typedef XRef _Nonnull (*XRefAllocate_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
+
+    XObjectRcFlag rcFlag = 0;
+    
+    XRef ref = allocator->allocateRef((_XAllocatorPtr)allocator, XClassStorage, __XStorageSizeAligned(contentSize), rcFlag);
+    _XStorage * storageRef = (_XStorage *)(ref);
+
+//    storageRef->content.clearWhenDealloc = ((flag & XObjectFlagClearWhenDealloc) == XObjectFlagClearWhenDealloc) ? 1 : 0;
+//    storageRef->content.hasHashCode = 0;
+    storageRef->content.contentSize = (XUInt32)contentSize;
+//    storageRef->content.hashCode = 0;
+    return ref;
+}
+static _XStorage * _Nonnull __XRefAsStorage(XValue _Nonnull ref, const char * _Nonnull func) {
+    XCompressedType compressedType = XCompressedTypeNone;
+    
+#if BUILD_TARGET_RT_64_BIT
+    __unused
+#endif
+    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
+    
+#if BUILD_TARGET_RT_64_BIT
+    XAssert(XCompressedTypeStorage == compressedType, func, "not Value instance");
+    return (_XStorage *)ref;
+#elif BUILD_TARGET_RT_32_BIT
+    const _XType_s * type = (const _XType_s *)info;
+    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Storage - 1].base.identifier, func, "not Value instance");
+    return (_XStorage *)ref;
+#else
+    #error unknown rt
+#endif
+}
+XSize XStorageGetSize(XStorageRef _Nonnull ref) {
+    XAssert(NULL != ref, __func__, "require ref != NULL");
+    _XStorage * storageRef = __XRefAsStorage(ref, __func__);
+    return storageRef->content.contentSize;
+}
+
+XPtr _Nullable XStorageGetContent(XStorageRef _Nonnull ref) {
+    XAssert(NULL != ref, __func__, "require ref != NULL");
+    _XStorage * storageRef = __XRefAsStorage(ref, __func__);
+    if (storageRef->content.contentSize == 0) {
+        return NULL;
+    }
+    return &(storageRef->content.extended[0]);
+}
+
 
 #pragma mark - XArrayRef
 #pragma mark - XMapRef

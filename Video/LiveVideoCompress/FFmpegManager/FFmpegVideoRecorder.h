@@ -70,7 +70,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) FFAudioCodec codec;
 
+@property (nonatomic, assign) int bitRate;
+@property (nonatomic, assign) int sampleRate;
+@property (nonatomic, assign) int channels;
 
+@property (nonatomic, assign) int fmt;//AV_SAMPLE_FMT_FLTP
 
 @end
 @interface FFVideoOption : NSObject
@@ -104,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @property (nonatomic, strong, readonly, nullable) FFAudioAdapter * audioAdapter;
-@property (nonatomic, strong, readonly, nullable) FFAudioAdapter * videoAdapter;
+@property (nonatomic, strong, readonly, nullable) FFVideoAdapter * videoAdapter;
 
 
 + (nullable instancetype)writerWithFormat:(FFAVFormat)format path:(NSString *)path;

@@ -76,14 +76,24 @@ extern XTimeInterval XDateGetValue(XDate _Nonnull ref);
 
 #pragma mark - XValue
 
+//64kb
+#define X_BUILD_ValueSizeMax X_BUILD_UInt(0x10000)
+extern const XSize XValueSizeMax;
+
+
 extern const XValue _Nonnull XValueEmpty;
 
 //通过copy content
-extern XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nonnull content, XSize contentSize);
+extern XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nullable content, XSize contentSize);
 extern XSize XValueGetSize(XValue _Nonnull ref);
 extern void XValueCopyContent(XValue _Nonnull ref, XPtr _Nonnull buffer, XSize offset, XSize length);
 
 #pragma mark - XStorageRef
+
+//64kb
+#define X_BUILD_StorageSizeMax X_BUILD_UInt(0x10000)
+
+extern const XSize XStorageSizeMax;
 
 typedef void (*XStorageClear_f)(XUInt8 * _Nullable content, XSize size);
 
@@ -91,7 +101,7 @@ typedef void (*XStorageClear_f)(XUInt8 * _Nullable content, XSize size);
 extern XStorageRef _Nonnull XStorageCreate(XUInt flag, XSize size, XStorageClear_f _Nullable clear, XPtr _Nullable content, XSize contentSize);
 
 extern XSize XStorageGetSize(XStorageRef _Nonnull ref);
-extern XPtr _Nonnull XStorageGetContent(XStorageRef _Nonnull ref);
+extern XPtr _Nullable XStorageGetContent(XStorageRef _Nonnull ref);
 
 #pragma mark - XArrayRef
 

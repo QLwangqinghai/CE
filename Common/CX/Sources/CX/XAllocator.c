@@ -73,8 +73,8 @@ const _XAllocator_s _XCompressedObjectAllocator = {
     .headerSize = sizeof(_XObjectCompressedBase),
     .allocate = _XAllocatorCompressedAllocate,
     .deallocate = _XAllocatorCompressedDeallocate,
-    .allocateObject = _XAllocatorCompressedObjectAllocate,
-    .deallocateObject = _XAllocatorCompressedObjectDeallocate,
+    .allocateRef = _XAllocatorCompressedObjectAllocate,
+    .deallocateRef = _XAllocatorCompressedObjectDeallocate,
 };
 
 
@@ -83,8 +83,8 @@ const _XAllocator_s _XObjectAllocator = {
     .headerSize = sizeof(_XObjectBase),
     .allocate = _XAllocatorDefaultAllocate,
     .deallocate = _XAllocatorDefaultDeallocate,
-    .allocateObject = _XAllocatorDefaultObjectAllocate,
-    .deallocateObject = _XAllocatorDefaultObjectDeallocate,
+    .allocateRef = _XAllocatorDefaultObjectAllocate,
+    .deallocateRef = _XAllocatorDefaultObjectDeallocate,
 };
 
 
@@ -93,8 +93,8 @@ const _XAllocator_s _XClassAllocator = {
     .headerSize = sizeof(_XObjectBase),
     .allocate = _XAllocatorDefaultAllocate,
     .deallocate = _XAllocatorDefaultDeallocate,
-    .allocateObject = _XAllocatorDefaultObjectAllocate,
-    .deallocateObject = _XAllocatorDefaultObjectDeallocate,
+    .allocateRef = _XAllocatorDefaultObjectAllocate,
+    .deallocateRef = _XAllocatorDefaultObjectDeallocate,
 };
 
 const _XAllocator_s _XConstantClassAllocator = {
@@ -102,8 +102,8 @@ const _XAllocator_s _XConstantClassAllocator = {
     .headerSize = sizeof(_XObjectBase),
     .allocate = _XAllocatorConstantAllocate,
     .deallocate = _XAllocatorConstantDeallocate,
-    .allocateObject = _XAllocatorConstantObjectAllocate,
-    .deallocateObject = _XAllocatorConstantObjectDeallocate,
+    .allocateRef = _XAllocatorConstantObjectAllocate,
+    .deallocateRef = _XAllocatorConstantObjectDeallocate,
 };
 
 const _XAllocator_s _XConstantAllocator = {
@@ -111,6 +111,6 @@ const _XAllocator_s _XConstantAllocator = {
     .headerSize = sizeof(_XObjectBase),
     .allocate = _XAllocatorConstantAllocate,
     .deallocate = _XAllocatorConstantDeallocate,
-    .allocateObject = _XAllocatorConstantObjectAllocate,
-    .deallocateObject = _XAllocatorConstantObjectDeallocate,
+    .allocateRef = _XAllocatorConstantObjectAllocate,
+    .deallocateRef = _XAllocatorConstantObjectDeallocate,
 };

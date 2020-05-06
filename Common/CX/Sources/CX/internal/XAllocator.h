@@ -29,8 +29,8 @@ struct _XAllocator {
     _XAllocate_f _Nonnull allocate;
     _XDeallocate_f _Nonnull deallocate;
     
-    XObjectAllocate_f _Nonnull allocateObject;
-    XObjectDeallocate_f _Nonnull deallocateObject;
+    XRefAllocate_f _Nonnull allocateRef;
+    XRefDeallocate_f _Nonnull deallocateRef;
 };
 
 #pragma pack(pop)

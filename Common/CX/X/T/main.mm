@@ -81,6 +81,12 @@ static XComparisonResult _XRealNumberCompare(const _XRealNumber *in1, const _XRe
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
+        NSData * data = [@"fwrite contens\n" dataUsingEncoding:NSUTF8StringEncoding];
+        fwrite(data.bytes, data.length, 1, stdout);
+        fprintf(stdout, "\n");
+        
+        
+        
         int64_t v = -0x10000000000000LL;
         NSLog(@"v %@", @(v));
         

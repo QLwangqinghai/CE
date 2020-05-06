@@ -49,6 +49,8 @@ static inline void XDeallocate(XPtr _Nonnull ptr) {
     free(ptr);
 }
 
+extern XComparisonResult XMemoryCompare(const XPtr _Nonnull lhs, const XPtr _Nonnull rhs, XSize size);
+
 
 #if defined(__cplusplus)
 }  // extern C

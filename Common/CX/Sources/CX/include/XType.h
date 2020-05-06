@@ -69,6 +69,8 @@ typedef intptr_t XSIntptr;
 
     #define XUIntMax UINT64_MAX
 
+    #define X_BUILD_UInt(value) value##ULL
+
 #elif BUILD_TARGET_RT_32_BIT
     typedef int32_t XSInt;
     typedef uint32_t XUInt;
@@ -80,6 +82,7 @@ typedef intptr_t XSIntptr;
     #define XSIntMax INT32_MAX
 
     #define XUIntMax UINT32_MAX
+    #define X_BUILD_UInt(value) value##UL
 #else
     #error unknown rt
 #endif
@@ -93,24 +96,26 @@ typedef uint32_t XU32Char;
 typedef void * XPtr;
 typedef void * XRef;
 
+//描述一个对象的类型，以及对象方法的指针列表
 typedef XRef XClass;
+
+//静态常量
 typedef XRef XNull;
 typedef XRef XBoolean;
 
+//不可变value类型， 默认hash是对内容的hash， 比较是对内容的比较
 typedef XRef XNumber;
 typedef XRef XString;
 typedef XRef XData;
 typedef XRef XDate;
 typedef XRef XValue;
 
-
+//对象类型， 默认hash是对对象地址的hash， 比较是对对象地址的比较
 typedef XRef XObject;
 typedef XObject XStorageRef;
 typedef XRef XArrayRef;
 typedef XRef XMapRef;
 typedef XRef XSetRef;
-
-
 
 typedef XPtr XClassIdentifier;
 

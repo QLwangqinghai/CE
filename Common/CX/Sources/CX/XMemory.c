@@ -39,7 +39,7 @@ static inline XSize _XMemoryCompare4(const XPtr _Nonnull lhs, const XPtr _Nonnul
     }
     return size;
 }
-static inline XComparisonResult _XMemoryCompare2(const XPtr _Nonnull lhs, const XPtr _Nonnull rhs, XSize memorySize) {
+static inline XSize _XMemoryCompare2(const XPtr _Nonnull lhs, const XPtr _Nonnull rhs, XSize memorySize) {
     const XUInt16 * left = lhs;
     const XUInt16 * right = rhs;
     XSize size = 0;
@@ -69,7 +69,6 @@ static inline XComparisonResult _XMemoryCompare(const XPtr _Nonnull lhs, const X
     }
 }
 
-
 XComparisonResult XMemoryCompare(const XPtr _Nonnull lhs, const XPtr _Nonnull rhs, XSize size) {
     XAssert(size >= 0, __func__, "size error");
     if (size == 0) {
@@ -77,6 +76,9 @@ XComparisonResult XMemoryCompare(const XPtr _Nonnull lhs, const XPtr _Nonnull rh
     } else {//size > 0
         XAssert(NULL != lhs, __func__, "lhs NULL error");
         XAssert(NULL != rhs, __func__, "rhs NULL error");
+        if (lhs == rhs) {
+            return XCompareEqualTo;
+        }
         uintptr_t lhsV = (uintptr_t)lhs;
         uintptr_t rhsV = (uintptr_t)rhs;
         const XUInt8 * left = lhs;
@@ -89,55 +91,50 @@ XComparisonResult XMemoryCompare(const XPtr _Nonnull lhs, const XPtr _Nonnull rh
             #if BUILD_TARGET_RT_64_BIT
                 if ((lhsV & X_BUILD_UInt(0x7)) == (rhsV & X_BUILD_UInt(0x7))) {
                     XSize s = lhsV & X_BUILD_UInt(0x7);
-                    result = _XMemoryCompare((const XPtr)left, (const XPtr)right, s);
+                    result = _XMemoryCompare((const XPtr)(left + len), (const XPtr)(right + len), s);
                     if (XCompareEqualTo != result) {
                         return result;
                     } else {
-                        len -= s;
+                        len += s;
                     }
-                    
                     len += _XMemoryCompare8((const XPtr)(left + len), (const XPtr)(right + len), size - len);
                     if (size == len) {
                         return XCompareEqualTo;
                     }
+                    return _XMemoryCompare((const XPtr)(left + len), (const XPtr)(right + len), size - len);
                 }
             #endif
             if ((lhsV & X_BUILD_UInt(0x3)) == (rhsV & X_BUILD_UInt(0x3))) {
                 XSize s = lhsV & X_BUILD_UInt(0x3);
-                result = _XMemoryCompare((const XPtr)left, (const XPtr)right, s);
+                result = _XMemoryCompare((const XPtr)(left + len), (const XPtr)(right + len), s);
                 if (XCompareEqualTo != result) {
                     return result;
                 } else {
-                    len -= s;
-                    left += s;
-                    right += s;
+                    len += s;
                 }
-                len -= _XMemoryCompare4((const XPtr)left, (const XPtr)right, len);
-                if (0 == len) {
+                len += _XMemoryCompare4((const XPtr)(left + len), (const XPtr)(right + len), size - len);
+                if (size == len) {
                     return XCompareEqualTo;
                 }
-                return _XMemoryCompare((const XPtr)left, (const XPtr)right, len);
+                return _XMemoryCompare((const XPtr)(left + len), (const XPtr)(right + len), size - len);
             }
             if ((lhsV & X_BUILD_UInt(0x1)) == (rhsV & X_BUILD_UInt(0x1))) {
                 XSize s = lhsV & X_BUILD_UInt(0x1);
-                result = _XMemoryCompare((const XPtr)left, (const XPtr)right, s);
+                result = _XMemoryCompare((const XPtr)(left + len), (const XPtr)(right + len), size - len);
                 if (XCompareEqualTo != result) {
                     return result;
                 } else {
-                    len -= s;
-                    left += s;
-                    right += s;
+                    len += s;
                 }
-                len -= _XMemoryCompare2((const XPtr)left, (const XPtr)right, len);
-                if (0 == len) {
+                len += _XMemoryCompare2((const XPtr)(left + len), (const XPtr)(right + len), size - len);
+                if (size == len) {
                     return XCompareEqualTo;
                 }
-                return _XMemoryCompare((const XPtr)left, (const XPtr)right, len);
+                return _XMemoryCompare((const XPtr)(left + len), (const XPtr)(right + len), size - len);
             }
+            return _XMemoryCompare((const XPtr)(left + len), (const XPtr)(right + len), size - len);
         }
     }
-
-    
 }
 
 

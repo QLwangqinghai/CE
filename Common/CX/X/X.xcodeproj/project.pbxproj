@@ -27,6 +27,7 @@
 		D6447021245018AE009E4F57 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = D6447020245018AE009E4F57 /* main.mm */; };
 		D647EC6E24584E8F008E1D15 /* XDate.c in Sources */ = {isa = PBXBuildFile; fileRef = D647EC6D24584E8F008E1D15 /* XDate.c */; };
 		D681FD7C2456D392001B28EB /* XByteStorage.c in Sources */ = {isa = PBXBuildFile; fileRef = D681FD7B2456D392001B28EB /* XByteStorage.c */; };
+		D6CE08BA2463AFBD008854F8 /* CXTester.m in Sources */ = {isa = PBXBuildFile; fileRef = D6CE08B92463AFBD008854F8 /* CXTester.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -82,6 +83,8 @@
 		D647EC6A24583E33008E1D15 /* XAtomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XAtomic.h; sourceTree = "<group>"; };
 		D647EC6D24584E8F008E1D15 /* XDate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XDate.c; sourceTree = "<group>"; };
 		D681FD7B2456D392001B28EB /* XByteStorage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XByteStorage.c; sourceTree = "<group>"; };
+		D6CE08B82463AFBD008854F8 /* CXTester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CXTester.h; sourceTree = "<group>"; };
+		D6CE08B92463AFBD008854F8 /* CXTester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CXTester.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +132,8 @@
 				D6446FD7244D7254009E4F57 /* AppDelegate.m */,
 				D6446FD9244D7254009E4F57 /* ViewController.h */,
 				D6446FDA244D7254009E4F57 /* ViewController.mm */,
+				D6CE08B82463AFBD008854F8 /* CXTester.h */,
+				D6CE08B92463AFBD008854F8 /* CXTester.m */,
 				D6446FDC244D7256009E4F57 /* Assets.xcassets */,
 				D6446FDE244D7256009E4F57 /* Main.storyboard */,
 				D6446FE1244D7256009E4F57 /* Info.plist */,
@@ -322,6 +327,7 @@
 				D6446FD8244D7254009E4F57 /* AppDelegate.m in Sources */,
 				D644700F244D7261009E4F57 /* CCReferenceBase.c in Sources */,
 				D644700D244D7261009E4F57 /* XDevice.c in Sources */,
+				D6CE08BA2463AFBD008854F8 /* CXTester.m in Sources */,
 				D6447014244D7306009E4F57 /* CXX.cpp in Sources */,
 				D6447008244D7261009E4F57 /* CXInit.c in Sources */,
 				D644700E244D7261009E4F57 /* XRuntime.c in Sources */,

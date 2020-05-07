@@ -101,6 +101,50 @@ void _XBufferRelease(_XBuffer * _Nonnull buffer) {
     }
 }
 
+
+
+/*
+ TaggedObject32
+
+ refType: 1, value = 1
+ taggedContent: {
+    class: 2
+    objectContent: 28 {
+        len: 4
+        content: 24
+    }
+ }
+ flag: 1, value = 1
+*/
+/*
+ TaggedObject64
+
+ refType: 2, value = 1
+ taggedContent: 61 {
+    class: 2
+    objectContent: 59 {
+       len: 3
+       content: 56
+   }
+ }
+ flag: 1, value = 1
+*/
+
+#if BUILD_TARGET_RT_64_BIT
+#define X_BUILD_TaggedByteStorageContentMask 0xFFFFFFFFFFFFFFULL
+#define X_BUILD_TaggedByteStorageContentLengthMask 0x7ULL
+#define X_BUILD_TaggedByteStorageContentLengthShift 57ULL
+#define X_BUILD_TaggedByteStorageContentLengthMax 0x7UL
+#else
+#define X_BUILD_TaggedByteStorageContentMask 0xFFFFFFUL
+#define X_BUILD_TaggedByteStorageContentLengthMask 0xFUL
+#define X_BUILD_TaggedByteStorageContentLengthShift 25ULL
+#define X_BUILD_TaggedByteStorageContentLengthMax 0x3UL
+#endif
+
+
+
+
 static void _XByteStorageDistory(_XByteStorage * _Nonnull storage) {
     XUInt32 length = storage->content.length;
     if (length < _XByteStorageContentBufferSizeMin) {
@@ -147,10 +191,9 @@ static _XByteStorage * _Nonnull _XByteStorageCreate(XCompressedType type, XObjec
         _XBuffer * buf = _XBufferAllocate(buffer, length, ((flag & XObjectFlagClearWhenDealloc) == XObjectFlagClearWhenDealloc));
         storageContent->length = length;
         storageContent->offset = 0;
-        storageContent->hashCode = 0;
-        storageContent->hasHashCode = 0;
         storageContent->buffer = 0;
         storageContent->buffer = buf;
+        atomic_store(&(storageContent->hashCode), XHash32NoneFlag);
         return ref;
     } else {
         XUInt bufferSize = 4;
@@ -231,5 +274,164 @@ static _XByteStorage * _Nonnull _XByteStorageCreateWithBuffer(XCompressedType ty
     }
 }
 
+static _XByteStorage * _Nonnull __XRefAsString(XRef _Nonnull ref, const char * _Nonnull func) {
+    XCompressedType compressedType = XCompressedTypeNone;
+    
+#if BUILD_TARGET_RT_64_BIT
+    __unused
+#endif
+    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
+    
+#if BUILD_TARGET_RT_64_BIT
+    XAssert(XCompressedTypeString == compressedType, func, "not String instance");
+    return (_XByteStorage *)ref;
+#else
+    const _XType_s * type = (const _XType_s *)info;
+    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_String - 1].base.identifier, func, "not String instance");
+    return (_XByteStorage *)ref;
+#endif
+}
+static _XByteStorage * _Nonnull __XRefAsData(XRef _Nonnull ref, const char * _Nonnull func) {
+    XCompressedType compressedType = XCompressedTypeNone;
+    
+#if BUILD_TARGET_RT_64_BIT
+    __unused
+#endif
+    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
+    
+#if BUILD_TARGET_RT_64_BIT
+    XAssert(XCompressedTypeData == compressedType, func, "not Data instance");
+    return (_XByteStorage *)ref;
+#else
+    const _XType_s * type = (const _XType_s *)info;
+    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Data - 1].base.identifier, func, "not Data instance");
+    return (_XByteStorage *)ref;
+
+#endif
+}
+
+
+//typedef struct {
+//    XUInt32 length;
+//    XUInt32 hashCode;
+//    XUInt32 hasHashCode: 1;
+//    XUInt32 __unuse: 31;
+//    XUInt8 * _Nonnull buffer;
+//} _XByteStorageUnpacked_t;
+
+
+/*
+ #define X_BUILD_TaggedByteStorageContentMask 0xFFFFFFFFFFFFFFULL
+ #define X_BUILD_TaggedByteStorageContentLengthMask 0x7ULL
+ #define X_BUILD_TaggedByteStorageContentLengthShift 57ULL
+ #define X_BUILD_TaggedByteStorageContentLengthMax 0x7UL
+ */
+void _XByteStorageUnpack(XPtr _Nonnull ref, XBool isString, _XByteStorageUnpacked_t * _Nonnull ptr, XBool requireHashCode, const char * _Nonnull func) {
+    
+#if BUILD_TARGET_RT_64_BIT
+    XUInt64 v = (XUInt64)((uintptr_t)ref);
+    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
+        XUInt64 clsId = v & X_BUILD_TaggedObjectClassMask;
+        if (isString) {
+            XAssert(X_BUILD_TaggedObjectClassString == clsId, func, "not String instance");
+        } else {
+            XAssert(X_BUILD_TaggedObjectClassData == clsId, func, "not Data instance");
+        }
+        
+        XUInt64 storageContent = (v >> 1) & X_BUILD_TaggedByteStorageContentMask;
+        XUInt64 len = (v >> X_BUILD_TaggedByteStorageContentLengthShift) & X_BUILD_TaggedByteStorageContentLengthMask;
+        XAssert(len <= X_BUILD_TaggedByteStorageContentLengthMax, func, "");
+        
+        XUInt64 bytes = storageContent;
+        *((XUInt64 *)ptr->tmp) = bytes;
+
+#if BUILD_TARGET_RT_BIG_ENDIAN
+        ptr->buffer = ptr->tmp + (sizeof(XUInt64) - len);
+#else
+        ptr->buffer = ptr->tmp;
+#endif
+        ptr->length = (XUInt32)len;
+        if (requireHashCode) {
+            ptr->hashCode = _XELFHashBytes(ptr->buffer, (XUInt32)len) & XHash32Mask;
+        } else {
+            ptr->hashCode = 0;
+        }
+        return;
+    }
+#else
+    
+    XUInt32 v = (XUInt32)((uintptr_t)ref);
+    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
+        XUInt32 clsId = v & X_BUILD_TaggedObjectClassMask;
+        if (isString) {
+            XAssert(X_BUILD_TaggedObjectClassString == clsId, func, "not String instance");
+        } else {
+            XAssert(X_BUILD_TaggedObjectClassData == clsId, func, "not Data instance");
+        }
+        
+        XUInt32 storageContent = (v >> 1) & X_BUILD_TaggedByteStorageContentMask;
+        XUInt32 len = (v >> X_BUILD_TaggedByteStorageContentLengthShift) & X_BUILD_TaggedByteStorageContentLengthMask;
+        XAssert(len <= X_BUILD_TaggedByteStorageContentLengthMax, __func__, "");
+            
+        uint8_t * bytes = (uint8_t *)&storageContent;
+        
+#if BUILD_TARGET_RT_BIG_ENDIAN
+        ptr->buffer = ptr->tmp + (sizeof(XUInt32) - len);
+#else
+        ptr->buffer = ptr->tmp;
+#endif
+        ptr->length = (XUInt32)len;
+        ptr->buffer = ptr->tmp;
+        if (requireHashCode) {
+            ptr->hashCode = _XELFHashBytes(ptr->buffer, len) & XHash32Mask;
+            ptr->hasHashCode = 1;
+        } else {
+            ptr->hashCode = 0;
+            ptr->hasHashCode = 0;
+        }
+        return;
+    }
+#endif
+    _XByteStorage * _Nonnull storage = NULL;
+    if (isString) {
+        storage = __XRefAsString(ref, func);
+    } else {
+        storage = __XRefAsData(ref, func);
+    }
+    
+    ptr->length = storage->content.length;
+    
+    if (storage->content.length >= _XByteStorageContentBufferSizeMin) {
+        _XByteStorageContentLarge_t * storageContent = (_XByteStorageContentLarge_t *)&(storage->content);
+        ptr->buffer = &(storageContent->buffer->content[storageContent->offset]);
+        XFastUInt32 hashCode = atomic_load(&(storageContent->hashCode));
+        if ((hashCode & XHash32NoneFlag) == XHash32NoneFlag) {
+            if (requireHashCode) {
+                hashCode = _XELFHashBytes(ptr->buffer, MIN(XHashEverythingLimit, ptr->length)) & XHash32Mask;
+                atomic_store(&(storageContent->hashCode), hashCode);
+            }
+        }
+        ptr->hashCode = hashCode;
+    } else {
+        _XByteStorageContentSmall_t * storageContent = (_XByteStorageContentSmall_t *)&(storage->content);
+        ptr->buffer = storageContent->extended;
+        if (requireHashCode) {
+            ptr->hashCode = _XELFHashBytes(ptr->buffer, MIN(XHashEverythingLimit, ptr->length)) & XHash32Mask;
+        } else {
+            ptr->hashCode = XHash32NoneFlag;
+        }
+    }
+}
+
+XHashCode XStringHash(XRef _Nonnull ref) {
+    _XByteStorageUnpacked_t v = {};
+    _XByteStorageUnpack(ref, true, &v, true, __func__);
+    return v.hashCode;
+}
+XHashCode XDataHash(XRef _Nonnull ref) {
+    _XByteStorageUnpacked_t v = {};
+    _XByteStorageUnpack(ref, false, &v, true, __func__);
+    return v.hashCode;
+}
 
 

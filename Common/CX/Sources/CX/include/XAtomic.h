@@ -31,7 +31,7 @@ extern "C" {
 
     #define XFastUIntMax UINT_FAST64_MAX
 
-#elif BUILD_TARGET_RT_32_BIT
+#else
     #define XFastSInt int_fast32_t
     #define XFastUInt uint_fast32_t
 
@@ -40,8 +40,7 @@ extern "C" {
 
     #define XFastUIntMax UINT_FAST32_MAX
 
-#else
-    #error unknown rt
+
 #endif
 
 

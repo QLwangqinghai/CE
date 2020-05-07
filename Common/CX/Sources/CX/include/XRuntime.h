@@ -35,10 +35,9 @@ typedef XUInt32 XNumberType;
 
 #if BUILD_TARGET_RT_64_BIT
     #define X_BUILD_UInt(value) value##ULL
-#elif BUILD_TARGET_RT_32_BIT
-    #define X_BUILD_UInt(value) value##UL
 #else
-    #error unknown rt
+    #define X_BUILD_UInt(value) value##UL
+
 #endif
 
 

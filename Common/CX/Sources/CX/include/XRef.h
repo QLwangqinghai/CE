@@ -76,8 +76,8 @@ extern XTimeInterval XDateGetValue(XDate _Nonnull ref);
 
 #pragma mark - XValue
 
-//64kb
-#define X_BUILD_ValueSizeMax X_BUILD_UInt(0x10000)
+//16mb
+#define X_BUILD_ValueSizeMax X_BUILD_UInt(0x1000000)
 extern const XSize XValueSizeMax;
 
 
@@ -90,8 +90,8 @@ extern void XValueCopyContent(XValue _Nonnull ref, XPtr _Nonnull buffer, XSize o
 
 #pragma mark - XStorageRef
 
-//64kb
-#define X_BUILD_StorageSizeMax X_BUILD_UInt(0x10000)
+//16mb
+#define X_BUILD_StorageSizeMax X_BUILD_UInt(0x1000000)
 
 extern const XSize XStorageSizeMax;
 

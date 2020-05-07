@@ -54,7 +54,7 @@ flag: 1, value = 1
 #define X_BUILD_TaggedDateContentSignBit    0x200000000000000ULL
 #define X_BUILD_TaggedDateContentSignHigh  0xFC00000000000000ULL
     
-#elif BUILD_TARGET_RT_32_BIT
+#else
 
 #define X_BUILD_TaggedDateUnitMask 0xC000000UL
 #define X_BUILD_TaggedDateUnitFlagMillisecond 0x4000000UL
@@ -67,8 +67,7 @@ flag: 1, value = 1
 #define X_BUILD_TaggedDateContentSignBit    0x1000000UL
 #define X_BUILD_TaggedDateContentSignHigh  0xFE000000UL
 
-#else
-    #error unknown rt
+
 #endif
 
 
@@ -119,7 +118,7 @@ XDate _Nonnull XDateCreate(XUInt flag, XTimeInterval time) {
             }
         }
     }
-#elif BUILD_TARGET_RT_32_BIT
+#else
     if (X_BUILD_TaggedDateMin <= time && time <= X_BUILD_TaggedDateMax) {
         XSInt32 value = time;
         XUInt32 tmp = *(XUInt32 *)(&value);
@@ -153,8 +152,7 @@ XDate _Nonnull XDateCreate(XUInt flag, XTimeInterval time) {
             }
         }
     }
-#else
-    #error unknown rt
+
 #endif
     return NULL;
 }
@@ -170,12 +168,11 @@ static _XDate * _Nonnull __XRefAsDate(XDate _Nonnull ref, const char * _Nonnull 
 #if BUILD_TARGET_RT_64_BIT
     XAssert(XCompressedTypeDate == compressedType, func, "not Date instance");
     return (_XDate *)ref;
-#elif BUILD_TARGET_RT_32_BIT
+#else
     const _XType_s * type = (const _XType_s *)info;
     XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Date - 1].base.identifier, func, "not Number instance");
     return (_XDate *)ref;
-#else
-    #error unknown rt
+
 #endif
 }
 
@@ -205,7 +202,7 @@ void __XDateUnpack(XDate _Nonnull ref, XTimeInterval * _Nonnull valuePtr, const 
         memcpy(valuePtr, &content, sizeof(XTimeInterval));
         return;
     }
-#elif BUILD_TARGET_RT_32_BIT
+#else
     XUInt32 v = (XUInt32)((uintptr_t)ref);
     if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
         XUInt32 clsId = v & X_BUILD_TaggedObjectClassMask;
@@ -238,8 +235,7 @@ void __XDateUnpack(XDate _Nonnull ref, XTimeInterval * _Nonnull valuePtr, const 
         memcpy(valuePtr, &content, sizeof(XTimeInterval));
         return;
     }
-#else
-    #error unknown rt
+
 #endif
 //ptr
     

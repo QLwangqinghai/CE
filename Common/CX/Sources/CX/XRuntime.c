@@ -14,6 +14,9 @@
 
 _Static_assert(sizeof(XUInt) == sizeof(size_t), "unknown error");
 _Static_assert(sizeof(_Atomic(uintptr_t)) == sizeof(XUInt), "unknown error");
+_Static_assert(sizeof(_Atomic(XFastUInt32)) == sizeof(XUInt32), "unknown error");
+_Static_assert(sizeof(_Atomic(XFastUInt64)) == sizeof(XUInt64), "unknown error");
+
 _Static_assert(BUILD_TARGET_RT_64_BIT || BUILD_TARGET_RT_32_BIT, "unknown rt");
 
 _Static_assert(X_BUILD_ObjectRcFlagReadOnly == 1, "X_BUILD_ObjectRcFlagReadOnly must be 1");
@@ -54,9 +57,6 @@ const XCompressedType XCompressedTypeSet = 9;
 XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 XBool XDataEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-
-XHashCode XStringHash(XRef _Nonnull obj) {return 0;};
-XHashCode XDataHash(XRef _Nonnull obj) {return 0;};
 
 #define _XTypeIdentifierMakeValue(Type) \
 {\
@@ -420,11 +420,11 @@ XHashCode _XHashFloat64(XFloat64 d) {
 
 #define ELF_STEP(B) T1 = (H << 4) + B; T2 = T1 & 0xF0000000; if (T2) T1 ^= (T2 >> 24); T1 &= (~T2); H = T1;
 
-XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length, XUInt32 vi) {
+XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length) {
     if (length > 0) {
         assert(bytes);
     }
-    XUInt32 H = vi, T1, T2;
+    XUInt32 H = 0, T1, T2;
     XUInt32 rem = length;
     while (3 < rem) {
     ELF_STEP(bytes[length - rem]);
@@ -441,27 +441,5 @@ XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length, XUInt32 vi) {
     }
     return H;
 }
-
-//XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length) {
-//    if (length > 0) {
-//        assert(bytes);
-//    }
-//    XUInt32 H = 0, T1, T2;
-//    XUInt32 rem = length;
-//    while (3 < rem) {
-//    ELF_STEP(bytes[length - rem]);
-//    ELF_STEP(bytes[length - rem + 1]);
-//    ELF_STEP(bytes[length - rem + 2]);
-//    ELF_STEP(bytes[length - rem + 3]);
-//    rem -= 4;
-//    }
-//    switch (rem) {
-//    case 3:  ELF_STEP(bytes[length - 3]);
-//    case 2:  ELF_STEP(bytes[length - 2]);
-//    case 1:  ELF_STEP(bytes[length - 1]);
-//    case 0:  ;
-//    }
-//    return H;
-//}
 
 #undef ELF_STEP

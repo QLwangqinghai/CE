@@ -71,7 +71,7 @@ typedef intptr_t XSIntptr;
 
     #define X_BUILD_UInt(value) value##ULL
 
-#elif BUILD_TARGET_RT_32_BIT
+#else
     typedef int32_t XSInt;
     typedef uint32_t XUInt;
 
@@ -83,8 +83,7 @@ typedef intptr_t XSIntptr;
 
     #define XUIntMax UINT32_MAX
     #define X_BUILD_UInt(value) value##UL
-#else
-    #error unknown rt
+
 #endif
 
 typedef unsigned char XU8Char;
@@ -146,7 +145,7 @@ typedef int64_t XTimeInterval;
 #define XSInt32Min INT32_MIN
 #define XSInt64Min INT64_MIN
 
-typedef XSInt XComparisonResult;
+typedef XSInt32 XComparisonResult;
 extern const XComparisonResult XCompareLessThan;
 extern const XComparisonResult XCompareEqualTo;
 extern const XComparisonResult XCompareGreaterThan;

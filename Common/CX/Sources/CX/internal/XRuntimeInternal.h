@@ -26,10 +26,9 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 
 #if BUILD_TARGET_RT_64_BIT
     #pragma pack(push, 8)
-#elif BUILD_TARGET_RT_32_BIT
-    #pragma pack(push, 4)
 #else
-    #error unknown rt
+    #pragma pack(push, 4)
+
 #endif
 
 
@@ -128,7 +127,7 @@ flag: 1, value = 1
 #define X_BUILD_TaggedObjectHeaderClassShift   56ULL
 
 
-#elif BUILD_TARGET_RT_32_BIT
+#else
 
 #define X_BUILD_ObjectRcMax 0xFFFFFFF0UL
 
@@ -142,8 +141,7 @@ flag: 1, value = 1
 #define X_BUILD_TaggedObjectClassData    0x40000000UL
 #define X_BUILD_TaggedObjectClassDate    0x60000000UL
 
-#else
-    #error unknown rt
+
 #endif
 
 #define X_BUILD_TaggedObjectClassMax    X_BUILD_TaggedObjectClassDate
@@ -167,7 +165,7 @@ typedef struct {
     .typeInfo = ATOMIC_VAR_INIT((uintptr_t)(X_BUILD_TypeInfoConstantCompressed | (((type) & 0x3f) << 56))),\
 }
 
-#elif BUILD_TARGET_RT_32_BIT
+#else
 
 typedef struct {
     _Atomic(uintptr_t) typeInfo;
@@ -181,8 +179,7 @@ typedef _XObjectCompressedBase _XObjectBase;
     .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
 }
 
-#else
-    #error unknown rt
+
 #endif
 
 #define _XConstantObjectBaseMake(type) {\
@@ -216,13 +213,12 @@ struct _XTypeBase {
     XUInt64 xx: 4;
     XUInt64 domain: 8;
     XUInt64 tableSize: 48;
-#elif BUILD_TARGET_RT_32_BIT
+#else
     XUInt32 kind: 4;
     XUInt32 xx: 4;
     XUInt32 domain: 8;
     XUInt32 tableSize: 16;
-#else
-    #error unknown rt
+
 #endif
     uintptr_t /* _XType_s * _Nullable */ super;
     _XAllocatorPtr _Nonnull allocator;
@@ -359,14 +355,22 @@ typedef struct {
 typedef struct {
     XUInt32 length;
     XUInt32 offset;
-    XUInt32 hashCode;
-    XUInt32 hasHashCode: 1;
-    XUInt32 __unuse: 31;
+    _Atomic(XFastUInt32) hashCode;
+#if BUILD_TARGET_RT_64_BIT
+    XUInt32 __unuse;
+#endif
     _XBuffer * _Nonnull buffer;
 } _XByteStorageContentLarge_t;
 
 #pragma pack(pop)
 #define _XByteStorageContentBufferSizeMin X_BUILD_UInt(245)
+
+typedef struct {
+    XUInt32 length;
+    XUInt32 hashCode;
+    XUInt8 tmp[sizeof(XUInt)];
+    XUInt8 * _Nonnull buffer;
+} _XByteStorageUnpacked_t;
 
 typedef struct {
     _XObjectCompressedBase _runtime;
@@ -409,9 +413,8 @@ typedef struct {
 
 typedef struct {
     XUInt32 clearWhenDealloc: 1;
-    XUInt32 hasHashCode: 1;
-    XUInt32 contentSize: 30;
-    XUInt32 hashCode;
+    XUInt32 contentSize: 31;
+    _Atomic(XFastUInt32) hashCode;
     XUInt8 extended[0];
 } _XValueContent_t;
 
@@ -432,9 +435,8 @@ typedef struct {
 } _XStorage;
 
 #if BUILD_TARGET_RT_64_BIT
-#elif BUILD_TARGET_RT_32_BIT
 #else
-    #error unknown rt
+
 #endif
 
 
@@ -455,8 +457,12 @@ extern _XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnul
 extern XHashCode _XHashUInt64(XUInt64 i);
 extern XHashCode _XHashSInt64(XSInt64 i);
 extern XHashCode _XHashFloat64(XFloat64 d);
-extern XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length, XUInt32 vi);
+extern XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length);
 
+#define XHashEverythingLimit 128
+
+#define XHash32NoneFlag 0x80000000UL
+#define XHash32Mask 0x7FFFFFFFUL
 
 #if defined(__cplusplus)
 }  // extern C

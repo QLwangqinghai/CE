@@ -185,9 +185,8 @@ const _XValue _XValueEmpty = {
     ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_Value),
     .content = {
         .clearWhenDealloc = 0,
-        .hasHashCode = 1,
         .contentSize = 0,
-        .hashCode = 0,
+        .hashCode = ATOMIC_VAR_INIT(0),
     },
 };
 const XValue _Nonnull XValueEmpty = (XValue)&_XValueEmpty;
@@ -195,10 +194,8 @@ const XValue _Nonnull XValueEmpty = (XValue)&_XValueEmpty;
 static inline XSize __XValueSizeAligned(XSize size) {
     #if BUILD_TARGET_RT_64_BIT
         XSize s = (size + 7) & (~X_BUILD_UInt(0x7));
-    #elif BUILD_TARGET_RT_32_BIT
-        XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
     #else
-        #error unknown rt
+        XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
     #endif
     return s;
 };
@@ -220,9 +217,8 @@ XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nullable content, XSize contentSi
     _XValue * valueRef = (_XValue *)(ref);
 
     valueRef->content.clearWhenDealloc = ((flag & XObjectFlagClearWhenDealloc) == XObjectFlagClearWhenDealloc) ? 1 : 0;
-    valueRef->content.hasHashCode = 0;
     valueRef->content.contentSize = (XUInt32)contentSize;
-    valueRef->content.hashCode = 0;
+    atomic_store(&(valueRef->content.hashCode), XHash32NoneFlag);
     return ref;
 }
 static _XValue * _Nonnull __XRefAsValue(XValue _Nonnull ref, const char * _Nonnull func) {
@@ -236,12 +232,11 @@ static _XValue * _Nonnull __XRefAsValue(XValue _Nonnull ref, const char * _Nonnu
 #if BUILD_TARGET_RT_64_BIT
     XAssert(XCompressedTypeValue == compressedType, func, "not Value instance");
     return (_XValue *)ref;
-#elif BUILD_TARGET_RT_32_BIT
+#else
     const _XType_s * type = (const _XType_s *)info;
     XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Value - 1].base.identifier, func, "not Value instance");
     return (_XValue *)ref;
-#else
-    #error unknown rt
+
 #endif
 }
 XSize XValueGetSize(XValue _Nonnull ref) {
@@ -268,10 +263,9 @@ XHashCode XValueHash(XValue _Nonnull ref) {
     XAssert(NULL != ref, __func__, "require ref != NULL");
 
     _XValue * valueRef = __XRefAsValue(ref, __func__);
-    if (0 == valueRef->content.hasHashCode) {
-        XUInt32 code = _XELFHashBytes(&(valueRef->content.extended[0]), MIN(valueRef->content.contentSize, 128 - 16), valueRef->content.contentSize);
-        valueRef->content.hashCode = code;
-        valueRef->content.hasHashCode = 1;
+    if (valueRef->content.hashCode >= XHash32NoneFlag) {
+        XUInt32 code = _XELFHashBytes(&(valueRef->content.extended[0]), MIN(valueRef->content.contentSize, XHashEverythingLimit));
+        valueRef->content.hashCode = (code & XHash32Mask);
     }
     return valueRef->content.hashCode;
 }
@@ -284,10 +278,9 @@ const XSize XStorageSizeMax = X_BUILD_StorageSizeMax;
 static inline XSize __XStorageSizeAligned(XSize size) {
     #if BUILD_TARGET_RT_64_BIT
         XSize s = (size + 7) & (~X_BUILD_UInt(0x7));
-    #elif BUILD_TARGET_RT_32_BIT
-        XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
     #else
-        #error unknown rt
+        XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
+
     #endif
     return s;
 };
@@ -324,12 +317,11 @@ static _XStorage * _Nonnull __XRefAsStorage(XValue _Nonnull ref, const char * _N
 #if BUILD_TARGET_RT_64_BIT
     XAssert(XCompressedTypeStorage == compressedType, func, "not Value instance");
     return (_XStorage *)ref;
-#elif BUILD_TARGET_RT_32_BIT
+#else
     const _XType_s * type = (const _XType_s *)info;
     XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Storage - 1].base.identifier, func, "not Value instance");
     return (_XStorage *)ref;
-#else
-    #error unknown rt
+
 #endif
 }
 XSize XStorageGetSize(XStorageRef _Nonnull ref) {

@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "CXX.hpp"
 #import <string>
+#include "CX.h"
+#import "CXTester.h"
 
 namespace XX {
     class StackObject {
@@ -83,7 +85,9 @@ namespace XX {
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
+    [CXTester test0];
     
+    return;
     NSLog(@"X::StackObject size %ld", sizeof(X::StackObject));
     
     static int objPtr = 0;

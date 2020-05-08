@@ -319,13 +319,6 @@ static _XByteStorage * _Nonnull __XRefAsData(XRef _Nonnull ref, const char * _No
 //    XUInt8 * _Nonnull buffer;
 //} _XByteStorageUnpacked_t;
 
-
-/*
- #define X_BUILD_TaggedByteStorageContentMask 0xFFFFFFFFFFFFFFULL
- #define X_BUILD_TaggedByteStorageContentLengthMask 0x7ULL
- #define X_BUILD_TaggedByteStorageContentLengthShift 57ULL
- #define X_BUILD_TaggedByteStorageContentLengthMax 0x7UL
- */
 void _XByteStorageUnpack(XPtr _Nonnull ref, XBool isString, _XByteStorageUnpacked_t * _Nonnull ptr, XBool requireHashCode, const char * _Nonnull func) {
     
 #if BUILD_TARGET_RT_64_BIT

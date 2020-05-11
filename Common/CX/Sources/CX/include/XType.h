@@ -86,7 +86,7 @@ typedef intptr_t XSIntptr;
 
 #endif
 
-typedef unsigned char XU8Char;
+typedef char XU8Char;
 typedef uint16_t XU16Char;
 typedef uint32_t XU32Char;
 
@@ -120,7 +120,7 @@ typedef XPtr XClassIdentifier;
 
 #pragma mark - CCHashCode
 
-typedef XUInt XHashCode;
+typedef XUInt32 XHashCode;
 
 #pragma mark - XTimeInterval
 

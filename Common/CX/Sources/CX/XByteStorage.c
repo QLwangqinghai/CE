@@ -291,6 +291,7 @@ static _XByteStorage * _Nonnull __XRefAsString(XRef _Nonnull ref, const char * _
     return (_XByteStorage *)ref;
 #endif
 }
+
 static _XByteStorage * _Nonnull __XRefAsData(XRef _Nonnull ref, const char * _Nonnull func) {
     XCompressedType compressedType = XCompressedTypeNone;
     
@@ -352,7 +353,6 @@ void _XByteStorageUnpack(XPtr _Nonnull ref, XBool isString, _XByteStorageUnpacke
         return;
     }
 #else
-    
     XUInt32 v = (XUInt32)((uintptr_t)ref);
     if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
         XUInt32 clsId = v & X_BUILD_TaggedObjectClassMask;
@@ -427,4 +427,34 @@ XHashCode XDataHash(XRef _Nonnull ref) {
     return v.hashCode;
 }
 
+XData _Nonnull XDataCreate(XObjectFlag flag, XUInt8 * _Nullable bytes, XUInt32 length) {
+    if (length == 0) {
+        return XDataEmpty;
+    }
+    return _XByteStorageCreate(XCompressedTypeData, flag, bytes, length, __func__);
+}
 
+
+typedef XUInt32 XStringEncoding;
+
+static const XStringEncoding XStringEncodingUtf8 = 1;
+
+XData _Nonnull XDataCreateByEncodeString(XObjectFlag flag, XString _Nonnull string, XStringEncoding encode) {
+//    if (length == 0) {
+//        return XDataEmpty;
+//    }
+//    return _XByteStorageCreate(XCompressedTypeData, flag, bytes, length, __func__);
+    return NULL;
+}
+
+XString _Nonnull XStringCreateByDecodeData(XObjectFlag flag, XData _Nonnull data, XStringEncoding encode) {
+    XAssert(NULL != data, __func__, "data is NULL");
+    XSize size = strlen(cString);
+    XAssert(size < XUInt32Max, __func__, "cString len error");
+    XUInt32 length = (XUInt32)size;
+    if (length == 0) {
+        return XDataEmpty;
+    }
+    return _XByteStorageCreate(XCompressedTypeData, flag, (XUInt8 *)cString, length, __func__);
+    return NULL;
+}

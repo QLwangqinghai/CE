@@ -33,7 +33,7 @@ open class AVWorkItem {
     
     open func start(completion: (AVWorkItem) -> Void) {
         
-        
+        let a: Array<Int> = []
         
         
         

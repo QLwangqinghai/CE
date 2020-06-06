@@ -39,6 +39,10 @@ import Foundation
  16MB/段
  */
 
+/*
+ sha512/filelength
+ 
+ */
 
 /*
 存储结构

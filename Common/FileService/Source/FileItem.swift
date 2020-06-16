@@ -16,8 +16,25 @@ public enum ImageFormat {
     case gif
     case heic
     case webp
+    case unknown
 }
 
+public protocol Assetable {
+    public var identifier: CCByte64
+
+    
+}
+
+public class BaseAsset {
+    public let format: ImageFormat
+    public let size: CCSize32
+    public let count: UInt32
+    public init(format: ImageFormat, size: CCSize32, count: UInt32 = 1) {
+        self.format = format
+        self.size = size
+        self.count = count
+    }
+}
 public struct ImageAsset {
     public let format: ImageFormat
     public let size: CCSize32

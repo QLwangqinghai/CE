@@ -9,6 +9,66 @@
 import UIKit
 @_exported import Basic
 
+public class BaseDrawingView: UIView {
+
+    /*
+     draw (background+content)
+     shape
+     foreground
+     */
+    
+    //图形图形， 用于放临时的图形， 确认后 提交到画板上
+    public let shapeView: ViewContainer
+
+    //前景
+    public let foregroundView: ViewContainer
+    
+    internal var drawDelegate: DrawingViewDrawDelegate? = nil
+
+    public override init(frame: CGRect) {
+        let bounds = CGRect(origin: CGPoint(), size: frame.size)
+        let shapeView: ViewContainer = ViewContainer(frame: bounds)
+        self.shapeView = shapeView
+        
+        let foregroundView: ViewContainer = ViewContainer(frame: bounds)
+        foregroundView.bounds = self.bounds
+        self.foregroundView = foregroundView
+        
+        super.init(frame: bounds)
+        self.addSubview(shapeView)
+        self.addSubview(foregroundView)
+    }
+    required init?(coder: NSCoder) {
+        let shapeView: ViewContainer = ViewContainer(frame: bounds)
+        self.shapeView = shapeView
+        let foregroundView: ViewContainer = ViewContainer()
+        self.foregroundView = foregroundView
+
+        super.init(coder: coder)
+        self.addSubview(shapeView)
+        self.addSubview(foregroundView)
+        shapeView.frame = self.bounds
+        foregroundView.frame = self.bounds
+        self.foregroundView.bounds = self.bounds
+    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        self.shapeView.frame = self.bounds
+        self.foregroundView.frame = self.bounds
+        self.foregroundView.bounds = self.bounds
+    }
+
+//    open func insertSubview(_ view: UIView, at index: Int)
+//    open func exchangeSubview(at index1: Int, withSubviewAt index2: Int)
+//    open func addSubview(_ view: UIView)
+//    open func insertSubview(_ view: UIView, belowSubview siblingSubview: UIView)
+//    open func insertSubview(_ view: UIView, aboveSubview siblingSubview: UIView)
+//    open func bringSubviewToFront(_ view: UIView)
+//    open func sendSubviewToBack(_ view: UIView)
+
+}
+
 public class TouchEventHandler: NSObject {
     public var isEnabled: Bool = true
     override init() {
@@ -188,7 +248,7 @@ public final class DrawingEventRecognizer: NSObject {
         }
     }
     
-    public func touchesBegan(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
+    public func touchesBegan(view: TiledDrawingView, touches: Set<UITouch>, with event: UIEvent?) {
 //        Log.logEvent(view: view, touches: touches, event: event)
         
         if self.state == .possible {
@@ -263,7 +323,7 @@ public final class DrawingEventRecognizer: NSObject {
 //        }
     }
     
-    public func touchesMoved(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
+    public func touchesMoved(view: TiledDrawingView, touches: Set<UITouch>, with event: UIEvent?) {
 //        Log.logEvent(view: view, touches: touches, event: event)
 
         if let (status, touch, points) = self.drawingHandler.recogning {
@@ -302,7 +362,7 @@ public final class DrawingEventRecognizer: NSObject {
 //        }
     }
     
-    private func _touchesEnded(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
+    private func _touchesEnded(view: TiledDrawingView, touches: Set<UITouch>, with event: UIEvent?) {
         if let (status, touch, points) = self.drawingHandler.recogning {
             if touches.contains(touch) {
                 let point = TouchPoint(location: touch.location(in: view), timestamp: touch.timestamp)
@@ -352,12 +412,12 @@ public final class DrawingEventRecognizer: NSObject {
     }
 
     
-    public func touchesEnded(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
+    public func touchesEnded(view: TiledDrawingView, touches: Set<UITouch>, with event: UIEvent?) {
 //        Log.logEvent(view: view, touches: touches, event: event)
         self._touchesEnded(view: view, touches: touches, with: event)
 
     }
-    public func touchesCancelled(view: DrawingView, touches: Set<UITouch>, with event: UIEvent?) {
+    public func touchesCancelled(view: TiledDrawingView, touches: Set<UITouch>, with event: UIEvent?) {
 //        Log.logEvent(view: view, touches: touches, event: event)
         self._touchesEnded(view: view, touches: touches, with: event)
     }
@@ -366,25 +426,25 @@ public final class DrawingEventRecognizer: NSObject {
 public protocol DrawingViewDrawDelegate: class {
     
     //返回一个identifer
-    func drawingView(_ view: DrawingView, shouldBeginRecognizeAt point: TouchPoint) -> AnyHashable?
+    func drawingView(_ view: BaseDrawingView, shouldBeginRecognizeAt point: TouchPoint) -> AnyHashable?
     
     //开始识别
-    func drawingView(_ view: DrawingView, didBeginRecognize context: TouchPointCollection)
+    func drawingView(_ view: BaseDrawingView, didBeginRecognize context: TouchPointCollection)
      
     //识别失败
-    func drawingView(_ view: DrawingView, didRecognizedFailed context: TouchPointCollection)
+    func drawingView(_ view: BaseDrawingView, didRecognizedFailed context: TouchPointCollection)
     
     //识别成功
-    func drawingView(_ view: DrawingView, didRecognizedSuccess context: TouchPointCollection)
+    func drawingView(_ view: BaseDrawingView, didRecognizedSuccess context: TouchPointCollection)
     
-    func drawingView(_ view: DrawingView, draw context: TouchPointCollection)
+    func drawingView(_ view: BaseDrawingView, draw context: TouchPointCollection)
     
-    func drawingView(_ view: DrawingView, finish context: TouchPointCollection)
+    func drawingView(_ view: TiledDrawingView, finish context: TouchPointCollection)
 }
 
 //
 //
-//public class TiledDrawingView: DrawingView {
+//public class TiledDrawingView: BaseDrawingView {
 //    /*
 //     background
 //     content
@@ -484,114 +544,58 @@ public protocol DrawingViewDrawDelegate: class {
 //
 
 
-fileprivate class ScrollIndicator: UIView {
-
-//    public let indicator: UIImageView
-
-}
-
-
-
-public class DrawingView: UIView {
-
-    //当前工作区间
-    public private(set) var workspace: String
-
+public class TiledDrawingView: BaseDrawingView {
+    /*
+     background
+     content
+     shape
+     foreground
+     */
     
-    //背景
-    public let content: CALayer
+    public let content: CATiledLayer
     
-    //图形图形， 用于放临时的图形， 确认后 提交到画板上
-    public let shapeView: ViewContainer
-
-    //前景
-    public let foregroundView: ViewContainer
-    
-    
-    internal var drawDelegate: DrawingViewDrawDelegate? = nil
-
-    
+    public let status: DrawingStatus
     public let bitmap: DrawingBitmap
-    
-    public let size: Size
-    public let contentSize: Size
-    
-//    /// 垂直方向上的位置指示
-//    private let verticalScrollIndicator: UIImageView
-//
-//    /// 水平方向上的位置指示
-//    private let horizontalScrollIndicator: UIImageView
-
-
-//    open var showsVerticalScrollIndicator: Bool // default YES. show indicator while we are tracking. fades out after tracking
-//    open var showsHorizontalScrollIndicator: Bool // default YES. show indicator while we are tracking. fades out after tracking
-//    open var indicatorStyle: UIScrollView.IndicatorStyle // default is UIScrollViewIndicatorStyleDefault
-//    open var verticalScrollIndicatorInsets: UIEdgeInsets // default is UIEdgeInsetsZero.
-//    open var horizontalScrollIndicatorInsets: UIEdgeInsets // default is UIEdgeInsetsZero.
-    
-    
     
     private let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
 
     private var isDispatchEventToRecognizer: Bool = false
     
-    public init(frame: CGRect, workspace: String, size: Size, contentSize: Size) {
-        self.workspace = workspace
-        self.size = size
-        self.contentSize = contentSize
-        
-        let bounds = CGRect(origin: CGPoint(), size: frame.size)
-        
-        let content = CALayer()
-        content.frame = bounds
+
+    public init(status: DrawingStatus) {
+        self.status = status
+        let bounds = CGRect(origin: CGPoint(), size: status.drawingSize.cgSize)
+        let content = CATiledLayer()
         content.zPosition = -1
         content.contentsScale = UIScreen.main.scale
         self.content = content
-        
-        let shapeView: ViewContainer = ViewContainer(frame: bounds)
-        self.shapeView = shapeView
-        
-        let foregroundView: ViewContainer = ViewContainer(frame: bounds)
-        foregroundView.bounds = bounds
-        self.foregroundView = foregroundView
-        
-        self.bitmap = DrawingBitmap(size: size, contentSize: contentSize)
-        
-        super.init(frame: frame)
-        self.layer.addSublayer(content)
-        self.addSubview(shapeView)
-        self.addSubview(foregroundView)
-        
-//        self.addSubview(self.verticalScrollIndicator)
-//        self.addSubview(self.horizontalScrollIndicator)
-
+//        content.delegate = self
+//        content.frame = bounds
+        var size = status.drawingSize.rawValue
+        size.height = Int32(status.contentHeightLimit)
+        self.bitmap = DrawingBitmap(size: size, status: status)
+        super.init(frame: bounds)
         self.clipsToBounds = true
         self.layer.masksToBounds = true
         self.layer.addSublayer(content)
-        self.isMultipleTouchEnabled = true
+        self._prepare()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    private func _prepare() {
+        self.isMultipleTouchEnabled = true
+    }
     public override func layoutSubviews() {
         super.layoutSubviews()
     }
-    
-//    open func insertSubview(_ view: UIView, at index: Int)
-//    open func exchangeSubview(at index1: Int, withSubviewAt index2: Int)
-//    open func addSubview(_ view: UIView)
-//    open func insertSubview(_ view: UIView, belowSubview siblingSubview: UIView)
-//    open func insertSubview(_ view: UIView, aboveSubview siblingSubview: UIView)
-//    open func bringSubviewToFront(_ view: UIView)
-//    open func sendSubviewToBack(_ view: UIView)
-    
-    
     public func didUpdateStatus(from: DrawingStatus.Status, to status: DrawingStatus.Status) {
         var bounds = self.bounds
         bounds.origin.y = status.offset
         self.bounds = bounds
+        self.bitmap.didUpdateStatus(from: from, to: status)
     }
     
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

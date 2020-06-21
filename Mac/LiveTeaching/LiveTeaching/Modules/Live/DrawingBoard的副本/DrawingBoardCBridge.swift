@@ -7,7 +7,6 @@
 //
 
 import UIKit
-@_exported import CCFoundation
 
 public typealias Rect = CCRect32
 public typealias Size = CCSize32

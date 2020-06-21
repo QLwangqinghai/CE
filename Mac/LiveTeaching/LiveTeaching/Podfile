@@ -11,10 +11,10 @@ target 'LiveTeaching' do
   # Pods for LiveTeaching
 
 
-    pod 'CCFoundation', :path => '../../../Common/CCFoundation'
+    #pod 'CCFoundation', :path => '../../../Common/CCFoundation'
     pod 'Basic', :path => '../../../Common/Basic'
-    pod 'SITP', :path => '../../../Common/SITP'
-    pod 'FileService', :path => '../../../Common/FileService'
+    #pod 'SITP', :path => '../../../Common/SITP'
+    #pod 'FileService', :path => '../../../Common/FileService'
     pod 'UIFoundation', :path => '../UIFoundation'
     #pod 'DrawingBoard', :path => '../DrawingBoard'
 

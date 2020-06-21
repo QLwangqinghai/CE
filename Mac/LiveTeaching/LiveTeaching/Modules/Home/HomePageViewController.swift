@@ -7,7 +7,6 @@
 //
 
 import UIFoundation
-import CCFoundation
 
 
 //import UIKit.UIGestureRecognizerSubclass

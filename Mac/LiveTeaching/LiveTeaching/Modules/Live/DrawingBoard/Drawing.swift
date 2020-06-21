@@ -1,342 +1,149 @@
 //
-//  Drawing.swift
-//  T
+//  DrawingBoard.swift
+//  DrawingBoard
 //
-//  Created by vector on 2020/1/12.
-//  Copyright © 2020 angfung. All rights reserved.
+//  Created by vector on 2020/1/23.
+//  Copyright © 2020 vector. All rights reserved.
 //
 
 import UIKit
+@_exported import Basic
 
-
-//https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_context/dq_context.html#//apple_ref/doc/uid/TP30001066-CH203-BCIBHHBB
-public struct Drawing {
-
-
-}
-
-
-
-//http://blog.sina.com.cn/s/blog_894d45e20102wwrt.html
-
-public class DrawingManager {
-    
-    private var links: [TimeInterval]
-    var displaylink: CADisplayLink?
-    
-    func createDisplayLink() {
-        // 创建CADisplayLink
-        displaylink = CADisplayLink(target: self,
-                                    selector: #selector(DrawingManager.onDisplaylink))
-        displaylink!.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
-    }
-    
-    
-//    open var timestamp: CFTimeInterval { get }
-//
-//    open var duration: CFTimeInterval { get }
-//
-//
-//    /* The next timestamp that the client should target their render for. */
-//
-//    @available(iOS 10.0, *)
-//    open var targetTimestamp: CFTimeInterval { get }
-
-    
-    
-    @objc func onDisplaylink(displaylink: CADisplayLink) {
-        // 打印时间戳
-//        print("current:\(CACurrentMediaTime()) linkInfo.current:\(displaylink.timestamp) linkInfo.target\(displaylink.targetTimestamp)")
-    }
-    
-    // 停止CADisplayLink
-    func stopDisplaylink() {
-        displaylink?.invalidate()
-        displaylink = nil
-    }
-    init() {
-        self.links = []
-        self.createDisplayLink()
-        self.links.reserveCapacity(61)
-    }
-    
-    
-    public static let shared: DrawingManager = DrawingManager()
-    
-}
-
-/*
-video: 16 * 9
-video: 4 * 3
-video: 3 * 2
-
- 3/3/5 45 720
- 3/5   60 960
- 3/5   75 1200
- 3/5   80 1280
-
- 
-width: 720、810、960、1080、1280、1440、1620、1920
-       6    7   8    9     10    12   13    1
-960 * 540
-720 * 540
-810 * 540
-
-1280 * 720
-960 * 720
-1080 * 720
-
-1920 * 1080
-1440 * 1080
-1620 * 1080
-
-//72 54 108  180 * 4 180 * 3 180 * 6
-
-*/
-public enum DrawingSize {
-    case preset960x540
-
-    //good
-    case preset960x720
-    case preset1280x720
-    case preset1280x1080
-
-    //good
-    case preset1440x1080
-    case preset1920x1080
-
-    public var rawValue: Size {
-        switch self {
-        case .preset960x540: return Size(width: 960, height: 540)
-        case .preset960x720: return Size(width: 960, height: 720)
-        case .preset1280x720: return Size(width: 1280, height: 720)
-        case .preset1280x1080: return Size(width: 1280, height: 1080)
-        case .preset1440x1080: return Size(width: 1440, height: 1080)
-        case .preset1920x1080: return Size(width: 1920, height: 1080)
-        }
-    }
-    public var cgSize: CGSize {
-        let s = self.rawValue
-        return CGSize(width: CGFloat(s.width) / UIScreen.main.scale, height: CGFloat(s.height) / UIScreen.main.scale)
-    }
-}
-
-
-
-//public struct Manager {
-////    public static let context: DrawingContainer = DrawingContainer()
-////    public static let specificKey: DispatchSpecificKey<DrawingContainer> = DispatchSpecificKey<DrawingContainer>()
-////    public static let queue: DispatchQueue = {
-////        let q = DispatchQueue(label: "d", qos: DispatchQoS.userInitiated, attributes: [], autoreleaseFrequency: .inherit, target: nil)
-////        q.setSpecific(key: Manager.specificKey, value: Manager.context)
-////        return q
-////    }()
-//
+//public class Drawing {
+//    public struct DrawingBoardContext: Equatable {
+//        public var identifier: String
+//        public var sequence: UInt64
+//        public var offset: Int32
+//        public static func == (_ lhs: DrawingBoardContext, _ rhs: DrawingBoardContext) -> Bool {
+//            return lhs.identifier == rhs.identifier && lhs.sequence == rhs.sequence && lhs.offset == rhs.offset
+//        }
+//    }
 //    
+//    public private(set) var context: DrawingBoardContext? = nil
+//    public let size: Size
 //    
+//    public let bitmapBuffer: BitmapByteBuffer
+//    public let bitmapContext: CGContext
+//    public let bitmapInfo: BitmapInfo
+//    public init(size: Size, bitmapInfo: BitmapInfo) {
+//        assert(size.height > 0)
+//        assert(size.width > 0)
+//        let bytesPerRow = Int(bitmapInfo.bytesPerPixel * size.width)
+//        self.bitmapInfo = bitmapInfo
+//        let bitmapBuffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
+//        self.bitmapBuffer = bitmapBuffer
 //
-//
-//}
-//
-//public class ByteBuffer: NSObject {
-//    public let ptr: UnsafeMutableRawPointer
-//    public let size: Int
-//    public init(ptr: UnsafeMutableRawPointer, size: Int) {
-//        assert(size > 0);
-//        self.ptr = ptr
+//        let colorSpace = bitmapInfo.space
+//        self.bitmapContext = CGContext(data: bitmapBuffer.ptr, width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(bitmapInfo.bitsPerComponent), bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo.bitmapInfo, releaseCallback: { (context, ptr) in
+//        }, releaseInfo: nil)!
 //        self.size = size
 //    }
-//    public init(size: Int) {
-//        assert(size > 0);
-//        self.ptr = UnsafeMutableRawPointer.allocate(byteCount: size, alignment: CCGetCachelineSize())
-//        self.size = size
-//    }
-//    deinit {
-//        self.ptr.deallocate()
-//    }
-//}
-//public class FileContent {
-//    public let path: String
-//
-//    //标识文件是否为空
-//    public var meta: ByteBuffer? {
-//        didSet(old) {
-//            if old != self.meta {
-//                FileManager.shared.setNeedsSync(meta: self.meta, to: self.path)
-//            }
-//        }
-//    }
-//    public init(path: String, meta: ByteBuffer?) {
-//        self.meta = meta
-//        self.path = path
-//    }
-//    public func setNeedsSyncToFile() {
-//        FileManager.shared.setNeedsSync(meta: self.meta, to: self.path)
-//    }
-//}
-//
-//public class FileManager {
-//    /*
-//     userId/liveId/dirId/pageId/bg/y
-//     userId/liveId/dirId/pageId/drawing/y
-//     userId/liveId/dirId/pageId/function/xx/xx
-//     */
 //    
-//    private let lock: NSLock = NSLock()
-//    private var dictionary: [String: FileData] = [:]
-//    
-//    private let markLock: NSLock = NSLock()
-//    private var markedRemoves: [FileData] = []
-//
-//    public func setNeedsRemove(_ item: FileData) {
-//        self.markLock.lock()
-//        self.markedRemoves.append(item)
-//        self.markLock.unlock()
-//    }
-//    
-//    public static let shared: FileManager = FileManager()
-//    
-//    public func clear() {
-//        self.markLock.lock()
-//        let items = self.markedRemoves
-//        self.markedRemoves.removeAll()
-//        self.markLock.unlock()
-//        self.lock.lock()
-//        for item in items {
-//            if item.isDiscarded() {
-//                self.dictionary.removeValue(forKey: item.path)
-//            }
-//        }
-//        self.lock.unlock()
-//    }
-//    
-//    public func beginAccessFileData(path: String) -> FileData {
-//        self.lock.lock()
-//        let result: FileData
-//        if let item = self.dictionary[path] {
-//            result = item
-//        } else {
-//            result = FileData(path: path)
-//            self.dictionary[path] = result
-//        }
-//        self.lock.unlock()
-//        result.beginAccess()
-//        return result
-//    }
-//    public func endAccess(fileData: FileData) {
-//        fileData.endAccess()
-//    }
-//    
-//    public func loadContent(of filePath: String) -> FileContent {
-//        return FileContent(path:filePath, meta: nil)
-//    }
-//
-//    public func setNeedsSync(meta: ByteBuffer?, to path: String) {
+//    private func clear() {
 //        
 //    }
+//    
+//    public func map(rect: CGRect, scale: CGFloat) -> Rect? {
+//        var frame = rect.standardized
+//        frame = rect.inset(by: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
+//        var bounds = Rect(x: Int32(frame.origin.x * scale), y: Int32(frame.origin.y * scale), width: Int32(frame.size.width * scale), height: Int32(frame.size.height * scale))
 //
+////        bounds = C2DRectEnlargeFrame(<#T##from: C2DRect##C2DRect#>, <#T##to: C2DRect##C2DRect#>)
+//
+//
+//        if Int64(bounds.origin.x) + Int64(bounds.size.width) < 0 {
+//            return nil
+//        }
+//        if Int64(bounds.origin.y) + Int64(bounds.size.height) < 0 {
+//            return nil
+//        }
+//        
+//        if bounds.origin.x < 0 {
+//            bounds.size.width -= Int32(rect.origin.x * -1)
+//            bounds.origin.x = 0
+//        }
+//        if rect.origin.y < 0 {
+//            bounds.size.height -= Int32(rect.origin.y * -1)
+//            bounds.origin.y = 0
+//        }
+/////TODO: F
+//        
+////        let alignment = Int32(CCGetCachelineSize()) / self.bitmapInfo.colorSpace.bytesPerPixel
+////
+////        if alignment > 1 {
+////            let xOffset = bounds.origin.x % Int32(alignment)
+////            bounds.origin.x -= xOffset
+////            bounds.size.width += Int32(xOffset)
+////
+////            let widthOffset = bounds.size.width % Int32(alignment)
+////            if widthOffset > 0 {
+////                bounds.size.width += (Int32(alignment) - widthOffset)
+////            }
+////        }
+//        return bounds
+//    }
+//
+//    
+////    public func map(rect: CGRect, config: DrawingContainer.BoxConfig, originY: Int32, frames: inout [Int32: C2DBytesRange]) -> C2DRect? {
+////        var frame = rect.standardized
+////        frame = rect.inset(by: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
+////        let scale = config.scale
+////        var bounds = C2DRectMake(Int32(tmp.origin.x * scale) - 1, Int32(tmp.origin.y * scale) - 1, Int32(tmp.size.width * scale) + 2, Int32(tmp.size.height * scale) + 2)
+////        let m = C2DRectMake(0, 0, config.contextSize.width, INT32_MAX)
+////
+////        if !C2DRectIntersect(m, bounds, &bounds) {
+////            return nil
+////        }
+////
+//////        bounds = C2DRectEnlargeFrame(<#T##from: C2DRect##C2DRect#>, <#T##to: C2DRect##C2DRect#>)
+////        if bounds.origin.x % 2 != 0 {
+////            bounds.origin.x -= 1
+////            bounds.size.width += 1
+////        }
+////        if bounds.origin.y % 2 != 0 {
+////            bounds.origin.y -= 1
+////            bounds.size.height += 1
+////        }
+////        if bounds.size.width % 2 != 0 {
+////            bounds.size.width += 1
+////        }
+////        if bounds.size.height % 2 != 0 {
+////            bounds.size.height += 1
+////        }
+////
+////        var rect = C2DRect()
+////        if rect.origin.x < 0 {
+////            rect.size.width += rect.origin.x
+////            rect.origin.x = 0
+////        }
+////        if rect.origin.y < 0 {
+////            rect.origin.y = 0
+////        }
+////
+////        if config.colorSpace.bytesPerPixel < 8 {
+////            let mask = (8 / config.colorSpace.bytesPerPixel)
+////            let offset = x % mask
+////            if offset != 0 {
+////                rect.origin.x -= offset
+////                rect.size.width += offset
+////            }
+////        }
+////        return rect
+////    }
+//
+//    
+////    public func begin(controller: DrawingBoardController, offset: Int32) throws {
+////        let context = DrawingBoardContext(identifier: controller.pageContext.identifier, sequence: controller.sequence, offset: offset)
+////        if self.context != context {
+////            self.context = context
+////            self.clear()
+////        }
+////    }
+//    
+//    public func beginDrawing() {}
+//    
+//    public func finish() {
+//        
+//    }
 //}
 //
-
-public class DisplayManager {
-    private var links: [TimeInterval]
-    private var last: Int64 = 0
-    
-    /*
-     10 58 +
-     9 55 - 57
-     8 52 - 54
-     7 49 - 51
-     6 45 - 48
-     5 40 - 44
-     4 30 - 39
-     3 20 - 29
-     2 10 - 19
-     1 1 - 9
-     0 0
-     */
-    private var level: (Int64, Int) = (0, 0) {
-       didSet(old) {
-           let new = self.level
-           if old != new {
-            print("fps time:\(new.0) level:\(new.1)")
-           }
-       }
-   }
-    private var fps: (Int64, Int) = (0, 0) {
-        didSet(oldValue) {
-            let old = oldValue.1
-            let new = self.fps.1
-            if old != new {
-                if new >= 58 {
-                    self.level = (self.fps.0, 10)
-                } else if new >= 55 {
-                    self.level = (self.fps.0, 9)
-                } else if new >= 52 {
-                    self.level = (self.fps.0, 8)
-                } else if new >= 49 {
-                    self.level = (self.fps.0, 7)
-                } else if new >= 45 {
-                    self.level = (self.fps.0, 6)
-                } else if new >= 40 {
-                    self.level = (self.fps.0, 5)
-                } else if new >= 30 {
-                    self.level = (self.fps.0, 4)
-                } else if new >= 20 {
-                    self.level = (self.fps.0, 3)
-                } else if new >= 10 {
-                    self.level = (self.fps.0, 2)
-                } else if new >= 1 {
-                    self.level = (self.fps.0, 1)
-                } else {
-                    self.level = (self.fps.0, 0)
-                }
-            }
-        }
-    }
-
-    var displaylink: CADisplayLink?
-    
-    func createDisplayLink() {
-        // 创建CADisplayLink
-        let displaylink = CADisplayLink(target: self,
-                                    selector: #selector(DisplayManager.onDisplaylink))
-        if #available(iOS 10, *) {
-            displaylink.preferredFramesPerSecond = 60
-        } else {
-            displaylink.frameInterval = 1
-        }
-        displaylink.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
-        self.displaylink = displaylink
-    }
-    
-    @objc func onDisplaylink(displaylink: CADisplayLink) {
-        self.check(timestamp: displaylink.timestamp)
-    }
-    func check(timestamp: TimeInterval) {
-        let last = Int64(timestamp)
-        if last != self.last {
-            if self.last + 1 == last {
-                self.fps = (self.last, self.links.count)
-                self.links.removeAll()
-                self.last = last
-            } else {
-                self.fps = (last - 1, 0)
-                self.links.removeAll()
-                self.last = last
-            }
-        }
-        self.links.append(timestamp)
-    }
-    func stopDisplaylink() {
-        displaylink?.invalidate()
-        displaylink = nil
-    }
-    init() {
-        self.links = [0]
-        self.createDisplayLink()
-        self.links.reserveCapacity(60)
-    }
-    public static let shared: DisplayManager = DisplayManager()
-}
-

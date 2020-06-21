@@ -17,12 +17,7 @@ public final class BitmapByteBuffer {
     public let bytesPerRow: Int
     public let ptr: UnsafeMutableRawPointer
 
-    public init(size: Size, bitmapInfo: BitmapInfo, byteCount: Int, bytesPerRow: Int) {
-        assert(size.height > 0)
-        assert(size.width > 0)
-        assert(byteCount > 0)
-        assert(bytesPerRow > 0)
-        
+    private init(size: Size, bitmapInfo: BitmapInfo, byteCount: Int, bytesPerRow: Int) {
         let ptr = UnsafeMutableRawPointer.allocate(byteCount: byteCount, alignment: 0)
         self.size = size
         self.ptr = ptr
@@ -31,14 +26,14 @@ public final class BitmapByteBuffer {
         self.byteCount = byteCount
     }
     
-//    public convenience init(size: Size, bitmapInfo: BitmapInfo) {
-//        assert(size.height > 0)
-//        assert(size.width > 0)
-//        
-//        let bytesPerRow = Int(bitmapInfo.bytesPerPixel) * Int(size.width)
-//        let byteCount = bytesPerRow * Int(size.height)
-//        self.init(size: size, bitmapInfo: bitmapInfo, byteCount: byteCount, bytesPerRow: bytesPerRow)
-//    }
+    public convenience init(size: Size, bitmapInfo: BitmapInfo) {
+        assert(size.height > 0)
+        assert(size.width > 0)
+        
+        let bytesPerRow = Int(bitmapInfo.bytesPerPixel) * Int(size.width)
+        let byteCount = bytesPerRow * Int(size.height)
+        self.init(size: size, bitmapInfo: bitmapInfo, byteCount: byteCount, bytesPerRow: bytesPerRow)
+    }
     deinit {
         self.ptr.deallocate()
     }
@@ -173,7 +168,7 @@ open class BitmapLayer: CALayer {
 
 open class BaseBitmap {
     public let size: Size
-    internal init(size: Size) {
+    fileprivate init(size: Size) {
         assert(size.height > 0)
         assert(size.width > 0)
         self.size = size
@@ -185,16 +180,12 @@ public class ARGBBitmap: BaseBitmap {
     public let bitmapContext: CGContext
     
     //size 宽高必须>0
-    public override init(size: Size) {
+    public init(size: Size) {
         assert(size.height > 0)
         assert(size.width > 0)
 
-        let bitmapInfo = BitmapInfo.littleArgb8888
-        let bytesPerRow = Int(bitmapInfo.bytesPerPixel) * Int(size.width)
-        let byteCount = bytesPerRow * Int(size.height)
-        let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo, byteCount: byteCount, bytesPerRow: bytesPerRow)
-        self.buffer = buffer
-        self.bitmapContext = buffer.makeContext(origin: Point.zero, size: size)!
+        let buffer = BitmapByteBuffer(size: size, bitmapInfo: BitmapInfo.littleArgb8888)
+        self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
         super.init(size: size)
     }
 }
@@ -213,8 +204,8 @@ public class RGBBitmap: BaseBitmap {
         //纹理
         case pattern(image: CGImage)
     }
-//    public let backgroundColor: UIColor
-//    private let _backgroundColor: UInt32
+    public let backgroundColor: UIColor
+    private let _backgroundColor: UInt32
     public let background: Background
     public let buffer: BitmapByteBuffer
     public let bitmapContext: CGContext
@@ -224,11 +215,8 @@ public class RGBBitmap: BaseBitmap {
     private init(size: Size, background: Background, bitmapInfo: BitmapInfo) {
         assert(size.height > 0)
         assert(size.width > 0)
-        let bytesPerRow = Int(bitmapInfo.bytesPerPixel) * Int(size.width)
-        let byteCount = bytesPerRow * Int(size.height)
-        let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo, byteCount: byteCount, bytesPerRow: bytesPerRow)
-        self.buffer = buffer
-        self.bitmapContext = buffer.makeContext(origin: Point.zero, size: size)!
+        let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo)
+        self.bitmapContext = buffer.makeContext(origin: Point(), size: size)!
         self.background = background
         super.init(size: size)
     }
@@ -262,19 +250,18 @@ public protocol BitmapTileContent: class {
 }
 
 public class BitmapTile {
-    public static let tileSize: Size = Size(width: 256, height: 256)
-    
+    public static let tileSize: Int32 = 256
     public static func sizeAlignment(size: Size) -> Size {
-        var result = Size.zero
+        var result = Size()
         if size.width >= 0 {
-            result.width = (size.width + tileSize.width - 1) / tileSize.width * tileSize.width
+            result.width = (size.width + tileSize - 1) / tileSize * tileSize
         } else {
-            result.width = (size.width - tileSize.width + 1) / tileSize.width * tileSize.width
+            result.width = (size.width - tileSize + 1) / tileSize * tileSize
         }
         if size.height >= 0 {
-            result.height = (size.height + tileSize.height - 1) / tileSize.height * tileSize.height
+            result.height = (size.height + tileSize - 1) / tileSize * tileSize
         } else {
-            result.height = (size.height - tileSize.height + 1) / tileSize.height * tileSize.height
+            result.height = (size.height - tileSize + 1) / tileSize * tileSize
         }
         return result
     }
@@ -289,8 +276,8 @@ public class BitmapTile {
         assert(size.width > 0)
         assert(size.height > 0)
 
-        assert(size.width % BitmapTile.tileSize.width == 0)
-        assert(size.height % BitmapTile.tileSize.height == 0)
+        assert(size.width % BitmapTile.tileSize == 0)
+        assert(size.height % BitmapTile.tileSize == 0)
 
         self.origin = origin
         self.size = size
@@ -312,94 +299,94 @@ public protocol TiledBitmapDataSource: class {
     
 }
 
-//public class TiledBitmap: BaseBitmap {
-//    //visibleFrame 一定是当前bounds 的一个子集
-//    public fileprivate(set) var visibleFrame: Rect {
-//        didSet(old) {
-//            if self.visibleFrame != old {
-//                self.visibleFrameDidChange(from: old, to: self.visibleFrame)
+public class TiledBitmap: BaseBitmap {
+    //visibleFrame 一定是当前bounds 的一个子集
+    public fileprivate(set) var visibleFrame: Rect {
+        didSet(old) {
+            if self.visibleFrame != old {
+                self.visibleFrameDidChange(from: old, to: self.visibleFrame)
+            }
+        }
+    }
+    
+    public let tiles: [TiledLine]
+    public private(set) var visibleTiles: [Point: BitmapTile]
+    
+    //size 宽高必须>0
+    public init(size: Size, background: Background, visibleFrame: Rect, bitmapInfo: BitmapInfo) {
+        assert(size.height > 0)
+        assert(size.width > 0)
+        
+        var yRow: Int32 = 0
+        let tileSize = Size(width: BitmapTile.tileSize, height: BitmapTile.tileSize)
+        var lines: [TiledLine] = []
+
+        while yRow < size.height {
+            let line = TiledLine(y: yRow)
+            var xRow: Int32 = 0
+            while xRow < size.width {
+                let tile = BitmapTile(origin: Point(x: xRow, y: yRow), size: tileSize)
+                line.items.append(tile)
+                xRow += tileSize.width
+            }
+            lines.append(line)
+            yRow += tileSize.height
+        }
+        self.tiles = lines
+        self.visibleFrame = visibleFrame
+        super.init(size: size, background:background)
+    }
+    
+    open func updateVisibleFrame(origin: Point, size: Size) {
+        self.update(visibleFrame: Rect(origin: origin, size: size))
+    }
+    open func update(visibleFrame: Rect) {
+        let frame = visibleFrame.standardize()
+        self.visibleFrame = frame
+    }
+    open func visibleFrameDidChange(from: Rect, to: Rect) {
+        var visibleTiles: [Point: BitmapTile] = [:]
+        self.tiles(in: to).forEach { (tile) in
+            visibleTiles[tile.origin] = tile
+        }
+        
+//        self.visibleTiles.keys.forEach { (origin) in
+//            if !set.contains(origin) {
+//                self.visibleTiles.removeValue(forKey: origin)
 //            }
 //        }
-//    }
-//
-//    public let tiles: [TiledLine]
-//    public private(set) var visibleTiles: [Point: BitmapTile]
-//
-//    //size 宽高必须>0
-//    public init(size: Size, background: Background, visibleFrame: Rect, bitmapInfo: BitmapInfo) {
-//        assert(size.height > 0)
-//        assert(size.width > 0)
-//
-//        var yRow: Int32 = 0
-//        let tileSize = BitmapTile.tileSize
-//        var lines: [TiledLine] = []
-//
-//        while yRow < size.height {
-//            let line = TiledLine(y: yRow)
-//            var xRow: Int32 = 0
-//            while xRow < size.width {
-//                let tile = BitmapTile(origin: Point(x: xRow, y: yRow), size: tileSize)
-//                line.items.append(tile)
-//                xRow += tileSize.width
-//            }
-//            lines.append(line)
-//            yRow += tileSize.height
-//        }
-//        self.tiles = lines
-//        self.visibleFrame = visibleFrame
-//        super.init(size: size, background:background)
-//    }
-//
-//    open func updateVisibleFrame(origin: Point, size: Size) {
-//        self.update(visibleFrame: Rect(origin: origin, size: size))
-//    }
-//    open func update(visibleFrame: Rect) {
-//        let frame = visibleFrame.standardize()
-//        self.visibleFrame = frame
-//    }
-//    open func visibleFrameDidChange(from: Rect, to: Rect) {
-//        var visibleTiles: [Point: BitmapTile] = [:]
-//        self.tiles(in: to).forEach { (tile) in
-//            visibleTiles[tile.origin] = tile
-//        }
-//
-////        self.visibleTiles.keys.forEach { (origin) in
-////            if !set.contains(origin) {
-////                self.visibleTiles.removeValue(forKey: origin)
-////            }
-////        }
-////        set.forEach { (origin) in
-////            if let _ = self.visibleTile[origin] {
-////
-////
-////            } else {
-////                self.visibleTiles[origin] =
-////            }
-////        }
-////        self.visibleTiles.keys.forEach { (origin) in
-////            if !set.contains(origin) {
-////                self.visibleTiles.removeValue(forKey: origin)
-////            }
-////        }
-//    }
-//
-//    open func tiles(in bounds: Rect) -> [BitmapTile] {
-//        var result: [BitmapTile] = []
-//        let xEnd = bounds.origin.x + bounds.size.width
-//        let yEnd = bounds.origin.y + bounds.size.height
-//
-//        let xBegin = bounds.origin.x / BitmapTile.tileSize * BitmapTile.tileSize
-//        let yBegin = bounds.origin.y / BitmapTile.tileSize * BitmapTile.tileSize
-//
-//        let lines = self.tiles.filter { (line) -> Bool in
-//            return line.y >= yBegin && line.y < yEnd
-//        }
-//        lines.forEach { (line) in
-//            line.items.forEach { (tile) in
-//                if tile.origin.x >= xBegin && tile.origin.x < xEnd {
-//                    result.append(tile)
-//                }
+//        set.forEach { (origin) in
+//            if let _ = self.visibleTile[origin] {
+//                
+//                
+//            } else {
+//                self.visibleTiles[origin] =
 //            }
 //        }
-//    }
-//}
+//        self.visibleTiles.keys.forEach { (origin) in
+//            if !set.contains(origin) {
+//                self.visibleTiles.removeValue(forKey: origin)
+//            }
+//        }
+    }
+    
+    open func tiles(in bounds: Rect) -> [BitmapTile] {
+        var result: [BitmapTile] = []
+        let xEnd = bounds.origin.x + bounds.size.width
+        let yEnd = bounds.origin.y + bounds.size.height
+
+        let xBegin = bounds.origin.x / BitmapTile.tileSize * BitmapTile.tileSize
+        let yBegin = bounds.origin.y / BitmapTile.tileSize * BitmapTile.tileSize
+        
+        let lines = self.tiles.filter { (line) -> Bool in
+            return line.y >= yBegin && line.y < yEnd
+        }
+        lines.forEach { (line) in
+            line.items.forEach { (tile) in
+                if tile.origin.x >= xBegin && tile.origin.x < xEnd {
+                    result.append(tile)
+                }
+            }
+        }
+    }
+}

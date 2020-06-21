@@ -41,6 +41,8 @@ public extension UIViewController {
             return handler;
         }
     }
+    
+    //返回
     @objc func back(sender: UIViewController, animate: Bool, completion: (() -> Void)?) -> Bool {
         guard let parent = self.parent else {
             if let presentingViewController = self.presentingViewController {
@@ -61,6 +63,7 @@ public extension UIViewController {
         }
     }
     
+    //关闭子控制器
     @objc func close(child: UIViewController, sender: UIViewController, animate: Bool, completion: (() -> Void)?) -> Bool {
         return false
     }
@@ -69,6 +72,8 @@ public extension UIViewController {
 }
 
 public extension UINavigationController {
+    
+    //关闭子控制器
     @objc override func close(child: UIViewController, sender: UIViewController, animate: Bool, completion: (() -> Void)?) -> Bool {
         if super.close(child: child, sender: sender, animate: animate, completion: completion) {
             return true

@@ -149,7 +149,6 @@ open class BaseTestViewController: BaseViewController {
     override open func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = UIColor(white: CGFloat(arc4random() % 1000) / 1000.0, alpha: 1.0)
-        // Do any additional setup after loading the view.
+        self.view.backgroundColor = UIColor(red: CGFloat(arc4random() % 255) / 255.0, green: CGFloat(arc4random() % 255) / 255.0, blue: CGFloat(arc4random() % 255) / 255.0, alpha: 1.0)
     }
 }

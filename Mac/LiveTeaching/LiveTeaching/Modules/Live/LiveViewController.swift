@@ -14,7 +14,7 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
     }
     
 //    public let drawingBoard: DrawingBoard
-    public let containerController: DrawingContainerController = {
+    public let drawingBoardController: DrawingBoardController = {
         let scale = UIScreen.main.scale
         let screenSize: CGSize = UIScreen.main.size
         let min = screenSize.width < screenSize.height ? screenSize.width : screenSize.height
@@ -26,8 +26,9 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         }
         
         //Drawing.BitmapLayout(width: drawingSize.rawValue.width, colorSpace: Drawing.ColorSpace.little16Xrgb, backgroundColor: Drawing.Color(little32Argb: 0))
-        
-        let controller = DrawingContainerController(frame: CGRect(), contentSize:drawingSize.rawValue)
+        var contentSize = drawingSize.rawValue
+        contentSize.height *= 16
+        let controller = DrawingBoardController(frame: CGRect(), workspace: "", size: drawingSize.rawValue, contentSize:contentSize)
         return controller
     } ()
     let textField: UITextField = UITextField(frame: CGRect(x: 20, y: 20, width: 80, height: 30))
@@ -35,7 +36,7 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        self.view.addSubview(self.drawingController.content)
-        self.view.addSubview(self.containerController.window)
+        self.view.addSubview(self.drawingBoardController.drawingBoard)
         self.resetContainerControllerLayout()
         
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: 30, height: 400))
@@ -89,7 +90,7 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         frame.size.width = bounds.size.height * 4 / 3
         frame.origin.x = bounds.size.width - frame.size.width
         frame.origin.y = 0
-        self.containerController.frame = frame
+        self.drawingBoardController.frame = frame
     }
     
         

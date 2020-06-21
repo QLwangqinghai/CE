@@ -31,18 +31,100 @@ public class BitmapTileCell: BitmapTileContent {
         ctx.setFillColor(UIColor(red: red, green: green, blue: blue, alpha: 1).cgColor)
         ctx.fill(bounds)
         
-        print("draw(_ layer  \(bounds)")
+        print("draw(in ctx:), \(bounds)")
     }
     
 }
 
 
-public class DrawingBitmap: TiledBitmap {
+public class TileManager {
+    public let tiles: [TiledLine] = []
+    public private(set) var visibleTiles: [Point: BitmapTile] = [:]
+
+    //visibleFrame 一定是当前bounds 的一个子集
+    public fileprivate(set) var visibleFrame: Rect {
+        didSet(old) {
+            if self.visibleFrame != old {
+
+            }
+        }
+    }
+    
+    fileprivate class TileEntry {
+        var value: BitmapTile?
+        init(value: BitmapTile?) {
+            self.value = value
+        }
+    }
+    private let tileCache: [Point: TileEntry] = [:]
+
+    public init() {
+        self.visibleFrame = Rect.zero
+    }
+        
+    open func tiles(in bounds: Rect) -> [(Rect, BitmapTile)] {
+//        var result: [BitmapTile] = []
+//        let xEnd = bounds.origin.x + bounds.size.width
+//        let yEnd = bounds.origin.y + bounds.size.height
+//
+//        let xBegin = bounds.origin.x / BitmapTile.tileSize.width * BitmapTile.tileSize.width
+//        let yBegin = bounds.origin.y / BitmapTile.tileSize.height * BitmapTile.tileSize.height
+//
+//        let lines = self.tiles.filter { (line) -> Bool in
+//            return line.y >= yBegin && line.y < yEnd
+//        }
+//        lines.forEach { (line) in
+//            line.items.forEach { (tile) in
+//                if tile.origin.x >= xBegin && tile.origin.x < xEnd {
+//                    result.append(tile)
+//                }
+//            }
+//        }
+        return []
+    }
+
+
+}
+
+
+public class DrawingBitmap: BaseBitmap {
+    //按照最低5mb/ms的memcpy速率设计
+    
+    public static let minChange: Point = {
+        var p = Point(x: 1, y: 1)
+        if UInt64(Int.max) == UInt64(Int64.max) {
+            p.x = 2
+        }
+        return p
+    }()
+    
+    
+    public fileprivate(set) var contentOffset: Point {
+        didSet(old) {
+            if self.contentOffset != old {
+                self.updateVisibleFrame(origin: self.contentOffset, size: self.size)
+            }
+        }
+    }
+    
+    //visibleFrame 一定是当前bounds 的一个子集
+    public fileprivate(set) var visibleFrame: Rect {
+        didSet(old) {
+            if self.visibleFrame != old {
+                self.visibleFrameDidChange(from: old, to: self.visibleFrame)
+            }
+        }
+    }
+    
+    private let tileManager: TileManager = TileManager()
+
+    
+    
+    
     var onSequenceUpdate: ((DrawingBitmap) -> Void)? = nil
     public private(set) var sequence: UInt64 = 0
     public let sliceSize: Size
     
-    public let bitmapContext: CGContext
 
 //    public var image: CGImage {
 //        let bitmapLayout = self.status.bitmapLayout
@@ -50,205 +132,138 @@ public class DrawingBitmap: TiledBitmap {
 //        let image = CGImage(width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: colorSpace.bitmapInfo), provider: self.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)!
 //        return image
 //    }
-    public private(set) var slices: [DrawingBitmapSliceLayer] = []
     
-    public let dataProvider: CGDataProvider
-    public var contentHeight: UInt32 {
+    public var contentSize: Size {
         didSet(old) {
-            if old != self.contentHeight {
-                let scale = UIScreen.main.scale
-                self.layer.frame = CGRect(x: 0, y: 0, width: CGFloat(self.size.width) / scale, height: CGFloat(self.contentHeight) / scale)
-                
-                if let last = self.slices.last {
-                    if last.size != self.sliceSize {
-                        last.removeFromSuperlayer()
-                        self.slices.removeLast()
-                    }
-                }
-                let count = Int(self.contentHeight / self.sliceSize.height)
-                if count > self.slices.count {
-                    for idx in self.slices.count ..< count {
-                        let y = UInt32(idx) * self.sliceSize.height
-                        let dataProvider: CGDataProvider = self.makeDataProvider(y: y, height: self.sliceSize.height)
-                        let layer = DrawingBitmapSliceLayer(y: y, size: self.sliceSize, dataProvider: dataProvider)
-                        self.layer.addSublayer(layer)
-                        self.slices.append(layer)
-                    }
-                } else if count < self.slices.count {
-                    for item in self.slices.suffix(self.slices.count - count) {
-                        item.removeFromSuperlayer()
-                    }
-                    self.slices.removeLast(self.slices.count - count)
-                }
-                let remain = self.contentHeight % self.sliceSize.height
-                if remain > 0 {
-                    var size = self.sliceSize
-                    size.height = remain
-                    let y = UInt32(self.slices.count) * self.sliceSize.height
-                    let dataProvider: CGDataProvider = self.makeDataProvider(y: y, height: remain)
-                    let layer = DrawingBitmapSliceLayer(y: y, size: size, dataProvider: dataProvider)
-                    self.layer.addSublayer(layer)
-                    self.slices.append(layer)
-                }
-                
+            if old != self.contentSize {
+
                 
             }
         }
     }
-    var timer: DispatchSourceTimer?
-//    let observer = DrawingStatus.Observer()
 
-    public let status: DrawingStatus
-    public init(size: Size, contentHeight: UInt32 = 0, status: DrawingStatus) {
-        let bitmapLayout = status.bitmapLayout
-        assert(size.height > 0)
-        assert(size.width <= bitmapLayout.countPerRow)
-        var sliceSize: Size = size
-        sliceSize.height = size.width / 2
-        self.sliceSize = sliceSize
-        self.status = status
-        self.contentHeight = contentHeight
-        let bufferSize = bitmapLayout.bytesPerRow * Int(size.height)
-        let ptr = UnsafeMutableRawPointer.allocate(byteCount: bufferSize, alignment: CCGetCachelineSize())
-        self.ptr = ptr
-        self.bufferSize = bufferSize
-        
-        let colorSpace = bitmapLayout.colorSpace
-        let bitmapContext = CGContext(data: ptr, width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bytesPerRow: bitmapLayout.bytesPerRow, space: colorSpace.space, bitmapInfo: colorSpace.bitmapInfo, releaseCallback: { (context, ptr) in
-        }, releaseInfo: nil)!
-        let layer: BitmapLayer = BitmapLayer()
-        layer.zPosition = -100
-        let scale = UIScreen.main.scale
-        layer.frame = CGRect(x: 0, y: 0, width: CGFloat(size.width) / scale, height: CGFloat(contentHeight) / scale)
-        
-        let dataProvider = CGDataProvider(dataInfo: nil, data: self.ptr, size: self.bufferSize) { (mptr, ptr, size) in
-            print("de")
-            }!
-        self.dataProvider = dataProvider
-        
-//        let image = CGImage(width: Int(size.width), height: Int(size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: colorSpace.bitmapInfo), provider: self.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)!
-//        self.image = image
-        
-//        let timer: DispatchSourceTimer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(), queue: DispatchQueue.main)
-//        timer.schedule(deadline: DispatchTime.now(), repeating: 2)
-//        self.timer = timer
-//        timer.setEventHandler {
-//            print("timer setmem")
-//            let size = Int(self.bufferSize)
-//            let random = Int(arc4random()) % 10 * self.status.bitmapLayout.bytesPerRow * 64
-//            memset(self.ptr.advanced(by: random), Int32(arc4random()/2), self.status.bitmapLayout.bytesPerRow * 64)
-//            self.displayContent()
-//        }
-//        timer.resume()
-//
-//        print("self.bufferSize: \(self.bufferSize)")
-//
-//
-//        let timeBegin = CFAbsoluteTimeGetCurrent();
-//        self.bitmapContext.setFillColor(UIColor.white.cgColor)
-//        self.bitmapContext.fill(CGRect.init(x: 0, y: 0, width: 100000, height: 2000000))
-//        let timeEnd = CFAbsoluteTimeGetCurrent();
-//        print(timeEnd - timeBegin)
-//
-//        CCMemorySetUInt64(self.ptr, 0x7f_ff_7f_80_70_ff_7f_ff, self.bufferSize/8)
-//        let timeEnd2 = CFAbsoluteTimeGetCurrent();
-//        print(timeEnd2 - timeEnd)
 
-        super.init(size: size, visibleFrame: <#Rect#>)
-//        status.addObserver(self.observer)
-//        self.observer.didUpdate = {[weak self] (_ observer: DrawingStatus.Observer, _ context: DrawingStatus, _ from: DrawingStatus.Status, _ to: DrawingStatus.Status) in
-//            guard let strongSelf = self else {
-//                return
-//            }
-//            strongSelf.contentHeight = to.contentHeight
-//
-//
-//
-//            let sliceSize = strongSelf.status.drawingSize.cgSize
-//            let top = to.offset > 0 ? to.offset : 0
-//            let bottom = to.offset + sliceSize.height
-//
-//            if top < strongSelf.layer.frame.origin.y || bottom > strongSelf.layer.frame.origin.y + strongSelf.layer.frame.size.height {
-//                let t = top - (sliceSize.width - sliceSize.height) / 2
-//                let y: UInt32
-//                let scale = UIScreen.main.scale
-//                if t < 0 {
-//                    y = 0
-//                } else {
-//                    let tmp = Int(t * scale - 1)
-//                    y = tmp > 0 ? UInt32(tmp) : 0
-//                }
-//
-//                strongSelf.layer.frame = CGRect(x: 0, y: CGFloat(y) / scale, width: sliceSize.width, height: sliceSize.width)
-//                strongSelf.layer.cgImage = strongSelf.makeImage(y: y, height: strongSelf.status.drawingSize.rawValue.height)
-//            }
-//
-//
-//        }
+    public let backgroundColor: UInt32 = 0
+    
+//    //缓冲区
+//    public let contentBuffer: BitmapByteBuffer
+//    public let bitmapContext: CGContext
+    
+//    var bitmapSize = size
+//    bitmapSize.width = (size.width + 31) / 32 * 32
+//    let bytesPerRow = Int(BitmapInfo.littleArgb8888.bytesPerPixel) * Int(bitmapSize.width)
+//    let buffer = BitmapByteBuffer(size: bitmapSize, bitmapInfo: BitmapInfo.littleArgb8888, byteCount: bytesPerRow * Int(bitmapSize.height), bytesPerRow: bytesPerRow)
+//    self.bitmapContext = buffer.makeContext(origin: Point.zero, size: size)!
+
+    
+    
+    public init(size: Size, contentSize: Size) {
+        self.sliceSize = BitmapTile.tileSize
+        self.contentSize = contentSize
+        self.contentOffset = Point.zero
+        self.visibleFrame = Rect(origin: Point.zero, size: size)
+        super.init(size: size)
     }
     deinit {
 //        self.status.removeObserver(self.observer)
     }
     
-    public func didUpdateStatus(from: DrawingStatus.Status, to: DrawingStatus.Status) {
-        self.contentHeight = to.contentHeight
+
         
-        let sliceSize = self.status.drawingSize.cgSize
-        let top = to.offset > 0 ? to.offset : 0
-        let bottom = to.offset + sliceSize.height
-        
-        if top < self.layer.frame.origin.y || bottom > self.layer.frame.origin.y + self.layer.frame.size.height {
-            let t = top - (sliceSize.width - sliceSize.height) / 2
-            let y: UInt32
-            let scale = UIScreen.main.scale
-            if t < 0 {
-                y = 0
-            } else {
-                let tmp = Int(t * scale - 1)
-                y = tmp > 0 ? UInt32(tmp) : 0
-            }
-            
-            self.layer.frame = CGRect(x: 0, y: CGFloat(y) / scale, width: sliceSize.width, height: sliceSize.width)
-            self.layer.cgImage = self.makeImage(y: y, height: self.status.drawingSize.rawValue.height)
-        }
+    open func updateVisibleFrame(origin: Point, size: Size) {
+        self.update(visibleFrame: Rect(origin: origin, size: size))
     }
-    
-    public func displayContent() {
-        let y: UInt32 = 0
-        let scale = UIScreen.main.scale
-        let sliceSize = self.status.drawingSize.cgSize
-
-        self.layer.frame = CGRect(x: 0, y: CGFloat(y) / scale, width: sliceSize.width, height: sliceSize.width)
-        self.layer.cgImage = self.makeImage(y: y, height: self.status.drawingSize.rawValue.height)
-
-//        if self.sequence > 5 {
-//            for slice in self.slices {
-//                let image = slice.cgImage
-//                slice.cgImage = image
-//                if let aimage = slice.cgImage  {
-//
-//                }
-//                slice.setNeedsDisplay()
-//            }
-//            self.layer.setNeedsDisplay()
-//            self.layer.superlayer?.setNeedsDisplay()
-//            return
+    open func update(visibleFrame: Rect) {
+        let frame = visibleFrame.standardize()
+        self.visibleFrame = frame
+    }
+    open func visibleFrameDidChange(from: Rect, to: Rect) {
+        var visibleTiles: [Point: BitmapTile] = [:]
+//        self.tiles(in: to).forEach { (tile) in
+//            visibleTiles[tile.origin] = tile
 //        }
-//        let bitmapLayout = self.status.bitmapLayout
-//        let colorSpace = bitmapLayout.colorSpace
-//        let bitmapInfo: UInt32 = colorSpace.bitmapInfo
-//        for (idx, slice) in self.slices.enumerated() {
-//            if idx < 16 {
-//                slice.cgImage = CGImage(width: Int(self.size.width), height: Int(slice.size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: slice.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+//
+//        self.visibleTiles.keys.forEach { (origin) in
+//            if !set.contains(origin) {
+//                self.visibleTiles.removeValue(forKey: origin)
+//            }
+//        }
+//        set.forEach { (origin) in
+//            if let _ = self.visibleTile[origin] {
+//
+//
 //            } else {
-//                slice.contents = nil
+//                self.visibleTiles[origin] =
 //            }
 //        }
-//        self.layer.setNeedsDisplay()
-//
-//        self.sequence += 1
+//        self.visibleTiles.keys.forEach { (origin) in
+//            if !set.contains(origin) {
+//                self.visibleTiles.removeValue(forKey: origin)
+//            }
+//        }
     }
-  
+
+    
+    
+//    public func didUpdateStatus(from: DrawingStatus.Status, to: DrawingStatus.Status) {
+//        self.contentHeight = to.contentHeight
+//        
+//        let sliceSize = self.status.drawingSize.cgSize
+//        let top = to.offset > 0 ? to.offset : 0
+//        let bottom = to.offset + sliceSize.height
+//        
+//        if top < self.layer.frame.origin.y || bottom > self.layer.frame.origin.y + self.layer.frame.size.height {
+//            let t = top - (sliceSize.width - sliceSize.height) / 2
+//            let y: UInt32
+//            let scale = UIScreen.main.scale
+//            if t < 0 {
+//                y = 0
+//            } else {
+//                let tmp = Int(t * scale - 1)
+//                y = tmp > 0 ? UInt32(tmp) : 0
+//            }
+//            
+//            self.layer.frame = CGRect(x: 0, y: CGFloat(y) / scale, width: sliceSize.width, height: sliceSize.width)
+//            self.layer.cgImage = self.makeImage(y: y, height: self.status.drawingSize.rawValue.height)
+//        }
+//    }
+//    
+//    public func displayContent() {
+//        let y: UInt32 = 0
+//        let scale = UIScreen.main.scale
+//        let sliceSize = self.status.drawingSize.cgSize
+//
+//        self.layer.frame = CGRect(x: 0, y: CGFloat(y) / scale, width: sliceSize.width, height: sliceSize.width)
+//        self.layer.cgImage = self.makeImage(y: y, height: self.status.drawingSize.rawValue.height)
+//
+////        if self.sequence > 5 {
+////            for slice in self.slices {
+////                let image = slice.cgImage
+////                slice.cgImage = image
+////                if let aimage = slice.cgImage  {
+////
+////                }
+////                slice.setNeedsDisplay()
+////            }
+////            self.layer.setNeedsDisplay()
+////            self.layer.superlayer?.setNeedsDisplay()
+////            return
+////        }
+////        let bitmapLayout = self.status.bitmapLayout
+////        let colorSpace = bitmapLayout.colorSpace
+////        let bitmapInfo: UInt32 = colorSpace.bitmapInfo
+////        for (idx, slice) in self.slices.enumerated() {
+////            if idx < 16 {
+////                slice.cgImage = CGImage(width: Int(self.size.width), height: Int(slice.size.height), bitsPerComponent: Int(colorSpace.bitsPerComponent), bitsPerPixel: Int(colorSpace.bitsPerPixel), bytesPerRow: bitmapLayout.bytesPerRow, space: Drawing.ColorSpace.deviceRgb, bitmapInfo:CGBitmapInfo(rawValue: bitmapInfo), provider: slice.dataProvider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+////            } else {
+////                slice.contents = nil
+////            }
+////        }
+////        self.layer.setNeedsDisplay()
+////
+////        self.sequence += 1
+//    }
+//  
 //    fileprivate func makeDataProvider(y: UInt32, height: UInt32) -> CGDataProvider {
 //        let bitmapLayout = self.status.bitmapLayout
 //        let offset = bitmapLayout.bytesPerRow * Int(y)

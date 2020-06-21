@@ -16,6 +16,7 @@ public struct Point {
     
     
     public static let minChange: Point = {
+        //为了加速copy， 64位机器上8字节对齐
         var p = Point(x: 1, y: 1)
         if UInt64(Int.max) == UInt64(Int64.max) {
             p.x = 2

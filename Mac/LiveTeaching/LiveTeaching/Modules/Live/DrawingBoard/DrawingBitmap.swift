@@ -10,18 +10,16 @@ import UIKit
 
 public class BitmapTileCell: BitmapTileContent {
     //相对于buffer中的位置
-    public let origin: Point
-    public let size: Size
+    public let indexPath: BitmapTile.IndexPath
     public let buffer: BitmapByteBuffer
 
-    public init(buffer: BitmapByteBuffer, origin: Point, size: Size) {
-        self.origin = origin
+    public init(buffer: BitmapByteBuffer, indexPath: BitmapTile.IndexPath) {
+        self.indexPath = indexPath
         self.buffer = buffer
-        self.size = size
     }
-    public func makeImage() -> CGImage? {
-        return self.buffer.makeImage(origin: self.origin, size: self.size)
-    }
+//    public func makeImage() -> CGImage? {
+//        return self.buffer.makeImage(origin: self.origin, size: self.size)
+//    }
 
     public func draw(in ctx: CGContext) {
         let bounds = ctx.boundingBoxOfClipPath
@@ -37,7 +35,149 @@ public class BitmapTileCell: BitmapTileContent {
 }
 
 
+
+public class TileFileManager {
+    class FileItem {
+        var isSynchronizing: Bool = false
+        var data: Data
+        init(data: Data) {
+            self.data = data
+        }
+    }
+    class TileEntry {
+        var sequences: IndexSet = IndexSet()
+        var items: [Int: FileItem] = [:]
+        init(sequences: IndexSet) {
+            self.sequences = sequences
+        }
+    }
+    
+    public class Group {
+        private var items: [BitmapTile.IndexPath: TileEntry] = [:]
+        public init() {
+
+        }
+        subscript(key: BitmapTile.IndexPath) -> TileEntry? {
+            set {
+                self.items[key] = newValue
+            }
+            get {
+                return self.items[key]
+            }
+        }
+    }
+
+    private let queue: DispatchQueue = DispatchQueue(label: "com.angfung.tile", qos: DispatchQoS.userInitiated, attributes: [], autoreleaseFrequency: .inherit, target: nil)
+
+    private let readQueue: DispatchQueue = DispatchQueue(label: "com.angfung.tile.read", qos: DispatchQoS.userInitiated, attributes: [], autoreleaseFrequency: .inherit, target: nil)
+
+    private var groups: [String: Group] = [:]
+
+    public func group(for workspace: String) -> Group {
+        if let group = self.groups[workspace] {
+            return group
+        } else {
+            let group = Group()
+            self.groups[workspace] = group
+            return group
+        }
+    }
+    private func tileEntry(for workspace: String, indexPath: BitmapTile.IndexPath) -> TileEntry {
+        let group = self.group(for: workspace)
+        if let entry = group[indexPath] {
+            
+            return entry
+        } else {
+            // TODO: init TileEntry
+            
+            
+            let entry = TileEntry(sequences: IndexSet())
+            group[indexPath] = entry
+            return entry
+        }
+    }
+    
+    func unpack(data: Data) -> BitmapByteBuffer {
+        // TODO: unpack
+        return BitmapByteBuffer.init(size: Size.zero, bitmapInfo: BitmapInfo.littleArgb8888, byteCount: 0, bytesPerRow: 0)
+    }
+    func pack(buffer: BitmapByteBuffer) -> Data {
+        // TODO: pack
+        return Data()
+    }
+    
+    
+    public func readFileItem(for workspace: String, indexPath: BitmapTile.IndexPath, sequence: Int) -> BitmapByteBuffer? {
+        self.queue.sync { () -> BitmapByteBuffer? in
+            let entry = self.tileEntry(for: workspace, indexPath: indexPath)
+            if let index = entry.sequences.integerLessThanOrEqualTo(sequence) {
+                if let file = entry.items[index] {
+                    return self.unpack(data: file.data)
+                } else {
+                    // TODO: read file
+                    let data = self.readQueue.sync { () -> Data in
+                        return Data()
+                    }
+                    // TODO: try add cache file
+                    let file = FileItem(data: data)
+                    entry.items[index] = file
+                    return self.unpack(data: file.data)
+                }
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    public func writeFileItem(for workspace: String, indexPath: BitmapTile.IndexPath, sequence: Int, buffer: BitmapByteBuffer) {
+        self.queue.sync {
+            let entry = self.tileEntry(for: workspace, indexPath: indexPath)
+
+            if !entry.sequences.contains(sequence) {
+                let data = self.pack(buffer: buffer)
+                let fileItem = FileItem(data: data)
+                
+                if let file = entry.items[sequence] {
+                    // TODO: log
+                }
+                
+                // TODO: 尝试与旧数据比价
+                
+                entry.items[sequence] = fileItem
+                
+                fileItem.isSynchronizing = true
+                DispatchQueue.global(qos: .userInitiated).async {
+                    // TODO: write file
+
+                    
+                    self.queue.async {
+                        fileItem.isSynchronizing = false
+                        // TODO: 尝试清理缓存
+                    }
+                }
+                
+            }
+        }
+
+    }
+
+    private let tileCache: [Point: TileEntry] = [:]
+
+    public init() {
+    }
+
+ 
+    public static let shared: TileFileManager = TileFileManager()
+}
 public class TileManager {
+    fileprivate class TileEntry {
+        var value: BitmapTile?
+        init(value: BitmapTile?) {
+            self.value = value
+        }
+    }
+    
+    
     public let tiles: [TiledLine] = []
     public private(set) var visibleTiles: [Point: BitmapTile] = [:]
 
@@ -49,13 +189,7 @@ public class TileManager {
             }
         }
     }
-    
-    fileprivate class TileEntry {
-        var value: BitmapTile?
-        init(value: BitmapTile?) {
-            self.value = value
-        }
-    }
+
     private let tileCache: [Point: TileEntry] = [:]
 
     public init() {
@@ -89,16 +223,9 @@ public class TileManager {
 
 public class DrawingBitmap: BaseBitmap {
     //按照最低5mb/ms的memcpy速率设计
-    
-    public static let minChange: Point = {
-        var p = Point(x: 1, y: 1)
-        if UInt64(Int.max) == UInt64(Int64.max) {
-            p.x = 2
-        }
-        return p
-    }()
-    
-    
+    //按照最低0.04mb/ms的文件写入速率
+    //按照最低0.5mb/ms的文件写入速率
+
     public fileprivate(set) var contentOffset: Point {
         didSet(old) {
             if self.contentOffset != old {

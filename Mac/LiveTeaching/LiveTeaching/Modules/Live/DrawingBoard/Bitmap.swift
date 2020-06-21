@@ -8,6 +8,7 @@
 
 import CoreFoundation
 import CoreGraphics
+import UIKit
 
 
 public final class BitmapByteBuffer {
@@ -261,8 +262,59 @@ public protocol BitmapTileContent: class {
     func draw(in ctx: CGContext)
 }
 
+
+
 public class BitmapTile {
-    public static let tileSize: Size = Size(width: 256, height: 256)
+    public struct IndexPath: Hashable {
+        public var x: Int32
+        public var y: Int32
+
+        public init(x: Int32, y: Int32) {
+            self.x = x
+            self.y = y
+        }
+        public init(origin: Point) {
+            let px = origin.x
+            var x = px / tileSize.width
+            if px < 0 {
+                if px % tileSize.width != 0 {
+                    x -= 1
+                }
+            }
+            let py = origin.y
+            var y = py / tileSize.height
+            if py < 0 {
+                if py % tileSize.height != 0 {
+                    y -= 1
+                }
+            }
+            
+            self.x = x
+            self.y = y
+        }
+
+        public static func == (_ lhs: IndexPath, _ rhs: IndexPath) -> Bool {
+            return lhs.x == rhs.x && lhs.y == rhs.y
+        }
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(self.x)
+            hasher.combine(self.y)
+        }
+    }
+    
+    
+    public static let tileSize: Size = {
+        let scale = UIScreen.main.scale
+        if scale < 1.1 {
+            return Size(width: 128, height: 128)
+        } else if scale < 2.1 {
+            return Size(width: 256, height: 256)
+        } else if scale < 3.1 {
+            return Size(width: 384, height: 384)
+        } else {
+            return Size(width: 256, height: 256)
+        }
+    }()
     
     public static func sizeAlignment(size: Size) -> Size {
         var result = Size.zero
@@ -280,20 +332,12 @@ public class BitmapTile {
     }
     
     //相对于bitmap整体中的位置
-    public let origin: Point
-    public let size: Size
+    public let indexPath: IndexPath
 
     public var content: BitmapTileContent? = nil
     //size 宽高必须>0
-    public init(origin: Point, size: Size) {
-        assert(size.width > 0)
-        assert(size.height > 0)
-
-        assert(size.width % BitmapTile.tileSize.width == 0)
-        assert(size.height % BitmapTile.tileSize.height == 0)
-
-        self.origin = origin
-        self.size = size
+    public init(indexPath: IndexPath) {
+        self.indexPath = indexPath
     }
 }
 

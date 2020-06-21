@@ -382,107 +382,6 @@ public protocol DrawingViewDrawDelegate: class {
     func drawingView(_ view: DrawingView, finish context: TouchPointCollection)
 }
 
-//
-//
-//public class TiledDrawingView: DrawingView {
-//    /*
-//     background
-//     content
-//     shape
-//     foreground
-//     */
-//
-//    public let content: CATiledLayer
-//
-//    //图形容器层
-//    public let status: DrawingStatus
-//    public let bitmap: DrawingBitmap
-//
-//    private let eventRecognizer: DrawingEventRecognizer = DrawingEventRecognizer()
-//
-//    private var isDispatchEventToRecognizer: Bool = false
-//
-//    internal var drawDelegate: DrawingViewDrawDelegate? = nil
-//
-//    public init(status: DrawingStatus) {
-//        self.status = status
-//        let bounds = CGRect(origin: CGPoint(), size: status.drawingSize.cgSize)
-//        let content = CATiledLayer()
-//        content.zPosition = -1
-//        content.contentsScale = UIScreen.main.scale
-//        self.content = content
-////        content.delegate = self
-////        content.frame = bounds
-//        var size = status.drawingSize.rawValue
-//        size.height = Int32(status.contentHeightLimit)
-//        self.bitmap = DrawingBitmap(size: size, status: status)
-//        super.init(frame: bounds)
-//        self.clipsToBounds = true
-//        self.layer.masksToBounds = true
-//        self.layer.addSublayer(content)
-//        self._prepare()
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//
-//    private func _prepare() {
-//        self.isMultipleTouchEnabled = true
-//    }
-//    public override func layoutSubviews() {
-//        super.layoutSubviews()
-//    }
-//    public func didUpdateStatus(from: DrawingStatus.Status, to status: DrawingStatus.Status) {
-//        var bounds = self.bounds
-//        bounds.origin.y = status.offset
-//        self.bounds = bounds
-//        self.bitmap.didUpdateStatus(from: from, to: status)
-//    }
-//
-//    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        if self.eventRecognizer.isEnabled {
-//            self.isDispatchEventToRecognizer = true
-//        } else {
-//            self.isDispatchEventToRecognizer = false
-//        }
-//        guard self.isDispatchEventToRecognizer else {
-//            super.touchesBegan(touches, with: event)
-//            return
-//        }
-//        self.eventRecognizer.touchesBegan(view: self, touches: touches, with: event)
-//    }
-//    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard self.isDispatchEventToRecognizer else {
-//            super.touchesMoved(touches, with: event)
-//            return
-//        }
-//        self.eventRecognizer.touchesMoved(view: self, touches: touches, with: event)
-//    }
-//    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard self.isDispatchEventToRecognizer else {
-//            super.touchesEnded(touches, with: event)
-//            return
-//        }
-//        guard self.eventRecognizer.isEnabled else {
-//            return
-//        }
-//        self.eventRecognizer.touchesEnded(view: self, touches: touches, with: event)
-//    }
-//    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard self.isDispatchEventToRecognizer else {
-//            super.touchesCancelled(touches, with: event)
-//            return
-//        }
-//        guard self.eventRecognizer.isEnabled else {
-//            return
-//        }
-//        self.eventRecognizer.touchesCancelled(view: self, touches: touches, with: event)
-//    }
-//}
-//
-//
-
 
 fileprivate class ScrollIndicator: UIView {
 
@@ -491,7 +390,13 @@ fileprivate class ScrollIndicator: UIView {
 }
 
 
-
+/**
+ * 待确认方案：
+ * 1. 主线程绘制 还是子线程
+ * 2. 如果在主线程绘制， 则bitmap 只能是cache的职能，但是又需要把正在画的bitmap同步到子线程(录屏)
+ * 3. 如果在子线程绘制，渲染会延迟
+ * 准备采用主线程绘制
+ */
 public class DrawingView: UIView {
 
     //当前工作区间

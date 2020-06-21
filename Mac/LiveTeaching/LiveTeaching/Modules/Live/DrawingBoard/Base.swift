@@ -13,11 +13,23 @@ public struct Point {
     public var y: Int32
     
     public static let zero: Point = Point(x: 0, y: 0)
-
+    
+    
+    public static let minChange: Point = {
+        var p = Point(x: 1, y: 1)
+        if UInt64(Int.max) == UInt64(Int64.max) {
+            p.x = 2
+        }
+        return p
+    }()    
 }
 public struct Size {
     public var width: Int32
     public var height: Int32
+    
+    public var area: Int {
+        return Int(self.width) * Int(self.height)
+    }
     
     public static let zero: Size = Size(width: 0, height: 0)
 }

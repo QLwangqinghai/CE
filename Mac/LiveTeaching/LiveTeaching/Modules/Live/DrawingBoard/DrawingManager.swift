@@ -15,48 +15,39 @@ import UIKit
 
 //http://blog.sina.com.cn/s/blog_894d45e20102wwrt.html
 
+/*
+ uid/liveId/pid/pageId/***
+ 
+ indexPath_data [UInt32(length)]
+ 
+ indexPath_index [UInt64(length), UInt16(length) ......]
+ index_db   index:do what
+ 
+
+ 
+ 
+ */
+ 
+ /*
+ index_db
+ |- sequence -|- time -|- opreationCode -|- do -|- changed -|- filecached -|
+ 
+
+ |- x -|- y -|- sequence -|- location -|- length -|
+
+ 
+ */
 
 
 public class DrawingManager {
-    
-    private var links: [TimeInterval]
-    var displaylink: CADisplayLink?
-    
-    func createDisplayLink() {
-        // 创建CADisplayLink
-        displaylink = CADisplayLink(target: self,
-                                    selector: #selector(DrawingManager.onDisplaylink))
-        displaylink!.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
-    }
-    
-    
-//    open var timestamp: CFTimeInterval { get }
-//
-//    open var duration: CFTimeInterval { get }
-//
-//
-//    /* The next timestamp that the client should target their render for. */
-//
-//    @available(iOS 10.0, *)
-//    open var targetTimestamp: CFTimeInterval { get }
-
-    
-    
-    @objc func onDisplaylink(displaylink: CADisplayLink) {
-        // 打印时间戳
-//        print("current:\(CACurrentMediaTime()) linkInfo.current:\(displaylink.timestamp) linkInfo.target\(displaylink.targetTimestamp)")
-    }
-    
-    // 停止CADisplayLink
-    func stopDisplaylink() {
-        displaylink?.invalidate()
-        displaylink = nil
-    }
+    private let sessions: [String: DrawingSession]
+    private let lock: NSLock
     init() {
-        self.links = []
-        self.createDisplayLink()
-        self.links.reserveCapacity(61)
+        self.lock = NSLock()
+        self.sessions = [:]
     }
+    
+    
     
     
     public static let shared: DrawingManager = DrawingManager()

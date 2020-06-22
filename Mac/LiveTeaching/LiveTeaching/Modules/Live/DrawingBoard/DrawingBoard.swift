@@ -18,7 +18,7 @@ public class DrawingBoard: StackView {
     public let zoomConainer: StackView
 
     
-    //动画  多媒体层， 跟workspace无关的数据
+    //动画  多媒体层， 跟session无关的数据
     public let topForeground: ViewContainer
 
     //菜单层
@@ -26,12 +26,12 @@ public class DrawingBoard: StackView {
     
     public let contentSize: Size
     
-    public init(frame: CGRect, workspace: String, size: Size, contentSize: Size) {
+    public init(frame: CGRect, session: String, size: Size, contentSize: Size) {
         self.contentSize = contentSize
         
         let bounds = CGRect(origin: CGPoint(), size: frame.size)
         let zoomConainer: StackView = StackView(frame: bounds)
-        let drawingView: DrawingView = DrawingView(frame:bounds, workspace: workspace, size: size, contentSize: contentSize)
+        let drawingView: DrawingView = DrawingView(frame:bounds, session: session, size: size, contentSize: contentSize)
         let topForeground: ViewContainer = ViewContainer(frame: bounds)
         zoomConainer.addSubview(drawingView)
         zoomConainer.addSubview(topForeground)

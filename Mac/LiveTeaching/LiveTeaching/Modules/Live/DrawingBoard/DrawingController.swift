@@ -31,9 +31,9 @@ public class DrawingBoardController: NSObject, DrawingViewDrawDelegate {
     }
     let observer: StackView.Observer = StackView.Observer()
 
-    public init(frame: CGRect, workspace: String, size: Size, contentSize: Size) {
+    public init(frame: CGRect, session: String, size: Size, contentSize: Size) {
         self.frame = frame
-        self.drawingBoard = DrawingBoard(frame: frame, workspace: workspace, size: size, contentSize: contentSize)
+        self.drawingBoard = DrawingBoard(frame: frame, session: session, size: size, contentSize: contentSize)
     }
 
     

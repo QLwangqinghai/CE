@@ -35,26 +35,27 @@ public class BitmapTileCell: BitmapTileContent {
 }
 
 
-
 public class TileFileManager {
     class FileItem {
         var isSynchronizing: Bool = false
-        var data: Data
-        init(data: Data) {
+        var data: NSData
+        init(data: NSData) {
             self.data = data
         }
     }
     class TileEntry {
-        var sequences: IndexSet = IndexSet()
+        var sequences: IndexSet
         var items: [Int: FileItem] = [:]
         init(sequences: IndexSet) {
             self.sequences = sequences
         }
     }
     
-    public class Group {
+    public class Session {
+        public private(set) var sequences: IndexSet
         private var items: [BitmapTile.IndexPath: TileEntry] = [:]
-        public init() {
+        public init(sequences: IndexSet) {
+            self.sequences = sequences
 
         }
         subscript(key: BitmapTile.IndexPath) -> TileEntry? {
@@ -71,19 +72,19 @@ public class TileFileManager {
 
     private let readQueue: DispatchQueue = DispatchQueue(label: "com.angfung.tile.read", qos: DispatchQoS.userInitiated, attributes: [], autoreleaseFrequency: .inherit, target: nil)
 
-    private var groups: [String: Group] = [:]
+    private var groups: [String: Session] = [:]
 
-    public func group(for workspace: String) -> Group {
-        if let group = self.groups[workspace] {
+    public func group(for session: String) -> Session {
+        if let group = self.groups[session] {
             return group
         } else {
-            let group = Group()
-            self.groups[workspace] = group
+            let group = Session()
+            self.groups[session] = group
             return group
         }
     }
-    private func tileEntry(for workspace: String, indexPath: BitmapTile.IndexPath) -> TileEntry {
-        let group = self.group(for: workspace)
+    private func tileEntry(for session: String, indexPath: BitmapTile.IndexPath) -> TileEntry {
+        let group = self.group(for: session)
         if let entry = group[indexPath] {
             
             return entry
@@ -97,44 +98,52 @@ public class TileFileManager {
         }
     }
     
-    func unpack(data: Data) -> BitmapByteBuffer {
+    func unpack(data: NSData) -> BitmapByteBuffer {
         // TODO: unpack
-        return BitmapByteBuffer.init(size: Size.zero, bitmapInfo: BitmapInfo.littleArgb8888, byteCount: 0, bytesPerRow: 0)
+        let size = BitmapTile.tileSize
+        let bitmapInfo = BitmapInfo.littleArgb8888
+        let bytesPerRow = size.width * bitmapInfo.bytesPerPixel
+        let byteCount = bytesPerRow * size.height
+        return BitmapByteBuffer.init(size: size, bitmapInfo: bitmapInfo, byteCount: byteCount, bytesPerRow: bytesPerRow)
     }
-    func pack(buffer: BitmapByteBuffer) -> Data {
+    func pack(buffer: BitmapByteBuffer) -> NSData {
         // TODO: pack
-        return Data()
+        return NSData()
     }
     
     
-    public func readFileItem(for workspace: String, indexPath: BitmapTile.IndexPath, sequence: Int) -> BitmapByteBuffer? {
-        self.queue.sync { () -> BitmapByteBuffer? in
-            let entry = self.tileEntry(for: workspace, indexPath: indexPath)
+    public func readFileItem(for session: String, indexPath: BitmapTile.IndexPath, sequence: Int) -> BitmapByteBuffer? {
+        if let file = self.queue.sync( { () -> FileItem? in
+            let entry = self.tileEntry(for: session, indexPath: indexPath)
             if let index = entry.sequences.integerLessThanOrEqualTo(sequence) {
                 if let file = entry.items[index] {
-                    return self.unpack(data: file.data)
+                    return file
                 } else {
                     // TODO: read file
-                    let data = self.readQueue.sync { () -> Data in
-                        return Data()
+                    let data = self.readQueue.sync { () -> NSData in
+                        return NSData()
                     }
                     // TODO: try add cache file
                     let file = FileItem(data: data)
                     entry.items[index] = file
-                    return self.unpack(data: file.data)
+                    return file
                 }
             } else {
                 return nil
             }
+        }) {
+            return self.unpack(data: file.data)
+        } else {
+            return nil
         }
     }
     
-    public func writeFileItem(for workspace: String, indexPath: BitmapTile.IndexPath, sequence: Int, buffer: BitmapByteBuffer) {
-        self.queue.sync {
-            let entry = self.tileEntry(for: workspace, indexPath: indexPath)
+    public func writeFileItem(for session: String, indexPath: BitmapTile.IndexPath, sequence: Int, buffer: BitmapByteBuffer) {
+        let data = self.pack(buffer: buffer)
+        self.queue.sync({
+            let entry = self.tileEntry(for: session, indexPath: indexPath)
 
             if !entry.sequences.contains(sequence) {
-                let data = self.pack(buffer: buffer)
                 let fileItem = FileItem(data: data)
                 
                 if let file = entry.items[sequence] {
@@ -155,9 +164,8 @@ public class TileFileManager {
                         // TODO: 尝试清理缓存
                     }
                 }
-                
             }
-        }
+        })
 
     }
 

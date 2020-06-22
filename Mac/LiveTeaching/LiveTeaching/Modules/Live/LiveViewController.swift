@@ -28,7 +28,7 @@ class LiveViewController: ViewController, UIScrollViewDelegate {
         //Drawing.BitmapLayout(width: drawingSize.rawValue.width, colorSpace: Drawing.ColorSpace.little16Xrgb, backgroundColor: Drawing.Color(little32Argb: 0))
         var contentSize = drawingSize.rawValue
         contentSize.height *= 16
-        let controller = DrawingBoardController(frame: CGRect(), workspace: "", size: drawingSize.rawValue, contentSize:contentSize)
+        let controller = DrawingBoardController(frame: CGRect(), session: "", size: drawingSize.rawValue, contentSize:contentSize)
         return controller
     } ()
     let textField: UITextField = UITextField(frame: CGRect(x: 20, y: 20, width: 80, height: 30))

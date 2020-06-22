@@ -400,7 +400,7 @@ fileprivate class ScrollIndicator: UIView {
 public class DrawingView: UIView {
 
     //当前工作区间
-    public private(set) var workspace: String
+    public private(set) var session: String
 
     
     //背景
@@ -440,8 +440,8 @@ public class DrawingView: UIView {
 
     private var isDispatchEventToRecognizer: Bool = false
     
-    public init(frame: CGRect, workspace: String, size: Size, contentSize: Size) {
-        self.workspace = workspace
+    public init(frame: CGRect, session: String, size: Size, contentSize: Size) {
+        self.session = session
         self.size = size
         self.contentSize = contentSize
         

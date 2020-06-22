@@ -10,6 +10,51 @@ import CoreFoundation
 import CoreGraphics
 import UIKit
 
+//public struct Layout {
+//    public let size: Size
+//    public let bitmapInfo: BitmapInfo
+//    public let byteCount: Int
+//    public let bytesPerRow: Int
+//
+//    public init(size: Size, bitmapInfo: BitmapInfo, byteCount: Int, bytesPerRow: Int) {
+//        assert(size.height > 0)
+//        assert(size.width > 0)
+//        assert(byteCount > 0)
+//        assert(bytesPerRow > 0)
+//
+//        let ptr = UnsafeMutableRawPointer.allocate(byteCount: byteCount, alignment: 0)
+//        self.size = size
+//        self.ptr = ptr
+//        self.bytesPerRow = bytesPerRow
+//        self.bitmapInfo = bitmapInfo
+//        self.byteCount = byteCount
+//    }
+//
+//}
+
+public final class ByteBuffer {
+    public let byteCount: Int
+    public let ptr: UnsafeMutableRawPointer
+
+    public init(byteCount: Int) {
+        assert(byteCount > 0)
+        let ptr = UnsafeMutableRawPointer.allocate(byteCount: byteCount, alignment: 0)
+        self.ptr = ptr
+        self.byteCount = byteCount
+    }
+    deinit {
+        self.ptr.deallocate()
+    }
+    
+    public func subBuffer(in range: Range<Int>) -> ByteBuffer {
+        assert(range.count > 0)
+        assert(range.max()! < self.byteCount)
+        let buffer = ByteBuffer(byteCount: range.count)
+        memcpy(buffer.ptr, self.ptr.advanced(by: range.lowerBound), range.count)
+        return buffer
+    }
+}
+
 
 public final class BitmapByteBuffer {
     public let size: Size
@@ -339,6 +384,15 @@ public class BitmapTile {
     public init(indexPath: IndexPath) {
         self.indexPath = indexPath
     }
+
+    public static func makeByteBuffer(bitmapInfo: BitmapInfo) -> BitmapByteBuffer {
+        let size = BitmapTile.tileSize
+        let bytesPerRow = Int(bitmapInfo.bytesPerPixel) * Int(size.width)
+        let byteCount = bytesPerRow * Int(size.height)
+        let buffer = BitmapByteBuffer(size: size, bitmapInfo: bitmapInfo, byteCount: byteCount, bytesPerRow: bytesPerRow)
+        return buffer
+    }
+    
 }
 
 public class TiledLine {

@@ -25,6 +25,9 @@ public protocol UniqueValue {
     }
 }
 
+/**
+ * 小规模数据
+ */
 public struct UniqueOrderedArray<Order, Value> where Order: Comparable, Value: UniqueValue {
     public typealias Key = Value.UniqueIdentifier
     
